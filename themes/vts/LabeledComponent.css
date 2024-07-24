@@ -1,0 +1,23 @@
+.vts-labeled-component {
+    display: flex;
+    &.top,
+    &.bottom {
+        flex-direction: column;
+    }
+    &.right,
+    &.left {
+        flex-direction: row;
+    }
+    &.top.start > .vts-label,
+    &.bottom.start > .vts-label {
+        text-align: start;
+    }
+    &.top.center > .vts-label,
+    &.bottom.center > .vts-label {
+        text-align: center;
+    }
+    &.top.end > .vts-label,
+    &.top.bottom > .vts-label {
+        text-align: end;
+    }
+}

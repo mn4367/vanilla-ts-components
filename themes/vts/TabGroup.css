@@ -1,0 +1,161 @@
+.vts-tab-group {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    background-color: inherit;
+    &.top,
+    &.right,
+    &.bottom,
+    &.left {
+        & > .tab-headers:empty {
+            border-top: none;
+            border-right: none;
+            border-bottom: none;
+            border-left: none;
+        }
+    }
+    & > .tab-headers {
+        display: flex;
+        /* background-color: inherit; */
+        & > .header-container {
+            display: flex;
+            margin: 0;
+            padding: 0.5rem;
+            background-color: lightgray;
+            white-space: nowrap;
+            &.active,
+            &:hover {
+                background-color: inherit;
+            }
+            & > .header-content {
+                flex-grow: 1;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                /* background-color: orange; */
+                /* background-color: inherit; */
+            }
+            & > .close {
+                flex-grow: 0;
+                padding: 0;
+                width: 1rem;
+                height: 1rem;
+                min-width: 1rem;
+                min-height: 1rem;
+                appearance: none;
+                border: none;
+                font-size: 0;
+                background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGVsbGlwc2Ugc3R5bGU9ImZpbGw6IHJnYigyNTUsIDAsIDApOyIgY3g9IjI1NiIgY3k9IjI1NiIgcng9IjI1NiIgcnk9IjI1NiIvPgogIDxwYXRoIGQ9Ik0gMzY2LjYgMjMwLjgzIEMgMzgwLjUwNCAyMzAuODMgMzkxLjc4NCAyNDIuMDc5IDM5MS43ODQgMjU1Ljk5OSBDIDM5MS43ODQgMjY5LjkxOSAzODAuNTA0IDI4MS4xNjcgMzY2LjYgMjgxLjE2NyBMIDE0NC45MiAyODEuMTY3IEwgMTQ0LjkyIDIzMC44MyBNIDE0NS4zODQgMjgxLjE2NyBDIDEzMS40OTYgMjgxLjE2NyAxMjAuMjE2IDI2OS45MTkgMTIwLjIxNiAyNTUuOTk5IEMgMTIwLjIxNiAyNDIuMDc5IDEzMS40OTYgMjMwLjgzIDE0NS4zODQgMjMwLjgzIiBzdHlsZT0icGFpbnQtb3JkZXI6IGZpbGw7IGZpbGw6IHJnYigyNTUsIDI1NSwgMjU1KTsiIHRyYW5zZm9ybT0ibWF0cml4KDAuNzA3MTA4LCAtMC43MDcxMDYsIDAuNzA3MTA2LCAwLjcwNzEwOCwgLTEwNi4wMzc2MDksIDI1NS45OTkwNTYpIi8+CiAgPHBhdGggZD0iTSAzNjYuNiAyMzAuODMgQyAzODAuNTA0IDIzMC44MyAzOTEuNzg0IDI0Mi4wNzggMzkxLjc4NCAyNTUuOTk4IEMgMzkxLjc4NCAyNjkuOTE4IDM4MC41MDQgMjgxLjE2NiAzNjYuNiAyODEuMTY2IEwgMTQ0LjkyIDI4MS4xNjYgTCAxNDQuOTIgMjMwLjgzIE0gMTQ1LjM4NCAyODEuMTY2IEMgMTMxLjQ5NiAyODEuMTY2IDEyMC4yMTYgMjY5LjkxOCAxMjAuMjE2IDI1NS45OTggQyAxMjAuMjE2IDI0Mi4wNzggMTMxLjQ5NiAyMzAuODMgMTQ1LjM4NCAyMzAuODMiIHN0eWxlPSJwYWludC1vcmRlcjogZmlsbDsgZmlsbDogcmdiKDI1NSwgMjU1LCAyNTUpOyIgdHJhbnNmb3JtPSJtYXRyaXgoMC43MDcxMDcsIDAuNzA3MTA3LCAtMC43MDcxMDcsIDAuNzA3MTA3LCAyNTUuOTk4NTgxLCAtMTA2LjAzOTI2KSIvPgo8L3N2Zz4=");
+                background-color: transparent;
+                filter: grayscale(1) brightness(1.7);
+            }
+            & > .close:hover {
+                filter: grayscale(1) brightness(1.2);
+            }
+        }
+    }
+    &.top,
+    &.bottom {
+        & > .tab-headers {
+            overflow-x: auto;
+            border-right: 0.1rem solid darkgray;
+            border-left: 0.1rem solid darkgray;
+            & > .header-container {
+                flex-direction: row-reverse;
+                align-items: center;
+                border-right: 0.1rem solid darkgray;
+                &:last-of-type {
+                    /* border-right: none; */
+                }
+                & > .header-content {
+                    min-width: 7rem;
+                    max-width: 21rem;
+                    width: 100%;
+                    /* background-color: inherit; */
+                }
+                & > .close {
+                    margin: 0 0 0 1rem;
+                }
+            }
+        }
+    }
+    &.top {
+        flex-direction: column;
+        & > .tab-headers {
+            border-top: 0.1rem solid darkgray;
+            & > .header-container {}
+        }
+    }
+    &.bottom {
+        flex-direction: column-reverse;
+        border-bottom: 0.1rem solid darkgray;
+        & > .tab-headers {
+            & > .header-container {}
+        }
+    }
+    &.right,
+    &.left {
+        /* flex-direction: row; */
+        & > .tab-headers {
+            overflow-y: auto;
+            border-top: 0.1rem solid darkgray;
+            border-bottom: 0.1rem solid darkgray;
+            & > .header-container {
+                align-items: center;
+                & > .header-content {
+                    min-height: 7rem;
+                    max-height: 21rem;
+                    writing-mode: vertical-lr;
+                }
+            }
+        }
+    }
+    &.right {
+        flex-direction: row-reverse;
+        & > .tab-headers {
+            flex-direction: column;
+            border-right: 0.1rem solid darkgray;
+            & > .header-container {
+                flex-direction: column-reverse;
+                border-bottom: 0.1rem solid darkgray;
+                &:last-of-type {
+                    /* border-bottom: none; */
+                }
+                & > .close {
+                    margin: 1rem 0 0 0;
+                }
+            }
+        }
+    }
+    &.left {
+        flex-direction: row;
+        & > .tab-headers {
+            flex-direction: column-reverse;
+            border-left: 0.1rem solid darkgray;
+            & > .header-container {
+                flex-direction: column;
+                border-top: 0.1rem solid darkgray;
+                &:last-of-type {
+                    /* border-top: none; */
+                }
+                & > .header-content {
+                    transform: rotate(180deg);
+                }
+                & > .close {
+                    margin: 0 0 1rem 0;
+                }
+            }
+        }
+    }
+    & > .tab-content {
+        flex-grow: 1;
+        display: flex;
+        border: 0.1rem solid darkgray;
+        padding: 0.5rem;
+        /* background-color: inherit; */
+        & > .content-container {
+            flex-grow: 1;
+            position: relative;
+            /* background-color: inherit; */
+        }
+    }
+}
