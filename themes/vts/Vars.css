@@ -1,0 +1,82 @@
+:root {
+    /* #region Fonts */
+    --system-ui: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --system-sans-serif: ui-sans-serif;
+    --system-serif: ui-serif;
+    --system-monospace: ui-monospace;
+    --font-color: hsl(0 0% 15.7%);
+    /* #endregion */
+
+    /* #region Sizes */
+    /* console.log(parseFloat(getComputedStyle(document.documentElement).fontSize));
+       __Note:__ 0.075rem ~ 1 Pixel at a font-size of 10pt.
+       3.52777...mm ~10pt. */
+    --base-size: 1rem;
+    --base-size-half: 0.5rem;
+    --1px: 0.075rem;
+    --2px: calc(2 * var(--1px));
+    --3px: calc(3 * var(--1px));
+    --4px: calc(4 * var(--1px));
+    --5px: calc(5 * var(--1px));
+    --6px: calc(6 * var(--1px));
+    --7px: calc(7 * var(--1px));
+    --8px: calc(8 * var(--1px));
+    --9px: calc(9 * var(--1px));
+    --10px: calc(10 * var(--1px));
+    --11px: calc(11 * var(--1px));
+    --12px: calc(12 * var(--1px));
+    --13px: calc(13 * var(--1px));
+    --14px: calc(14 * var(--1px));
+    --15px: calc(15 * var(--1px));
+    --16px: calc(16 * var(--1px));
+    --17px: calc(17 * var(--1px));
+    --18px: calc(18 * var(--1px));
+    --19px: calc(19 * var(--1px));
+    --20px: calc(20 * var(--1px));
+    --21px: calc(21 * var(--1px));
+    --22px: calc(22 * var(--1px));
+    --23px: calc(23 * var(--1px));
+    --24px: calc(24 * var(--1px));
+    --25px: calc(25 * var(--1px));
+    --input-border-radius: var(--2px);
+    --border-radius-normal: var(--6px);
+    --border-radius-small: var(--3px);
+    --border-radius-large: var(--13px);
+    --busy-overlay-size: 5rem;
+    /* #endregion */
+
+    /* #region Colors */
+    --window-background-color: hsl(0 0% 100%);
+    --dialog-background-color: hsl(0 0% 91.4%);
+    --dialog-window-background-color: hsl(0 0% 96.5%);
+    --dialog-border-color: hsl(0 0% 78.4%);
+    --dialog-backdrop: hsla(0 0% 0% / 0.2);
+    --panel-background-color-light: hsl(0 0% 94.9%);
+    --panel-background-color: hsl(0 0% 91.4%);
+    --panel-background-color-dark: hsl(0 0% 83%);
+    --border-color: hsl(0 0% 89.8%);
+    --border-color-dark: hsl(0 0% 86.7%);
+    --input-background-color: hsl(0 0% 100%);
+    --input-border-color: hsl(0 0% 85.9%);
+    --input-border-color-dark: hsl(0 0% 71%);
+    --input-focused-outline-color: hsl(219 93.2% 76.9%);
+    --menu-background-color: hsl(0 0% 94.5%);
+    --menu-background-color-focused: hsl(214 100% 67.5%);
+    --menu-border-color: hsl(0 0% 78.4%);
+    --menu-separator-color: hsl(0 0% 84.7%);
+    --menu-font-color: hsl(0 0% 20.8%);
+    --menu-font-color-focused: hsl(0 0% 100%);
+    --menu-font-color-hint: hsla(0 0% 0% / 30%);
+    --busy-overlay-color: hsl(214 100% 67.5%);
+    --busy-overlay-backdrop-color: hsla(0 0% 0% / 0.1);
+    /* #endregion */
+
+    /* #region Images */
+    /* delete.svg */
+    --img-delete: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGVsbGlwc2Ugc3R5bGU9ImZpbGw6IHJnYigyNTUsIDAsIDApOyIgY3g9IjI1NiIgY3k9IjI1NiIgcng9IjI1NiIgcnk9IjI1NiIvPgogIDxwYXRoIGQ9Ik0gMzY2LjYgMjMwLjgzIEMgMzgwLjUwNCAyMzAuODMgMzkxLjc4NCAyNDIuMDc5IDM5MS43ODQgMjU1Ljk5OSBDIDM5MS43ODQgMjY5LjkxOSAzODAuNTA0IDI4MS4xNjcgMzY2LjYgMjgxLjE2NyBMIDE0NC45MiAyODEuMTY3IEwgMTQ0LjkyIDIzMC44MyBNIDE0NS4zODQgMjgxLjE2NyBDIDEzMS40OTYgMjgxLjE2NyAxMjAuMjE2IDI2OS45MTkgMTIwLjIxNiAyNTUuOTk5IEMgMTIwLjIxNiAyNDIuMDc5IDEzMS40OTYgMjMwLjgzIDE0NS4zODQgMjMwLjgzIiBzdHlsZT0icGFpbnQtb3JkZXI6IGZpbGw7IGZpbGw6IHJnYigyNTUsIDI1NSwgMjU1KTsiIHRyYW5zZm9ybT0ibWF0cml4KDAuNzA3MTA4LCAtMC43MDcxMDYsIDAuNzA3MTA2LCAwLjcwNzEwOCwgLTEwNi4wMzc2MDksIDI1NS45OTkwNTYpIi8+CiAgPHBhdGggZD0iTSAzNjYuNiAyMzAuODMgQyAzODAuNTA0IDIzMC44MyAzOTEuNzg0IDI0Mi4wNzggMzkxLjc4NCAyNTUuOTk4IEMgMzkxLjc4NCAyNjkuOTE4IDM4MC41MDQgMjgxLjE2NiAzNjYuNiAyODEuMTY2IEwgMTQ0LjkyIDI4MS4xNjYgTCAxNDQuOTIgMjMwLjgzIE0gMTQ1LjM4NCAyODEuMTY2IEMgMTMxLjQ5NiAyODEuMTY2IDEyMC4yMTYgMjY5LjkxOCAxMjAuMjE2IDI1NS45OTggQyAxMjAuMjE2IDI0Mi4wNzggMTMxLjQ5NiAyMzAuODMgMTQ1LjM4NCAyMzAuODMiIHN0eWxlPSJwYWludC1vcmRlcjogZmlsbDsgZmlsbDogcmdiKDI1NSwgMjU1LCAyNTUpOyIgdHJhbnNmb3JtPSJtYXRyaXgoMC43MDcxMDcsIDAuNzA3MTA3LCAtMC43MDcxMDcsIDAuNzA3MTA3LCAyNTUuOTk4NTgxLCAtMTA2LjAzOTI2KSIvPgo8L3N2Zz4=");
+    /* restart.svg */
+    --img-restart: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZWxsaXBzZSBzdHlsZT0iZmlsbDogcmdiKDg0LCAxODAsIDI0Nik7IiBjeD0iMjU2IiBjeT0iMjU2IiByeD0iMjU2IiByeT0iMjU2Ii8+CiAgPHBhdGggZD0iTSA0MDkuNjE1IDg4LjA2IEMgNDIwLjAxOCA4OC4wNiA0MzAgOTYuMTM3IDQzMCAxMDguMzQgTCA0MzAgMjE3Ljc2MiBDIDQzMCAyMjUuNzA1IDQyMy41NjIgMjMyLjEzOSA0MTUuNjIzIDIzMi4xMzkgTCAzMDYuMzUgMjMyLjEzOSBDIDI5NC4xNCAyMzIuMTM5IDI4Ni4wNTYgMjIyLjE1IDI4Ni4wNTYgMjExLjc0IEMgMjg2LjA1NiAyMDYuNzY0IDI4Ny45MDEgMjAxLjY5IDI5Mi4wMjUgMTk3LjU2NSBMIDMyNS44NjUgMTYzLjcxMSBDIDMwNC43IDE0Ni4zNTYgMjc3Ljk3OCAxMzYuMjMxIDI0OS44OTEgMTM2LjIzMSBDIDE4My44MjUgMTM2LjIzMSAxMzAuMDQ0IDE4OS45OTggMTMwLjA0NCAyNTYuMDc5IEMgMTMwLjA0NCAzMjIuMTYgMTgzLjc5NSAzNzUuODk2IDI0OS44NjkgMzc1Ljg5NiBDIDMwNC43MjMgMzc1Ljg5NiAzMTYuOTQ3IDM0Ny4xNjQgMzM2LjE5MiAzNDcuMTY0IEMgMzUwLjA1MiAzNDcuMTY0IDM2MC4xNjkgMzU4LjQ0NCAzNjAuMTY5IDM3MS4xMzQgQyAzNjAuMTY5IDM5Ny40MTMgMjk4Ljk3OCA0MjMuOTQgMjQ5LjkyMSA0MjMuOTQgQyAxNTcuMzczIDQyMy45NCA4MiAzNDguNTY3IDgyIDI1Ni4wMTkgQyA4MiAxNjMuNDcxIDE1Ny4zOTYgODguMzA3IDI0OS45NDQgODguMzA3IEMgMjkwLjg5MyA4OC4zMDcgMzI5LjU5MiAxMDMuNiAzNTkuNzQxIDEyOS43NTIgTCAzOTUuNDQxIDk0LjAzIEMgMzk5LjU2NiA4OS45MDUgNDA0LjY2NSA4OC4wNiA0MDkuNjE1IDg4LjA2IFoiIHN0eWxlPSJmaWxsOiByZ2IoMjU1LCAyNTUsIDI1NSk7Ii8+Cjwvc3ZnPg==");
+    /* menu.svg */
+    --img-menu: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj4KICA8cGF0aCBkPSJNMCA5NkMwIDc4LjMgMTQuMyA2NCAzMiA2NGwzODQgMGMxNy43IDAgMzIgMTQuMyAzMiAzMnMtMTQuMyAzMi0zMiAzMkwzMiAxMjhDMTQuMyAxMjggMCAxMTMuNyAwIDk2ek0wIDI1NmMwLTE3LjcgMTQuMy0zMiAzMi0zMmwzODQgMGMxNy43IDAgMzIgMTQuMyAzMiAzMnMtMTQuMyAzMi0zMiAzMkwzMiAyODhjLTE3LjcgMC0zMi0xNC4zLTMyLTMyek00NDggNDE2YzAgMTcuNy0xNC4zIDMyLTMyIDMyTDMyIDQ0OGMtMTcuNyAwLTMyLTE0LjMtMzItMzJzMTQuMy0zMiAzMi0zMmwzODQgMGMxNy43IDAgMzIgMTQuMyAzMiAzMnoiIHN0eWxlPSJmaWxsOiByZ2IoMjU1LCAwLCAwKTsiLz4KPC9zdmc+");
+    /* #endregion */
+}

@@ -1,0 +1,89 @@
+.popup-menu,
+.vts-popup-menu {
+    position: absolute;
+    margin: 0;
+    padding: var(--5px);
+    border-radius: var(--border-radius-normal);
+    border: var(--1px) solid var(--menu-border-color);
+    box-shadow: var(--1px) var(--5px) var(--9px) calc(-1 * var(--2px)) hsla(0 0% 0% / 0.25);
+    background-color: var(--menu-background-color);
+    color: var(--menu-font-color);
+    z-index: 10000;
+    outline: none;
+    > .menu-item,
+    > .menu-separator,
+    > .menu-heading {
+        list-style: none;
+        height: var(--22px);
+        margin: 0;
+        padding: 0;
+        line-height: 1.1;
+    }
+    &.has-checked {
+        > .menu-item,
+        > .menu-heading {
+            padding-inline-start: var(--19px);
+        }
+    }
+    > .menu-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0.25rem 0.7rem;
+        border-radius: var(--border-radius-small);
+        color: var(--font-color);
+        outline: none;
+        &:not(.disabled) {
+            &:focus,
+            &:focus-within {
+                background-color: var(--menu-background-color-focused);
+                color: var(--menu-font-color-focused);
+                > .hint {
+                    color: var(--menu-font-color-focused);
+                }
+            }
+        }
+        &.text,
+        &.phrase {
+            white-space: pre;
+        }
+        &.text.disabled,
+        &.phrase.disabled {
+            opacity: 0.4;
+        }
+        &.checked::before {
+            /* Checkmark */
+            content: "\2713\A0\A0";
+            display: inline-block;
+            margin-inline-start: -1.1rem;
+            width: 1.1rem;
+        }
+        > .hint {
+            flex-grow: 1;
+            text-align: end;
+            color: var(--menu-font-color-hint);
+            &:empty {
+                display: none;
+            }
+            &:not(:empty) {
+                margin-inline-start: var(--22px);
+            }
+        }
+    }
+    > .menu-heading {
+        padding: 0.25rem 0.7rem;
+        font-weight: bolder;
+    }
+    > .menu-separator {
+        height: var(--1px);
+        margin: 0 0.7rem;
+        padding: var(--5px) 0;
+        > hr {
+            margin: 0;
+            padding: 0;
+            height: var(--1px);
+            border: none;
+            background-color: var(--menu-separator-color);
+        }
+    }
+}

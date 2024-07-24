@@ -1,0 +1,55 @@
+.busy-overlay,
+.vts-busy-overlay {
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    max-width: initial;
+    max-height: initial;
+    border: none;
+    outline: none;
+    background-color: var(--busy-overlay-backdrop-color);
+    opacity: 0;
+    animation: busy-overlay-visibility 200ms forwards;
+    animation-delay: 0ms;
+    cursor: pointer;
+    &::backdrop {
+        background: transparent;
+    }
+    > .content {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        padding: 1rem;
+        > .busy-indicator {
+            display: block;
+            margin: auto;
+            width: var(--busy-overlay-size);
+            height: var(--busy-overlay-size);
+            border-radius: 50%;
+            border-style: solid;
+            border-width: calc(var(--busy-overlay-size) / 10);
+            border-color: var(--busy-overlay-color);
+            border-bottom-color: transparent;
+            animation: busy-indicator-rotate 1.25s linear infinite running;
+        }
+    }
+}
+@keyframes busy-overlay-visibility {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes busy-indicator-rotate {
+    0% {
+        /* `1` doesn't work properly in Blink. */
+        opacity: 0.999;
+        transform: rotate(0deg);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(360deg);
+    }
+}

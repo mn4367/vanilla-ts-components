@@ -1,0 +1,43 @@
+.dialog,
+.vts-dialog {
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+    margin: 0;
+    padding: 0;
+    border: var(--1px) solid var(--dialog-border-color);
+    border-radius: var(--border-radius-large);
+    outline: none;
+    &::backdrop {
+        position: fixed;
+        inset: 0;
+        background: transparent;
+    }
+    &.modal-dialog-first::backdrop {
+        background: var(--dialog-backdrop);
+    }
+    background-color: var(--dialog-background-color);
+    &.dialog-window {
+        background-color: var(--dialog-window-background-color);
+    }
+    &:focus,
+    &:focus-within {
+        box-shadow: var(--1px) var(--5px) var(--20px) calc(-1 * var(--2px)) hsla(0 0% 0% / 0.25);
+    }
+    &.h-centered:not(.v-centered) {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    &.v-centered:not(.h-centered) {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    &.v-centered.h-centered {
+        left: 50%;
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%);
+    }
+    > .content {
+        padding: 1rem;
+    }
+}

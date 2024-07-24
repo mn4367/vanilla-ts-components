@@ -1,0 +1,191 @@
+.labeled-radio-button-group,
+.vts-labeled-radio-button-group {
+    display: flex;
+    position: relative;
+    border: var(--1px) solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    background-color: inherit;
+    > span {
+        flex-grow: 0;
+        position: absolute;
+        margin: 0;
+        padding-block-start: 0;
+        padding-inline-end: 0.5rem;
+        padding-block-end: 0;
+        padding-inline-start: 0.5rem;
+        width: fit-content;
+        height: fit-content;
+        line-height: 1;
+        background-color: inherit;
+    }
+    /* #region top/bottom */
+    &.p-top,
+    &.p-bottom {
+        flex-direction: column;
+        padding-inline: 1rem;
+    }
+    &.p-top {
+        margin-block-start: 0.5rem;
+        padding-block: 1.25rem 1rem;
+        > span {
+            inset-block-start: -0.5rem;
+        }
+        > div {
+            margin-block-start: 0.5rem;
+        }
+    }
+    &.p-bottom {
+        margin-block-end: 0.5rem;
+        padding-block: 1rem 1.25rem;
+        > span {
+            inset-block-end: -0.5rem;
+        }
+        > div {
+            margin-block-end: 0.5rem;
+        }
+    }
+    &.p-top.a-start,
+    &.p-bottom.a-start {
+        > span {
+            inset-inline-start: 1rem;
+        }
+    }
+    &.p-top.a-center,
+    &.p-bottom.a-center {
+        > span {
+            inset-inline-start: 0;
+            inset-inline-end: 0;
+            margin-inline-start: auto;
+            margin-inline-end: auto;
+        }
+    }
+    &.p-top.a-end,
+    &.p-bottom.a-end {
+        > span {
+            inset-inline-end: 1rem;
+        }
+    }
+    /* #endregion */
+    /* #region start/end */
+    &.p-start,
+    &.p-end {
+        flex-direction: row;
+        padding-block: 1rem;
+        > span {
+            writing-mode: vertical-lr;
+        }
+        > span:dir(rtl) {
+            writing-mode: vertical-rl;
+            transform: unset;
+        }
+    }
+    &.p-start {
+        margin-inline-start: 0.5rem;
+        padding-inline: 1.25rem 1rem;
+        > span {
+            inset-block-start: -0.5rem;
+            transform: rotate(180deg);
+        }
+        > div {
+            margin-inline-start: 0.5rem;
+        }
+    }
+    &.p-end {
+        margin-inline-end: 0.5rem;
+        padding-inline: 1rem 1.25rem;
+        > span {
+            inset-block-end: -0.5rem;
+            /* Workaround for bug in Gecko. */
+            width: unset;
+        }
+        > div {
+            margin-inline-end: 0.5rem;
+        }
+    }
+    &.p-start.a-start,
+    &.p-end.a-start {
+        > span {
+            inset-inline-start: 1rem;
+        }
+    }
+    &.p-start.a-center,
+    &.p-end.a-center {
+        > span {
+            inset-inline-start: 0;
+            inset-inline-end: 0;
+            margin-inline-start: auto;
+            margin-inline-end: auto;
+        }
+    }
+    &.p-start.a-end,
+    &.p-end.a-end {
+        > span {
+            inset-inline-end: 1rem;
+        }
+    }
+    /* #endregion */
+    > div.radio-buttons {
+        flex-grow: 1;
+        background-color: inherit;
+        > div {
+            display: flex;
+            position: relative;
+            margin-block: 0.25rem;
+            background-color: inherit;
+            > label {
+                flex-shrink: 0;
+                margin: 0;
+                background-color: inherit;
+            }
+            > input {
+                margin: 0;
+                padding: 0;
+            }
+            /* #region start/end */
+            &.p-start,
+            &.p-end {
+                flex-direction: row;
+                align-items: center;
+            }
+            &.p-start > label {
+                margin-inline-end: 0.5rem;
+            }
+            &.p-end > label {
+                margin-inline-start: 0.5rem;
+            }
+            /* #endregion */
+            /* #region top/bottom */
+            /* These styles only exist for the sake of technical completeness; in practice, this
+               arrangement is not actually visually usable. */
+            &.p-top,
+            &.p-bottom {
+                flex-direction: column;
+                justify-items: center;
+            }
+            &.p-top > label {
+                margin-block-end: 0.5rem;
+            }
+            &.p-bottom > label {
+                margin-block-start: 0.5rem;
+            }
+            /* #endregion */
+            /* #region common */
+            &:first-child {
+                margin-block-start: 0;
+            }
+            &:last-child {
+                margin-block-end: 0;
+            }
+            &.a-start > label {
+                text-align: start;
+            }
+            &.a-center > label {
+                text-align: center;
+            }
+            &.a-end > label {
+                text-align: end;
+            }
+            /* #endregion */
+        }
+    }
+}

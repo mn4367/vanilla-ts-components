@@ -1,0 +1,180 @@
+.disclosure-container,
+.vts-disclosure-container {
+    display: flex;
+    > .header-container {
+        position: relative;
+        display: flex;
+        > .disclose {
+            flex-shrink: 0;
+            margin: 0;
+            padding: 0;
+            width: 1rem;
+            height: 1rem;
+            appearance: none;
+            border: none;
+            font-size: 0;
+            background-color: darkgray;
+        }
+        > .disclose:hover {
+            filter: brightness(0.75);
+        }
+    }
+    > .content-container {
+        position: relative;
+    }
+    &.top-start,
+    &.top-end {
+        flex-direction: column;
+    }
+    &.bottom-start,
+    &.bottom-end {
+        flex-direction: column-reverse;
+    }
+    &.start-top,
+    &.start-bottom {
+        flex-direction: row;
+    }
+    &.end-top,
+    &.end-bottom {
+        flex-direction: row-reverse;
+    }
+    &.top-start,
+    &.bottom-start {
+        > .header-container {
+            flex-direction: row;
+        }
+    }
+    &.top-end,
+    &.bottom-end {
+        > .header-container {
+            flex-direction: row-reverse;
+        }
+    }
+    &.start-top,
+    &.end-top {
+        > .header-container {
+            flex-direction: column;
+        }
+    }
+    &.start-bottom,
+    &.end-bottom {
+        > .header-container {
+            flex-direction: column-reverse;
+        }
+    }
+    &.top-start,
+    &.top-end,
+    &.bottom-start,
+    &.bottom-end {
+        > .header-container {
+            align-items: center;
+        }
+    }
+    &.start-top,
+    &.start-bottom,
+    &.end-top,
+    &.end-bottom {
+        > .header-container {
+            align-items: center;
+        }
+    }
+    &.disclosed {
+        &.top-start,
+        &.top-end {
+            .disclose {
+                /* Arrow down */
+                clip-path: polygon(0% 6.666%, 100% 6.666%, 50% 93.333%);
+            }
+        }
+        &.bottom-start,
+        &.bottom-end {
+            .disclose {
+                /* Arrow up */
+                clip-path: polygon(0% 93.333%, 50% 6.666%, 100% 93.333%);
+            }
+        }
+        &.start-top,
+        &.start-bottom {
+            .disclose {
+                /* Arrow right */
+                clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+                &:dir(rtl) {
+                    /* Arrow left */
+                    clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+                }
+            }
+        }
+        &.end-top,
+        &.end-bottom {
+            .disclose {
+                /* Arrow left */
+                clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+                &:dir(rtl) {
+                    /* Arrow right */
+                    clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+                }
+            }
+        }
+    }
+    &.undisclosed {
+        > .content-container {
+            display: none;
+        }
+        &.top-start,
+        &.bottom-start {
+            .disclose {
+                /* Arrow right */
+                clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+                &:dir(rtl) {
+                    /* Arrow left */
+                    clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+                }
+            }
+        }
+        &.top-end,
+        &.bottom-end {
+            .disclose {
+                /* Arrow left */
+                clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+                &:dir(rtl) {
+                    /* Arrow right */
+                    clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+                }
+            }
+        }
+        &.start-top,
+        &.end-top {
+            .disclose {
+                /* Arrow down */
+                clip-path: polygon(0% 6.666%, 100% 6.666%, 50% 93.333%);
+            }
+        }
+        &.start-bottom,
+        &.end-bottom {
+            .disclose {
+                /* Arrow up */
+                clip-path: polygon(0% 93.333%, 50% 6.666%, 100% 93.333%);
+            }
+        }
+    }
+    &.end-top,
+    &.end-bottom {
+        .header-content {
+            writing-mode: vertical-lr;
+            &:dir(rtl) {
+                transform: rotate(180deg);
+            }
+            /* transform: rotate(180deg); */
+            /* transform-origin: top left 0; */
+        }
+    }
+    &.start-top,
+    &.start-bottom {
+        .header-content {
+            writing-mode: vertical-lr;
+            &:not(:dir(rtl)) {
+                transform: rotate(180deg);
+            }
+        }
+    }
+}

@@ -1,0 +1,59 @@
+.labeled-text-input,
+.vts-labeled-text-input {
+    display: flex;
+    position: relative;
+    margin-block: 0.25rem;
+    background-color: inherit;
+    > label {
+        flex-shrink: 0;
+        margin: 0;
+        background-color: inherit;
+    }
+    > input {
+        margin: 0;
+        padding: 0;
+    }
+    /* #region start/end */
+    &.p-start,
+    &.p-end {
+        flex-direction: row;
+        align-items: center;
+    }
+    &.p-start > label {
+        margin-inline-end: 0.5rem;
+    }
+    &.p-end > label {
+        margin-inline-start: 0.5rem;
+    }
+    /* #endregion */
+    /* #region top/bottom */
+    &.p-top,
+    &.p-bottom {
+        flex-direction: column;
+        justify-items: start
+    }
+    &.p-top > label {
+        margin-block-end: 0.5rem;
+    }
+    &.p-bottom > label {
+        margin-block-start: 0.5rem;
+    }
+    /* #endregion */
+    /* #region common */
+    &:first-child {
+        margin-block-start: 0;
+    }
+    &:last-child {
+        margin-block-end: 0;
+    }
+    &.a-start > label {
+        text-align: start;
+    }
+    &.a-center > label {
+        text-align: center;
+    }
+    &.a-end > label {
+        text-align: end;
+    }
+    /* #endregion */
+}

@@ -1,0 +1,137 @@
+:root {
+    /* All images are red, the color can be changed with, for example `hue-rotate`. */
+    --stepper-first: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNIDM2My41IDQ0MC42MTQgQyAzNzMgNDQ4LjUxNCAzODYuMyA0NTAuMzE0IDM5Ny42IDQ0NS4wMTQgQyA0MDguOSA0MzkuNzE0IDQxNiA0MjguNDE0IDQxNiA0MTYuMDE0IEwgNDE2IDk2LjAxNCBDIDQxNiA4My42MTQgNDA4LjggNzIuMzE0IDM5Ny42IDY3LjAxNCBDIDM4Ni40IDYxLjcxNCAzNzMuMSA2My40MTQgMzYzLjUgNzEuNDE0IEwgMTcxLjUgMjMxLjQxNCBMIDE2MCAyNDEuMDE0IEwgMTYwIDk2LjAxNCBDIDE2MCA3OC4zMTQgMTQ1LjcgNjQuMDE0IDEyOCA2NC4wMTQgQyAxMTAuMyA2NC4wMTQgOTYgNzguMzE0IDk2IDk2LjAxNCBMIDk2IDQxNi4wMTQgQyA5NiA0MzMuNzE0IDExMC4zIDQ0OC4wMTQgMTI4IDQ0OC4wMTQgQyAxNDUuNyA0NDguMDE0IDE2MCA0MzMuNzE0IDE2MCA0MTYuMDE0IEwgMTYwIDI3MS4wMTQgTCAxNzEuNSAyODAuNjE0IEwgMzYzLjUgNDQwLjYxNCBaIiBzdHlsZT0iZmlsbDogcmdiKDI1NSwgMCwgMCk7Ii8+Cjwvc3ZnPg==");
+    --stepper-page-backward: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNNDU5LjUgNDQwLjZjOS41IDcuOSAyMi44IDkuNyAzNC4xIDQuNHMxOC40LTE2LjYgMTguNC0yOVY5NmMwLTEyLjQtNy4yLTIzLjctMTguNC0yOXMtMjQuNS0zLjYtMzQuMSA0LjRMMjg4IDIxNC4zVjI1NnY0MS43TDQ1OS41IDQ0MC42ek0yNTYgMzUyVjI1NiAxMjggOTZjMC0xMi40LTcuMi0yMy43LTE4LjQtMjlzLTI0LjUtMy42LTM0LjEgNC40bC0xOTIgMTYwQzQuMiAyMzcuNSAwIDI0Ni41IDAgMjU2czQuMiAxOC41IDExLjUgMjQuNmwxOTIgMTYwYzkuNSA3LjkgMjIuOCA5LjcgMzQuMSA0LjRzMTguNC0xNi42IDE4LjQtMjlWMzUyeiIgc3R5bGU9ImZpbGw6IHJnYigyNTUsIDAsIDApOyIvPgo8L3N2Zz4=");
+    --stepper-backward: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNIDM4NCAzNTIuMDE0IEwgMzg0IDI1Ni4wMTQgTCAzODQgMTI4LjAxNCBMIDM4NCA5Ni4wMTQgQyAzODQgODMuNjE0IDM3Ni44IDcyLjMxNCAzNjUuNiA2Ny4wMTQgQyAzNTQuNCA2MS43MTQgMzQxLjEgNjMuNDE0IDMzMS41IDcxLjQxNCBMIDEzOS41IDIzMS40MTQgQyAxMzIuMiAyMzcuNTE0IDEyOCAyNDYuNTE0IDEyOCAyNTYuMDE0IEMgMTI4IDI2NS41MTQgMTMyLjIgMjc0LjUxNCAxMzkuNSAyODAuNjE0IEwgMzMxLjUgNDQwLjYxNCBDIDM0MSA0NDguNTE0IDM1NC4zIDQ1MC4zMTQgMzY1LjYgNDQ1LjAxNCBDIDM3Ni45IDQzOS43MTQgMzg0IDQyOC40MTQgMzg0IDQxNi4wMTQgTCAzODQgMzUyLjAxNCBaIiBzdHlsZT0iZmlsbDogcmdiKDI1NSwgMCwgMCk7Ii8+Cjwvc3ZnPg==");
+    --stepper-forward: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNIDEyOCAzNTIuMDE0IEwgMTI4IDI1Ni4wMTQgTCAxMjggMTI4LjAxNCBMIDEyOCA5Ni4wMTQgQyAxMjggODMuNjE0IDEzNS4yIDcyLjMxNCAxNDYuNCA2Ny4wMTQgQyAxNTcuNiA2MS43MTQgMTcwLjkgNjMuNDE0IDE4MC41IDcxLjQxNCBMIDM3Mi41IDIzMS40MTQgQyAzNzkuOCAyMzcuNTE0IDM4NCAyNDYuNTE0IDM4NCAyNTYuMDE0IEMgMzg0IDI2NS41MTQgMzc5LjggMjc0LjUxNCAzNzIuNSAyODAuNjE0IEwgMTgwLjUgNDQwLjYxNCBDIDE3MSA0NDguNTE0IDE1Ny43IDQ1MC4zMTQgMTQ2LjQgNDQ1LjAxNCBDIDEzNS4xIDQzOS43MTQgMTI4IDQyOC40MTQgMTI4IDQxNi4wMTQgTCAxMjggMzUyLjAxNCBaIiBzdHlsZT0iZmlsbDogcmdiKDI1NSwgMCwgMCk7Ii8+Cjwvc3ZnPg==");
+    --stepper-page-forward: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNNTIuNSA0NDAuNmMtOS41IDcuOS0yMi44IDkuNy0zNC4xIDQuNFMwIDQyOC40IDAgNDE2Vjk2QzAgODMuNiA3LjIgNzIuMyAxOC40IDY3czI0LjUtMy42IDM0LjEgNC40TDIyNCAyMTQuM1YyNTZ2NDEuN0w1Mi41IDQ0MC42ek0yNTYgMzUyVjI1NiAxMjggOTZjMC0xMi40IDcuMi0yMy43IDE4LjQtMjlzMjQuNS0zLjYgMzQuMSA0LjRsMTkyIDE2MGM3LjMgNi4xIDExLjUgMTUuMSAxMS41IDI0LjZzLTQuMiAxOC41LTExLjUgMjQuNmwtMTkyIDE2MGMtOS41IDcuOS0yMi44IDkuNy0zNC4xIDQuNHMtMTguNC0xNi42LTE4LjQtMjlWMzUyeiIgc3R5bGU9ImZpbGw6IHJnYigyNTUsIDAsIDApOyIvPgo8L3N2Zz4=");
+    --stepper-last: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNIDE0OC41IDQ0MC42MTQgQyAxMzkgNDQ4LjUxNCAxMjUuNyA0NTAuMzE0IDExNC40IDQ0NS4wMTQgQyAxMDMuMSA0MzkuNzE0IDk2IDQyOC40MTQgOTYgNDE2LjAxNCBMIDk2IDk2LjAxNCBDIDk2IDgzLjYxNCAxMDMuMiA3Mi4zMTQgMTE0LjQgNjcuMDE0IEMgMTI1LjYgNjEuNzE0IDEzOC45IDYzLjQxNCAxNDguNSA3MS40MTQgTCAzNDAuNSAyMzEuNDE0IEwgMzUyIDI0MS4wMTQgTCAzNTIgOTYuMDE0IEMgMzUyIDc4LjMxNCAzNjYuMyA2NC4wMTQgMzg0IDY0LjAxNCBDIDQwMS43IDY0LjAxNCA0MTYgNzguMzE0IDQxNiA5Ni4wMTQgTCA0MTYgNDE2LjAxNCBDIDQxNiA0MzMuNzE0IDQwMS43IDQ0OC4wMTQgMzg0IDQ0OC4wMTQgQyAzNjYuMyA0NDguMDE0IDM1MiA0MzMuNzE0IDM1MiA0MTYuMDE0IEwgMzUyIDI3MS4wMTQgTCAzNDAuNSAyODAuNjE0IEwgMTQ4LjUgNDQwLjYxNCBaIiBzdHlsZT0iZmlsbDogcmdiKDI1NSwgMCwgMCk7Ii8+Cjwvc3ZnPg==");
+    --stepper-button-offset: 0.15rem;
+    --stepper-gap: 0rem;
+}
+.stepper,
+.vts-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    > .stepper-button {
+        width: 1.5rem;
+        height: 1.5rem;
+        background-color: transparent;
+        border: none;
+        background-repeat: no-repeat;
+        filter: brightness(1) grayscale(1);
+        opacity: 0.7;
+        &[disabled] {
+            opacity: 0.45;
+        }
+        &:active:not([disabled]) {
+            transform: scale(0.9);
+        }
+        &:hover:not([disabled]) {
+            opacity: 1;
+            transition: 100ms ease-in;
+        }
+    }
+    > .first {
+        background-image: var(--stepper-first);
+    }
+    > .page-backward {
+        background-image: var(--stepper-page-backward);
+    }
+    > .backward {
+        background-image: var(--stepper-backward);
+    }
+    > .forward {
+        background-image: var(--stepper-forward);
+    }
+    > .page-forward {
+        background-image: var(--stepper-page-forward);
+    }
+    > .last {
+        background-image: var(--stepper-last);
+    }
+    /* Horizontal appearance. */
+    &.horizontal,
+    &.horizontal-alt {
+        flex-direction: row;
+        > .stepper-button {
+            margin-inline-end: var(--stepper-button-offset);
+        }
+        > .stepper-button:last-child {
+            margin-inline-end: unset;
+        }
+        > .first + .forward,
+        > .first + .page-forward,
+        > .first + .last,
+        > .page-backward + .forward,
+        > .page-backward + .page-forward,
+        > .page-backward + .last,
+        > .backward + .forward,
+        > .backward + .page-forward,
+        > .backward + .last {
+            margin-inline-start: var(--stepper-gap);
+        }
+    }
+    &.horizontal {
+        > .stepper-button {
+            &:active:not([disabled]) {
+                transform: scale(0.9);
+            }
+        }
+        > .stepper-button:dir(rtl) {
+            transform: rotate(180deg);
+            &:active:not([disabled]) {
+                transform: rotate(180deg) scale(0.9);
+            }
+        }
+    }
+    &.horizontal-alt {
+        > .stepper-button {
+            transform: rotate(90deg);
+            &:active:not([disabled]) {
+                transform: rotate(90deg) scale(0.9);
+            }
+        }
+    }
+    /* Vertical appearance. */
+    &.vertical,
+    &.vertical-alt {
+        flex-direction: column;
+        > .stepper-button {
+            margin-block-end: var(--stepper-button-offset);
+            transform: rotate(90deg);
+            &:active:not([disabled]) {
+                transform: rotate(90deg) scale(0.9);
+            }
+        }
+        > .stepper-button:last-child {
+            margin-block-end: unset;
+        }
+        > .first + .forward,
+        > .first + .page-forward,
+        > .first + .last,
+        > .page-backward + .forward,
+        > .page-backward + .page-forward,
+        > .page-backward + .last,
+        > .backward + .forward,
+        > .backward + .page-forward,
+        > .backward + .last {
+            margin-block-start: var(--stepper-gap);
+        }
+    }
+    &.vertical-alt {
+        > .stepper-button {
+            transform: rotate(0deg);
+            &:active:not([disabled]) {
+                transform: rotate(0deg) scale(0.9);
+            }
+        }
+        > .stepper-button:dir(rtl) {
+            transform: rotate(180deg);
+            &:active:not([disabled]) {
+                transform: rotate(180deg) scale(0.9);
+            }
+        }
+    }
+}

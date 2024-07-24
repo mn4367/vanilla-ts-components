@@ -1,0 +1,79 @@
+html {
+    font-family: var(--system-ui);
+    font-size: 10pt;
+    color: var(--font-color);
+    box-sizing: border-box;
+    /* -webkit-font-smoothing: antialiased; */
+}
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+* {
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+.disabled,
+[disabled] {
+    pointer-events: none !important;
+}
+.text-selectable {
+    -webkit-user-select: text;
+    user-select: text;
+    cursor: text;
+}
+button {
+    color: var(--font-color);
+}
+input,
+select,
+textarea {
+    cursor: auto;
+    background-color: var(--input-background-color);
+    color: var(--font-color);
+    &:focus-visible {
+        outline: var(--4px) solid var(--input-focused-outline-color);
+        @media (prefers-reduced-motion: no-preference) {
+            animation: outline-bounce .2s;
+        }
+    }
+}
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="week"],
+input[type="month"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"],
+input[type="text"],
+select,
+textarea {
+    border: var(--1px) solid var(--input-border-color);
+    border-bottom: var(--1px) solid var(--input-border-color-dark);
+    border-radius: var(--2px);
+}
+@keyframes outline-bounce {
+    0% {
+        outline-color: hsl(from var(--input-focused-outline-color) h s 65%);
+        outline-width: var(--6px);
+        outline-offset: var(--3px);
+    }
+    50% {
+        outline-color: hsl(from var(--input-focused-outline-color) h s 70%);
+        outline-color: hsl(219 93.2% 70%);
+        outline-width: var(--5px);
+        outline-offset: var(--1px);
+    }
+    100% {
+        outline-width: var(--4px);
+        outline-offset: 0;
+    }
+}
+hr {
+    border: none;
+    height: var(--1px);
+    background-color: var(--border-color);
+}

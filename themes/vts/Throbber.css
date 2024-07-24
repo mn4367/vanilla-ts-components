@@ -1,0 +1,29 @@
+.throbber,
+.vts-throbber {
+    /* `width` and `height` must be set explicitly (with width === height). */
+    /* width: <value>; */
+    /* height: <value>; */
+    margin: 0;
+    padding: 0;
+    flex-grow: 0;
+    border-radius: 50%;
+    border-style: solid;
+    border-color: var(--border-color-dark);
+    /* `border-width` must be set explicitly. A visually appealing value is `calc(<width> / 10)`. */
+    /* border-width: <value>; */
+    border-bottom-color: transparent;
+    /* border-left-color: transparent; */
+    visibility: hidden;
+    &.active {
+        visibility: visible;
+        animation: throbber-rotate360 1.25s linear infinite running;
+    }
+}
+@keyframes throbber-rotate360 {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
