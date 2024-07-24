@@ -1,0 +1,144 @@
+.vts-scroll-container {
+    /* ------------------------------------------------- */
+    /* Based on the design of the scrollbars under macOS */
+    /* ------------------------------------------------- */
+    /* console.log(parseFloat(getComputedStyle(document.documentElement).fontSize));
+       0.06833rem ~ 1 Pixel at a font-size of 11pt.
+       3.8804mm ~ 11pt
+       All following lengths calculated based on a font-size of 11pt on the <html> element. */
+    --1px: 0.06833rem;
+    --2px: calc(2 * var(--1px));
+    --scroll-bar-overlay-fade-in: opacity 0.1s ease-in;
+    --scroll-bar-overlay-fade-out: opacity 0.2s ease-in 0.7s;
+    /* ~ 8.8px */
+    --scroll-bar-size: 0.6rem;
+    /* ~ 2.9px */
+    --scroll-bar-border-radius: 0.2rem;
+    --scroll-bar-background-color: rgba(255, 255, 255, 0.75);
+    --scroll-bar-border: var(--1px) solid rgba(110, 110, 110, 0.2);
+    /* ~14.6px */
+    --scroll-bar-thumb-min-size: 1rem;
+    --scroll-bar-thumb-gap: var(--1px);
+    /* ~4.4px */
+    --scroll-bar-thumb-border-radius: 0.3rem;
+    --scroll-bar-thumb-background-color: rgba(110, 110, 110, 0.8);
+    /* Native scroll bars on/off. */
+    &:not(.native) {
+        /* Gecko, Blink */
+        scrollbar-width: none;
+        /* WebKit, Blink */
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+    /* ------ */
+    /* Common */
+    /* ------ */
+    position: relative;
+    /* !! Some height must be set, whether here or from outside. */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    > .content {
+        /* width/height should/must be adjusted by somebody using scroll container if necessary */
+        width: 100%;
+        height: 100%;
+    }
+    &:not(.dragging).horizontal {
+        overflow-x: auto;
+    }
+    &:not(.dragging).vertical {
+        overflow-y: auto;
+    }
+    /* &.dragging.horizontal,
+    &.dragging.vertical {
+        pointer-events: none;
+    } */
+    > .h-bar-overlay:hover,
+    > .v-bar-overlay:hover,
+    &.scrolling > .h-bar-overlay,
+    &.scrolling > .v-bar-overlay {
+        opacity: 1;
+        transition: var(--scroll-bar-overlay-fade-in);
+    }
+    > .h-bar-overlay,
+    > .v-bar-overlay {
+        position: sticky;
+        z-index: 1000;
+        opacity: 0;
+        transition: var(--scroll-bar-overlay-fade-out);
+    }
+    > .h-bar-overlay {
+        left: 0;
+        top: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap));
+        height: 0;
+    }
+    > .v-bar-overlay {
+        float: left;
+        left: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap));
+        top: 0;
+        width: 0;
+    }
+    &.h-off > .v-bar-overlay {
+        height: 100%;
+    }
+    &.v-off > .h-bar-overlay {
+        width: 100%;
+    }
+    > .h-bar-overlay > .h-bar,
+    > .v-bar-overlay > .v-bar {
+        position: relative;
+        left: 0;
+        top: 0;
+        /* border-radius: var(--scroll-bar-border-radius); */
+    }
+    > .h-bar-overlay > .h-bar:hover,
+    > .v-bar-overlay > .v-bar:hover {
+        background-color: var(--scroll-bar-background-color);
+    }
+    > .h-bar-overlay > .h-bar:hover {
+        border-top: var(--scroll-bar-border);
+        border-bottom: var(--scroll-bar-border);
+    }
+    > .v-bar-overlay > .v-bar:hover {
+        border-left: var(--scroll-bar-border);
+        border-right: var(--scroll-bar-border);
+    }
+    > .h-bar-overlay > .h-bar {
+        width: 100%;
+        height: var(--scroll-bar-size);
+    }
+    > .v-bar-overlay > .v-bar {
+        height: 100%;
+        width: var(--scroll-bar-size);
+    }
+    > .h-bar-overlay > .h-bar > .h-bar-thumb,
+    > .v-bar-overlay > .v-bar > .v-bar-thumb {
+        position: relative;
+        border-radius: var(--scroll-bar-thumb-border-radius);
+    }
+    > .h-bar-overlay > .h-bar > .h-bar-thumb {
+        will-change: width, left;
+        width: 100%;
+        height: 100%;
+        min-width: var(--scroll-bar-thumb-min-size);
+        background-color: var(--scroll-bar-thumb-background-color);
+    }
+    > .h-bar-overlay > .h-bar:hover > .h-bar-thumb {
+        top: calc(-1 * var(--1px));
+        height: calc(100% + var(--2px));
+    }
+    > .v-bar-overlay > .v-bar > .v-bar-thumb {
+        will-change: height, top;
+        width: 100%;
+        height: 100%;
+        min-height: var(--scroll-bar-thumb-min-size);
+        background-color: var(--scroll-bar-thumb-background-color);
+    }
+    > .v-bar-overlay > .v-bar:hover > .v-bar-thumb {
+        left: calc(-1 * var(--1px));
+        width: calc(100% + var(--2px));
+    }
+}

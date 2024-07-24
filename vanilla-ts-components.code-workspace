@@ -1,0 +1,47 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "-files.exclude": {
+            "node_modules": true,
+            "example/out": true,
+            ".gitignore": true,
+            "**/*.js.map": true,
+            "**/tsconfig*": true,
+            ".npmrc": true,
+            "eslintrc.json": true,
+            "LICENSE": true,
+            "package-lock.json": true,
+            "README.md": true
+        },
+        "[typescript]": {
+            "editor.defaultFormatter": "vscode.typescript-language-features",
+            "editor.formatOnSave": true,
+            "editor.codeActionsOnSave": {
+                "source.organizeImports": "explicit"
+            }
+        },
+        "files.associations": {
+            "config*.json": "jsonc",
+            "lang*.json": "jsonc",
+            "package.json": "json"
+        },
+        "eslint.options": {
+            "overrideConfigFile": "./eslintrc.json"
+        },
+        "-eslint.format.enable": true,
+        "eslint.validate": [
+            "typescript"
+        ],
+        "eslint.alwaysShowStatus": true,
+        "eslint.nodePath": ".",
+    },
+    "extensions": {
+        "recommendations": [
+            "dbaeumer.vscode-eslint",
+        ]
+    }
+}

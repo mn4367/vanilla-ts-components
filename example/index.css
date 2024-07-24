@@ -1,0 +1,274 @@
+html {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 15px;
+}
+body {
+    background-color: rgba(245, 245, 245, 1);
+}
+#app {
+    background-color: inherit;
+}
+.vts-labeled-container,
+.vts-labeled-text-area,
+.vts-labeled-radio-button-group {
+    position: relative;
+    margin: 1rem;
+    padding: 1rem;
+    width: max-content;
+    border: 0.1rem solid darkgray;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background-color: inherit;
+}
+.vts-labeled-container > .vts-span,
+.vts-labeled-text-area > .vts-label,
+.vts-labeled-radio-button-group > .vts-span {
+    position: absolute;
+    margin: 0;
+    padding: 0 0.5rem;
+    left: 1rem;
+    top: -0.7rem;
+    background-color: inherit;
+}
+.vts-labeled-select-input {
+    display: flex;
+    &.top,
+    &.bottom {
+        flex-direction: column;
+    }
+    &.right,
+    &.left {
+        flex-direction: row;
+    }
+    &.top.start > .vts-label,
+    &.bottom.start > .vts-label {
+        text-align: start;
+    }
+    &.top.center > .vts-label,
+    &.bottom.center > .vts-label {
+        text-align: center;
+    }
+    &.top.end > .vts-label,
+    &.top.bottom > .vts-label {
+        text-align: end;
+    }
+}
+
+.vts-disclosure-container {
+    & .header-container {
+        /* border: 2px solid black; */
+    }
+    & .content-container {
+        /* border: 2px solid red; */
+    }
+    display: flex;
+    &.top-left,
+    &.top-right {
+        flex-direction: column;
+    }
+    &.bottom-left,
+    &.bottom-right {
+        flex-direction: column-reverse;
+    }
+    &.left-top,
+    &.left-bottom {
+        flex-direction: row;
+    }
+    &.right-top,
+    &.right-bottom {
+        flex-direction: row-reverse;
+    }
+    & > .header-container {
+        display: flex;
+    }
+    &.top-left,
+    &.bottom-left {
+        & > .header-container {
+            flex-direction: row;
+        }
+    }
+    &.top-right,
+    &.bottom-right {
+        & > .header-container {
+            flex-direction: row-reverse;
+        }
+    }
+    &.left-top,
+    &.right-top {
+        & > .header-container {
+            flex-direction: column;
+        }
+    }
+    &.left-bottom,
+    &.right-bottom {
+        & > .header-container {
+            flex-direction: column-reverse;
+        }
+    }
+    & .disclose {
+        margin: 0;
+        padding: 0;
+        width: 1rem;
+        height: 1rem;
+        appearance: none;
+        border: none;
+        font-size: 0;
+        background-color: darkgray;
+    }
+    & .disclose:hover {
+        filter: brightness(0.75);
+    }
+    &.top-left,
+    &.top-right,
+    &.bottom-left,
+    &.bottom-right {
+        & > .header-container {
+            align-items: center;
+        }
+    }
+    &.left-top,
+    &.left-bottom,
+    &.right-top,
+    &.right-bottom {
+        & > .header-container {
+            text-align: center;
+        }
+    }
+    &.disclosed {
+        &.top-left,
+        &.top-right {
+            & .disclose {
+                /* Arrow down */
+                clip-path: polygon(0% 6.666%, 100% 6.666%, 50% 93.333%);
+            }
+        }
+        &.bottom-left,
+        &.bottom-right {
+            & .disclose {
+                /* Arrow up */
+                clip-path: polygon(0% 93.333%, 50% 6.666%, 100% 93.333%);
+            }
+        }
+        &.left-top,
+        &.left-bottom {
+            & .disclose {
+                /* Arrow right */
+                clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+            }
+        }
+        &.right-top,
+        &.right-bottom {
+            & .disclose {
+                /* Arrow left */
+                clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+            }
+        }
+    }
+    &.undisclosed {
+        & > .content-container {
+            display: none;
+        }
+        &.top-left,
+        &.bottom-left {
+            & .disclose {
+                /* Arrow right */
+                clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+            }
+        }
+        &.top-right,
+        &.bottom-right {
+            & .disclose {
+                /* Arrow left */
+                clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+            }
+        }
+        &.left-top,
+        &.right-top {
+            & .disclose {
+                /* Arrow down */
+                clip-path: polygon(0% 6.666%, 100% 6.666%, 50% 93.333%);
+            }
+        }
+        &.left-bottom,
+        &.right-bottom {
+            & .disclose {
+                /* Arrow up */
+                clip-path: polygon(0% 93.333%, 50% 6.666%, 100% 93.333%);
+            }
+        }
+    }
+    &.right-top,
+    &.right-bottom {
+        & .header-text {
+            writing-mode: vertical-lr;
+            /* transform: rotate(180deg); */
+            /* transform-origin: top left 0; */
+        }
+    }
+    &.left-top,
+    &.left-bottom {
+        & .header-text {
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.vts-tab-group {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    background-color: inherit;
+    & > .tab-headers {
+        display: flex;
+        flex-direction: row;
+        overflow-x: scroll;
+        /* background-color: inherit; */
+        & > .header-container {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            margin: 0;
+            padding: 0.5rem;
+            min-width: 7rem;
+            border-top: 0.1rem solid darkgray;
+            border-right: none;
+            border-bottom: none;
+            border-left: 0.1rem solid darkgray;
+            background-color: lightgray;
+            white-space: nowrap;
+            &:last-of-type {
+                border-right: 0.1rem solid darkgray;
+            }
+            &.active,
+            &:hover {
+                background-color: inherit;
+            }
+            & > .header-content {
+                width: 100%;
+                /* background-color: inherit; */
+            }
+            & > .close {
+                flex-grow: 0;
+                margin: 0 0 0 1rem;
+                padding: 0;
+                width: 1rem;
+                height: 1rem;
+                min-width: 1rem;
+                min-height: 1rem;
+                appearance: none;
+                border: none;
+                font-size: 0;
+                background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGVsbGlwc2Ugc3R5bGU9ImZpbGw6IHJnYigyNTUsIDAsIDApOyIgY3g9IjI1NiIgY3k9IjI1NiIgcng9IjI1NiIgcnk9IjI1NiIvPgogIDxwYXRoIGQ9Ik0gMzY2LjYgMjMwLjgzIEMgMzgwLjUwNCAyMzAuODMgMzkxLjc4NCAyNDIuMDc5IDM5MS43ODQgMjU1Ljk5OSBDIDM5MS43ODQgMjY5LjkxOSAzODAuNTA0IDI4MS4xNjcgMzY2LjYgMjgxLjE2NyBMIDE0NC45MiAyODEuMTY3IEwgMTQ0LjkyIDIzMC44MyBNIDE0NS4zODQgMjgxLjE2NyBDIDEzMS40OTYgMjgxLjE2NyAxMjAuMjE2IDI2OS45MTkgMTIwLjIxNiAyNTUuOTk5IEMgMTIwLjIxNiAyNDIuMDc5IDEzMS40OTYgMjMwLjgzIDE0NS4zODQgMjMwLjgzIiBzdHlsZT0icGFpbnQtb3JkZXI6IGZpbGw7IGZpbGw6IHJnYigyNTUsIDI1NSwgMjU1KTsiIHRyYW5zZm9ybT0ibWF0cml4KDAuNzA3MTA4LCAtMC43MDcxMDYsIDAuNzA3MTA2LCAwLjcwNzEwOCwgLTEwNi4wMzc2MDksIDI1NS45OTkwNTYpIi8+CiAgPHBhdGggZD0iTSAzNjYuNiAyMzAuODMgQyAzODAuNTA0IDIzMC44MyAzOTEuNzg0IDI0Mi4wNzggMzkxLjc4NCAyNTUuOTk4IEMgMzkxLjc4NCAyNjkuOTE4IDM4MC41MDQgMjgxLjE2NiAzNjYuNiAyODEuMTY2IEwgMTQ0LjkyIDI4MS4xNjYgTCAxNDQuOTIgMjMwLjgzIE0gMTQ1LjM4NCAyODEuMTY2IEMgMTMxLjQ5NiAyODEuMTY2IDEyMC4yMTYgMjY5LjkxOCAxMjAuMjE2IDI1NS45OTggQyAxMjAuMjE2IDI0Mi4wNzggMTMxLjQ5NiAyMzAuODMgMTQ1LjM4NCAyMzAuODMiIHN0eWxlPSJwYWludC1vcmRlcjogZmlsbDsgZmlsbDogcmdiKDI1NSwgMjU1LCAyNTUpOyIgdHJhbnNmb3JtPSJtYXRyaXgoMC43MDcxMDcsIDAuNzA3MTA3LCAtMC43MDcxMDcsIDAuNzA3MTA3LCAyNTUuOTk4NTgxLCAtMTA2LjAzOTI2KSIvPgo8L3N2Zz4=");
+                background-color: transparent;
+                filter: grayscale(1) brightness(1.7);
+            }
+        }
+    }
+    & > .tab-content {
+        border: 0.1rem solid darkgray;
+        padding: 0.5rem;
+        /* background-color: inherit; */
+    }
+}

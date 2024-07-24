@@ -1,0 +1,23 @@
+.vts-labeled-container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 1rem;
+    padding: 1rem;
+    border: 0.1rem solid darkgray;
+    border-radius: 0.5rem;
+    background-color: inherit;
+    & > label,
+    > span {
+        flex-grow: 0;
+        position: absolute;
+        margin: 0;
+        padding: 0 0.5rem;
+        left: 1rem;
+        top: -0.7rem;
+        background-color: inherit;
+    }
+    & > div {
+        flex-grow: 1;
+    }
+}
