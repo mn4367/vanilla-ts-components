@@ -15,6 +15,7 @@ export * from "./LabeledTextArea.js";
 export * from "./LabeledTextInput.js";
 export * from "./Menu.js";
 export * from "./PinchZoomGestureHandler.js";
+export * from "./RadioButtonGroup.js";
 export * from "./ScrollContainer.js";
 export * from "./Stepper.js";
 export * from "./TabGroup.js";

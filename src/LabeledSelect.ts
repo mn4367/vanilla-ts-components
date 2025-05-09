@@ -27,7 +27,8 @@ export class LabeledSelect<EventMap extends HTMLElementEventMap = HTMLElementEve
     }
 
     /**
-     * Get select component of this component.
+     * Get select component of this component. Equivalent to `Component`, just with a more
+     * descriptive name.
      */
     public get Select(): Select {
         return this.component;

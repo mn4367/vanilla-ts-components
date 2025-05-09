@@ -1,0 +1,27 @@
+.radio-button-group,
+.vts-radio-button-group {
+    display: flex;
+    position: relative;
+    padding-block: var(--2px);
+    &.vertical {
+        flex-direction: column;
+        > .labeled-radio-button {
+            &:first-child {
+                padding-block-start: 0;
+            }
+            &:last-child {
+                padding-block-end: 0;
+            }
+        }
+    }
+    &.horizontal {
+        flex-direction: row;
+        > .labeled-radio-button {
+            padding-block: 0;
+            padding-inline-end: 1.5rem;
+            &:last-child {
+                padding-inline-end: 0;
+            }
+        }
+    }
+}

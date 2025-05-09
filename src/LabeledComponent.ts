@@ -119,19 +119,19 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
         this.removeClass("p-top", "p-end", "p-bottom", "p-start");
         switch (v) {
             case LabelPosition.TOP:
-                this.ui.Children[0] !== this.label ? this.ui.insert(0, this.label) : undefined;
+                this.ui.Children[0] === this.label || this.ui.insert(0, this.label);
                 this.addClass("p-top");
                 break;
             case LabelPosition.END:
-                this.ui.Children[1] !== this.label ? this.ui.append(this.label) : undefined;
+                this.ui.Children[1] === this.label || this.ui.append(this.label);
                 this.addClass("p-end");
                 break;
             case LabelPosition.BOTTOM:
-                this.ui.Children[1] !== this.label ? this.ui.append(this.label) : undefined;
+                this.ui.Children[1] === this.label || this.ui.append(this.label);
                 this.addClass("p-bottom");
                 break;
             case LabelPosition.START:
-                this.ui.Children[0] !== this.label ? this.ui.insert(0, this.label) : undefined;
+                this.ui.Children[0] === this.label || this.ui.insert(0, this.label);
                 this.addClass("p-start");
                 break;
         }
@@ -147,18 +147,6 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
     /** @inheritdoc */
     public set LabelAlignment(v: LabelAlignment) {
         this.labelAlignment(v);
-    }
-
-    /** @inheritdoc */
-    public override focus(options?: FocusOptions): this {
-        this.component.DOM.focus(options);
-        return this;
-    }
-
-    /** @inheritdoc */
-    public override blur(): this {
-        this.component.DOM.blur();
-        return this;
     }
 
     /**
@@ -183,6 +171,18 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
                 this.addClass("a-end");
                 break;
         }
+        return this;
+    }
+
+    /** @inheritdoc */
+    public override focus(options?: FocusOptions): this {
+        this.component.focus(options);
+        return this;
+    }
+
+    /** @inheritdoc */
+    public override blur(): this {
+        this.component.blur();
         return this;
     }
 }

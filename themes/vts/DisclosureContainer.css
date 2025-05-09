@@ -14,10 +14,24 @@
             border: none;
             font-size: 0;
             background-color: darkgray;
+            cursor: pointer;
+            &:hover {
+                filter: brightness(0.75);
+            }
         }
-        > .disclose:hover {
-            filter: brightness(0.75);
+        > .header-content > .header-text {
+            margin-inline-start: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
+        /*
+         * Mark the first element (usually the caption span) as clickable. Note: This needs a click
+         * handler to beimplemented.
+         */
+        /* > .header-content > :first-child {
+            cursor: pointer;
+        } */
     }
     > .content-container {
         position: relative;

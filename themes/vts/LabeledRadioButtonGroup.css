@@ -1,5 +1,6 @@
 .labeled-radio-button-group,
 .vts-labeled-radio-button-group {
+    /* #region common */
     display: flex;
     position: relative;
     border: var(--1px) solid var(--border-color);
@@ -18,6 +19,10 @@
         line-height: 1;
         background-color: inherit;
     }
+    > .radio-button-group {
+        padding-block: 0;
+    }
+    /* #endregion */
     /* #region top/bottom */
     &.p-top,
     &.p-bottom {
@@ -30,9 +35,9 @@
         > span {
             inset-block-start: -0.5rem;
         }
-        > div {
+        /* > div {
             margin-block-start: 0.5rem;
-        }
+        } */
     }
     &.p-bottom {
         margin-block-end: 0.5rem;
@@ -40,9 +45,9 @@
         > span {
             inset-block-end: -0.5rem;
         }
-        > div {
+        /* > div {
             margin-block-end: 0.5rem;
-        }
+        } */
     }
     &.p-top.a-start,
     &.p-bottom.a-start {
@@ -86,9 +91,9 @@
             inset-block-start: -0.5rem;
             transform: rotate(180deg);
         }
-        > div {
+        /* > div {
             margin-inline-start: 0.5rem;
-        }
+        } */
     }
     &.p-end {
         margin-inline-end: 0.5rem;
@@ -98,9 +103,9 @@
             /* Workaround for bug in Gecko. */
             width: unset;
         }
-        > div {
+        /* > div {
             margin-inline-end: 0.5rem;
-        }
+        } */
     }
     &.p-start.a-start,
     &.p-end.a-start {
@@ -124,68 +129,4 @@
         }
     }
     /* #endregion */
-    > div.radio-buttons {
-        flex-grow: 1;
-        background-color: inherit;
-        > div {
-            display: flex;
-            position: relative;
-            margin-block: 0.25rem;
-            background-color: inherit;
-            > label {
-                flex-shrink: 0;
-                margin: 0;
-                background-color: inherit;
-            }
-            > input {
-                margin: 0;
-                padding: 0;
-            }
-            /* #region start/end */
-            &.p-start,
-            &.p-end {
-                flex-direction: row;
-                align-items: center;
-            }
-            &.p-start > label {
-                margin-inline-end: 0.5rem;
-            }
-            &.p-end > label {
-                margin-inline-start: 0.5rem;
-            }
-            /* #endregion */
-            /* #region top/bottom */
-            /* These styles only exist for the sake of technical completeness; in practice, this
-               arrangement is not actually visually usable. */
-            &.p-top,
-            &.p-bottom {
-                flex-direction: column;
-                justify-items: center;
-            }
-            &.p-top > label {
-                margin-block-end: 0.5rem;
-            }
-            &.p-bottom > label {
-                margin-block-start: 0.5rem;
-            }
-            /* #endregion */
-            /* #region common */
-            &:first-child {
-                margin-block-start: 0;
-            }
-            &:last-child {
-                margin-block-end: 0;
-            }
-            &.a-start > label {
-                text-align: start;
-            }
-            &.a-center > label {
-                text-align: center;
-            }
-            &.a-end > label {
-                text-align: end;
-            }
-            /* #endregion */
-        }
-    }
 }

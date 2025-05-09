@@ -33,6 +33,7 @@ textarea {
     cursor: auto;
     background-color: var(--input-background-color);
     color: var(--font-color);
+    &:focus,
     &:focus-visible {
         outline: var(--4px) solid var(--input-focused-outline-color);
         @media (prefers-reduced-motion: no-preference) {

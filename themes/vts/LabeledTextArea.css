@@ -1,50 +1,22 @@
 .labeled-text-area,
 .vts-labeled-text-area {
+    /* #region common */
     display: flex;
     position: relative;
-    margin-block: 0.25rem;
-    background-color: inherit;
-    > label {
-        flex-shrink: 0;
-        margin: 0;
-        background-color: inherit;
-    }
+    padding-block: var(--2px);
+    > label,
     > textarea {
         margin: 0;
         padding: 0;
     }
-    /* #region start/end */
-    &.p-start,
-    &.p-end {
-        flex-direction: row;
-        align-items: flex-start;
+    > label {
+        flex-shrink: 0;
     }
-    &.p-start > label {
-        margin-inline-end: 0.5rem;
-    }
-    &.p-end > label {
-        margin-inline-start: 0.5rem;
-    }
-    /* #endregion */
-    /* #region top/bottom */
-    &.p-top,
-    &.p-bottom {
-        flex-direction: column;
-        justify-items: start
-    }
-    &.p-top > label {
-        margin-block-end: 0.5rem;
-    }
-    &.p-bottom > label {
-        margin-block-start: 0.5rem;
-    }
-    /* #endregion */
-    /* #region common */
     &:first-child {
-        margin-block-start: 0;
+        padding-block-start: 0;
     }
     &:last-child {
-        margin-block-end: 0;
+        padding-block-end: 0;
     }
     &.a-start > label {
         text-align: start;
@@ -54,6 +26,32 @@
     }
     &.a-end > label {
         text-align: end;
+    }
+    /* #endregion */
+    /* #region start/end */
+    &.p-start,
+    &.p-end {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    &.p-start > label {
+        padding-inline-end: 0.5rem;
+    }
+    &.p-end > label {
+        padding-inline-start: 0.5rem;
+    }
+    /* #endregion */
+    /* #region top/bottom */
+    &.p-top,
+    &.p-bottom {
+        flex-direction: column;
+        justify-items: start
+    }
+    &.p-top > label {
+        padding-block-end: 0.5rem;
+    }
+    &.p-bottom > label {
+        padding-block-start: 0.5rem;
     }
     /* #endregion */
 }

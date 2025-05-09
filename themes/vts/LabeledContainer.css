@@ -99,7 +99,7 @@
         padding-inline: 1rem 1.25rem;
         > span {
             inset-block-end: -0.5rem;
-            /* Workaround for bug in Gecko. */
+            /* Workaround for behavior in Gecko. */
             width: unset;
         }
         > div {
