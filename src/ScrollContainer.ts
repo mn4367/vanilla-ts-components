@@ -369,6 +369,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
      * detect any changes that may affect the geometry and the position of the scroll bars these
      * checks currently won't detect, for example, a change of `dir="rtl"` somewhere in the DOM.
      * Changes like this would need a rearrangement which can be carried out manually with `sync()`.
+     * This can be remedied by calling `sync()` from within a custom suitable MutationObserver.
      */
     public sync(): void {
         this.#syncScrollBarGeometry();
@@ -554,7 +555,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
     }
 
     /**
-     * @see `onDragThumbPointerDown()`.
+     * @see {@link #onDragThumbPointerDown()}
      * @param event The pointer event.
      */
     #onDragThumbPointerMove(event: PointerEvent): void {
@@ -584,7 +585,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
     }
 
     /**
-     * @see `onDragThumbPointerDown()`.
+     * @see {@link #onDragThumbPointerDown()}
      * @param event The pointer event.
      */
     #onDragThumbPointerUp(event: PointerEvent): void {
@@ -645,7 +646,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
     }
 
     /**
-     * @see `onScrollBarPointerDown()`.
+     * @see {@link #onScrollBarPointerDown()}
      * @param event The pointer event.
      */
     #onScrollBarPointerUp(event: PointerEvent): void {
@@ -656,7 +657,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
     }
 
     /**
-     * @see `onScrollBarPointerDown()`.
+     * @see {@link #onScrollBarPointerDown()}
      * @param _event The event.
      * @see https://bugs.webkit.org/show_bug.cgi?id=201556 Once implemented, this probably could be
      * made easier.

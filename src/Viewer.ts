@@ -106,7 +106,7 @@ export interface ViewerOptions {
      * can be set to `HORIZONTAL_ALT`/`VERTICAL_ALT` with `StepperApperanceHorizontalAlt` and
      * `StepperApperanceVerticalAlt` (see below).\
      * Default: The default options of the stepper component.
-     * @see Class `Stepper`.
+     * @see {@link Stepper}
      */
     StepperOptions?: StepperOptions;
     /**
@@ -122,7 +122,7 @@ export interface ViewerOptions {
     /**
      * The initial predefined zoom setting for items that are _added to the viewer_.\
      * Default: `Zoom.Fit`.
-     * @see `Zoom`.
+     * @see {@link Zoom}
      */
     Zoom?: Zoom;
     /**
@@ -134,7 +134,7 @@ export interface ViewerOptions {
     /**
      * Support pinch zoom gestures.\
      * Default: `false`.
-     * @see class `PinchZoomGestureHandler`
+     * @see {@link PinchZoomGestureHandler}
      */
     PinchZoom?: boolean;
     /**
@@ -999,7 +999,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             item.Throbber = new Throbber().addClass("throbber", "vts-throbber");
         }
         this.itemContainer.remove();
-        this.itemContainer.append(item.Component!);
+        this.itemContainer.append(item.Component);
         if (item.Throbber) {
             this.itemContainer.append(item.Throbber);
         }

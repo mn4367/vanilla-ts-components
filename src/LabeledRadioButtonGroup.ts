@@ -57,7 +57,7 @@ export class LabeledRadioButtonGroup<EventMap extends RadioButtonGroupEventMap =
      * Set the value of this radio button group. Also available via `RadioButtonGroup`, re-exported
      * here for convenience.
      * @param v The value to be set.
-     * @see Property `Value`.
+     * @see {@link LabeledRadioButtonGroup.Value}
      * @returns This instance.
      */
     public value(v: NullableString): this {

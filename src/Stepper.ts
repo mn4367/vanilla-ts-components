@@ -404,7 +404,7 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
 
     /**
      * Called internally by all functions that change the index in the steppable object.
-     * @see `index()`.
+     * @see {@link Stepper.index()}
      */
     /* eslint-disable-next-line jsdoc/require-jsdoc */
     protected internalSetIndex(index: number): boolean {

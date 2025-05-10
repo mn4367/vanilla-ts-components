@@ -553,7 +553,7 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
      * components are also disposed of. Removal/disposal also includes every tab, so if the content
      * of tabs or the tabs themselves have to be preserved, tabs must be extracted or removed before
      * calling `clear()`.
-     * @see `AElementComponentWithChildren.clear()`.
+     * @see {@link AElementComponentWithChildren.clear()}
      * @returns This instance.
      */
     public override clear(): this {

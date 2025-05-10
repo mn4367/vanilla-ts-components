@@ -45,7 +45,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      *   (instances of `@vanilla-ts/dom/Text`, phrasing content or a component like, for example, a
      *   labeled checkbox).
      * - For the behaviour of the setter see function `content()`.
-     * @see Function `content()`.
+     * @see {@link MenuItem.content()}.
      */
     public get Content(): INodeComponent<Node>[] {
         return this._content.Children;
@@ -109,7 +109,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      *   (instances of `@vanilla-ts/dom/Text`, phrasing content or a component like, for example, a
      *   labeled checkbox).
      * - For the behaviour of the setter see function `content()`.
-     * @see Function `content()`.
+     * @see {@link MenuItem.content()}.
      */
     public get Hint(): INodeComponent<Node>[] {
         return this._hint.Children;
@@ -469,7 +469,7 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
      * refers to the top left corner of the page. If `position` is given, it is always adjusted in a
      * way that ensures that the menu is never clipped by the layout viewport. If another behavior
      * is desired, `adjustMenuPosition()` must be overridden.
-     * @see `adjustMenuPosition()`
+     * @see {@link PopupMenu.adjustMenuPosition()}
      * @returns This instance.
      */
     public show(position?: DOMPoint): this {

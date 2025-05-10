@@ -240,7 +240,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
 
     /**
      * Get/set the 'weak undisclosed' property.
-     * @see `weakUndisclosed()`.
+     * @see {@link DisclosureContainer.weakUndisclosed()}
      */
     public get WeakUndisclosed(): boolean {
         return this._weakUndisclosed;

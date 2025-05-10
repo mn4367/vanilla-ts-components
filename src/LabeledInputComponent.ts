@@ -53,7 +53,7 @@ export abstract class LabeledInputComponent<I extends Input, EventMap extends HT
      * __Note:__ The property `Value` must be overridden by input elements of type `image` since
      * `value` isn't avaliable for this type, so using `value()` should do nothing.
      * @param v The value to be set.
-     * @see Property `Value`.
+     * @see {@link LabeledInputComponent.Value}
      * @returns This instance.
      */
     public value(v: string): this {

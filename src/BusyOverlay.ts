@@ -97,7 +97,7 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
 
     /**
      * Get/set the default delay after which the overlay will be shown.
-     * @see Function `delay()`.
+     * @see {@link BusyOverlay.delay()}
      */
     public get Delay(): number {
         return this._delay;
@@ -124,7 +124,7 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
 
     /**
      * Enable/disable using the 'Esc' button to hide the overlay.
-     * @see Function `allowEscape()`.
+     *  {@link BusyOverlay.allowEscape()}.
      */
     public get AllowEscape(): boolean {
         return this._allowEscape;
@@ -154,7 +154,7 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
 
     /**
      * Get/set the component which is displayed to visualize the 'busy' state.
-     * @see Function `busyIndicator()`.
+     * @see {@link BusyOverlay.busyIndicator()}
      */
     public get BusyIndicator(): IElementComponent<HTMLElement> | undefined {
         return this._busyIndicator;
