@@ -1,5 +1,6 @@
 import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_EVENT_INIT_DICT, HTMLElementWithChildren, IElementWithChildrenComponent, INodeComponent, mixin, NullableString, Phrase } from "@vanilla-ts/core";
 import { Button, Div, Span } from "@vanilla-ts/dom";
+import { ScrollContainer } from "./ScrollContainer.js";
 
 
 /////////////////////////////
@@ -32,10 +33,24 @@ class TabGroupUI extends Div {
  * Apperance of the tab group (tab headers position).
  */
 export enum TabGroupAppearance {
+    /** Tab headers appear _above_ the tab content. */
     TOP = 0,
+    /** Tab headers appear horizontally _after_ the tab content (depending on `dir="rtl"`). */
     END,
+    /**
+     * Tab headers appear horizontally _after_ the tab content (depending on `dir="rtl"`). The
+     * vertical order of the tabs should be reversed (e.g. the first tab is placed on the bottom).
+     */
+    END_ALT,
+    /** Tab headers appear _below_ the tab content. */
     BOTTOM,
+    /** Tab headers appear horizontally _before_ the tab content (depending on `dir="rtl"`). */
     START,
+    /**
+     * Tab headers appear horizontally _before_ the tab content (depending on `dir="rtl"`). The
+     * vertical order of the tabs should be reversed (e.g. the first tab is placed on the bottom).
+     */
+    START_ALT
 }
 
 /**
@@ -100,7 +115,7 @@ export interface TabGroupEventMap extends HTMLElementEventMap {
  */
 export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> extends AElementComponentWithInternalUI<TabGroupUI, EventMap> {
     protected tabs: Tab[] = [];
-    protected tabHeadersContainer: IElementWithChildrenComponent<HTMLDivElement>;
+    protected tabHeadersContainer: ScrollContainer;
     protected tabContent: IElementWithChildrenComponent<HTMLDivElement>;
     protected _appearance: TabGroupAppearance;
     protected activeTab?: Tab = undefined;
@@ -188,23 +203,39 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
     public appearance(appearance: TabGroupAppearance): this {
         if (this._appearance !== appearance) {
             this._appearance = appearance;
-            this.ui.removeClass("top", "end", "bottom", "start");
+            this.tabHeadersContainer.horizontal(false);
+            this.tabHeadersContainer.vertical(false);
+            this.ui.removeClass("top", "end", "end-alt", "bottom", "start", "start-alt");
             let clazz: string;
             switch (this._appearance) {
                 case TabGroupAppearance.TOP:
+                    this.tabHeadersContainer.horizontal(true);
                     clazz = "top";
                     break;
                 case TabGroupAppearance.END:
+                    this.tabHeadersContainer.vertical(true);
                     clazz = "end";
                     break;
+                case TabGroupAppearance.END_ALT:
+                    this.tabHeadersContainer.vertical(true);
+                    clazz = "end-alt";
+                    break;
                 case TabGroupAppearance.BOTTOM:
+                    this.tabHeadersContainer.horizontal(true);
                     clazz = "bottom";
                     break;
                 case TabGroupAppearance.START:
+                    this.tabHeadersContainer.vertical(true);
                     clazz = "start";
+                    break;
+                case TabGroupAppearance.START_ALT:
+                    this.tabHeadersContainer.vertical(true);
+                    clazz = "start-alt";
                     break;
             }
             this.ui.addClass(clazz);
+            this.syncTabs();
+            this.tabHeadersContainer.sync();
             this.activeTab?.DOM.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" }); // eslint-disable-line jsdoc/require-jsdoc
         }
         return this;
@@ -400,13 +431,18 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
      * @returns This instance.
      */
     public remove(...tabs: (Tab | undefined | null)[]): this {
-        if (tabs.length === 0) {
+        const tabsToRemove = tabs.length === 0
+            ? this.tabs
+            : [...new Set(tabs.filter(e => (e ?? e) && this.tabs.includes(e))) as Set<Tab>];
+        if (tabsToRemove.length === 0) {
             return this;
         }
-        const tabsToRemove = [...new Set(tabs.filter(e => (e ?? e) && this.tabs.includes(e))) as Set<Tab>];
         // Get new tab to activate after removal (if `remove()` includes the active tab).
-        const newActiveTab = this.getTabToActivateAfterRemoval(tabsToRemove);
+        const newActiveTab = tabs.length === 0
+            ? undefined
+            : this.getTabToActivateAfterRemoval(tabsToRemove);
         for (const tab of tabsToRemove) {
+            tab.style("order", null);
             tab.Content.Parent?.remove(tab.Content);
         }
         this.tabHeadersContainer.remove(...tabsToRemove);
@@ -427,6 +463,7 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
     public extract(to: Tab[], ...tabs: (Tab | undefined | null)[]): this {
         if (tabs.length === 0) {
             for (const tab of this.tabs) {
+                tab.style("order", null);
                 tab.Content.Parent?.remove(tab.Content);
             }
             this.tabHeadersContainer.extract(to, ...tabs);
@@ -434,9 +471,13 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
             return this;
         }
         const tabsToExtract = [...new Set(tabs.filter(e => (e ?? e) && this.tabs.includes(e))) as Set<Tab>];
+        if (tabsToExtract.length === 0) {
+            return this;
+        }
         // Get new tab to activate after extraction (if `extract()` includes the active tab).
         const newActiveTab = this.getTabToActivateAfterRemoval(tabsToExtract);
         for (const tab of tabsToExtract) {
+            tab.style("order", null);
             tab.Content.Parent?.remove(tab.Content);
         }
         this.tabHeadersContainer.extract(to, ...tabsToExtract);
@@ -500,6 +541,16 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
         this.tabs = <Tab[]>this.tabHeadersContainer.Children.slice(0);
         if (this.tabs.length === 0) {
             this.activeTab = undefined;
+            return;
+        }
+        for (const tab of this.tabs) {
+            tab.style("order", null);
+        }
+        if (this._appearance === TabGroupAppearance.START_ALT || this._appearance === TabGroupAppearance.END_ALT) {
+            let l = 0;
+            for (let i = this.tabs.length - 1; i > -1; i--) {
+                this.tabs[i].style("order", (l++).toString());
+            }
         }
     }
 
@@ -540,11 +591,13 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
     protected buildUI(): this {
         this.ui = new TabGroupUI(this)
             .append(
-                this.tabHeadersContainer = new Div()
-                    .addClass("tab-headers"),
+                this.tabHeadersContainer = new ScrollContainer()
+                    // .native(true)
+                    .addClass(ScrollContainer.DefaultCSSClassName),
                 this.tabContent = new Div()
                     .addClass("tab-content")
             );
+        this.tabHeadersContainer.Content.addClass("tab-headers");
         return this;
     }
 

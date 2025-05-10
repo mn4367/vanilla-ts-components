@@ -5,16 +5,67 @@
     padding: 0;
     &.top,
     &.end,
+    &.end-alt,
     &.bottom,
-    &.start {
-        > .tab-headers:empty {
+    &.start,
+    &.start-alt {
+        > .scroll-container > .tab-headers:empty {
             border-block-start: none;
             border-inline-end: none;
             border-block-end: none;
             border-inline-start: none;
         }
     }
-    > .tab-headers {
+    > .scroll-container {
+        --scroll-bar-size: 0.3rem;
+        --scroll-bar-border-radius: 0;
+        --scroll-bar-background-color: transparent;
+        --scroll-bar-border: 0;
+        --scroll-bar-thumb-border-radius: var(--2px);
+        height: revert;
+        > .content {
+            position: relative;
+        }
+        > .h-bar-overlay > .h-bar:hover > .h-bar-thumb {
+            inset-block-start: 0;
+            height: 100%;
+        }
+        > .v-bar-overlay > .v-bar:hover > .v-bar-thumb {
+            inset-inline-start: 0;
+            width: 100%;
+        }
+    }
+    &.top {
+        > .scroll-container > .h-bar-overlay {
+            inset-block-start: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap) - 0.5rem);
+        }
+    }
+    /* &.bottom {
+        > .scroll-container > .h-bar-overlay {
+            inset-block-start: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap) - 0.1rem);
+        }
+    } */
+    &.start,
+    &.start-alt,
+    &.end,
+    &.end-alt {
+        > .scroll-container > .content {
+            height: 100%;
+        }
+    }
+    &.start,
+    &.start-alt {
+        > .scroll-container > .v-bar-overlay {
+            inset-inline-start: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap) - 0.5rem);
+        }
+    }
+    &.end,
+    &.end-alt {
+        > .scroll-container > .v-bar-overlay {
+            inset-inline-start: calc(0.5rem + var(--scroll-bar-thumb-gap));
+        }
+    }
+    > .scroll-container > .tab-headers {
         display: flex;
         > .header-container {
             display: flex;
@@ -47,6 +98,7 @@
                 font-size: 0;
                 background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGVsbGlwc2Ugc3R5bGU9ImZpbGw6IHJnYigyNTUsIDAsIDApOyIgY3g9IjI1NiIgY3k9IjI1NiIgcng9IjI1NiIgcnk9IjI1NiIvPgogIDxwYXRoIGQ9Ik0gMzY2LjYgMjMwLjgzIEMgMzgwLjUwNCAyMzAuODMgMzkxLjc4NCAyNDIuMDc5IDM5MS43ODQgMjU1Ljk5OSBDIDM5MS43ODQgMjY5LjkxOSAzODAuNTA0IDI4MS4xNjcgMzY2LjYgMjgxLjE2NyBMIDE0NC45MiAyODEuMTY3IEwgMTQ0LjkyIDIzMC44MyBNIDE0NS4zODQgMjgxLjE2NyBDIDEzMS40OTYgMjgxLjE2NyAxMjAuMjE2IDI2OS45MTkgMTIwLjIxNiAyNTUuOTk5IEMgMTIwLjIxNiAyNDIuMDc5IDEzMS40OTYgMjMwLjgzIDE0NS4zODQgMjMwLjgzIiBzdHlsZT0icGFpbnQtb3JkZXI6IGZpbGw7IGZpbGw6IHJnYigyNTUsIDI1NSwgMjU1KTsiIHRyYW5zZm9ybT0ibWF0cml4KDAuNzA3MTA4LCAtMC43MDcxMDYsIDAuNzA3MTA2LCAwLjcwNzEwOCwgLTEwNi4wMzc2MDksIDI1NS45OTkwNTYpIi8+CiAgPHBhdGggZD0iTSAzNjYuNiAyMzAuODMgQyAzODAuNTA0IDIzMC44MyAzOTEuNzg0IDI0Mi4wNzggMzkxLjc4NCAyNTUuOTk4IEMgMzkxLjc4NCAyNjkuOTE4IDM4MC41MDQgMjgxLjE2NiAzNjYuNiAyODEuMTY2IEwgMTQ0LjkyIDI4MS4xNjYgTCAxNDQuOTIgMjMwLjgzIE0gMTQ1LjM4NCAyODEuMTY2IEMgMTMxLjQ5NiAyODEuMTY2IDEyMC4yMTYgMjY5LjkxOCAxMjAuMjE2IDI1NS45OTggQyAxMjAuMjE2IDI0Mi4wNzggMTMxLjQ5NiAyMzAuODMgMTQ1LjM4NCAyMzAuODMiIHN0eWxlPSJwYWludC1vcmRlcjogZmlsbDsgZmlsbDogcmdiKDI1NSwgMjU1LCAyNTUpOyIgdHJhbnNmb3JtPSJtYXRyaXgoMC43MDcxMDcsIDAuNzA3MTA3LCAtMC43MDcxMDcsIDAuNzA3MTA3LCAyNTUuOTk4NTgxLCAtMTA2LjAzOTI2KSIvPgo8L3N2Zz4=");
                 background-color: transparent;
+                cursor: pointer;
                 filter: grayscale(1) brightness(1.7);
             }
             > .close:hover {
@@ -56,12 +108,16 @@
     }
     &.top,
     &.bottom {
-        > .tab-headers {
-            overflow-x: auto;
+        > .scroll-container > .tab-headers {
             > .header-container {
                 flex-direction: row-reverse;
                 align-items: center;
+                margin-inline-start: 0.25rem;
+                margin-inline-end: 0;
                 padding: 0.25rem 0.5rem;
+                &:first-child {
+                    margin-inline-start: 0;
+                }
                 > .header-content {
                     min-width: 7rem;
                     max-width: 21rem;
@@ -76,84 +132,75 @@
     }
     &.top {
         flex-direction: column;
-        > .tab-headers {
+        > .scroll-container > .tab-headers {
             > .header-container {
                 margin-block-start: 0;
                 margin-block-end: 0.5rem;
-                margin-inline-start: 0.25rem;
-                &:first-child {
-                    margin-inline-start: 0;
-                }
-                margin-inline-end: 0;
             }
         }
     }
     &.bottom {
         flex-direction: column-reverse;
-        > .tab-headers {
+        > .scroll-container > .tab-headers {
             > .header-container {
                 margin-block-start: 0.5rem;
                 margin-block-end: 0;
-                margin-inline-start: 0.25rem;
-                &:first-child {
-                    margin-inline-start: 0;
-                }
-                margin-inline-end: 0;
             }
         }
     }
+    &.start,
+    &.start-alt,
     &.end,
-    &.start {
-        > .tab-headers {
-            overflow-y: auto;
-            > .header-container {
-                align-items: center;
-                padding: 0.5rem 0.25rem;
-                > .header-content {
-                    min-height: 7rem;
-                    max-height: 21rem;
-                    writing-mode: vertical-lr;
-                }
+    &.end-alt {
+        > .scroll-container > .tab-headers > .header-container {
+            align-items: center;
+            padding: 0.5rem 0.25rem;
+            > .header-content {
+                min-height: 7rem;
+                max-height: 21rem;
+                writing-mode: vertical-lr;
             }
         }
     }
-    &.end {
-        flex-direction: row-reverse;
-        > .tab-headers {
-            flex-direction: column;
-            > .header-container {
-                flex-direction: column-reverse;
-                margin-block: 0 0.25rem;
-                &:last-child {
-                    margin-block-end: 0;
-                }
-                margin-inline: 0.5rem 0;
-                > :dir(rtl).header-content {
-                    transform: rotate(180deg);
-                }
-                > .close {
-                    margin-block: 1rem 0;
-                    margin-inline: 0;
-                }
-            }
-        }
+    &.start > .scroll-container > .tab-headers > .header-container:last-child,
+    &.start-alt > .scroll-container > .tab-headers > .header-container:first-child,
+    &.end > .scroll-container > .tab-headers > .header-container:last-child,
+    &.end-alt > .scroll-container > .tab-headers > .header-container:first-child {
+        margin-block-end: 0;
     }
-    &.start {
+    &.start,
+    &.start-alt {
         flex-direction: row;
-        > .tab-headers {
-            flex-direction: column-reverse;
+        > .scroll-container > .tab-headers {
+            flex-direction: column;
             > .header-container {
                 flex-direction: column;
                 margin-block: 0 0.25rem;
-                &:first-child {
-                    margin-block-end: 0;
-                }
                 margin-inline: 0 0.5rem;
                 > :dir(ltr).header-content {
                     transform: rotate(180deg);
                 }
                 > .close {
                     margin-block: 0 1rem;
+                    margin-inline: 0;
+                }
+            }
+        }
+    }
+    &.end,
+    &.end-alt {
+        flex-direction: row-reverse;
+        > .scroll-container > .tab-headers {
+            flex-direction: column;
+            > .header-container {
+                flex-direction: column-reverse;
+                margin-block: 0 0.25rem;
+                margin-inline: 0.5rem 0;
+                > :dir(rtl).header-content {
+                    transform: rotate(180deg);
+                }
+                > .close {
+                    margin-block: 1rem 0;
                     margin-inline: 0;
                 }
             }

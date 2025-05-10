@@ -42,10 +42,21 @@
     --border-radius-normal: var(--6px);
     --border-radius-small: var(--3px);
     --border-radius-large: var(--13px);
+    /* BusyOverlay */
     --busy-overlay-size: 5rem;
+    /* ----------------------------------------------- */
+    /* Based on the design of the scrollbars on macOS. */
+    /* ----------------------------------------------- */
+    --scroll-bar-overlay-fade-in: opacity 0.1s ease-in;
+    --scroll-bar-overlay-fade-out: opacity 0.2s ease-in 0.7s;
+    --scroll-bar-size: 0.6rem;
+    --scroll-bar-border-radius: 0.2rem;
+    --scroll-bar-thumb-min-size: calc(3 * var(--scroll-bar-size));
+    --scroll-bar-thumb-gap: var(--1px);
+    --scroll-bar-thumb-border-radius: 0.3rem;
     /* #endregion */
 
-    /* #region Colors */
+    /* #region Colors, borders */
     --window-background-color: hsl(0 0% 100%);
     --dialog-background-color: hsl(0 0% 91.4%);
     --dialog-window-background-color: hsl(0 0% 96.5%);
@@ -60,6 +71,7 @@
     --input-border-color: hsl(0 0% 85.9%);
     --input-border-color-dark: hsl(0 0% 71%);
     --input-focused-outline-color: hsl(219 93.2% 76.9%);
+    /* PopupMenu */
     --menu-background-color: hsl(0 0% 94.5%);
     --menu-background-color-focused: hsl(214 100% 67.5%);
     --menu-border-color: hsl(0 0% 78.4%);
@@ -67,8 +79,16 @@
     --menu-font-color: hsl(0 0% 20.8%);
     --menu-font-color-focused: hsl(0 0% 100%);
     --menu-font-color-hint: hsla(0 0% 0% / 30%);
+    /* BusyOverlay */
     --busy-overlay-color: hsl(214 100% 67.5%);
     --busy-overlay-backdrop-color: hsla(0 0% 0% / 0.1);
+    /* ----------------------------------------------- */
+    /* Based on the design of the scrollbars on macOS. */
+    /* ----------------------------------------------- */
+    --scroll-bar-background-color: hsla(0 0% 100% / 0.75);
+    --scroll-bar-border-color: hsla(0 0% 43% / 0.2);
+    --scroll-bar-border: var(--1px) solid var(--scroll-bar-border-color);
+    --scroll-bar-thumb-color: hsla(0 0% 43% / 0.8);
     /* #endregion */
 
     /* #region Images */
