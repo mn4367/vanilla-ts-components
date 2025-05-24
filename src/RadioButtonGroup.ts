@@ -45,9 +45,9 @@ export enum RadioButtonGroupAlignment {
  * A component that holds a group of labeled radio buttons inside a `<div>` container.
  */
 export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioButtonGroupEventMap> extends AElementComponentWithInternalUI<Div, EventMap> {
-    #radioButtons: LabeledRadioButton[];
-    #alignment: RadioButtonGroupAlignment;
-    #toggle: boolean;
+    protected radioButtons: LabeledRadioButton[];
+    protected _alignment: RadioButtonGroupAlignment;
+    protected _toggle: boolean;
 
     /**
      * Create RadioButtonGroup component.
@@ -64,7 +64,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * Get an array of all contained labeled radio buttons (as a copy).
      */
     public get RadioButtons(): LabeledRadioButton[] {
-        return this.#radioButtons.slice();
+        return this.radioButtons.slice();
     }
 
     /**
@@ -73,7 +73,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * it is found, its status is set to checked.
      */
     public get Value(): string {
-        for (const radioButton of this.#radioButtons) {
+        for (const radioButton of this.radioButtons) {
             if (radioButton.Checked) {
                 return radioButton.Value;
             }
@@ -92,11 +92,11 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * @returns This instance.
      */
     public value(v: NullableString): this {
-        for (const radioButton of this.#radioButtons) {
+        for (const radioButton of this.radioButtons) {
             radioButton.checked(false);
         }
         if (v !== null) {
-            for (const radioButton of this.#radioButtons) {
+            for (const radioButton of this.radioButtons) {
                 if (radioButton.Value === v) {
                     radioButton.checked(true);
                     break;
@@ -110,7 +110,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * Allow toggling the radio button state of all contained radio buttons.
      */
     public get Toggle(): boolean {
-        return this.#toggle;
+        return this._toggle;
     }
     /** @inheritdoc */
     public set Toggle(v: boolean) {
@@ -123,9 +123,11 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * @returns This instance.
      */
     public toggle(toggle: boolean): this {
-        this.#toggle = toggle;
-        for (const radioButton of this.#radioButtons) {
-            radioButton.RadioButton.toggle(toggle);
+        if (toggle !== this._toggle) {
+            this._toggle = toggle;
+            for (const radioButton of this.radioButtons) {
+                radioButton.RadioButton.toggle(toggle);
+            }
         }
         return this;
     }
@@ -134,7 +136,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * Gets/sets the alignment of the contained labeled radio buttons.
      */
     public get Alignment(): RadioButtonGroupAlignment {
-        return this.#alignment;
+        return this._alignment;
     }
     /** @inheritdoc */
     public set Alignment(v: RadioButtonGroupAlignment) {
@@ -147,16 +149,18 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * @returns This instance.
      */
     public alignment(alignment: RadioButtonGroupAlignment): this {
-        this.#alignment = alignment;
-        this.#alignment === RadioButtonGroupAlignment.VERTICAL
-            ? this.replaceClass("horizontal", "vertical")
-            : this.replaceClass("vertical", "horizontal");
+        if (alignment !== this._alignment) {
+            this._alignment = alignment;
+            this._alignment === RadioButtonGroupAlignment.VERTICAL
+                ? this.replaceClass("horizontal", "vertical")
+                : this.replaceClass("vertical", "horizontal");
+        }
         return this;
     }
 
     /** @inheritdoc */
     protected override buildUI(radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment): this {
-        this.#radioButtons = radioButtons.map(item => {
+        this.radioButtons = radioButtons.map(item => {
             const lrb = new LabeledRadioButton(
                 item.Label,
                 item.ID,
@@ -183,22 +187,22 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
             });
             return lrb;
         });
-        this.#alignment = alignment;
+        this._alignment = alignment;
         this.ui = new Div()
-            .addClass(this.#alignment === RadioButtonGroupAlignment.VERTICAL ? "vertical" : "horizontal")
-            .append(...this.#radioButtons);
+            .addClass(this._alignment === RadioButtonGroupAlignment.VERTICAL ? "vertical" : "horizontal")
+            .append(...this.radioButtons);
         return this;
     }
 
     /** @inheritdoc */
     public override focus(options?: FocusOptions): this {
-        (this.#radioButtons.find(e => e.Checked) || this.#radioButtons[0]).focus(options);
+        (this.radioButtons.find(e => e.Checked) || this.radioButtons[0]).focus(options);
         return this;
     }
 
     /** @inheritdoc */
     public override blur(): this {
-        (this.#radioButtons.find(e => e.Checked) || this.#radioButtons[0]).blur();
+        (this.radioButtons.find(e => e.Checked) || this.radioButtons[0]).blur();
         return this;
     }
 }

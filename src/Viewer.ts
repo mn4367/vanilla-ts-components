@@ -1605,22 +1605,22 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         for (const element of this._options.ToolbarElements!) {
             switch (element) {
                 case ToolbarElement.STEPPER:
-                    this.stepperBorrowed ? undefined : this.toolBar.append(this.stepper);
+                    this.stepperBorrowed || this.toolBar.append(this.stepper);
                     break;
                 case ToolbarElement.ZOOM_IN_OUT:
-                    this.zoomInOutBorrowed ? undefined : this.toolBar.append(this.zoomInOut);
+                    this.zoomInOutBorrowed || this.toolBar.append(this.zoomInOut);
                     break;
                 case ToolbarElement.ZOOM_FIT:
-                    this.zoomFitBorrowed ? undefined : this.toolBar.append(this.zoomFit);
+                    this.zoomFitBorrowed || this.toolBar.append(this.zoomFit);
                     break;
                 case ToolbarElement.ITEM_INDEX:
-                    this.itemIndexBorrowed ? undefined : this.toolBar.append(this.itemIndex);
+                    this.itemIndexBorrowed || this.toolBar.append(this.itemIndex);
                     break;
                 case ToolbarElement.ZOOM_LEVEL:
-                    this.zoomLevelBorrowed ? undefined : this.toolBar.append(this.zoomLevel);
+                    this.zoomLevelBorrowed || this.toolBar.append(this.zoomLevel);
                     break;
                 case ToolbarElement.ZOOM_RANGE:
-                    this.zoomRangeBorrowed ? undefined : this.toolBar.append(this.zoomRange);
+                    this.zoomRangeBorrowed || this.toolBar.append(this.zoomRange);
             }
         }
         return this;
