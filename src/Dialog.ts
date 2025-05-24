@@ -73,9 +73,7 @@ export enum DialogState {
     MODAL = 2
 }
 
-/**
- * Custom 'dlg-show' event for dialogs.
- */
+/** Custom 'dlg-show' event for dialogs. */
 export class DialogShowEvent extends ACustomComponentEvent<"dlg-show", Dialog, {
     /** `true` if the dialog is about to be displayed modal, otherwise false. */
     Modal: boolean;
@@ -91,9 +89,7 @@ export class DialogShowEvent extends ACustomComponentEvent<"dlg-show", Dialog, {
     }
 }
 
-/**
- * Custom 'dlg-close' event for dialogs.
- */
+/** Custom 'dlg-close' event for dialogs. */
 export class DialogCloseEvent extends ACustomComponentEvent<"dlg-close", Dialog, {
     /**
      * The `returnValue` with which the dialog is to be closed/canceled. If `cancel` is `true`,
@@ -126,9 +122,7 @@ export class DialogCloseEvent extends ACustomComponentEvent<"dlg-close", Dialog,
     }
 }
 
-/**
- * Additional event(s) for `Dialog`.
- */
+/** Additional event(s) for `Dialog`. */
 export interface DialogEventMap extends HTMLElementEventMap {
     /**
      * A dialog is to be shown. Event handlers can prevent showing the dialog by calling

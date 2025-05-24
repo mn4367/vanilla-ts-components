@@ -216,9 +216,7 @@ export interface StepperOptions {
     LastTitle?: string;
 }
 
-/**
- * Custom 'step' event for objects implementing `IStepper`.
- */
+/** Custom 'step' event for objects implementing `IStepper`. */
 export class StepEvent extends ACustomComponentEvent<"step", Stepper, {
     /** The new index/position in the steppable object. */
     Index: number;
@@ -235,9 +233,7 @@ export class StepEvent extends ACustomComponentEvent<"step", Stepper, {
     }
 }
 
-/**
- * Custom 'stepped' event for objects implementing `IStepper`.
- */
+/** Custom 'stepped' event for objects implementing `IStepper`. */
 export class SteppedEvent extends ACustomComponentEvent<"stepped", Stepper, {
     /** The new index/position in the steppable object. */
     Index: number;
@@ -253,9 +249,7 @@ export class SteppedEvent extends ACustomComponentEvent<"stepped", Stepper, {
     }
 }
 
-/**
- * Additional event(s) for objects implementing `IStepper`.
- */
+/** Additional event(s) for objects implementing `IStepper`. */
 export interface StepperEventMap extends HTMLElementEventMap {
     /**
      * The stepper wants to go to a new index/position in the steppable object. Event handlers can

@@ -20,9 +20,7 @@ export interface LabeledRadioButtons extends Array<{
     LabelAlignment?: LabelAlignment;
 }> { }
 
-/**
- * Custom 'checked' event for radio button group.
- */
+/** Custom 'checked' event for radio button group. */
 export interface RadioButtonGroupEventMap extends HTMLElementEventMap {
     /** A radio button in a radio button group has been checked/uncheked. */
     "checked": CheckedEvent<RadioButton, {

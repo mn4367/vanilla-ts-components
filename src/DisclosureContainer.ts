@@ -36,9 +36,7 @@ export type DisclosureContainerLabels = {
     Titles: [string, string];
 };
 
-/**
- * Custom 'disclose' event for disclosure containers.
- */
+/** Custom 'disclose' event for disclosure containers. */
 export class DiscloseEvent extends ACustomComponentEvent<"disclose", DisclosureContainer, {
     /** `true`, if the disclosure container is disclosed, otherwise `false`. */
     Disclosed: boolean;
@@ -54,9 +52,7 @@ export class DiscloseEvent extends ACustomComponentEvent<"disclose", DisclosureC
     }
 }
 
-/**
- * Additional event(s) for `DisclosureContainer`.
- */
+/** Additional event(s) for `DisclosureContainer`. */
 export interface DisclosureContainerEventMap extends HTMLElementEventMap {
     /**
      * A disclosure container is disclosed/undisclosed. Event handlers can prevent changing the

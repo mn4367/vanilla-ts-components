@@ -53,9 +53,7 @@ export enum TabGroupAppearance {
     START_ALT
 }
 
-/**
- * Custom 'tab' event for tab groups.
- */
+/** Custom 'tab' event for tab groups. */
 export class TabEvent extends ACustomComponentEvent<"tab", TabGroup, {
     /** The tab which was activated / deactivated. */
     Tab: Tab;
@@ -74,9 +72,7 @@ export class TabEvent extends ACustomComponentEvent<"tab", TabGroup, {
     }
 }
 
-/**
- * Custom 'tab-close' event for tab groups.
- */
+/** Custom 'tab-close' event for tab groups. */
 export class TabCloseEvent extends ACustomComponentEvent<"tab-close", TabGroup, {
     /** The tab which was closed (and disposed!). */
     Tab: Tab;
@@ -94,9 +90,7 @@ export class TabCloseEvent extends ACustomComponentEvent<"tab-close", TabGroup, 
     }
 }
 
-/**
- * Additional event(s) for `TabGroup`.
- */
+/** Additional event(s) for `TabGroup`. */
 export interface TabGroupEventMap extends HTMLElementEventMap {
     /** A `tab` event occured (on activation/deactivation). */
     "tab": TabEvent;

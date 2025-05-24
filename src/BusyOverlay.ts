@@ -2,9 +2,7 @@ import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactor
 import { Dialog, Div, Span } from "@vanilla-ts/dom";
 
 
-/**
- * Custom 'busy' event for BusyOverlays.
- */
+/** Custom 'busy' event for BusyOverlays. */
 export class BusyOverlayBusyEvent extends ACustomComponentEvent<"busy", BusyOverlay> {
     /**
      * Create 'busy' event.
@@ -16,9 +14,7 @@ export class BusyOverlayBusyEvent extends ACustomComponentEvent<"busy", BusyOver
     }
 }
 
-/**
- * Custom 'idle' event for BusyOverlays.
- */
+/** Custom 'idle' event for BusyOverlays. */
 export class BusyOverlayIdleEvent extends ACustomComponentEvent<"idle", BusyOverlay> {
     /**
      * Create 'idle' event.
@@ -30,9 +26,7 @@ export class BusyOverlayIdleEvent extends ACustomComponentEvent<"idle", BusyOver
     }
 }
 
-/**
- * Additional event(s) for `BusyOverlay`.
- */
+/** Additional event(s) for `BusyOverlay`. */
 export interface BusyOverlayEventMap extends HTMLElementEventMap {
     /**
      * A busy overlay is to be shown. Event handlers can prevent showing the overlay by calling

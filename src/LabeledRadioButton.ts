@@ -4,9 +4,7 @@ import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
 import { LabeledInputComponent } from "./LabeledInputComponent.js";
 
 
-/**
- * Additional event(s) for `LabeledRadioButton`.
- */
+/** Additional event(s) for `LabeledRadioButton`. */
 export interface LabeledRadioButtonEventMap extends HTMLElementEventMap {
     /** A radio button is checked/unchecked. */
     "checked": CheckedEvent<RadioButton>;

@@ -4,9 +4,7 @@ import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
 import { LabeledInputComponent } from "./LabeledInputComponent.js";
 
 
-/**
- * Additional event(s) for `LabeledCheckbox`.
- */
+/** Additional event(s) for `LabeledCheckbox`. */
 export interface LabeledCheckboxEventMap extends HTMLElementEventMap {
     /** A checkbox is checked/unchecked. */
     "checked": CheckedEvent<Checkbox>;

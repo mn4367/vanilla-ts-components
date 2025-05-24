@@ -345,9 +345,7 @@ export class MenuSeparatorFactory<T> extends ComponentFactory<MenuSeparator> {
     }
 }
 
-/**
- * Custom 'show' event for popup menus.
- */
+/** Custom 'show' event for popup menus. */
 export class PopupMenuShowEvent extends ACustomComponentEvent<"show", PopupMenu> {
     /**
      * Create popup menu show event.
@@ -359,9 +357,7 @@ export class PopupMenuShowEvent extends ACustomComponentEvent<"show", PopupMenu>
     }
 }
 
-/**
- * Custom 'hide' event for popup menus.
- */
+/** Custom 'hide' event for popup menus. */
 export class PopupMenuHideEvent extends ACustomComponentEvent<"hide", PopupMenu> {
     /**
      * Create popup menu hide event.
@@ -373,9 +369,7 @@ export class PopupMenuHideEvent extends ACustomComponentEvent<"hide", PopupMenu>
     }
 }
 
-/**
- * Custom 'select' event for menu items.
- */
+/** Custom 'select' event for menu items. */
 export class PopupMenuItemSelectEvent extends ACustomComponentEvent<"select", PopupMenu, {
     MenuItem: MenuItem; // eslint-disable-line jsdoc/require-jsdoc
 }> {
@@ -390,9 +384,7 @@ export class PopupMenuItemSelectEvent extends ACustomComponentEvent<"select", Po
     }
 }
 
-/**
- * Additional event(s) for `PopupMenu`.
- */
+/** Additional event(s) for `PopupMenu`. */
 export interface PopupMenuEventMap extends HTMLElementEventMap {
     /**
      * A popup menu is to be shown. Event handlers can prevent showing the popup menu by calling
