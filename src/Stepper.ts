@@ -125,13 +125,13 @@ export enum StepperAppearance {
  * `Stepper` options. The options are used to initialze the stepper _and_ they can be used to
  * completely re-configure an existing instance of a stepper. All option properties are optional, a
  * missing property will be replaced by its default value (using `new Stepper(steppable, options)`)
- * or by the value already existing in the steppers options (when reconfiguring a stepper instance).
+ * or by the value already existing in the steppers options (when reconfiguring a stepper).
  * @example
  * ```typescript
  * // Get a stepper instance and without showing the 'PageBackward' and 'PageForward' buttons.
  * const stepper = new Stepper(steppable, {
  *   PageBackward: false,
- *   PageForwad: false,
+ *   PageForwad: false
  * })
  *
  * // Re-enable the 'PageBackward' and 'PageForward' buttons, set their titles (tooltips) according
@@ -140,9 +140,9 @@ export enum StepperAppearance {
  * stepper.options({
  *   Appearance: StepperAppearance.HORIZONTAL_ALT,
  *   PageBackward: true,
- *   PageBackwardTitle: `Go back ${stepper.PageSize} entries`;
+ *   PageBackwardTitle: `Go back ${stepper.PageSize} entries`,
  *   PageForward: true,
- *   PageForwardTitle: `Go forwad ${stepper.PageSize} entries`;
+ *   PageForwardTitle: `Go forwad ${stepper.PageSize} entries`
  * })
  * ```
  */

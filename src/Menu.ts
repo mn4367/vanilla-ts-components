@@ -45,7 +45,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      *   (instances of `@vanilla-ts/dom/Text`, phrasing content or a component like, for example, a
      *   labeled checkbox).
      * - For the behaviour of the setter see function `content()`.
-     * @see {@link MenuItem.content()}.
+     * @see {@link MenuItem.content()}
      */
     public get Content(): INodeComponent<Node>[] {
         return this._content.Children;
@@ -109,7 +109,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      *   (instances of `@vanilla-ts/dom/Text`, phrasing content or a component like, for example, a
      *   labeled checkbox).
      * - For the behaviour of the setter see function `content()`.
-     * @see {@link MenuItem.content()}.
+     * @see {@link MenuItem.content()}
      */
     public get Hint(): INodeComponent<Node>[] {
         return this._hint.Children;

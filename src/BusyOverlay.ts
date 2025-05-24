@@ -124,7 +124,7 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
 
     /**
      * Enable/disable using the 'Esc' button to hide the overlay.
-     *  {@link BusyOverlay.allowEscape()}.
+     *  {@link BusyOverlay.allowEscape()}
      */
     public get AllowEscape(): boolean {
         return this._allowEscape;
