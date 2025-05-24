@@ -79,6 +79,8 @@
                 background-image: var(--zoom-fit-height);
             }
         }
+        /* Example for styling a separator component. */
+        > .stepper > .separator,
         /* Index of item. */
         > .item-index {
             flex-grow: 0;
@@ -173,6 +175,10 @@
             > .zoom-fit {
                 flex-direction: row;
             }
+            /* Example for styling a separator component. */
+            > .stepper > .separator {
+                width: 4rem;
+            }
             > .item-index {
                 width: 4.4rem;
             }
@@ -204,6 +210,11 @@
             > .zoom-fit {
                 flex-direction: column;
             }
+            /* Example for styling a separator component. */
+            > .stepper > .separator {
+                height: 4rem;
+                writing-mode: vertical-rl;
+            }
             > .item-index {
                 height: 4.4rem;
                 writing-mode: vertical-rl;
@@ -229,6 +240,10 @@
             border-top-right-radius: 0.75rem;
             border-bottom-right-radius: 0.75rem;
         }
+        /* Example for styling a separator component. */
+        > .stepper > .separator:dir(rtl) {
+            transform: rotate(180deg);
+        }
         > .item-index:dir(rtl) {
             transform: rotate(180deg);
         }
@@ -250,11 +265,19 @@
             border-top-left-radius: 0.75rem;
             border-bottom-left-radius: 0.75rem;
         }
+        /* Example for styling a separator component. */
+        > .stepper > .separator {
+            transform: rotate(180deg);
+        }
         > .item-index {
             transform: rotate(180deg);
         }
         > .zoom-level {
             transform: rotate(180deg);
+        }
+        /* Example for styling a separator component. */
+        > .stepper > .separator:dir(rtl) {
+            transform: rotate(0deg);
         }
         > .item-index:dir(rtl) {
             transform: rotate(0deg);

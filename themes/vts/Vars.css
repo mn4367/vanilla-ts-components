@@ -8,9 +8,14 @@
     /* #endregion */
 
     /* #region Sizes */
-    /* console.log(parseFloat(getComputedStyle(document.documentElement).fontSize));
-       __Note:__ 0.075rem ~ 1 Pixel at a font-size of 10pt.
-       3.52777...mm ~10pt. */
+    /*
+     * - All sizes for this theme are based on a base font size of 10pt.
+     * - With this base font size 1 Pixel corresponds to 0.075rem.
+     * - The value of `--1px` must be adjusted if the base font size is to be changed from `10pt`
+     *   but `--1px` should still result in 1 'real' pixel (for example to `0.0625rem` for a base
+     *   font size of `12pt` or `16px`).
+     */
+    --base-font-size: 10pt;
     --base-size: 1rem;
     --base-size-half: 0.5rem;
     --1px: 0.075rem;

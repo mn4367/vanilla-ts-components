@@ -1,6 +1,6 @@
 html {
     font-family: var(--system-ui);
-    font-size: 10pt;
+    font-size: var(--base-font-size);
     color: var(--font-color);
     box-sizing: border-box;
     /* -webkit-font-smoothing: antialiased; */
