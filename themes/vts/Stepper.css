@@ -15,6 +15,9 @@
     align-items: center;
     justify-content: center;
     > .stepper-button {
+        &.hidden {
+            visibility: hidden;
+        }
         width: 1.5rem;
         height: 1.5rem;
         background-color: transparent;
@@ -118,6 +121,13 @@
         > .backward + .page-forward,
         > .backward + .last {
             margin-block-start: var(--stepper-gap);
+        }
+        /* Example for styling a separator component. */
+        > .separator {
+            writing-mode: vertical-rl;
+            &:dir(rtl) {
+                transform: rotate(180deg);
+            }
         }
     }
     &.vertical-alt {

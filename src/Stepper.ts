@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, IElementComponent } from "@vanilla-ts/core";
 import { Button, Div } from "@vanilla-ts/dom";
 
 
@@ -144,18 +144,44 @@ export enum StepperAppearance {
  *   PageForward: true,
  *   PageForwardTitle: `Go forwad ${stepper.PageSize} entries`
  * })
+ *
+ * // Add a component which displays the current index and count of the steppable object.
+ * const index = new Span(`${stepper.Index + 1} / ${stepper.Count}`);
+ * stepper
+ *   .on("stepped", () => index.Text = `${stepper.Index + 1} / ${stepper.Count}`)
+ *   .options({
+ *     Separator: index
+ *   });
  * ```
  */
 export interface StepperOptions {
     /** Appearance of the stepper. */
     Appearance?: StepperAppearance;
     /**
-     * If `true`, buttons that cannot be used (e.g. the `First` button with `Index === 0`) are
-     * hidden (`visibility: hidden;`) instead of just deactivated.
+     * If `true`, buttons that cannot be used (e.g. the `First` button with `Index === 0`) are not
+     * only deactivated but the CSS class `hidden` is be added. Usually this should make the buttons
+     * invilible (`visibility: hidden`) but they could also be styled differently.
      */
     HideButtons?: boolean;
     /** Timings for a held down pointer/mouse button. */
     // Continuous?: OnHeldDownOptions;
+    /**
+     * A separator component is inserted between the button groups which step backwards and
+     * forwards. Such a component could be used, for example, to display the current index of the
+     * steppable object. When using `Separator` the following rules apply:
+     * 1. If the value is a component, it is inserted and the CSS class `separator` is added to it.
+     * 2. If the value is `null`, the current separator component (if present) is removed from the
+     *    stepper.
+     * 3. If the value is `undefined`, nothing happens. If the stepper already contains a separator
+     *    component, it stays untouched.
+     * 4. If the stepper is disposed of and it contains a separator component, this separator is also
+     *    disposed of.
+     *
+     * The following applies to cases 1 and 2: A previous separator component (if present) is
+     * removed from the stepper and its CSS class `separator` is also removed. But this previous
+     * separator is not disposed of, this must be done elsewhere!
+     */
+    Separator?: IElementComponent<HTMLElement> | null;
     /** Show button 'First'? Default: `true`. */
     First?: boolean;
     /** Title/tooltip for button 'First'. Default: empty string. */
@@ -210,6 +236,24 @@ export class StepEvent extends ACustomComponentEvent<"step", Stepper, {
 }
 
 /**
+ * Custom 'stepped' event for objects implementing `IStepper`.
+ */
+export class SteppedEvent extends ACustomComponentEvent<"stepped", Stepper, {
+    /** The new index/position in the steppable object. */
+    Index: number;
+}> {
+    /**
+     * Create SteppedEvent event.
+     * @param sender The event emitter (always `Stepper`).
+     * @param index The new index of the steppable object.
+     * @param customEventInitDict Optional event properties.
+     */
+    constructor(sender: Stepper, index: number, customEventInitDict: EventInit = DEFAULT_EVENT_INIT_DICT) {
+        super("stepped", sender, { Index: index }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
+/**
  * Additional event(s) for objects implementing `IStepper`.
  */
 export interface StepperEventMap extends HTMLElementEventMap {
@@ -218,7 +262,17 @@ export interface StepperEventMap extends HTMLElementEventMap {
      * prevent changing the index/position by calling `preventDefault()`.
      */
     "step": StepEvent;
+    /**
+     * The stepper has changed the index in the steppable object. This event is purely informative
+     * and can't be canceled.
+     */
+    "stepped": SteppedEvent;
 }
+
+/**
+ * All stepper buttons.
+ */
+export type StepperButtons = [Button, Button, Button, Button, Button, Button];
 
 /**
  * Stepper component with configurable buttons for stepping through an instance of `ISteppable`.
@@ -226,6 +280,7 @@ export interface StepperEventMap extends HTMLElementEventMap {
 export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends AElementComponentWithInternalUI<Div, EventMap> implements IStepper {
     protected steppable: ISteppable;
     protected _options: StepperOptions = {};
+    protected btns: StepperButtons;
     protected btnFirst: Button;
     protected btnPageBackward: Button;
     protected btnBackward: Button;
@@ -274,10 +329,20 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
      * @returns This instance.
      */
     public options(options: StepperOptions) {
+        let separator = this._options.Separator;
+        if (options.Separator !== undefined) {
+            if (options.Separator === null) {
+                this.ui.remove(separator?.removeClass("separator"));
+                separator = undefined;
+            } else {
+                separator = options.Separator;
+            }
+        }
         this._options = {
             /* eslint-disable jsdoc/require-jsdoc */
             Appearance: options.Appearance ?? this._options.Appearance ?? StepperAppearance.HORIZONTAL,
             HideButtons: options.HideButtons ?? this._options.HideButtons ?? false,
+            Separator: separator,
             First: options.First ?? this._options.First ?? true,
             FirstTitle: options.FirstTitle ?? this._options.FirstTitle ?? "",
             PageBackward: options.PageBackward ?? this._options.PageBackward ?? true,
@@ -297,30 +362,33 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
             /* eslint-enable */
         };
         const buttons: Button[] = [];
-        this.ui.remove();
-        this._options.First ? buttons.push(this.btnFirst) : undefined;
+        !this._options.First || buttons.push(this.btnFirst);
         this.btnFirst.Title = this._options.FirstTitle ?? null;
-        this._options.PageBackward ? buttons.push(this.btnPageBackward) : undefined;
+        !this._options.PageBackward || buttons.push(this.btnPageBackward);
         // this.btnBackward.OnHeldDown = this.options.BackwardContinuous ? this.fncBackward : undefined;
         // this.btnBackward.OnHeldDownOptions = this.options.Continuous;
         this.btnPageBackward.Title = this._options.PageBackwardTitle ?? null;
-        this._options.Backward ? buttons.push(this.btnBackward) : undefined;
+        !this._options.Backward || buttons.push(this.btnBackward);
         // this.btnPrevious.OnHeldDown = this.options.PreviousContinuous ? this.fncPrevious : undefined;
         // this.btnPrevious.OnHeldDownOptions = this.options.Continuous;
         this.btnBackward.Title = this._options.BackwardTitle ?? null;
-        this._options.Forward ? buttons.push(this.btnForward) : undefined;
+        !this._options.Forward || buttons.push(this.btnForward);
         // this.btnNext.OnHeldDown = this.options.NextContinuous ? this.fncNext : undefined;
         // this.btnNext.OnHeldDownOptions = this.options.Continuous;
         this.btnForward.Title = this._options.ForwardTitle ?? null;
-        this._options.PageForward ? buttons.push(this.btnPageForward) : undefined;
+        !this._options.PageForward || buttons.push(this.btnPageForward);
         // this.btnForward.OnHeldDown = this.options.ForwardContinuous ? this.fncForward : undefined;
         // this.btnForward.OnHeldDownOptions = this.options.Continuous;
         this.btnPageForward.Title = this._options.PageForwardTitle ?? null;
-        this._options.Last ? buttons.push(this.btnLast) : undefined;
+        !this._options.Last || buttons.push(this.btnLast);
         this.btnLast.Title = this._options.LastTitle ?? null;
-        this.ui.append(...buttons);
-        this.appearance(this._options.Appearance!);
-        this.updateButtons(this.steppable.Index, this.steppable.Count);
+        this.ui.remove()
+            .append(this.btnFirst, this.btnPageBackward, this.btnBackward)
+            .append(this._options.Separator?.addClass("separator"))
+            .append(this.btnForward, this.btnPageForward, this.btnLast);
+        this
+            .appearance(this._options.Appearance!)
+            .updateButtons(this.steppable.Index, this.steppable.Count);
         return this;
     }
 
@@ -423,6 +491,7 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
         }
         this.steppable.Index = newIndex;
         this.updateButtons(this.steppable.Index, this.steppable.Count);
+        this.emit(new SteppedEvent(this, newIndex));
         return this.steppable.Index === newIndex;
     }
 
@@ -432,11 +501,8 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
      * array is also always the same: `First`, `PageBackward`, `Backward`, `Forward`, `PageForward`
      * and `Last`.
      */
-    public get Buttons(): [Button, Button, Button, Button, Button, Button] {
-        return [
-            this.btnFirst, this.btnPageBackward, this.btnBackward,
-            this.btnForward, this.btnPageForward, this.btnLast
-        ];
+    public get Buttons(): StepperButtons {
+        return <StepperButtons>this.btns.slice();
     }
 
     /** @inheritdoc */
@@ -508,6 +574,19 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
         return Math.min(Math.max(index, 0), this.steppable.Count - 1);
     }
 
+    /** @inheritdoc */
+    protected override clearOwner(): this {
+        // All buttons can be mounted or not, so remove and dispose of them manually.
+        this.ui.remove();
+        for (const btn of this.btns) {
+            btn.dispose();
+        }
+        // Also remove and dispose a separator.
+        this._options.Separator?.dispose();
+        super.clearOwner();
+        return this;
+    }
+
     /**
      * Build UI of the component.
      * @returns This instance.
@@ -522,24 +601,23 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
      * @returns This instance.
      */
     protected createButtons(): this {
-        this.btnFirst = new Button()
-            .addClass("first", "stepper-button")
-            .on("click", this.fncFirst);
-        this.btnPageBackward = new Button()
-            .addClass("page-backward", "stepper-button")
-            .on("click", this.fncPageBackward);
-        this.btnBackward = new Button()
-            .addClass("backward", "stepper-button")
-            .on("click", this.fncBackward);
-        this.btnForward = new Button()
-            .addClass("forward", "stepper-button")
-            .on("click", this.fncForward);
-        this.btnPageForward = new Button()
-            .addClass("page-forward", "stepper-button")
-            .on("click", this.fncPageForward);
-        this.btnLast = new Button()
-            .addClass("last", "stepper-button")
-            .on("click", this.fncLast);
+        this.btns = [
+            this.btnFirst = new Button(), this.btnPageBackward = new Button(), this.btnBackward = new Button(),
+            this.btnForward = new Button(), this.btnPageForward = new Button(), this.btnLast = new Button()
+        ];
+        const props: Array<[string, () => boolean]> = [
+            ["first", this.fncFirst],
+            ["page-backward", this.fncPageBackward],
+            ["backward", this.fncBackward],
+            ["forward", this.fncForward],
+            ["page-forward", this.fncPageForward],
+            ["last", this.fncLast]
+        ];
+        for (let i = 0; i < this.btns.length; i++) {
+            this.btns[i]
+                .addClass("stepper-button", props[i][0])
+                .on("click", props[i][1]);
+        }
         return this;
     }
 
@@ -551,33 +629,35 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
     protected updateButtons(index: number, count: number): void {
         const isAtBegin = (count <= 0) || (index <= 0);
         const isAtEnd = (count <= 0) || (index >= count - 1);
-        if (this._options.HideButtons) {
-            this.btnFirst.hidden(isAtBegin);
-            this.btnPageBackward.hidden(isAtBegin);
-            this.btnBackward.hidden(isAtBegin);
-            this.btnForward.hidden(isAtEnd);
-            this.btnPageForward.hidden(isAtEnd);
-            this.btnLast.hidden(isAtEnd);
-        } else {
-            this.btnFirst
-                .disabled(isAtBegin)
-                .title(isAtBegin ? "" : this._options.FirstTitle || "");
-            this.btnPageBackward
-                .disabled(isAtBegin)
-                .title(isAtBegin ? "" : this._options.PageBackwardTitle || "");
-            this.btnBackward
-                .disabled(isAtBegin)
-                .title(isAtBegin ? "" : this._options.BackwardTitle || "");
-            this.btnForward
-                .disabled(isAtEnd)
-                .title(isAtEnd ? "" : this._options.ForwardTitle || "");
-            this.btnPageForward
-                .disabled(isAtEnd)
-                .title(isAtEnd ? "" : this._options.PageForwardTitle || "");
-            this.btnLast
-                .disabled(isAtEnd)
-                .title(isAtEnd ? "" : this._options.LastTitle || "");
+        const cssHideAtBegin = this._options.HideButtons && isAtBegin ? "hidden" : "";
+        const cssHideAtEnd = this._options.HideButtons && isAtEnd ? "hidden" : "";
+        for (const btn of this.btns) {
+            btn.removeClass("hidden");
         }
+        this.btnFirst
+            .disabled(isAtBegin)
+            .addClass(cssHideAtBegin)
+            .title(isAtBegin ? "" : this._options.FirstTitle || "");
+        this.btnPageBackward
+            .disabled(isAtBegin)
+            .addClass(cssHideAtBegin)
+            .title(isAtBegin ? "" : this._options.PageBackwardTitle || "");
+        this.btnBackward
+            .disabled(isAtBegin)
+            .addClass(cssHideAtBegin)
+            .title(isAtBegin ? "" : this._options.BackwardTitle || "");
+        this.btnForward
+            .disabled(isAtEnd)
+            .addClass(cssHideAtEnd)
+            .title(isAtEnd ? "" : this._options.ForwardTitle || "");
+        this.btnPageForward
+            .disabled(isAtEnd)
+            .addClass(cssHideAtEnd)
+            .title(isAtEnd ? "" : this._options.PageForwardTitle || "");
+        this.btnLast
+            .disabled(isAtEnd)
+            .addClass(cssHideAtEnd)
+            .title(isAtEnd ? "" : this._options.LastTitle || "");
     }
 }
 
