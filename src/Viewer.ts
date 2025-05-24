@@ -279,7 +279,7 @@ export interface ViewerEventMap extends HTMLElementEventMap {
     /**
      * The viewer has changed its index. This event is purely informative and can't be canceled.
      */
-    "viewer-stepped": ViewerStepEvent;
+    "viewer-stepped": ViewerSteppedEvent;
 }
 
 /** A transparent GIF image with one pixel. */
@@ -1633,7 +1633,16 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this.toolBar = new Div()
             .addClass("toolbar");
         this.stepper = new Stepper(this)
-            .addClass(Stepper.DefaultCSSClassName);
+            .addClass(Stepper.DefaultCSSClassName)
+            .on("step", (ev) => {
+                if (!this.dispatch(new ViewerStepEvent(this, ev.$.Index))) {
+                    ev.preventDefault();
+                    ev.stopImmediatePropagation();
+                }
+            })
+            .on("stepped", (ev) => {
+                this.emit(new ViewerSteppedEvent(this, ev.$.Index));
+            });
         this.zoomInOut = new Div()
             .addClass("zoom-in-out")
             .append(
@@ -1697,7 +1706,9 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         // These components can be mounted elsewhere so that they have to be disposed of manually.
         for (const component of [this.stepper, this.zoomInOut, this.zoomFit, this.itemIndex, this.zoomLevel, this.zoomRange]) {
             component.Parent?.remove(component);
-            component.dispose();
+            // Check the `Disposed` status: e.g. `this.itemIndex` could have been misused as a
+            // separator for the splitter and would therefore already have been disposed of.
+            component.Disposed || component.dispose();
         }
         this.toolBar.dispose();
         this.ui.remove(this.itemContainer);
