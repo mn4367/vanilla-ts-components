@@ -22,7 +22,7 @@ export class LabeledSelect<EventMap extends HTMLElementEventMap = HTMLElementEve
      *   the select element, if `labelAction` is `false`, clicking on the label does nothing.
      */
     constructor(labelPhrase: Phrase | Phrase[], values: ISelectValues[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
-        super(labelPhrase, lblPosition ?? LabelPosition.START, lblAlignment);
+        super(labelPhrase, lblPosition, lblAlignment);
         this.initialize(undefined, values, id, value, name, labelAction);
     }
 

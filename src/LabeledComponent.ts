@@ -41,7 +41,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      */
-    constructor(labelPhrase: Phrase | Phrase[], lblPosition: LabelPosition = LabelPosition.TOP, lblAlignment: LabelAlignment = LabelAlignment.START) {
+    constructor(labelPhrase: Phrase | Phrase[], lblPosition: LabelPosition = LabelPosition.START, lblAlignment: LabelAlignment = LabelAlignment.START) {
         super();
         this.#labelPhrase = labelPhrase;
         this.lblPosition = lblPosition;

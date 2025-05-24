@@ -24,7 +24,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * @param lblAlignment The alignment of the label.
      */
     constructor(labelPhrase: Phrase | Phrase[], paragraphPhrase: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
-        super(labelPhrase, lblPosition ?? LabelPosition.START, lblAlignment);
+        super(labelPhrase, lblPosition, lblAlignment);
         this.initialize();
         Array.isArray(paragraphPhrase)
             ? this.component.phrase(...paragraphPhrase)

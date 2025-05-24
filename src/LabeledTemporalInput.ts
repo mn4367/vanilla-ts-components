@@ -24,7 +24,7 @@ export class LabeledTemporalInput<EventMap extends HTMLElementEventMap = HTMLEle
      *   nothing.
      */
     constructor(labelPhrase: Phrase | Phrase[], temporalType: TemporalType, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
-        super(labelPhrase, id, lblPosition ?? LabelPosition.START, lblAlignment, labelAction);
+        super(labelPhrase, id, lblPosition, lblAlignment, labelAction);
         this.ui.append(this.component = new TemporalInput(temporalType, id, value, name));
     }
 

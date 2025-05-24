@@ -16,7 +16,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @param lblAlignment The alignment of the label.
      */
     constructor(href: string, labelPhrase: Phrase | Phrase[], anchorPhrase?: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
-        super(labelPhrase, lblPosition ?? LabelPosition.START, lblAlignment);
+        super(labelPhrase, lblPosition, lblAlignment);
         this.initialize(undefined, href);
         Array.isArray(anchorPhrase)
             ? this.component.phrase(...anchorPhrase)
