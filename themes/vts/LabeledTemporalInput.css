@@ -3,7 +3,7 @@
     /* #region common */
     display: flex;
     position: relative;
-    padding-block: 0.25rem;
+    padding-block: var(--2px);
     > label,
     > input {
         margin: 0;
