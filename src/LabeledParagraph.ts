@@ -61,13 +61,13 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
 
     /** @inheritdoc */
     protected override buildUI(): this {
-        (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? this.ui = new Div()
+        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
+            ? new Div()
                 .append(
                     this.label = new Span(),
                     this.component = new P()
                 )
-            : this.ui = new Div()
+            : new Div()
                 .append(
                     this.component = new P(),
                     this.label = new Span()

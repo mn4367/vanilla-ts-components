@@ -74,13 +74,13 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
                 : undefined
         );
         this.component = new TextArea(text, rows, cols, id, name);
-        (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? this.ui = new Div()
+        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
+            ? new Div()
                 .append(
                     this.label,
                     this.component
                 )
-            : this.ui = new Div()
+            : new Div()
                 .append(
                     this.component,
                     this.label

@@ -40,7 +40,6 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
                 ev.stopImmediatePropagation();
                 this.emit(new CheckedEvent("checked", this, { Checked: ev.$.Checked })); // eslint-disable-line jsdoc/require-jsdoc
             });
-
         (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
             ? this.ui.append(this.component)
             : this.ui.insert(0, this.component);

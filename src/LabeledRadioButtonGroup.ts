@@ -92,13 +92,13 @@ export class LabeledRadioButtonGroup<EventMap extends RadioButtonGroupEventMap =
     protected override buildUI(radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment): this {
         this.component = new RadioButtonGroup(radioButtons, name, alignment)
             .addClass(RadioButtonGroup.DefaultCSSClassName);
-        (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? this.ui = new Div()
+        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
+            ? new Div()
                 .append(
                     this.label = new Span(),
                     this.component
                 )
-            : this.ui = new Div()
+            : new Div()
                 .append(
                     this.component,
                     this.label = new Span()

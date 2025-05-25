@@ -74,13 +74,13 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
 
     /** @inheritdoc */
     protected override buildUI(href: string): this {
-        (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? this.ui = new Div()
+        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
+            ? new Div()
                 .append(
                     this.label = new Span(),
                     this.component = new A(href)
                 )
-            : this.ui = new Div()
+            : new Div()
                 .append(
                     this.component = new A(href),
                     this.label = new Span()

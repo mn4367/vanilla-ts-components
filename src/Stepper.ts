@@ -568,28 +568,6 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
         return Math.min(Math.max(index, 0), this.steppable.Count - 1);
     }
 
-    /** @inheritdoc */
-    protected override clearOwner(): this {
-        // All buttons can be mounted or not, so remove and dispose of them manually.
-        this.ui.remove();
-        for (const btn of this.btns) {
-            btn.dispose();
-        }
-        // Also remove and dispose a separator.
-        this._options.Separator?.dispose();
-        super.clearOwner();
-        return this;
-    }
-
-    /**
-     * Build UI of the component.
-     * @returns This instance.
-     */
-    protected buildUI() {
-        this.ui = new Div();
-        return this;
-    }
-
     /**
      * Create all stepper buttons.
      * @returns This instance.
@@ -652,6 +630,28 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
             .disabled(isAtEnd)
             .addClass(cssHideAtEnd)
             .title(isAtEnd ? "" : this._options.LastTitle || "");
+    }
+
+    /** @inheritdoc */
+    protected override clearOwner(): this {
+        // All buttons can be mounted or not, so remove and dispose of them manually.
+        this.ui.remove();
+        for (const btn of this.btns) {
+            btn.dispose();
+        }
+        // Also remove and dispose a separator.
+        this._options.Separator?.dispose();
+        super.clearOwner();
+        return this;
+    }
+
+    /**
+     * Build UI of the component.
+     * @returns This instance.
+     */
+    protected buildUI() {
+        this.ui = new Div();
+        return this;
     }
 }
 
