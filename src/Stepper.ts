@@ -124,8 +124,9 @@ export enum StepperAppearance {
 /**
  * `Stepper` options. The options are used to initialze the stepper _and_ they can be used to
  * completely re-configure an existing instance of a stepper. All option properties are optional, a
- * missing property will be replaced by its default value (using `new Stepper(steppable, options)`)
- * or by the value already existing in the steppers options (when reconfiguring a stepper).
+ * missing property will be replaced by its default value (when using
+ * `new Stepper(steppable, options)`) or by the value already existing in the steppers options (when
+ * reconfiguring a stepper with `someStepper.options({...})`).
  * @example
  * ```typescript
  * // Get a stepper instance and without showing the 'PageBackward' and 'PageForward' buttons.
@@ -355,31 +356,32 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
             LastTitle: options.LastTitle ?? this._options.LastTitle ?? ""
             /* eslint-enable */
         };
-        const buttons: Button[] = [];
-        !this._options.First || buttons.push(this.btnFirst);
+        const backwardButtons: Button[] = [];
+        const forwardButtons: Button[] = [];
+        !this._options.First || backwardButtons.push(this.btnFirst);
         this.btnFirst.Title = this._options.FirstTitle ?? null;
-        !this._options.PageBackward || buttons.push(this.btnPageBackward);
+        !this._options.PageBackward || backwardButtons.push(this.btnPageBackward);
         // this.btnBackward.OnHeldDown = this.options.BackwardContinuous ? this.fncBackward : undefined;
         // this.btnBackward.OnHeldDownOptions = this.options.Continuous;
         this.btnPageBackward.Title = this._options.PageBackwardTitle ?? null;
-        !this._options.Backward || buttons.push(this.btnBackward);
+        !this._options.Backward || backwardButtons.push(this.btnBackward);
         // this.btnPrevious.OnHeldDown = this.options.PreviousContinuous ? this.fncPrevious : undefined;
         // this.btnPrevious.OnHeldDownOptions = this.options.Continuous;
         this.btnBackward.Title = this._options.BackwardTitle ?? null;
-        !this._options.Forward || buttons.push(this.btnForward);
+        !this._options.Forward || forwardButtons.push(this.btnForward);
         // this.btnNext.OnHeldDown = this.options.NextContinuous ? this.fncNext : undefined;
         // this.btnNext.OnHeldDownOptions = this.options.Continuous;
         this.btnForward.Title = this._options.ForwardTitle ?? null;
-        !this._options.PageForward || buttons.push(this.btnPageForward);
+        !this._options.PageForward || forwardButtons.push(this.btnPageForward);
         // this.btnForward.OnHeldDown = this.options.ForwardContinuous ? this.fncForward : undefined;
         // this.btnForward.OnHeldDownOptions = this.options.Continuous;
         this.btnPageForward.Title = this._options.PageForwardTitle ?? null;
-        !this._options.Last || buttons.push(this.btnLast);
+        !this._options.Last || forwardButtons.push(this.btnLast);
         this.btnLast.Title = this._options.LastTitle ?? null;
         this.ui.remove()
-            .append(this.btnFirst, this.btnPageBackward, this.btnBackward)
+            .append(...backwardButtons)
             .append(this._options.Separator?.addClass("separator"))
-            .append(this.btnForward, this.btnPageForward, this.btnLast);
+            .append(...forwardButtons);
         this
             .appearance(this._options.Appearance!)
             .updateButtons(this.steppable.Index, this.steppable.Count);
