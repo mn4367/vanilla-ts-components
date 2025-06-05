@@ -952,8 +952,8 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
     }
 }
 
-/** Augment class definition with `IChildren` (see `static`). */
-export interface Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { }
+// Augment class definition with `IChildren` (see `static`).
+export interface Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
  * Factory for Tab components.

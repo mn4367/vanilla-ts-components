@@ -529,8 +529,8 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 }
 
-/** Augment class definition with `IChildren` (see `static`). */
-export interface Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AElementComponentWithInternalUI<DOMDialog, EventMap>, AChildren<HTMLElement, EventMap> { }
+// Augment class definition with `IChildren` (see `static`).
+export interface Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AElementComponentWithInternalUI<DOMDialog, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
  * Factory for Dialog components.

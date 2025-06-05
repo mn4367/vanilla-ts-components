@@ -385,8 +385,8 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
     }
 }
 
-/** Augment class definition with `IChildren` (see `static`). */
-export interface DisclosureContainer<EventMap extends DisclosureContainerEventMap = DisclosureContainerEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { }
+// Augment class definition with `IChildren` (see `static`).
+export interface DisclosureContainer<EventMap extends DisclosureContainerEventMap = DisclosureContainerEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
  * Factory for DisclosureContainer components.

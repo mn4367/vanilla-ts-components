@@ -81,8 +81,8 @@ export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElement
     }
 }
 
-/** Augment class definition with `IChildren` (see `static`). */
-export interface LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, Div, EventMap>, AChildren<HTMLElement, EventMap> { }
+// Augment class definition with `IChildren` (see `static`).
+export interface LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
  * Factory for LabeledContainer components.

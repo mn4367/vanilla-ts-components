@@ -879,8 +879,8 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
     }
 }
 
-/** Augment class definition with `IChildren` (see `static`). */
-export interface ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { }
+// Augment class definition with `IChildren` (see `static`).
+export interface ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
  * Factory for ScrollContainer components.
