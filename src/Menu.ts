@@ -39,12 +39,13 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * Get/set the content of the menu item.\
      * __Notes:__
      * - The getter returns a _copy_ of the internal array of content items.
-     * - The setter replaces _and_ disposes of _all_ content items currently present in this menu
-     *   item (the hint remains untouched)!
+     * - The setter replaces _and_ disposes of _all_ content currently present in this menu item
+     *   (the hint remains untouched)!
      * - The return type of the getter is very general since the content can be almost anything
      *   (instances of `@vanilla-ts/dom/Text`, phrasing content or a component like, for example, a
      *   labeled checkbox).
-     * - For the behaviour of the setter see function `content()`.
+     * - For the further behaviour of this setter see function `content()`.
+     * @see {@link MenuItem.Recontent}
      * @see {@link MenuItem.content()}
      */
     public get Content(): INodeComponent<Node>[] {
@@ -52,15 +53,28 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
     }
     /** @inheritdoc */
     public set Content(content: Phrase | Phrase[] | IElementComponent<HTMLElement>) {
-        this.content(content);
+        this.internalContent(content, false);
+    }
+
+    /**
+     * Set the content of the menu item.\
+     * __Notes:__
+     * - This setter first removes all content currently present in this menu item and then adds the
+     *   new content. The removed content must be managed/cleared/disposed of by the consumer!
+     * - For the further behaviour of this setter see function `recontent()`.
+     * @see {@link MenuItem.Content}
+     * @see {@link MenuItem.recontent()}
+     */
+    public set Recontent(content: Phrase | Phrase[] | IElementComponent<HTMLElement>) {
+        this.internalContent(content, true);
     }
 
     /**
      * Set the content of the menu item.
      * @param content The content of the menu item.\
      * __Notes:__
-     * - Setting new content (items) replaces _and_ disposes of _all_ content items currently
-     *   present in this menu item (the hint remains untouched)!
+     * - Setting new content replaces _and_ disposes of _all_ content currently present in this menu
+     *   item (the hint remains untouched)!
      * - If `content` is a string, an instance of `@vanilla-ts/dom/Text` from that string will be
      *   created and appended.
      * - If `content` is an array with a length of `1` and `content[0]` is a string, an instance of
@@ -68,11 +82,46 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * - If `content` is an array with a length greater than `0`, then an instance of
      *   `@vanilla-ts/dom/Text` is created and appended for each element of `content` that is a
      *   string. All other elements of the array `content` are added unchanged.
+     * @see {@link MenuItem.recontent()}
      * @returns This instance.
      */
     public content(content: Phrase | Phrase[] | IElementComponent<HTMLElement>): this {
+        return this.internalContent(content, false);
+    }
+
+    /**
+     * Set the content of the menu item.
+     * @param content The content of the menu item.\
+     * __Notes:__
+     * - Setting new content first removes all content currently present in this menu item and then
+     *   adds the new content. The removed content must be managed/cleared/disposed of by the
+     *   consumer (the hint remains untouched)!
+     * - If `content` is a string, an instance of `@vanilla-ts/dom/Text` from that string will be
+     *   created and appended.
+     * - If `content` is an array with a length of `1` and `content[0]` is a string, an instance of
+     *   `@vanilla-ts/dom/Text` from that string will be created and appended.
+     * - If `content` is an array with a length greater than `0`, then an instance of
+     *   `@vanilla-ts/dom/Text` is created and appended for each element of `content` that is a
+     *   string. All other elements of the array `content` are added unchanged.
+     * @see {@link MenuItem.content()}
+     * @returns This instance.
+     */
+    public recontent(content: Phrase | Phrase[] | IElementComponent<HTMLElement>): this {
+        return this.internalContent(content, true);
+    }
+
+    /**
+     * Called internally by `Content`/`Recontent`/`content()`/`content()`.
+     * @param content The menu item content to be set.
+     * @param rephrase `true`, if the previous menu item content is disposed of, `false` if the
+     * previous menu item content remains untouched.
+     * @returns This instance.
+     */
+    public internalContent(content: Phrase | Phrase[] | IElementComponent<HTMLElement>, rephrase: boolean): this {
         this.removeClass("text", "phrase", "component");
-        this._content.clear();
+        rephrase
+            ? this._content.remove()
+            : this._content.clear();
         if (typeof content === "string") {
             this._content.phrase(new Text(content));
             this.addClass("text");
@@ -102,30 +151,45 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
     /**
      * Get/set the content of the menu item hint.\
      * __Notes:__
-     * - The getter returns a _copy_ of the internal array of the hint items.
-     * - The setter replaces _and_ disposes of _all_ hint items currently present in this menu item
-     *   hint!
+     * - The getter returns a _copy_ of the internal array of the hint contents.
+     * - The setter replaces _and_ disposes of _all_ hint content currently present in this menu
+     *   item hint!
      * - The return type of the getter is very general since the hint can be almost anything
      *   (instances of `@vanilla-ts/dom/Text`, phrasing content or a component like, for example, a
      *   labeled checkbox).
-     * - For the behaviour of the setter see function `content()`.
-     * @see {@link MenuItem.content()}
+     * - For the further behaviour of this setter see function `hint()`.
+     * @see {@link MenuItem.Rehint}
+     * @see {@link MenuItem.hint()}
      */
     public get Hint(): INodeComponent<Node>[] {
         return this._hint.Children;
     }
     /** @inheritdoc */
     public set Hint(hint: Phrase | Phrase[] | IElementComponent<HTMLElement> | undefined) {
-        this.hint(hint);
+        this.internalHint(hint, false);
+    }
+
+    /**
+     * Set the content of the menu item hint.\
+     * __Notes:__
+     * - This setter first removes all hint content currently present in this menu item hint and
+     *   then adds the new hint content. The removed hint content must be managed/cleared/disposed
+     *   of by the consumer!
+     * - For the further behaviour of this setter see function `rehint()`.
+     * @see {@link MenuItem.Hint}
+     * @see {@link MenuItem.rehint()}
+     */
+    public set Rehint(hint: Phrase | Phrase[] | IElementComponent<HTMLElement> | undefined) {
+        this.internalHint(hint, true);
     }
 
     /**
      * Set the content of the menu item hint.
-     * @param hint The hint of the menu item.\
+     * @param hint The hint content of the menu item.\
      * __Notes:__
-     * - Setting new hint (items) replaces _and_ disposes of _all_ hint items currently present in
-     *   this menu item hint!
-     * - If `hint` is undefined, the current hint items are removed _and_ disposed of!
+     * - Setting new hint content replaces _and_ disposes of _all_ hint content currently present
+     *   in this menu item hint!
+     * - If `hint` is undefined, the current hint content is removed _and_ disposed of!
      * - If `hint` is a string, an instance of `@vanilla-ts/dom/Text` from that string will be
      *   created and appended.
      * - If `hint` is an array with a length of `1` and `hint[0]` is a string, an instance of
@@ -133,10 +197,47 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * - If `hint` is an array with a length greater than `0`, then an instance of
      *   `@vanilla-ts/dom/Text` is created and appended for each element of `hint` that is a string.
      *   All other elements of the array `hint` are added unchanged.
+     * @see {@link MenuItem.rehint()}
      * @returns This instance.
      */
     public hint(hint?: Phrase | Phrase[] | IElementComponent<HTMLElement>): this {
-        this._hint.clear();
+        return this.internalHint(hint, false);
+    }
+
+    /**
+     * Set the content of the menu item hint.
+     * @param hint The hint content of the menu item.\
+     * __Notes:__
+     * - Setting new hint content first removes all hint content currently present in this menu item
+     *   hint and then adds the new content. The removed hint content must be
+     *   managed/cleared/disposed of by the consumer!
+     * - If `hint` is undefined, all current hint content is removed. The removed hint content must
+     *   be managed/cleared/disposed of by the consumer!
+     * - If `hint` is a string, an instance of `@vanilla-ts/dom/Text` from that string will be
+     *   created and appended.
+     * - If `hint` is an array with a length of `1` and `hint[0]` is a string, an instance of
+     *   `@vanilla-ts/dom/Text` from that string will be created and appended.
+     * - If `hint` is an array with a length greater than `0`, then an instance of
+     *   `@vanilla-ts/dom/Text` is created and appended for each element of `hint` that is a string.
+     *   All other elements of the array `hint` are added unchanged.
+     * @see {@link MenuItem.hint()}
+     * @returns This instance.
+     */
+    public rehint(hint?: Phrase | Phrase[] | IElementComponent<HTMLElement>): this {
+        return this.internalHint(hint, true);
+    }
+
+    /**
+     * Called internally by `Hint`/`Rehint`/`hint()`/`rehint()`.
+     * @param hint The hint content to be set.
+     * @param rephrase `true`, if the previous hint content is disposed of, `false` if the previous
+     * hint content remains untouched.
+     * @returns This instance.
+     */
+    protected internalHint(hint: Phrase | Phrase[] | IElementComponent<HTMLElement> | undefined, rephrase: boolean): this {
+        rephrase
+            ? this._hint.remove()
+            : this._hint.clear();
         if (hint === undefined) {
             return this;
         }

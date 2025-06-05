@@ -59,6 +59,26 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
         return this;
     }
 
+    /**
+     * Set the phrasing content of the components paragraph. __The setter `Rephrase` here is an
+     * alias for the property `this.Paragraph.Rephrase`.__
+     */
+    public set Rephrase(phrase: Phrase | Phrase[]) {
+        this.component.Rephrase = phrase;
+    }
+
+    /**
+     * Set the phrasing content of the the components paragraph. __The function `rephrase()` here is
+     * an alias for the function `this.Paragraph.rephrase()` but it returns _this_ instance instead
+     * of the 'Paragraph' instance.__
+     * @param phrase The phrasing content to be set for the paragraph.
+     * @returns This instance.
+     */
+    public rephrase(...phrase: Phrase[]): this {
+        this.component.rephrase(...phrase);
+        return this;
+    }
+
     /** @inheritdoc */
     protected override buildUI(): this {
         this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)

@@ -96,6 +96,26 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
     }
 
     /**
+     * Set the phrasing content of the components label. __The setter `LabelRephrase` here is an
+     * alias for the property `this.Label.Rephrase`.__
+     */
+    public set LabelRephrase(phrase: Phrase | Phrases) {
+        this.label.Rephrase = phrase;
+    }
+
+    /**
+     * Set the phrasing content of the the components label. __The function `labelRephrase()` here
+     * is an alias for the function `this.Label.rephrase()` but it returns _this_ instance instead
+     * of the 'Label' instance.__
+     * @param phrase The phrasing content to be set for the label.
+     * @returns This instance.
+     */
+    public labelRephrase(...phrase: Phrase[]): this {
+        this.label.rephrase(...phrase);
+        return this;
+    }
+
+    /**
      * Get/set the position of the label.
      */
     public get LabelPosition(): LabelPosition {

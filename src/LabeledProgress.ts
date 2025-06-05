@@ -63,6 +63,26 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
     }
 
     /**
+     * Set the phrasing content of the components progress element. __The setter `Rephrase` here is
+     * an alias for the property `this.Progress.Rephrase`.__
+     */
+    public set Rephrase(phrase: Phrase | Phrase[]) {
+        this.component.Rephrase = phrase;
+    }
+
+    /**
+     * Set the phrasing content of the the components progress element. __The function `rephrase()`
+     * here is an alias for the function `this.Progress.rephrase()` but it returns _this_ instance
+     * instead of the 'Progress' instance.__
+     * @param phrase The phrasing content to be set for the progress element.
+     * @returns This instance.
+     */
+    public rephrase(...phrase: Phrase[]): this {
+        this.component.rephrase(...phrase);
+        return this;
+    }
+
+    /**
      * Get/set the indeterminate state of the progress element (re-exported for easier direct
      * access).
      */

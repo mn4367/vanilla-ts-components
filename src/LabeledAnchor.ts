@@ -72,6 +72,26 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
         return this;
     }
 
+    /**
+     * Set the phrasing content of the components anchor. __The setter `Rephrase` here is an alias
+     * for the property `this.Anchor.Rephrase`.__
+     */
+    public set Rephrase(phrase: Phrase | Phrase[]) {
+        this.component.Rephrase = phrase;
+    }
+
+    /**
+     * Set the phrasing content of the the components anchor. __The function `rephrase()` here is an
+     * alias for the function `this.Anchor.rephrase()` but it returns _this_ instance instead of the
+     * 'Anchor' instance.__
+     * @param phrase The phrasing content to be set for the anchor.
+     * @returns This instance.
+     */
+    public rephrase(...phrase: Phrase[]): this {
+        this.component.rephrase(...phrase);
+        return this;
+    }
+
     /** @inheritdoc */
     protected override buildUI(href: string): this {
         this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
