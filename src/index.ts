@@ -1,6 +1,7 @@
 export * from "./BusyOverlay.js";
 export * from "./Dialog.js";
 export * from "./DisclosureContainer.js";
+export * from "./IconButton.js";
 export * from "./LabeledAnchor.js";
 export * from "./LabeledCheckbox.js";
 export * from "./LabeledComponent.js";

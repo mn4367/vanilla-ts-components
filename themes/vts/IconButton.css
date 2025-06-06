@@ -1,0 +1,46 @@
+/* The styling here is very generic and only handles the basic layout. */
+.icon-button,
+.vts-icon-button {
+    display: flex;
+    align-items: center;
+    > .start:empty,
+    > .phrase:empty,
+    > .end:empty {
+        display: none;
+    }
+    &.horizontal {
+        flex-direction: row;
+        > .start:has(+ .phrase:not(:empty)) {
+            margin-inline-end: var(--icon-button-margin);
+            /* Example for using a background image and hiding the text content
+             * if no icon font is used.
+             */
+            /*
+            width: 1rem;
+            height: 1rem;
+            font-size: 0;
+            color: transparent;
+            */
+            /* This background image then would have to be defined elsewhere. */
+            /* background-image: ...; */
+        }
+        > .phrase:not(:empty) + .end {
+            margin-inline-start: var(--icon-button-margin);
+        }
+        > .start:not(:empty) + .phrase:empty + .end:not(:empty) {
+            margin-inline-start: var(--icon-button-margin);
+        }
+    }
+    &.vertical {
+        flex-direction: column;
+        > .start:has(+ .phrase:not(:empty)) {
+            margin-block-end: var(--icon-button-margin);
+        }
+        > .phrase:not(:empty) + .end {
+            margin-block-start: var(--icon-button-margin);
+        }
+        > .start:not(:empty) + .phrase:empty + .end:not(:empty) {
+            margin-block-start: var(--icon-button-margin);
+        }
+    }
+}

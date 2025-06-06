@@ -94,6 +94,8 @@
     --scroll-bar-border-color: hsla(0 0% 43% / 0.2);
     --scroll-bar-border: var(--1px) solid var(--scroll-bar-border-color);
     --scroll-bar-thumb-color: hsla(0 0% 43% / 0.8);
+    /* IconButton */
+    --icon-button-margin: var(--base-size-half);
     /* #endregion */
 
     /* #region Images */

@@ -11,7 +11,6 @@
     opacity: 0;
     animation: busy-overlay-visibility 200ms forwards;
     animation-delay: 0ms;
-    cursor: pointer;
     &::backdrop {
         background: transparent;
     }
