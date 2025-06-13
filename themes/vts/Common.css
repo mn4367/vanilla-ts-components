@@ -26,6 +26,10 @@ html {
 }
 button {
     color: var(--font-color);
+    &:active {
+        transform: scale(0.95);
+        transition: 100ms ease-in-out;
+    }
 }
 input,
 select,

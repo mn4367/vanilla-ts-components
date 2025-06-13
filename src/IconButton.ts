@@ -3,6 +3,31 @@ import { Button, Span } from "@vanilla-ts/dom";
 
 
 /**
+ * Options for an icon button. The options are used to initialze the icon button _and_ they can be
+ * used to completely re-configure an existing instance of an icon button. All option properties are
+ * optional, a missing property will be replaced by its default value (when using
+ * `new IconButton(options)`) or by the value already existing in the icon buttons options (when
+ * reconfiguring an icon button with `someButton.options({...})`).
+ * @see {@link IconButton}
+ */
+export type IconButtonOptions = {
+    /** Icon for the logical start icon element of the button. Default: `null`. */
+    IconStart?: NullableString;
+    /** Caption for the button. Default: []. */
+    Caption?: Phrase[];
+    /** Icon for the logical end icon element of the button. Default: `null`. */
+    IconEnd?: NullableString;
+    /** Title (tooltip) for the button. Default: `null`. */
+    Title?: NullableString;
+    /**
+     * Alignment of the three inner button parts. `true` for a horizontal alignment, `false` for a
+     * vertical alignment. The order of the parts is always the same, `Horizontal` only sets a CSS
+     * marker class. Default: `true`.
+     */
+    Horizontal?: boolean;
+};
+
+/**
  * IconButton component to display buttons with icons and/or text. The component consists of three
  * inner parts:
  * - A `Span` component at the logical start side of the button (on the left side in 'ltr'
@@ -12,133 +37,132 @@ import { Button, Span } from "@vanilla-ts/dom";
  *   direction, otherwise on left side).
  *
  * The intended use of this component is that the icons (part one and three) are styled by
- * background images or with an icon font like 'Material Icons'. In both cases the properties and
- * functions `IconStart`/`iconStart()` and `IconEnd`/`iconEnd()` are used to set the respective
- * identifier for the icon, so styling should be easy (see the description of both
- * properties/functions).
+ * background images or with an icon font like 'Material Icons'. In both cases the icon button
+ * options are used to set the respective identifier for the icon, so styling should be easy. For
+ * both icon spans (part one and three) the following rules apply:
+ * - If the value of `IconStart`/`IconEnd` is an empty string or null, the current text content and
+ *   the class name of the `Span` component are removed.
+ * - If the value of `IconStart`/`IconEnd` begins with `-` (minus), the current text content of the
+ *   `Span` component is removed and its class name is set to `<value>.substring(1)`, e.g.
+ *   `-some-class` results in the class name `some-class`.
  *
- * __Notes:__
+ * __Further notes:__
+ * - Any component in the array `Caption` of an icon button options object will be disposed of if
+ *   the icon button is disposed of.
  * - The properties/functions `Phrase`/`Rephrase`/`phrase()`/`rephrase()` only affect the span
- * component containing the phrasing content of the button (part two). See the corresponding
- * properties and functions in `IElementWithChildrenComponent` in `@vanilla-ts/core`.
+ *   component containing the phrasing content of the button (part two). See the corresponding
+ *   properties and functions in `IElementWithChildrenComponent` in `@vanilla-ts/core`.
  * - The styling in `themes/vts/IconButton.css` is very generic and only handles the basic layout.
+ * @see {@link IconButtonOptions}
  */
 export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Button, EventMap> {
-    protected _phrase: Span;
-    protected _iconStart: Span;
-    protected _iconEnd: Span;
+    // protected _options: IconButtonOptions = { IconStart: null, Caption: [], IconEnd: null, Title: null, Horizontal: true }; // eslint-disable-line jsdoc/require-jsdoc
+    protected _options: IconButtonOptions = {}; // eslint-disable-line jsdoc/require-jsdoc
+    protected btnPhrase: Span;
+    protected spanStart: Span;
+    protected spanEnd: Span;
+
+    /**
+     * Utility function that merges icon button options into existing icon button options. The
+     * result contains always _all_ possible members of `IconButtonOptions`. The following rules
+     * apply:
+     * - A property of `from` that is not equal to `undefined` will replace/create the respective
+     * property in `to`.
+     * - A property that does exist in `to` but not in `from` remains untouched.
+     * - A property that doesn't exist in `from` nor `to`  will be set to its default value in `to`.
+     * @param from An object with icon button options that are to be merged into existing options.
+     * If `from` is `undefined` or an empty object, `to` will remain untouched, except for missing
+     * properties in `to` which will be set to their default values.
+     * @param to An object into which the properties from the object `from` are to be merged. If
+     * `to` is `undefined`, a _new_ object is returned, otherwise `to` is retained and updated with
+     * the properties from the object `from`.
+     * @returns An object with complete icon button options. If `to` is `undefined`, this is a _new_
+     * object, otherwise the modified object `to` is returned.
+     */
+    public static mergeOptionsFromTo(from?: IconButtonOptions, to?: IconButtonOptions): IconButtonOptions {
+        const result = to ?? {};
+        result.IconStart = from?.IconStart !== undefined ? from.IconStart : to?.IconStart ?? null;
+        result.IconEnd = from?.IconEnd !== undefined ? from.IconEnd : to?.IconEnd ?? null;
+        result.Caption = from?.Caption !== undefined ? [...from.Caption] : to?.Caption ?? [];
+        result.Title = from?.Title !== undefined ? from.Title : to?.Title ?? null;
+        result.Horizontal = from?.Horizontal !== undefined ? from.Horizontal : to?.Horizontal ?? true;
+        return result;
+    }
 
     /**
      * Create IconButton component.
-     * @param iconStart The identifier for the icon at the logical start side of the button.
-     * `iconStart` sets the DOM text content and the class name of the logical inner start `Span`
-     * componnent of the button to the value of `iconStart`. If `iconStart` is an empty string or
-     * null, the current text content and the class name are removed.
-     * @param iconEnd Identical to `iconStart` but for the logical end side of the button.
-     * @param phrase The phrasing content for the IconButton component.
-     * @param horizontal `true`, for a horizontal alignment of the three inner button parts, `false`
-     * for a vertical alignment.
+     * @param options The options for the icon button.
+     * @see {@link IconButtonOptions}
      */
-    constructor(iconStart: NullableString, iconEnd: NullableString, phrase: Phrase[], horizontal: boolean = true) {
+    constructor(options?: IconButtonOptions) {
         super();
         super
             .initialize()
-            .iconStart(iconStart)
-            .phrase(...phrase)
-            .iconEnd(iconEnd)
-            .horizontal(horizontal);
+            .options(options ?? {});
     }
 
     /**
-     * Get/set identifier for the icon at the logical start side of the button. The setter sets the
-     * DOM text content and the class name of the logical inner start `Span` componnent of the
-     * button to the value of `v`. If `v` is an empty string or null, the current text content and
-     * the class name are removed.
+     * Get/set the icon button options. The returned object is a _copy_, modifying this copy has no
+     * effect on the corresponding icon button instance.
      */
-    public get IconStart(): NullableString {
-        return this._iconStart.Text;
+    public get Options(): IconButtonOptions {
+        return {
+            ...this._options,
+            Caption: [...this._options.Caption!] // eslint-disable-line jsdoc/require-jsdoc
+        };
     }
     /** @inheritdoc */
-    public set IconStart(v: NullableString) {
-        this.setIcon(v, true);
+    public set Options(v: IconButtonOptions) {
+        this.options(v);
     }
 
     /**
-     * Set the identifier for the icon at the logical start side of the button.
-     * @param v The identifier for the logical inner start `Span` componnent of the button. If `v`
-     * is an empty string or null, the current text content and the class name are removed.
+     * Sets the options for the icon button. See also the documentation for `IconButtonOptions`.
+     * @param options The new icon button options.
      * @returns This instance.
      */
-    public iconStart(v: NullableString): this {
-        return this.setIcon(v, true);
-    }
-
-    /**
-     * Get/set identifier for the icon at the logical end side of the button. The setter sets the
-     * DOM text content and the class name of the logical inner end `Span` componnent of the
-     * button to the value of `v`. If `v` is an empty string or null, the current text content and
-     * the class name are removed.
-     */
-    public get IconEnd(): NullableString {
-        return this._iconEnd.Text;
-    }
-    /** @inheritdoc */
-    public set IconEnd(v: NullableString) {
-        this.setIcon(v, false);
-    }
-
-    /**
-     * Set the identifier for the icon at the logical end side of the button.
-     * @param v The identifier for the logical inner end `Span` componnent of the button. If `v`
-     * is an empty string or null, the current text content and the class name are removed.
-     * @returns This instance.
-     */
-    public iconEnd(v: NullableString): this {
-        return this.setIcon(v, false);
+    public options(options: IconButtonOptions) {
+        IconButton.mergeOptionsFromTo(options, this._options);
+        this
+            .setIcon(this._options.IconStart!, true)
+            .rephrase(...this._options.Caption!)
+            .setIcon(this._options.IconEnd!, false)
+            .title(this._options.Title!)
+            .removeClass("horizontal", "vertical")
+            .addClass(this._options.Horizontal ? "horizontal" : "vertical");
+        return this;
     }
 
     /**
      * Set the identifier for the icon at the logical start or end side of the button.
      * @param v The identifier for the logical inner start or end `Span` componnent of the button.
-     * If `v` is an empty string or null, the current text content and the class name are removed.
+     * - If `v` is an empty string or null, the current text content and the class name of the
+     *   `Span` component are removed.
+     * - If `v` begins with `-` (minus), the current text content of the `Span` component is removed
+     *   and its class name is set to `v.substring(1)`, e.g. `-some-class` results in the class name
+     *   `some-class`.
      * @param atStart `true` for the logical start icon, `false` for the logical end icon.
      * @returns This instance.
      */
     protected setIcon(v: NullableString, atStart: boolean): this {
-        const identifier = v === null ? null : v.trim() || null;
-        const icon = atStart ? this._iconStart : this._iconEnd;
-        icon.text(identifier).clazz(identifier).addClass(atStart ? "start" : "end");
+        v = v === null ? null : v.trim() || null;
+        const icon = atStart
+            ? this.spanStart
+            : this.spanEnd;
+        icon.text(
+            v === null || v.startsWith("-")
+                ? null
+                : v
+        ).clazz(
+            v === null
+                ? null
+                : v.startsWith("-")
+                    ? v.substring(1)
+                    : v
+        ).addClass(atStart ? "start" : "end");
         return this;
     }
 
-    /**
-     * Get/set the alignment of the three inner button parts. `true`, for a horizontal alignment of
-     * the three inner button parts, `false` for a vertical alignment.\
-     * __Note:__ This only sets the CSS class names `horizontal`/`vertical`.
-     */
-    public get Horizontal(): boolean {
-        return this.hasClass("horizontal");
-    }
-    /** @inheritdoc */
-    public set Horizontal(v: boolean) {
-        this.horizontal(v);
-    }
-
-    /**
-     * Set the alignment of the three inner button parts.\
-     * __Note:__ This only sets the CSS class names `horizontal`/`vertical`.
-     * @param horizontal `true`, for a horizontal alignment of the three inner button parts, `false`
-     * for a vertical alignment.
-     * @returns This instance.
-     */
-    public horizontal(horizontal: boolean): this {
-        this
-            .removeClass("vertical", "horizontal")
-            .addClass(horizontal ? "horizontal" : "vertical");
-        return this;
-    }
-
-    /* eslint-disable jsdoc/no-undefined-types */
     /**
      * @inheritdoc
      * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Phrase}
@@ -151,7 +175,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
      * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Phrase}
      */
     public set Phrase(phrase: Phrase | Phrase[]) {
-        this._phrase.Phrase = phrase;
+        this.btnPhrase.Phrase = phrase;
     }
 
     /**
@@ -159,7 +183,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
      * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.phrase()}
      */
     public phrase(...phrase: Phrase[]): this {
-        this._phrase.phrase(...phrase);
+        this.btnPhrase.phrase(...phrase);
         return this;
     }
 
@@ -175,7 +199,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
      * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Rephrase}
      */
     public set Rephrase(phrase: Phrase | Phrase[]) {
-        this._phrase.Rephrase = phrase;
+        this.btnPhrase.Rephrase = phrase;
     }
 
     /**
@@ -183,18 +207,18 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
      * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.rephrase()}
      */
     public rephrase(...phrase: Phrase[]): this {
-        this._phrase.rephrase(...phrase);
+        this.btnPhrase.rephrase(...phrase);
         return this;
     }
-    /* eslint-enable */
 
     /** @inheritdoc */
     protected override buildUI(): this {
-        this.ui = new Button().append(
-            this._iconStart = new Span().style("order", "1").addClass("start"),
-            this._phrase = new Span().style("order", "2").addClass("phrase"),
-            this._iconEnd = new Span().style("order", "3").addClass("end")
-        );
+        this.ui = new Button()
+            .append(
+                this.spanStart = new Span().style("order", "1").addClass("start"),
+                this.btnPhrase = new Span().style("order", "2").addClass("phrase"),
+                this.spanEnd = new Span().style("order", "3").addClass("end")
+            );
         return this;
     }
 }
@@ -205,18 +229,12 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
 export class IconButtonFactory<T> extends ComponentFactory<IconButton> {
     /**
      * Create IconButton component.
-     * @param iconStart The identifier for the icon at the logical start side of the button.
-     * `iconStart` sets the DOM text content and the class name of the logical inner start `Span`
-     * componnent of the button to the value of `iconStart`. If `iconStart` is an empty string or
-     * null, the current text content and the class name are removed.
-     * @param iconEnd Identical to `iconStart` but for the logical end side of the button.
-     * @param phrase The phrasing content for the IconButton component.
-     * @param horizontal `true`, for a horizontal alignment of the three inner button parts, `false`
-     * for a vertical alignment.
+     * @param options The options for the icon button.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns IconButton component.
+     * @see {@link IconButtonOptions}
      */
-    public iconButton(iconStart: NullableString, iconEnd: NullableString, phrase: Phrase[], horizontal: boolean = true, data?: T): IconButton {
-        return this.setupComponent(new IconButton(iconStart, iconEnd, phrase, horizontal), data);
+    public iconButton(options?: IconButtonOptions, data?: T): IconButton {
+        return this.setupComponent(new IconButton(options), data);
     }
 }
