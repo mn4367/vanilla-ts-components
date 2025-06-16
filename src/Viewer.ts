@@ -1,5 +1,6 @@
 import { ACustomComponentEvent, AElementComponentWithInternalUI, AnyType, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, INodeComponent } from "@vanilla-ts/core";
-import { Button, Div, Img, RangeInput, Span } from "@vanilla-ts/dom";
+import { Div, Img, RangeInput, Span } from "@vanilla-ts/dom";
+import { IconButton, IconButtonOptions } from "./IconButton.js";
 import { PINCH_ZOOM_START, PINCH_ZOOM_STOP, PinchZoomEvent, PinchZoomGestureHandler } from "./PinchZoomGestureHandler.js";
 import { ScrollContainer } from "./ScrollContainer.js";
 import { ISteppable, IStepper, Stepper, StepperAppearance, StepperOptions } from "./Stepper.js";
@@ -147,16 +148,31 @@ export interface ViewerOptions {
      * Default: `navigator.language`.
      */
     Locale?: string;
-    /** Title/tooltip for the 'Zoom in' button. Default: empty string. */
-    ZoomIn?: string;
-    /** Title/tooltip for the 'Zoom out' button. Default: empty string. */
-    ZoomOut?: string;
-    /** Title/tooltip for the 'Fit' button. Default: empty string. */
-    ZoomFit?: string;
-    /** Title/tooltip for the 'Fit width' button. Default: empty string. */
-    ZoomFitWidth?: string;
-    /** Title/tooltip for the 'Fit height' button. Default: empty string. */
-    ZoomFitHeight?: string;
+    /**
+     * Options for the button 'Zoom in'.\
+     * Default: `{ IconStart: null, Caption: [], IconEnd: null, Title: null, Horizontal: true }`.
+     */
+    ZoomInBtnOptions?: IconButtonOptions;
+    /**
+     * Options for the button 'Zoom out'.\
+     * Default: same as {@link ViewerOptions.ZoomInBtnOptions}
+     */
+    ZoomOutBtnOptions?: IconButtonOptions;
+    /**
+     * Options for the button 'Fit'.\
+     * Default: same as {@link ViewerOptions.ZoomInBtnOptions}
+     */
+    ZoomFitBtnOptions?: IconButtonOptions;
+    /**
+     * Options for the button 'Fit width'.\
+     * Default: same as {@link ViewerOptions.ZoomInBtnOptions}
+     */
+    ZoomFitWidthBtnOptions?: IconButtonOptions;
+    /**
+     * Options for the button 'Fit height'.\
+     * Default: same as {@link ViewerOptions.ZoomInBtnOptions}
+     */
+    ZoomFitHeightBtnOptions?: IconButtonOptions;
     /** Title/tooltip for the zoom range input. Default: empty string. */
     ZoomRange?: string;
     /**
@@ -299,13 +315,13 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     protected stepperBorrowed: boolean = false;
     protected zoomInOut: Div;
     protected zoomInOutBorrowed: boolean = false;
-    protected btnZoomIn: Button;
-    protected btnZoomOut: Button;
+    protected btnZoomIn: IconButton;
+    protected btnZoomOut: IconButton;
     protected zoomFit: Div;
     protected zoomFitBorrowed: boolean = false;
-    protected btnZoomFit: Button;
-    protected btnZoomFitWidth: Button;
-    protected btnZoomFitHeight: Button;
+    protected btnZoomFit: IconButton;
+    protected btnZoomFitWidth: IconButton;
+    protected btnZoomFitHeight: IconButton;
     protected itemIndex: Span;
     protected itemIndexBorrowed: boolean = false;
     protected zoomLevel: Span;
@@ -313,7 +329,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     protected zoomRange: RangeInput;
     protected zoomRangeBorrowed: boolean = false;
     protected itemContainer: ScrollContainer;
-    protected itemResizeOberver: ResizeObserver;
+    protected itemResizeObserver: ResizeObserver;
     protected fncOnItemContainerScroll = this.onItemContainerScroll.bind(this);
     protected clickPoint: DOMPoint;
     protected pinchZoomHandler: PinchZoomGestureHandler;
@@ -333,14 +349,20 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     }
 
     /**
-     * Get/set the options for this viewer. The getter returns a _copy_ of the options.
+     * Get/set the options for this viewer. The returned object is a _copy_, modifying this copy has
+     * no effect on the corresponding viewer instance.
      */
     public get Options(): ViewerOptions {
         return {
             /* eslint-disable jsdoc/require-jsdoc */
             ...this._options,
             ItemURLs: [...this._options.ItemURLs!],
-            StepperOptions: { ...this.stepper.Options }
+            StepperOptions: this.stepper.Options,
+            ZoomInBtnOptions: this.btnZoomIn.Options,
+            ZoomOutBtnOptions: this.btnZoomOut.Options,
+            ZoomFitBtnOptions: this.btnZoomFit.Options,
+            ZoomFitWidthBtnOptions: this.btnZoomFitWidth.Options,
+            ZoomFitHeightBtnOptions: this.btnZoomFitHeight.Options,
             /* eslint-enable */
         };
     }
@@ -371,11 +393,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             PinchZoom: options.PinchZoom ?? this._options.PinchZoom ?? false,
             NativeScrollbars: options.NativeScrollbars ?? this._options.NativeScrollbars ?? false,
             Locale: options.Locale ?? this._options.Locale ?? "",
-            ZoomIn: options.ZoomIn ?? this._options.ZoomIn ?? "",
-            ZoomOut: options.ZoomOut ?? this._options.ZoomOut ?? "",
-            ZoomFit: options.ZoomFit ?? this._options.ZoomFit ?? "",
-            ZoomFitWidth: options.ZoomFitWidth ?? this._options.ZoomFitWidth ?? "",
-            ZoomFitHeight: options.ZoomFitHeight ?? this._options.ZoomFitHeight ?? "",
+            ZoomInBtnOptions: IconButton.mergeOptionsFromTo(options.ZoomInBtnOptions, this._options.ZoomInBtnOptions),
+            ZoomOutBtnOptions: IconButton.mergeOptionsFromTo(options.ZoomOutBtnOptions, this._options.ZoomOutBtnOptions),
+            ZoomFitBtnOptions: IconButton.mergeOptionsFromTo(options.ZoomFitBtnOptions, this._options.ZoomFitBtnOptions),
+            ZoomFitWidthBtnOptions: IconButton.mergeOptionsFromTo(options.ZoomFitWidthBtnOptions, this._options.ZoomFitWidthBtnOptions),
+            ZoomFitHeightBtnOptions: IconButton.mergeOptionsFromTo(options.ZoomFitHeightBtnOptions, this._options.ZoomFitHeightBtnOptions),
             ZoomRange: options.ZoomRange ?? this._options.ZoomRange ?? "",
             LoadingError: options.LoadingError ?? this._options.LoadingError ?? "",
             /* eslint-enable */
@@ -391,14 +413,14 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this.item = wasEmpty
             ? this.items[0] ?? this.dummyItem
             : this.items[index ?? -1] ?? this.items.find(e => e === this.item) ?? this.items[0] ?? this.dummyItem;
-        this.stepper.options(options.StepperOptions ? options.StepperOptions : this.stepper.Options);
+        !options.StepperOptions || this.stepper.options(options.StepperOptions);
         this.itemContainer.native(opts.NativeScrollbars!);
         this.pinchZoomHandler.active(opts.PinchZoom!);
         opts.OmitToolbar
             ? this.addClass("omit-toolbar")
             : this.removeClass("omit-toolbar");
         this
-            .i18n()
+            .i18n(this._options)
             .rebuildToolbar()
             .toolbarPosition(opts.ToolbarPosition!)
             .toolbarHidden(opts.ToolbarHidden!)
@@ -575,6 +597,13 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     public scrollOffset(x: number, y: number): this {
         this.itemContainer.scroll(x, y);
         return this;
+    }
+
+    /**
+     * Only for very special purposes(!): Get access to the inner `Stepper` component.
+     */
+    public get Stepper(): Stepper {
+        return this.stepper;
     }
 
     /**
@@ -816,7 +845,6 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             default:
                 return this;
         }
-        this.toolBar.append(component);
         return this.rebuildToolbar();
     }
 
@@ -1563,19 +1591,22 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     }
 
     /**
-     * Set strings from the current options on some components.
+     * Translate all inner components based on the current options.
+     * @param options The current viewer options.
      * @returns This instance.
      */
-    protected i18n(): this {
-        this.btnZoomIn.title(this._options.ZoomIn!);
-        this.btnZoomOut.title(this._options.ZoomOut!);
-        this.btnZoomFit.title(this._options.ZoomFit!);
-        this.btnZoomFitWidth.title(this._options.ZoomFitWidth!);
-        this.btnZoomFitHeight.title(this._options.ZoomFitHeight!);
-        this.zoomRange.title(this._options.ZoomRange!);
+    protected i18n(options: ViewerOptions): this {
+        /* eslint-disable jsdoc/require-jsdoc */
+        this.btnZoomIn.options({ Title: options.ZoomInBtnOptions!.Title! });
+        this.btnZoomOut.options({ Title: options.ZoomOutBtnOptions!.Title! });
+        this.btnZoomFit.options({ Title: options.ZoomFitBtnOptions!.Title! });
+        this.btnZoomFitWidth.options({ Title: options.ZoomFitWidthBtnOptions!.Title! });
+        this.btnZoomFitHeight.options({ Title: options.ZoomFitHeightBtnOptions!.Title! });
+        /* eslint-enable */
+        this.zoomRange.title(options.ZoomRange!);
         for (const item of this.items) {
             if (item.LoadError && item.Component) {
-                const loadingError = this._options.LoadingError!.replaceAll("%s", item.URL);
+                const loadingError = options.LoadingError!.replaceAll("%s", item.URL);
                 item.Component
                     .alt(loadingError)
                     .title(loadingError);
@@ -1590,8 +1621,8 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param clickHandler Click handler for the button.
      * @returns A toolbar button.
      */
-    protected getZoomButton(clazz: string, clickHandler: (ev: KeyboardEvent | MouseEvent | PointerEvent) => void): Button {
-        return new Button()
+    protected getToolbarIconButton(clazz: string, clickHandler: (ev: KeyboardEvent | MouseEvent | PointerEvent) => void): IconButton {
+        return new IconButton()
             .addClass(clazz, "zoom-button")
             .on("click", clickHandler);
     }
@@ -1646,15 +1677,15 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this.zoomInOut = new Div()
             .addClass("zoom-in-out")
             .append(
-                this.btnZoomIn = this.getZoomButton("btn-zoom-in", this.zoomIn.bind(this)),
-                this.btnZoomOut = this.getZoomButton("btn-zoom-out", this.zoomOut.bind(this))
+                this.btnZoomIn = this.getToolbarIconButton("btn-zoom-in", this.zoomIn.bind(this)),
+                this.btnZoomOut = this.getToolbarIconButton("btn-zoom-out", this.zoomOut.bind(this))
             );
         this.zoomFit = new Div()
             .addClass("zoom-fit")
             .append(
-                this.btnZoomFit = this.getZoomButton("btn-zoom-fit", (ev: KeyboardEvent | MouseEvent | PointerEvent) => { this.zoom(Zoom.FIT, ev.shiftKey); }),
-                this.btnZoomFitWidth = this.getZoomButton("btn-zoom-fit-width", (ev: KeyboardEvent | MouseEvent | PointerEvent) => { this.zoom(Zoom.FITWIDTH, ev.shiftKey); }),
-                this.btnZoomFitHeight = this.getZoomButton("btn-zoom-fit-height", (ev: KeyboardEvent | MouseEvent | PointerEvent) => { this.zoom(Zoom.FITHEIGHT, ev.shiftKey); })
+                this.btnZoomFit = this.getToolbarIconButton("btn-zoom-fit", (ev: KeyboardEvent | MouseEvent | PointerEvent) => { this.zoom(Zoom.FIT, ev.shiftKey); }),
+                this.btnZoomFitWidth = this.getToolbarIconButton("btn-zoom-fit-width", (ev: KeyboardEvent | MouseEvent | PointerEvent) => { this.zoom(Zoom.FITWIDTH, ev.shiftKey); }),
+                this.btnZoomFitHeight = this.getToolbarIconButton("btn-zoom-fit-height", (ev: KeyboardEvent | MouseEvent | PointerEvent) => { this.zoom(Zoom.FITHEIGHT, ev.shiftKey); })
             );
         this.itemIndex = new Span()
             .addClass("item-index")
@@ -1673,7 +1704,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this.itemContainer = new ScrollContainer(true, true, false)
             .addClass("item-container", ScrollContainer.DefaultCSSClassName);
         this.itemContainer.Content.on("scroll", this.fncOnItemContainerScroll, { passive: true }); // eslint-disable-line jsdoc/require-jsdoc
-        this.itemResizeOberver = new ResizeObserver((entries => {
+        this.itemResizeObserver = new ResizeObserver((entries => {
             for (const entry of entries) {
                 if (this.item.Loaded && this.item.Component && (entry.target === this.itemContainer.DOM)) {
                     this.calcScaleForZoomFit(this.item);
@@ -1681,7 +1712,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                 }
             }
         }));
-        this.itemResizeOberver.observe(this.itemContainer.DOM);
+        this.itemResizeObserver.observe(this.itemContainer.DOM);
     }
 
     /** @inheritdoc */
@@ -1697,7 +1728,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
 
     /** @inheritdoc */
     public override dispose(): void {
-        this.itemResizeOberver.unobserve(this.itemContainer.DOM);
+        this.itemResizeObserver.unobserve(this.itemContainer.DOM);
         // Dispose of this handler manually (it isn't mounted).
         this.pinchZoomHandler.dispose();
         // Both the toolbar and the item container can be mounted or not, so make sure they are

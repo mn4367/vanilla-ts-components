@@ -1,9 +1,10 @@
 import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, IElementComponent } from "@vanilla-ts/core";
-import { Button, Div } from "@vanilla-ts/dom";
+import { Div } from "@vanilla-ts/dom";
+import { IconButton, IconButtonOptions } from "./IconButton.js";
 
 
 /**
- * Interface that must be implemented in order to enable stepping/navigation in bjects that
+ * Interface that must be implemented in order to enable stepping/navigation in objects that
  * implement `IStepper`.
  */
 export interface ISteppable {
@@ -141,9 +142,9 @@ export enum StepperAppearance {
  * stepper.options({
  *   Appearance: StepperAppearance.HORIZONTAL_ALT,
  *   PageBackward: true,
- *   PageBackwardTitle: `Go back ${stepper.PageSize} entries`,
+ *   PageBackwardIcons: { Title: `Go back ${stepper.PageSize} entries` },
  *   PageForward: true,
- *   PageForwardTitle: `Go forwad ${stepper.PageSize} entries`
+ *   PageForwardIcons: { Title: `Go forwad ${stepper.PageSize} entries` }
  * })
  *
  * // Add a component which displays the current index and count of the steppable object.
@@ -185,36 +186,54 @@ export interface StepperOptions {
     Separator?: IElementComponent<HTMLElement> | null;
     /** Show button 'First'? Default: `true`. */
     First?: boolean;
-    /** Title/tooltip for button 'First'. Default: empty string. */
-    FirstTitle?: string;
+    /**
+     * Options for the button 'First'.\
+     * Default: `{ IconStart: null, Caption: [], IconEnd: null, Title: null, Horizontal: true }`.
+     */
+    FirstBtnOptions?: IconButtonOptions;
     /** Show button 'Page back'? Default: `true`. */
     PageBackward?: boolean;
     /** Support for holding the pointer down on 'Page backward'? */
     // PageBackwardContinuous?: boolean;
-    /** Title/tooltip for button 'Page back'. Default: empty string. */
-    PageBackwardTitle?: string;
+    /**
+     * Options for the button 'Page Backward'.\
+     * Default: same as {@link StepperOptions.FirstBtnOptions}
+     */
+    PageBackwardBtnOptions?: IconButtonOptions;
     /** Show button 'Backward'? Default: `true`. */
     Backward?: boolean;
     /** Support for holding the pointer down on 'Backward'? */
     // BackwardContinuous?: boolean;
-    /** Title/tooltip for button 'Backward'. Default: empty string. */
-    BackwardTitle?: string;
+    /**
+     * Options for the button 'Backward'.\
+     * Default: same as {@link StepperOptions.FirstBtnOptions}
+     */
+    BackwardBtnOptions?: IconButtonOptions;
     /** Show button 'Forward'? Default: `true`. */
     Forward?: boolean;
     /** Support for holding the pointer down on 'Forward'? */
     // ForwardContinuous?: boolean;
-    /** Title/tooltip for button 'Forward'. Default: empty string. */
-    ForwardTitle?: string;
+    /**
+     * Options for the button 'Forward'.\
+     * Default: same as {@link StepperOptions.FirstBtnOptions}
+     */
+    ForwardBtnOptions?: IconButtonOptions;
     /** Show button 'Page forward'? Default: `true`. */
     PageForward?: boolean;
     /** Support for holding the pointer down on 'Page forward'? */
     // PageForwardContinuous?: boolean;
-    /** Title/tooltip for button 'Page forward'. Default: empty string. */
-    PageForwardTitle?: string;
+    /**
+     * Options for the button 'Page Forward'.\
+     * Default: same as {@link StepperOptions.FirstBtnOptions}
+     */
+    PageForwardBtnOptions?: IconButtonOptions;
     /** Show button 'Last'? Default: `true`. */
     Last?: boolean;
-    /** Title/tooltip for button 'Last'. Default: empty string. */
-    LastTitle?: string;
+    /**
+     * Options for the button 'Last'.\
+     * Default: same as {@link StepperOptions.FirstBtnOptions}
+     */
+    LastBtnOptions?: IconButtonOptions;
 }
 
 /** Custom 'step' event for objects implementing `IStepper`. */
@@ -267,7 +286,7 @@ export interface StepperEventMap extends HTMLElementEventMap {
 /**
  * All stepper buttons.
  */
-export type StepperButtons = [Button, Button, Button, Button, Button, Button];
+export type StepperButtons = [IconButton, IconButton, IconButton, IconButton, IconButton, IconButton];
 
 /**
  * Stepper component with configurable buttons for stepping through an instance of `ISteppable`.
@@ -276,12 +295,12 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
     protected steppable: ISteppable;
     protected _options: StepperOptions = {};
     protected btns: StepperButtons;
-    protected btnFirst: Button;
-    protected btnPageBackward: Button;
-    protected btnBackward: Button;
-    protected btnForward: Button;
-    protected btnPageForward: Button;
-    protected btnLast: Button;
+    protected btnFirst: IconButton;
+    protected btnPageBackward: IconButton;
+    protected btnBackward: IconButton;
+    protected btnForward: IconButton;
+    protected btnPageForward: IconButton;
+    protected btnLast: IconButton;
     protected fncFirst = this.First.bind(this);
     protected fncPageBackward = this.PageBackward.bind(this);
     protected fncBackward = this.Backward.bind(this);
@@ -309,8 +328,16 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
      */
     public get Options(): StepperOptions {
         return {
+            /* eslint-disable jsdoc/require-jsdoc */
             ...this._options,
+            FirstBtnOptions: this.btnFirst.Options,
+            PageBackwardBtnOptions: this.btnPageBackward.Options,
+            BackwardBtnOptions: this.btnBackward.Options,
+            ForwardBtnOptions: this.btnForward.Options,
+            PageForwardBtnOptions: this.btnPageForward.Options,
+            LastBtnOptions: this.btnLast.Options,
             // Continuous: { ...this.options.Continuous } // eslint-disable-line jsdoc/require-jsdoc
+            /* eslint-enable */
         };
     }
     /** @inheritdoc */
@@ -339,52 +366,48 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
             HideButtons: options.HideButtons ?? this._options.HideButtons ?? false,
             Separator: separator,
             First: options.First ?? this._options.First ?? true,
-            FirstTitle: options.FirstTitle ?? this._options.FirstTitle ?? "",
+            FirstBtnOptions: IconButton.mergeOptionsFromTo(options.FirstBtnOptions, this._options.FirstBtnOptions),
             PageBackward: options.PageBackward ?? this._options.PageBackward ?? true,
             // PageBackwardContinuous: options.PageBackwardContinuous ?? this._options.PageBackwardContinuous ?? false,
-            PageBackwardTitle: options.PageBackwardTitle ?? this._options.PageBackwardTitle ?? "",
+            PageBackwardBtnOptions: IconButton.mergeOptionsFromTo(options.PageBackwardBtnOptions, this._options.PageBackwardBtnOptions),
             Backward: options.Backward ?? this._options.Backward ?? true,
             // BackwardContinuous: options.BackwardContinuous ?? this._options.BackwardContinuous ?? true,
-            BackwardTitle: options.BackwardTitle ?? this._options.BackwardTitle ?? "",
+            BackwardBtnOptions: IconButton.mergeOptionsFromTo(options.BackwardBtnOptions, this._options.BackwardBtnOptions),
             Forward: options.Forward ?? this._options.Forward ?? true,
             // ForwardContinuous: options.ForwardContinuous ?? this._options.ForwardContinuous ?? true,
-            ForwardTitle: options.ForwardTitle ?? this._options.ForwardTitle ?? "",
+            ForwardBtnOptions: IconButton.mergeOptionsFromTo(options.ForwardBtnOptions, this._options.ForwardBtnOptions),
             PageForward: options.PageForward ?? this._options.PageForward ?? true,
             // PageForwardContinuous: options.PageForwardContinuous ?? this._options.PageForwardContinuous ?? false,
-            PageForwardTitle: options.PageForwardTitle ?? this._options.PageForwardTitle ?? "",
+            PageForwardBtnOptions: IconButton.mergeOptionsFromTo(options.PageForwardBtnOptions, this._options.PageForwardBtnOptions),
             Last: options.Last ?? this._options.Last ?? true,
-            LastTitle: options.LastTitle ?? this._options.LastTitle ?? ""
+            LastBtnOptions: IconButton.mergeOptionsFromTo(options.LastBtnOptions, this._options.LastBtnOptions),
             /* eslint-enable */
         };
-        const backwardButtons: Button[] = [];
-        const forwardButtons: Button[] = [];
+        const backwardButtons: IconButton[] = [];
+        const forwardButtons: IconButton[] = [];
         !this._options.First || backwardButtons.push(this.btnFirst);
-        this.btnFirst.Title = this._options.FirstTitle ?? null;
         !this._options.PageBackward || backwardButtons.push(this.btnPageBackward);
-        // this.btnBackward.OnHeldDown = this.options.BackwardContinuous ? this.fncBackward : undefined;
+        // this.btnBackward.OnHeldDown = this.options.BackwardContinuous ? this.fncPageBackward : undefined;
         // this.btnBackward.OnHeldDownOptions = this.options.Continuous;
-        this.btnPageBackward.Title = this._options.PageBackwardTitle ?? null;
         !this._options.Backward || backwardButtons.push(this.btnBackward);
-        // this.btnPrevious.OnHeldDown = this.options.PreviousContinuous ? this.fncPrevious : undefined;
+        // this.btnPrevious.OnHeldDown = this.options.PreviousContinuous ? this.fncBackward : undefined;
         // this.btnPrevious.OnHeldDownOptions = this.options.Continuous;
-        this.btnBackward.Title = this._options.BackwardTitle ?? null;
         !this._options.Forward || forwardButtons.push(this.btnForward);
-        // this.btnNext.OnHeldDown = this.options.NextContinuous ? this.fncNext : undefined;
+        // this.btnNext.OnHeldDown = this.options.NextContinuous ? this.fncForward : undefined;
         // this.btnNext.OnHeldDownOptions = this.options.Continuous;
-        this.btnForward.Title = this._options.ForwardTitle ?? null;
         !this._options.PageForward || forwardButtons.push(this.btnPageForward);
-        // this.btnForward.OnHeldDown = this.options.ForwardContinuous ? this.fncForward : undefined;
+        // this.btnForward.OnHeldDown = this.options.ForwardContinuous ? this.fncPageForward : undefined;
         // this.btnForward.OnHeldDownOptions = this.options.Continuous;
-        this.btnPageForward.Title = this._options.PageForwardTitle ?? null;
         !this._options.Last || forwardButtons.push(this.btnLast);
-        this.btnLast.Title = this._options.LastTitle ?? null;
-        this.ui.remove()
+        this.ui.remove();
+        this
+            .appearance(this._options.Appearance!)
+            .setButtonOptions(this._options)
+            .updateButtons(this.steppable.Index, this.steppable.Count);
+        this.ui
             .append(...backwardButtons)
             .append(this._options.Separator?.addClass("separator"))
             .append(...forwardButtons);
-        this
-            .appearance(this._options.Appearance!)
-            .updateButtons(this.steppable.Index, this.steppable.Count);
         return this;
     }
 
@@ -576,8 +599,12 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
      */
     protected createButtons(): this {
         this.btns = [
-            this.btnFirst = new Button(), this.btnPageBackward = new Button(), this.btnBackward = new Button(),
-            this.btnForward = new Button(), this.btnPageForward = new Button(), this.btnLast = new Button()
+            this.btnFirst = new IconButton(),
+            this.btnPageBackward = new IconButton(),
+            this.btnBackward = new IconButton(),
+            this.btnForward = new IconButton(),
+            this.btnPageForward = new IconButton(),
+            this.btnLast = new IconButton()
         ];
         const props: Array<[string, () => boolean]> = [
             ["first", this.fncFirst],
@@ -589,9 +616,24 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
         ];
         for (let i = 0; i < this.btns.length; i++) {
             this.btns[i]
-                .addClass("stepper-button", props[i][0])
+                .addClass("stepper-button", props[i][0], IconButton.DefaultCSSClassName)
                 .on("click", props[i][1]);
         }
+        return this;
+    }
+
+    /**
+     * (Re-)configure all icon buttons based on the current options.
+     * @param options The current stepper options.
+     * @returns This instance.
+     */
+    protected setButtonOptions(options: StepperOptions): this {
+        this.btnFirst.options(options.FirstBtnOptions!);
+        this.btnPageBackward.options(options.PageBackwardBtnOptions!);
+        this.btnBackward.options(options.BackwardBtnOptions!);
+        this.btnForward.options(options.ForwardBtnOptions!);
+        this.btnPageForward.options(options.PageForwardBtnOptions!);
+        this.btnLast.options(options.LastBtnOptions!);
         return this;
     }
 
@@ -611,27 +653,27 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
         this.btnFirst
             .disabled(isAtBegin)
             .addClass(cssHideAtBegin)
-            .title(isAtBegin ? "" : this._options.FirstTitle || "");
+            .title(isAtBegin ? "" : this._options.FirstBtnOptions!.Title || null);
         this.btnPageBackward
             .disabled(isAtBegin)
             .addClass(cssHideAtBegin)
-            .title(isAtBegin ? "" : this._options.PageBackwardTitle || "");
+            .title(isAtBegin ? "" : this._options.PageBackwardBtnOptions!.Title || null);
         this.btnBackward
             .disabled(isAtBegin)
             .addClass(cssHideAtBegin)
-            .title(isAtBegin ? "" : this._options.BackwardTitle || "");
+            .title(isAtBegin ? "" : this._options.BackwardBtnOptions!.Title || null);
         this.btnForward
             .disabled(isAtEnd)
             .addClass(cssHideAtEnd)
-            .title(isAtEnd ? "" : this._options.ForwardTitle || "");
+            .title(isAtEnd ? "" : this._options.ForwardBtnOptions!.Title || null);
         this.btnPageForward
             .disabled(isAtEnd)
             .addClass(cssHideAtEnd)
-            .title(isAtEnd ? "" : this._options.PageForwardTitle || "");
+            .title(isAtEnd ? "" : this._options.PageForwardBtnOptions!.Title || null);
         this.btnLast
             .disabled(isAtEnd)
             .addClass(cssHideAtEnd)
-            .title(isAtEnd ? "" : this._options.LastTitle || "");
+            .title(isAtEnd ? "" : this._options.LastBtnOptions!.Title || null);
     }
 
     /** @inheritdoc */

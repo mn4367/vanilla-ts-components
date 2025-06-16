@@ -1,5 +1,6 @@
 import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_EVENT_INIT_DICT, HTMLElementWithChildren, IElementWithChildrenComponent, INodeComponent, mixin, NullableString, Phrase } from "@vanilla-ts/core";
-import { Button, Div, Span } from "@vanilla-ts/dom";
+import { Div, Span, Text } from "@vanilla-ts/dom";
+import { IconButton, IconButtonOptions } from "./IconButton.js";
 import { ScrollContainer } from "./ScrollContainer.js";
 
 
@@ -635,20 +636,6 @@ export class TabGroupFactory<T> extends ComponentFactory<TabGroup> {
 /////////////////////////////
 // #region Tab class
 /**
- * Caption and title (tooltip) for the standard tab close button.
- */
-export type TabCloseLabels = {
-    /**
-     * Caption for the standard tab close button.
-     */
-    Caption: string;
-    /**
-     * Title (tooltip) for the standard tab close button.
-     */
-    Title: string;
-};
-
-/**
  * A tab group switches the content of a tab by removing/adding the content of the inner content
  * container. This makes it difficult to impossible for the content of a tab to track when it is
  * unmounted/mounted (for example to store/restore its scroll position). This class passes the
@@ -693,9 +680,8 @@ class TabContentContainer extends Div {
  */
 export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     protected headerContent: IElementWithChildrenComponent<HTMLDivElement>;
-    protected closeBtn: Button;
-    protected _closeBtn: boolean;
-    protected _labels: TabCloseLabels;
+    protected closeTabBtn: IconButton;
+    protected showCloseTabBtn: boolean;
     // Inner content container to make layout, content access/switching and tab switching easier.
     protected contentContainer: IElementWithChildrenComponent<HTMLDivElement>;
     protected tabGroup?: TabGroup;
@@ -707,25 +693,26 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
      * @param header The header content (components or string). In the case of a string, the header
      * content is a `Span` component with the string as the content. If `undefined` or an empty
      * array, the header is empty.
-     * @param content The content for the tab (components or string, in the case of a string, the
-     * container content is a `P` component with the string as the content).
-     * @param closeBtn If `true` (default), a standard close button is added to the tab header,
-     * otherwise closing the tab must be done by other means (e.g. a keyboard shortcut).
-     * @param labels The caption/title for the standard tab close button.
+     * @param content The content for the tab. Any element of `content` that is a string is
+     * converted into a `Text` component.
+     * @param showCloseTabBtn If `true` (default), a standard close tab button is added to the tab
+     * header, otherwise closing the tab must be done by other means (e.g. a keyboard shortcut).
+     * @param closeTabBtnOptions Options for the standard close tab button.\
+     * Default: `{ IconStart: null, Caption: ["X"], IconEnd: null, Title: null, Horizontal: true }`.
      */
     constructor(
-        header?: INodeComponent<Node>[] | string,
-        content?: INodeComponent<Node>[],
-        closeBtn: boolean = true,
-        labels: TabCloseLabels = { Caption: "x", Title: "" } // eslint-disable-line jsdoc/require-jsdoc
+        header?: (INodeComponent<Node> | undefined | null)[] | string,
+        content?: (INodeComponent<Node> | undefined | null | string)[],
+        showCloseTabBtn: boolean = true,
+        closeTabBtnOptions: IconButtonOptions = { Caption: ["X"] } // eslint-disable-line jsdoc/require-jsdoc
     ) {
         super();
         super
             .initialize()
-            .closeButton(closeBtn)
-            .labels(labels)
+            .showCloseTabButton(showCloseTabBtn)
             .header(header)
-            .append(...(content ?? []));
+            .append(...(content ? content.map(e => typeof e === "string" ? new Text(e) : e) : []))
+            .CloseTabButton.options(closeTabBtnOptions);
     }
 
     /**
@@ -762,60 +749,38 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
     }
 
     /**
-     * Adds/removes a standard tab close button to the header of the tab.
+     * Get the inner close tab button component. To be used for reconfiguring this button or for
+     * getting its options.
+     * @see {@link IconButton}
      */
-    public get CloseButton(): boolean {
-        return this._closeBtn;
-    }
-    /** @inheritdoc */
-    public set CloseButton(v: boolean) {
-        this.closeButton(v);
+    public get CloseTabButton(): IconButton {
+        return this.closeTabBtn;
     }
 
     /**
-     * Adds/removes a standard tab close button to the header of the tab.
-     * @param v `true`, if a a standard tab close button is added to the header of the tab,
-     * otherwise `false`.
+     * Adds/removes a standard close tab button to/from the header of the tab.
+     */
+    public get ShowCloseTabButton(): boolean {
+        return this.showCloseTabBtn;
+    }
+    /** @inheritdoc */
+    public set ShowCloseTabButton(v: boolean) {
+        this.showCloseTabButton(v);
+    }
+
+    /**
+     * Adds/removes a standard close tab button to the header of the tab.
+     * @param v `true`, if a standard close tab button is added to the header of the tab, otherwise
+     * `false`.
      * @returns This instance.
      */
-    public closeButton(v: boolean): this {
-        if (v !== this._closeBtn) {
-            this._closeBtn = v;
-            this._closeBtn
-                ? this.ui.insert(0, this.closeBtn)
-                : this.ui.remove(this.closeBtn);
+    public showCloseTabButton(v: boolean): this {
+        if (v !== this.showCloseTabBtn) {
+            this.showCloseTabBtn = v;
+            this.showCloseTabBtn
+                ? this.ui.insert(0, this.closeTabBtn)
+                : this.ui.remove(this.closeTabBtn);
         }
-        return this;
-    }
-
-    /**
-     * Get the caption/title for the standard tab close button. Returns a _copy_ of the current
-     * caption/title!
-     */
-    public get Labels(): TabCloseLabels {
-        return { ...this._labels };
-    }
-    /** @inheritdoc */
-    public set Labels(v: TabCloseLabels) {
-        this.labels(v);
-    }
-
-    /**
-     * Set new caption/title for the standard tab close button. No reference to the given labels
-     * object is held!
-     * @param labels The new caption/title.
-     * @returns This instance.
-     */
-    public labels(labels: TabCloseLabels): this {
-        this._labels = {
-            /* eslint-disable jsdoc/require-jsdoc */
-            Caption: labels.Caption ?? "x",
-            Title: labels.Title ?? ""
-            /* eslint-enable */
-        };
-        this.closeBtn
-            .text(this._labels.Caption)
-            .title(this._labels.Title);
         return this;
     }
 
@@ -907,9 +872,9 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
      * @returns This instance.
      */
     protected override clearOwner(): this {
-        this._closeBtn
-            ? undefined                 // Child of `this.ui`, so handled by `clear()`.
-            : this.closeBtn.dispose();  // Manual disposal necessary.
+        // If the button is shown/mounted it is a child of `this.ui` and handled by `clear()`,
+        // otherwise it has to be disposed of manually.
+        this.showCloseTabBtn || this.closeTabBtn.dispose();
         // The content container is always cleared due to the `AChildren` but since it is never
         // mounted in `this.ui` it must be disposed of manually.
         // Remove first from a potential parent.
@@ -933,12 +898,12 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
                     .addClass("header-content")
             )
             .on("pointerup", (ev) => {
-                if (ev.target !== this.closeBtn.DOM) {
+                if (ev.target !== this.closeTabBtn.DOM) {
                     this.tabGroup?.requestActivateTab(this);
                 }
             });
-        this.closeBtn = new Button()
-            .addClass("close")
+        this.closeTabBtn = new IconButton()
+            .addClass("close", IconButton.DefaultCSSClassName)
             .on("click", () => this.tabGroup?.requestCloseTab(this));
         this.contentContainer = new TabContentContainer(this).addClass("content-container");
         // Set target DOM for the `IChildren` mixin!!
@@ -964,20 +929,23 @@ export class TabFactory<T> extends ComponentFactory<Tab> {
      * @param header The header content (components or string). In the case of a string, the header
      * content is a `Span` component with the string as the content. If `undefined` or an empty
      * array, the header is empty.
-     * @param content The content for the tab (components or string, in the case of a string, the
-     * container content is a `P` component with the string as the content).
-     * @param closeBtn If `true` (default), a standard close button is added to the tab header,
-     * otherwise closing the tab must be done by other means (e.g. a keyboard shortcut).
-     * @param labels The caption/title for the standard tab close button.
+     * @param content The content for the tab. Any element of `content` that is a string is
+     * converted into a `Text` component.
+     * @param showCloseTabBtn If `true` (default), a standard close tab button is added to the tab
+     * header, otherwise closing the tab must be done by other means (e.g. a keyboard shortcut).
+     * @param closeTabBtnOptions Options for the standard close tab button.\
+     * Default: `{ IconStart: null, Caption: ["X"], IconEnd: null, Title: null, Horizontal: true }`.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns TabGroup component.
      */
-    public tab(header?: INodeComponent<Node>[] | string,
-        content?: INodeComponent<Node>[],
-        closeBtn?: boolean,
-        labels: TabCloseLabels = { Caption: "x", Title: "Close" }, // eslint-disable-line jsdoc/require-jsdoc
-        data?: T): Tab {
-        return this.setupComponent(new Tab(header, content, closeBtn, labels), data);
+    public tab(
+        header?: INodeComponent<Node>[] | string,
+        content?: (INodeComponent<Node> | undefined | null | string)[],
+        showCloseTabBtn: boolean = true,
+        closeTabBtnOptions: IconButtonOptions = { Caption: ["X"] }, // eslint-disable-line jsdoc/require-jsdoc
+        data?: T
+    ): Tab {
+        return this.setupComponent(new Tab(header, content, showCloseTabBtn, closeTabBtnOptions), data);
     }
 }
 // #endregion

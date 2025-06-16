@@ -1,5 +1,6 @@
 import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, IElementWithChildrenComponent, INodeComponent, mixin } from "@vanilla-ts/core";
-import { Button, Div, Span } from "@vanilla-ts/dom";
+import { Div, Span } from "@vanilla-ts/dom";
+import { IconButton, IconButtonOptions } from "./IconButton.js";
 
 
 /**
@@ -17,24 +18,6 @@ export enum DisclosureContainerAppearance {
     START_BOTTOM,
     START_TOP,
 }
-
-/**
- * Captions and titles (tooltips) for the disclosure button.
- */
-export type DisclosureContainerLabels = {
-    /**
-     * Captions. The first element is the caption for the state `Disclosed === false`, e.g.
-     * 'Show details', the second elment is the caption for the state `Disclosed === true`, e.g.
-     * 'Hide details'.
-     */
-    Captions: [string, string];
-    /**
-     * Titles (tooltips). The first element is the title for the state `Disclosed === false`, e.g.
-     * 'Show details', the second elment is the title for the state `Disclosed === true`, e.g.
-     * 'Hide details'.
-     */
-    Titles: [string, string];
-};
 
 /** Custom 'disclose' event for disclosure containers. */
 export class DiscloseEvent extends ACustomComponentEvent<"disclose", DisclosureContainer, {
@@ -66,13 +49,14 @@ export interface DisclosureContainerEventMap extends HTMLElementEventMap {
  */
 export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = DisclosureContainerEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     protected headerContainer: IElementWithChildrenComponent<HTMLDivElement>;
-    protected discloseButton: Button;
+    protected disclosureButton: IconButton;
     protected headerContent: IElementWithChildrenComponent<HTMLDivElement>;
     protected contentContainer: IElementWithChildrenComponent<HTMLDivElement>;
     protected _weakUndisclosed: boolean;
     protected _disclosed: boolean;
+    protected disclosedBtnOptions: IconButtonOptions = {};
+    protected undisclosedBtnOptions: IconButtonOptions = {};
     protected _appearance: DisclosureContainerAppearance;
-    protected _labels: DisclosureContainerLabels;
 
     /**
      * Creates DisclosureContainer component.
@@ -80,7 +64,16 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      * content is a `Span` component with the string as the content. If `undefined` or an empty
      * array, the header is empty.
      * @param content The content components for the disclosure container.
-     * @param labels The captions/titles for the disclosure button.
+     * @param disclosedBtnOptions The options for the disclosure button (`IconButton`) if the
+     * disclosure container is in _disclosed_ state. Default: `{ Caption: ["-"] }`.\
+     * __Note:__ When the disclosure container is disposed of it will also dispose of any component
+     * that is found in the array `Caption`! If the components in this array are to be retained, new
+     * empty options must be set first before the disclosure container is disposed of.
+     * @param undisclosedBtnOptions The options for the disclosure button (`IconButton`) if the
+     * disclosure container is in _undisclosed_ state. Default: `{ Caption: ["+"] }`.\
+     * __Note:__ When the disclosure container is disposed of it will also dispose of any component
+     * that is found in the array `Caption`! If the components in this array are to be retained, new
+     * empty options must be set first before the disclosure container is disposed of.
      * @param disclosed `true`, if the initial state of the disclosure container is 'disclosed',
      * otherwise `false`. Default: `true`.
      * @param weakUndisclosed There are two ways of 'hiding'/'unhiding' the inner content container:
@@ -89,68 +82,89 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      *   inner content container from/to the internal DOM.
      * If `weakUndisclosed` is `true`, only the mentioned class names are set and the inner content
      * container will be left as is (mounted). If `weakUndisclosed` is `false`, the inner content
-     * container will be _removed/added_ from/to the internal DOM.
-     *
+     * container will be _removed/added_ from/to the internal DOM.\
      * `weakUndisclosed` can help to animate the states `disclosed`/`undisclosed`. Default: `false`.
      * @param appearance The disclosure container appearance (header position and orientation).
      */
     constructor(
         header?: (INodeComponent<Node> | undefined | null)[] | string,
         content?: (INodeComponent<Node> | undefined | null)[],
-        labels: DisclosureContainerLabels = { Captions: ["+", "-"], Titles: ["", ""] }, // eslint-disable-line jsdoc/require-jsdoc
+        disclosedBtnOptions: IconButtonOptions = { Caption: ["-"] }, // eslint-disable-line jsdoc/require-jsdoc
+        undisclosedBtnOptions: IconButtonOptions = { Caption: ["+"] }, // eslint-disable-line jsdoc/require-jsdoc
         disclosed: boolean = true,
         weakUndisclosed: boolean = false,
         appearance: DisclosureContainerAppearance = DisclosureContainerAppearance.TOP_START
     ) {
         super();
         super.initialize()
-            .labels(labels)
             .weakUndisclosed(weakUndisclosed)
             .disclosed(disclosed)
+            .disclosedButtonOptions(disclosedBtnOptions)
+            .undisclosedButtonOptions(undisclosedBtnOptions)
             .appearance(appearance)
             .header(header)
             .append(...(content ?? []));
     }
 
     /**
-     * Get the disclose button component.
+     * Only for special purposes: Get the disclosure button component.
+     * @see {@link IconButton}
      */
-    public get DiscloseButton(): Button {
-        return this.discloseButton;
+    public get DisclosureButton(): IconButton {
+        return this.disclosureButton;
     }
 
     /**
-     * Get the captions/titles for the disclosure button. Returns a _copy_ of the current
-     * captions/titles!
+     * Get/set the options for the disclosure button in _disclosed_ state. Returns a _copy_ of the
+     * current options. Modifying this object has no effect except for the case where components in
+     * `Caption` are accessed and modified (which should be avoided!).
      */
-    public get Labels(): DisclosureContainerLabels {
-        return { ...this._labels };
+    public get DisclosedButtonOptions(): IconButtonOptions {
+        return {
+            ...this.disclosedBtnOptions,
+            Caption: [...this.disclosedBtnOptions.Caption!] // eslint-disable-line jsdoc/require-jsdoc
+        };
     }
     /** @inheritdoc */
-    public set Labels(v: DisclosureContainerLabels) {
-        this.labels(v);
+    public set DisclosedButtonOptions(v: IconButtonOptions) {
+        this.disclosedButtonOptions(v);
     }
 
     /**
-     * Set new captions/titles for the disclosure button. No reference to the given lables object
-     * is held!
-     * @param labels The new captions/titles.
+     * Set the options for the disclosure button in _disclosed_ state.
+     * @param v The new icon button options.
      * @returns This instance.
      */
-    public labels(labels: DisclosureContainerLabels): this {
-        this._labels = {
-            /* eslint-disable jsdoc/require-jsdoc */
-            Captions: labels.Captions ?? ["+", "-"],
-            Titles: labels.Titles ?? ["", ""]
-            /* eslint-enable */
+    public disclosedButtonOptions(v: IconButtonOptions): this {
+        IconButton.mergeOptionsFromTo(v, this.disclosedBtnOptions);
+        !this._disclosed || this.disclosureButton.options(this.disclosedBtnOptions);
+        return this;
+    }
+
+    /**
+     * Get/set the options for the disclosure button in _undisclosed_ state. Returns a _copy_ of the
+     * current options. Modifying this object has no effect except for the case where components in
+     * `Caption` are accessed and modified (which should be avoided!).
+     */
+    public get UndisclosedButtonOptions(): IconButtonOptions {
+        return {
+            ...this.undisclosedBtnOptions,
+            Caption: [...this.undisclosedBtnOptions.Caption!] // eslint-disable-line jsdoc/require-jsdoc
         };
-        if (this._disclosed) {
-            this.discloseButton.Text = this._labels.Captions[1];
-            this.discloseButton.Title = this._labels.Titles[1];
-        } else {
-            this.discloseButton.Text = this._labels.Captions[0];
-            this.discloseButton.Title = this._labels.Titles[0];
-        }
+    }
+    /** @inheritdoc */
+    public set UndisclosedButtonOptions(v: IconButtonOptions) {
+        this.undisclosedButtonOptions(v);
+    }
+
+    /**
+     * Set the options for the disclosure button in _undisclosed_ state.
+     * @param v The new icon button options.
+     * @returns This instance.
+     */
+    public undisclosedButtonOptions(v: IconButtonOptions): this {
+        IconButton.mergeOptionsFromTo(v, this.undisclosedBtnOptions);
+        this._disclosed || this.disclosureButton.options(this.undisclosedBtnOptions);
         return this;
     }
 
@@ -205,18 +219,18 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
             }
             this._disclosed = disclosed;
             if (this._disclosed) {
-                this.removeClass("undisclosed")
+                this
+                    .removeClass("undisclosed")
                     .addClass("disclosed");
-                this.discloseButton.Text = this._labels.Captions[1];
-                this.discloseButton.Title = this._labels.Titles[1];
+                this.disclosureButton.options(this.disclosedBtnOptions);
                 this._weakUndisclosed
                     ? undefined
                     : this.ui.append(this.contentContainer);
             } else {
-                this.removeClass("disclosed")
+                this
+                    .removeClass("disclosed")
                     .addClass("undisclosed");
-                this.discloseButton.Text = this._labels.Captions[0];
-                this.discloseButton.Title = this._labels.Titles[0];
+                this.disclosureButton.options(this.undisclosedBtnOptions);
                 this._weakUndisclosed
                     ? undefined
                     : this.ui.remove(this.contentContainer);
@@ -346,6 +360,10 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
 
     /** @inheritdoc */
     protected override clearOwner(): this {
+        // Dispose of all components in the two disclosure button options.
+        this.disclosureButton.rephrase();
+        this.disclosedBtnOptions.Caption!.forEach(e => typeof e === "string" || e.dispose());
+        this.undisclosedBtnOptions.Caption!.forEach(e => typeof e === "string" || e.dispose());
         // The content container is always cleared due to the `AChildren` mixin, but it is not
         // disposed of if it is not mounted. This is the case if `_weakUndisclosed` is `false` _and_
         // the `DisclosureContainer` instance is undisclosed.
@@ -364,8 +382,8 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
                 this.headerContainer = new Div()
                     .addClass("header-container")
                     .append(
-                        this.discloseButton = new Button("")
-                            .addClass("disclose")
+                        this.disclosureButton = new IconButton()
+                            .addClass("disclose", IconButton.DefaultCSSClassName)
                             .on("click", () => this.Disclosed = !this.Disclosed),
                         this.headerContent = new Div()
                             .addClass("header-content")
@@ -398,7 +416,16 @@ export class DisclosureContainerFactory<T> extends ComponentFactory<DisclosureCo
      * content is a `Span` component with the string as the content. If `undefined` or an empty
      * array, the header is empty.
      * @param content The content components for the disclosure container.
-     * @param labels The captions/titles for the disclosure button.
+     * @param disclosedBtnOptions The options for the disclosure button (`IconButton`) if the
+     * disclosure container is in _disclosed_ state. Default: `{ Caption: ["-"] }`.\
+     * __Note:__ When the disclosure container is disposed of it will also dispose of any component
+     * that is found in the array `Caption`! If the components in this array are to be retained, new
+     * empty options must be set first before the disclosure container is disposed of.
+     * @param undisclosedBtnOptions The options for the disclosure button (`IconButton`) if the
+     * disclosure container is in _undisclosed_ state. Default: `{ Caption: ["+"] }`.\
+     * __Note:__ When the disclosure container is disposed of it will also dispose of any component
+     * that is found in the array `Caption`! If the components in this array are to be retained, new
+     * empty options must be set first before the disclosure container is disposed of.
      * @param disclosed `true`, if the initial state of the disclosure container is 'disclosed',
      * otherwise `false`. Default: `true`.
      * @param weakUndisclosed There are two ways of 'hiding'/'unhiding' the inner content container:
@@ -407,22 +434,22 @@ export class DisclosureContainerFactory<T> extends ComponentFactory<DisclosureCo
      *   inner content container from/to the internal DOM.
      * If `weakUndisclosed` is `true`, only the mentioned class names are set and the inner content
      * container will be left as is (mounted). If `weakUndisclosed` is `false`, the inner content
-     * container will be _removed/added_ from/to the internal DOM.
-     *
+     * container will be _removed/added_ from/to the internal DOM.\
      * `weakUndisclosed` can help to animate the states `disclosed`/`undisclosed`. Default: `false`.
      * @param appearance The disclosure container appearance (header position and orientation).
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns DisclosureContainer component.
      */
     public disclosureContainer(
-        header?: INodeComponent<Node>[] | string,
-        content?: INodeComponent<Node>[],
-        labels: DisclosureContainerLabels = { Captions: ["+", "-"], Titles: ["", ""] }, // eslint-disable-line jsdoc/require-jsdoc
+        header?: (INodeComponent<Node> | undefined | null)[] | string,
+        content?: (INodeComponent<Node> | undefined | null)[],
+        disclosedBtnOptions: IconButtonOptions = { Caption: ["-"] }, // eslint-disable-line jsdoc/require-jsdoc
+        undisclosedBtnOptions: IconButtonOptions = { Caption: ["+"] }, // eslint-disable-line jsdoc/require-jsdoc
         disclosed: boolean = true,
         weakUndisclosed: boolean = false,
         appearance: DisclosureContainerAppearance = DisclosureContainerAppearance.TOP_START,
         data?: T
     ): DisclosureContainer {
-        return this.setupComponent(new DisclosureContainer(header, content, labels, disclosed, weakUndisclosed, appearance), data);
+        return this.setupComponent(new DisclosureContainer(header, content, disclosedBtnOptions, undisclosedBtnOptions, disclosed, weakUndisclosed, appearance), data);
     }
 }
