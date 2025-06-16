@@ -513,6 +513,8 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
     protected fncOnPointerMove = this.onPointerMove.bind(this);
     protected fncOnPointerLeave = this.onPointerLeave.bind(this);
     protected fncRemovePopupMenu = this.removePopupMenu.bind(this);
+    protected passiveTrue = { passive: true }; // eslint-disable-line jsdoc/require-jsdoc
+    protected menuMutationObserver: MutationObserver;
 
     /**
      * Create popup menu component.
@@ -580,7 +582,7 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         const layoutViewportHeight = document.documentElement.scrollHeight;
         this.style("visibility", "hidden");
         this.style("display", "");
-        this.setMenuItemWidths();
+        this.adjustMenuItemWidths();
         if (position) {
             this.adjustMenuPosition(position, layoutViewportWidth, layoutViewportHeight);
         }
@@ -591,10 +593,11 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         window.addEventListener("blur", this.fncRemovePopupMenu);
         this.on("click", this.fncOnClick);
         this.on("keydown", this.fncOnKeyDown);
-        this.on("pointermove", this.fncOnPointerMove, { passive: true }); // eslint-disable-line jsdoc/require-jsdoc
-        this.on("pointerleave", this.fncOnPointerLeave, { passive: true }); // eslint-disable-line jsdoc/require-jsdoc
+        this.on("pointermove", this.fncOnPointerMove, this.passiveTrue);
+        this.on("pointerleave", this.fncOnPointerLeave, this.passiveTrue);
         this.visible(true);
         this.focus();
+        this.menuMutationObserver.observe(this.ui.DOM, { childList: true, subtree: true }); // eslint-disable-line jsdoc/require-jsdoc
         return this;
     }
 
@@ -603,22 +606,46 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
      * @returns This instance.
      */
     public hide(): this {
+        this.menuMutationObserver.disconnect();
         window.removeEventListener("pointerdown", this.fncRemovePopupMenu);
         window.removeEventListener("resize", this.fncRemovePopupMenu);
         window.removeEventListener("blur", this.fncRemovePopupMenu);
         this.off("click", this.fncOnClick);
         this.off("keydown", this.fncOnKeyDown);
-        this.off("pointermove", this.fncOnPointerMove, { passive: true }); // eslint-disable-line jsdoc/require-jsdoc
-        this.off("pointerleave", this.fncOnPointerLeave, { passive: true }); // eslint-disable-line jsdoc/require-jsdoc
+        this.off("pointermove", this.fncOnPointerMove, this.passiveTrue);
+        this.off("pointerleave", this.fncOnPointerLeave, this.passiveTrue);
         this.visible(false);
         this.DOM.remove();
+        this.emit(new PopupMenuHideEvent(this));
         this.style("left", "");
         this.style("top", "");
         this.lastFocusedElement instanceof HTMLElement
             ? this.lastFocusedElement.focus()
             : undefined;
-        this.emit(new PopupMenuHideEvent(this));
         return this;
+    }
+
+    /**
+     * Adjust minimum widths of menu items.\
+     * Calculate minimum with with regard to the hints. This code is far from ideal since it
+     * first hides all hints to get the width of the widest menu text and then shows the
+     * hints again, but it works. Care must be taken if `MenuItem` (or an inheriting class)
+     * changes it's inner layout since the code here relies on this layout.
+     */
+    protected adjustMenuItemWidths(): void {
+        const items = this.Items.filter(e => e instanceof MenuItem);
+        let minItemWidth = 0;
+        for (const item of items) {
+            item.Hint[0]?.Parent?.visible(false);
+            item.Content[0]?.Parent?.style("minWidth", null);
+        }
+        for (const item of items) {
+            minItemWidth = Math.max(minItemWidth, item.Content[0]?.Parent?.DOM.clientWidth ?? 0);
+        }
+        for (const item of items) {
+            item.Content[0]?.Parent?.style("minWidth", `${minItemWidth}px`);
+            item.Hint[0]?.Parent?.visible(true);
+        }
     }
 
     /**
@@ -630,30 +657,6 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
             if (item instanceof MenuItem && !item.Disabled /* !! */) {
                 this.focusableItems.push(item); // eslint-disable-line @typescript-eslint/no-unsafe-argument
             }
-        }
-    }
-
-    /**
-     * Adjust minimum widths of menu items.\
-     * Calculate minimum with with regard to the hints. This code is far from ideal since it
-     * first hides all hints to get the width of the widest menu text and then shows the
-     * hints again, but it works. Care must be taken if `MenuItem` (or an inheriting class)
-     * changes it's inner layout since the code here relies on this layout.
-     */
-    protected setMenuItemWidths(): void {
-        const items = this.Items.filter(e => e instanceof MenuItem);
-        let minItemWidth = 0;
-        for (const item of items) {
-            item.Hint[0]?.Parent?.visible(false);
-        }
-        for (const item of items) {
-            minItemWidth = Math.max(minItemWidth, item.Content[0]?.Parent?.DOM.clientWidth ?? 0);
-        }
-        for (const item of items) {
-            item.Content[0]?.Parent?.style("minWidth", `${minItemWidth}px`);
-        }
-        for (const item of items) {
-            item.Hint[0]?.Parent?.visible(true);
         }
     }
 
@@ -821,6 +824,13 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
      */
     protected buildUI() {
         this.ui = new Menu();
+        this.menuMutationObserver = new MutationObserver(records => {
+            for (const record of records) {
+                if (record.type === "childList") {
+                    this.adjustMenuItemWidths();
+                }
+            }
+        });
         return this;
     }
 }
