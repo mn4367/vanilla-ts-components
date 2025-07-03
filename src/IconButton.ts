@@ -56,7 +56,6 @@ export type IconButtonOptions = {
  * @see {@link IconButtonOptions}
  */
 export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Button, EventMap> {
-    // protected _options: IconButtonOptions = { IconStart: null, Caption: [], IconEnd: null, Title: null, Horizontal: true }; // eslint-disable-line jsdoc/require-jsdoc
     protected _options: IconButtonOptions = {}; // eslint-disable-line jsdoc/require-jsdoc
     protected btnPhrase: Span;
     protected spanStart: Span;

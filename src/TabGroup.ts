@@ -82,7 +82,7 @@ export class TabCloseEvent extends ACustomComponentEvent<"tab-close", TabGroup, 
      * Create `tab-close` event.
      * @param sender The event emitter (always `TabGroup`).
      * @param tab The tab which is to be closed (and then disposed!).\
-     * __Important note:__ This event can't be canceled and the tab will be disposed of immediately
+     * __Important note:__ This event can't be cancelled and the tab will be disposed of immediately
      * after the event has been dispatched to all listeners!
      * @param customEventInitDict Optional event properties.
      */

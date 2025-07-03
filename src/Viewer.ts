@@ -293,7 +293,7 @@ export interface ViewerEventMap extends HTMLElementEventMap {
      */
     "viewer-step": ViewerStepEvent;
     /**
-     * The viewer has changed its index. This event is purely informative and can't be canceled.
+     * The viewer has changed its index. This event is purely informative and can't be cancelled.
      */
     "viewer-stepped": ViewerSteppedEvent;
 }

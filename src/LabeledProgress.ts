@@ -7,7 +7,7 @@ import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledCompon
 export interface LabeledProgressEventMap extends HTMLElementEventMap {
     /**
      * The value of the progress component has changed. This event is purely informative and can't
-     * be canceled.
+     * be cancelled.
      */
     "progress-value": ProgressValueEvent;
 }

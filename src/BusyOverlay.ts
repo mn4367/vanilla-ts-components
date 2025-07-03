@@ -193,8 +193,8 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
      *   opens the overlay if the counter is `0` whereas `idle()` only closes the overlay if the
      *   counter is `1`. Therefore is it is very important that `busy()`/`idle()` should always be
      *   used in a `try/finally` context that calls `idle()` in the `finally` block!
-     * - `busy()` dispatches a `BusyOverlayBusyEvent` that can be canceled. If the event is
-     *   canceled `busy()` does nothing.
+     * - `busy()` dispatches a `BusyOverlayBusyEvent` that can be cancelled. If the event is
+     *   cancelled `busy()` does nothing.
      * @param delay Temporarily overrides the current default delay (property `Delay`) for this
      * `busy()` call. The next call of `busy()` will use the default value again.
      * @example
