@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase } from "@vanilla-ts/core";
+import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, ISelectValues, Label, Select } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
 
@@ -21,7 +21,7 @@ export class LabeledSelect<EventMap extends HTMLElementEventMap = HTMLElementEve
      * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label focuses
      *   the select element, if `labelAction` is `false`, clicking on the label does nothing.
      */
-    constructor(labelPhrase: Phrase | Phrase[], values: ISelectValues[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, values: ISelectValues[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
         super(labelPhrase, lblPosition, lblAlignment);
         this.initialize(undefined, values, id, value, name, labelAction);
     }
@@ -77,7 +77,7 @@ export class LabeledSelectFactory<T> extends ComponentFactory<LabeledSelect> {
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledSelect component.
      */
-    public labeledSelect(labelPhrase: Phrase | Phrase[], values: ISelectValues[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledSelect {
+    public labeledSelect(labelPhrase: Phrase | Phrases, values: ISelectValues[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledSelect {
         return this.setupComponent(new LabeledSelect(labelPhrase, values, id, value, name, lblPosition, lblAlignment, labelAction), data);
     }
 }

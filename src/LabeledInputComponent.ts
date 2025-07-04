@@ -1,4 +1,4 @@
-import { Phrase } from "@vanilla-ts/core";
+import { Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, Input, Label } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
 
@@ -20,7 +20,7 @@ export abstract class LabeledInputComponent<I extends Input, EventMap extends HT
      *   the corresponding action on the input element; if `labelAction` is `false`, clicking on
      *   the label does nothing.
      */
-    constructor(labelPhrase: Phrase | Phrase[], id?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, id?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
         super(labelPhrase, lblPosition, lblAlignment);
         this.initialize(undefined, id, labelAction);
     }

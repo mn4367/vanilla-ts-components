@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase } from "@vanilla-ts/core";
+import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, P, Span } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
 
@@ -23,7 +23,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      */
-    constructor(labelPhrase: Phrase | Phrase[], paragraphPhrase: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
+    constructor(labelPhrase: Phrase | Phrases, paragraphPhrase: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
         super(labelPhrase, lblPosition, lblAlignment);
         this.initialize();
         Array.isArray(paragraphPhrase)
@@ -43,7 +43,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * Set the phrasing content of the components paragraph. __The setter `Phrase` here is an alias
      * for the property `this.Paragraph.Phrase`.__
      */
-    public set Phrase(phrase: Phrase | Phrase[]) {
+    public set Phrase(phrase: Phrase | Phrases) {
         this.component.Phrase = phrase;
     }
 
@@ -54,7 +54,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * @param phrase The phrasing content to be set for the paragraph.
      * @returns This instance.
      */
-    public phrase(...phrase: Phrase[]): this {
+    public phrase(...phrase: Phrases): this {
         this.component.phrase(...phrase);
         return this;
     }
@@ -63,7 +63,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * Set the phrasing content of the components paragraph. __The setter `Rephrase` here is an
      * alias for the property `this.Paragraph.Rephrase`.__
      */
-    public set Rephrase(phrase: Phrase | Phrase[]) {
+    public set Rephrase(phrase: Phrase | Phrases) {
         this.component.Rephrase = phrase;
     }
 
@@ -74,7 +74,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * @param phrase The phrasing content to be set for the paragraph.
      * @returns This instance.
      */
-    public rephrase(...phrase: Phrase[]): this {
+    public rephrase(...phrase: Phrases): this {
         this.component.rephrase(...phrase);
         return this;
     }
@@ -109,7 +109,7 @@ export class LabeledParagraphFactory<T> extends ComponentFactory<LabeledParagrap
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledParagraph component.
      */
-    public labeledParagraph(labelPhrase: Phrase | Phrase[], paragraphPhrase: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledParagraph {
+    public labeledParagraph(labelPhrase: Phrase | Phrases, paragraphPhrase: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledParagraph {
         return this.setupComponent(new LabeledParagraph(labelPhrase, paragraphPhrase, lblPosition, lblAlignment), data);
     }
 }

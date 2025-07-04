@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase } from "@vanilla-ts/core";
+import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { TemporalInput, TemporalType } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
 import { LabeledInputComponent } from "./LabeledInputComponent.js";
@@ -23,7 +23,7 @@ export class LabeledTemporalInput<EventMap extends HTMLElementEventMap = HTMLEle
      *   the temporal input element, if `labelAction` is `false`, clicking on the label does
      *   nothing.
      */
-    constructor(labelPhrase: Phrase | Phrase[], temporalType: TemporalType, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, temporalType: TemporalType, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
         super(labelPhrase, id, lblPosition, lblAlignment, labelAction);
         this.ui.append(this.component = new TemporalInput(temporalType, id, value, name));
     }
@@ -103,7 +103,7 @@ export class LabeledTemporalInputFactory<T> extends ComponentFactory<LabeledTemp
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledTemporalInput component.
      */
-    public labeledTemporalInput(labelPhrase: Phrase | Phrase[], temporalType: TemporalType, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledTemporalInput {
+    public labeledTemporalInput(labelPhrase: Phrase | Phrases, temporalType: TemporalType, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledTemporalInput {
         return this.setupComponent(new LabeledTemporalInput(labelPhrase, temporalType, id, value, name, lblPosition, lblAlignment, labelAction), data);
     }
 }

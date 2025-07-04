@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase } from "@vanilla-ts/core";
+import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { A, Div, Span } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
 
@@ -15,7 +15,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      */
-    constructor(href: string, labelPhrase: Phrase | Phrase[], anchorPhrase?: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
+    constructor(href: string, labelPhrase: Phrase | Phrases, anchorPhrase?: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
         super(labelPhrase, lblPosition, lblAlignment);
         this.initialize(undefined, href);
         Array.isArray(anchorPhrase)
@@ -56,7 +56,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * Set the phrasing content of the components anchor. __The setter `Phrase` here is an alias for
      * the property `this.Anchor.Phrase`.__
      */
-    public set Phrase(phrase: Phrase | Phrase[]) {
+    public set Phrase(phrase: Phrase | Phrases) {
         this.component.Phrase = phrase;
     }
 
@@ -67,7 +67,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @param phrase The phrasing content to be set for the anchor.
      * @returns This instance.
      */
-    public phrase(...phrase: Phrase[]): this {
+    public phrase(...phrase: Phrases): this {
         this.component.phrase(...phrase);
         return this;
     }
@@ -76,7 +76,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * Set the phrasing content of the components anchor. __The setter `Rephrase` here is an alias
      * for the property `this.Anchor.Rephrase`.__
      */
-    public set Rephrase(phrase: Phrase | Phrase[]) {
+    public set Rephrase(phrase: Phrase | Phrases) {
         this.component.Rephrase = phrase;
     }
 
@@ -87,7 +87,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @param phrase The phrasing content to be set for the anchor.
      * @returns This instance.
      */
-    public rephrase(...phrase: Phrase[]): this {
+    public rephrase(...phrase: Phrases): this {
         this.component.rephrase(...phrase);
         return this;
     }
@@ -123,7 +123,7 @@ export class LabeledAnchorFactory<T> extends ComponentFactory<LabeledAnchor> {
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledAnchor component.
      */
-    public labeledAnchor(href: string, labelPhrase: Phrase | Phrase[], anchorPhrase?: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledAnchor {
+    public labeledAnchor(href: string, labelPhrase: Phrase | Phrases, anchorPhrase?: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledAnchor {
         return this.setupComponent(new LabeledAnchor(href, labelPhrase, anchorPhrase, lblPosition, lblAlignment), data);
     }
 }

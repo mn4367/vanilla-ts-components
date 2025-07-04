@@ -30,7 +30,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
     protected label: L;
     // This member exists only to temporarily store the value given to the contructor to be
     // available in `this.buildUI()`. It will be set to `undefined` again after `initialize()`.
-    #labelPhrase?: Phrase | Phrase[];
+    #labelPhrase?: Phrase | Phrases;
     protected lblPosition: LabelPosition;
     protected lblAlignment: LabelAlignment;
     protected component: C;
@@ -41,7 +41,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      */
-    constructor(labelPhrase: Phrase | Phrase[], lblPosition: LabelPosition = LabelPosition.START, lblAlignment: LabelAlignment = LabelAlignment.START) {
+    constructor(labelPhrase: Phrase | Phrases, lblPosition: LabelPosition = LabelPosition.START, lblAlignment: LabelAlignment = LabelAlignment.START) {
         super();
         this.#labelPhrase = labelPhrase;
         this.lblPosition = lblPosition;
@@ -90,7 +90,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
      * @param phrase The phrasing content to be set for the label.
      * @returns This instance.
      */
-    public labelPhrase(...phrase: Phrase[]): this {
+    public labelPhrase(...phrase: Phrases): this {
         this.label.phrase(...phrase);
         return this;
     }
@@ -110,7 +110,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
      * @param phrase The phrasing content to be set for the label.
      * @returns This instance.
      */
-    public labelRephrase(...phrase: Phrase[]): this {
+    public labelRephrase(...phrase: Phrases): this {
         this.label.rephrase(...phrase);
         return this;
     }

@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, ComponentFactory, NullableString, Phrase } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { Button, Span } from "@vanilla-ts/dom";
 
 
@@ -14,7 +14,7 @@ export type IconButtonOptions = {
     /** Icon for the logical start icon element of the button. Default: `null`. */
     IconStart?: NullableString;
     /** Caption for the button. Default: []. */
-    Caption?: Phrase[];
+    Caption?: Phrases;
     /** Icon for the logical end icon element of the button. Default: `null`. */
     IconEnd?: NullableString;
     /** Title (tooltip) for the button. Default: `null`. */
@@ -173,7 +173,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
      * @inheritdoc
      * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Phrase}
      */
-    public set Phrase(phrase: Phrase | Phrase[]) {
+    public set Phrase(phrase: Phrase | Phrases) {
         this.btnPhrase.Phrase = phrase;
     }
 
@@ -181,7 +181,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
      * @inheritdoc
      * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.phrase()}
      */
-    public phrase(...phrase: Phrase[]): this {
+    public phrase(...phrase: Phrases): this {
         this.btnPhrase.phrase(...phrase);
         return this;
     }
@@ -197,7 +197,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
      * @inheritdoc
      * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Rephrase}
      */
-    public set Rephrase(phrase: Phrase | Phrase[]) {
+    public set Rephrase(phrase: Phrase | Phrases) {
         this.btnPhrase.Rephrase = phrase;
     }
 
@@ -205,7 +205,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
      * @inheritdoc
      * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.rephrase()}
      */
-    public rephrase(...phrase: Phrase[]): this {
+    public rephrase(...phrase: Phrases): this {
         this.btnPhrase.rephrase(...phrase);
         return this;
     }

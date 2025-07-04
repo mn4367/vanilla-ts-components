@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, NullableString, Phrase } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, RadioButton } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
 import { LabeledRadioButton } from "./LabeledRadioButton.js";
@@ -9,7 +9,7 @@ import { LabeledRadioButton } from "./LabeledRadioButton.js";
  */
 export interface LabeledRadioButtons extends Array<{
     /** The phrasing content for the label of a radio button. */
-    Label: Phrase | Phrase[];
+    Label: Phrase | Phrases;
     /** The `id` attribute of a radio button. */
     ID: string;
     /** The value of a radio button. */

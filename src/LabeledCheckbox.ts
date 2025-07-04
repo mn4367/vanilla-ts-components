@@ -1,4 +1,4 @@
-import { CheckedEvent, ComponentFactory, Phrase } from "@vanilla-ts/core";
+import { CheckedEvent, ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { Checkbox } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
 import { LabeledInputComponent } from "./LabeledInputComponent.js";
@@ -31,7 +31,7 @@ export class LabeledCheckbox<EventMap extends LabeledCheckboxEventMap = LabeledC
      *   the checkbox input element, if `labelAction` is `false`, clicking on the label does
      *   nothing.
      */
-    constructor(labelPhrase: Phrase | Phrase[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
         super(labelPhrase, id, lblPosition ?? LabelPosition.END, lblAlignment, labelAction);
         this.component = new Checkbox(id, value, name)
             // Forward this event to make handling of the component easier.
@@ -122,7 +122,7 @@ export class LabeledCheckboxFactory<T> extends ComponentFactory<LabeledCheckbox>
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledCheckbox component.
      */
-    public labeledCheckbox(labelPhrase: Phrase | Phrase[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledCheckbox {
+    public labeledCheckbox(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledCheckbox {
         return this.setupComponent(new LabeledCheckbox(labelPhrase, id, value, name, lblPosition, lblAlignment, labelAction), data);
     }
 }

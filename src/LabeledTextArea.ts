@@ -1,4 +1,4 @@
-import { ComponentFactory, NullableString, Phrase } from "@vanilla-ts/core";
+import { ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, Label, TextArea } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
 
@@ -22,7 +22,7 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
      * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label focuses
      *   the textarea element, if `labelAction` is `false`, clicking on the label does nothing.
      */
-    constructor(labelPhrase: Phrase | Phrase[], text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
         super(labelPhrase, lblPosition ?? LabelPosition.TOP, lblAlignment);
         this.initialize(undefined, text, rows, cols, id, name, labelAction);
     }
@@ -110,7 +110,7 @@ export class LabeledTextAreaFactory<T> extends ComponentFactory<LabeledTextArea>
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledTextArea component.
      */
-    public labeledTextArea(labelPhrase: Phrase | Phrase[], text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledTextArea {
+    public labeledTextArea(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledTextArea {
         return this.setupComponent(new LabeledTextArea(labelPhrase, text, rows, cols, id, name, lblPosition, lblAlignment, labelAction), data);
     }
 }

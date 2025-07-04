@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, IElementComponent, INodeComponent, Phrase } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, IElementComponent, INodeComponent, Phrase, Phrases } from "@vanilla-ts/core";
 import { Hr, LiUl, Menu, Span, Text } from "@vanilla-ts/dom";
 
 
@@ -24,7 +24,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * @param checked The `Checked` state of the menu item.
      * @param menuItemData Optional data attached to the menu item.
      */
-    constructor(content: Phrase | Phrase[] | IElementComponent<HTMLElement>, hint?: Phrase | Phrase[] | IElementComponent<HTMLElement>, checked: boolean = false, menuItemData?: MenuItemData) {
+    constructor(content: Phrase | Phrases | IElementComponent<HTMLElement>, hint?: Phrase | Phrases | IElementComponent<HTMLElement>, checked: boolean = false, menuItemData?: MenuItemData) {
         super();
         super
             .initialize()
@@ -52,7 +52,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
         return this._content.Children;
     }
     /** @inheritdoc */
-    public set Content(content: Phrase | Phrase[] | IElementComponent<HTMLElement>) {
+    public set Content(content: Phrase | Phrases | IElementComponent<HTMLElement>) {
         this.internalContent(content, false);
     }
 
@@ -65,7 +65,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * @see {@link MenuItem.Content}
      * @see {@link MenuItem.recontent()}
      */
-    public set Recontent(content: Phrase | Phrase[] | IElementComponent<HTMLElement>) {
+    public set Recontent(content: Phrase | Phrases | IElementComponent<HTMLElement>) {
         this.internalContent(content, true);
     }
 
@@ -85,7 +85,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * @see {@link MenuItem.recontent()}
      * @returns This instance.
      */
-    public content(content: Phrase | Phrase[] | IElementComponent<HTMLElement>): this {
+    public content(content: Phrase | Phrases | IElementComponent<HTMLElement>): this {
         return this.internalContent(content, false);
     }
 
@@ -106,7 +106,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * @see {@link MenuItem.content()}
      * @returns This instance.
      */
-    public recontent(content: Phrase | Phrase[] | IElementComponent<HTMLElement>): this {
+    public recontent(content: Phrase | Phrases | IElementComponent<HTMLElement>): this {
         return this.internalContent(content, true);
     }
 
@@ -117,7 +117,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * previous menu item content remains untouched.
      * @returns This instance.
      */
-    public internalContent(content: Phrase | Phrase[] | IElementComponent<HTMLElement>, rephrase: boolean): this {
+    public internalContent(content: Phrase | Phrases | IElementComponent<HTMLElement>, rephrase: boolean): this {
         this.removeClass("text", "phrase", "component");
         rephrase
             ? this._content.remove()
@@ -165,7 +165,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
         return this._hint.Children;
     }
     /** @inheritdoc */
-    public set Hint(hint: Phrase | Phrase[] | IElementComponent<HTMLElement> | undefined) {
+    public set Hint(hint: Phrase | Phrases | IElementComponent<HTMLElement> | undefined) {
         this.internalHint(hint, false);
     }
 
@@ -179,7 +179,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * @see {@link MenuItem.Hint}
      * @see {@link MenuItem.rehint()}
      */
-    public set Rehint(hint: Phrase | Phrase[] | IElementComponent<HTMLElement> | undefined) {
+    public set Rehint(hint: Phrase | Phrases | IElementComponent<HTMLElement> | undefined) {
         this.internalHint(hint, true);
     }
 
@@ -200,7 +200,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * @see {@link MenuItem.rehint()}
      * @returns This instance.
      */
-    public hint(hint?: Phrase | Phrase[] | IElementComponent<HTMLElement>): this {
+    public hint(hint?: Phrase | Phrases | IElementComponent<HTMLElement>): this {
         return this.internalHint(hint, false);
     }
 
@@ -223,7 +223,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * @see {@link MenuItem.hint()}
      * @returns This instance.
      */
-    public rehint(hint?: Phrase | Phrase[] | IElementComponent<HTMLElement>): this {
+    public rehint(hint?: Phrase | Phrases | IElementComponent<HTMLElement>): this {
         return this.internalHint(hint, true);
     }
 
@@ -234,7 +234,7 @@ export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap
      * hint content remains untouched.
      * @returns This instance.
      */
-    protected internalHint(hint: Phrase | Phrase[] | IElementComponent<HTMLElement> | undefined, rephrase: boolean): this {
+    protected internalHint(hint: Phrase | Phrases | IElementComponent<HTMLElement> | undefined, rephrase: boolean): this {
         rephrase
             ? this._hint.remove()
             : this._hint.clear();
@@ -330,7 +330,7 @@ export class MenuItemFactory<T> extends ComponentFactory<MenuItem> {
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns MenuItem component.
      */
-    public menuItem(content: Phrase | Phrase[] | IElementComponent<HTMLElement>, hint?: Phrase | Phrase[] | IElementComponent<HTMLElement>, checked: boolean = false, menuItemData?: MenuItemData, data?: T): MenuItem {
+    public menuItem(content: Phrase | Phrases | IElementComponent<HTMLElement>, hint?: Phrase | Phrases | IElementComponent<HTMLElement>, checked: boolean = false, menuItemData?: MenuItemData, data?: T): MenuItem {
         return this.setupComponent(new MenuItem(content, hint, checked, menuItemData), data);
     }
 }
@@ -346,7 +346,7 @@ export class MenuHeading<EventMap extends HTMLElementEventMap = HTMLElementEvent
      * Create menu heading component.
      * @param content The content of the menu heading.
      */
-    constructor(content: Phrase | Phrase[]) {
+    constructor(content: Phrase | Phrases) {
         super();
         super
             .initialize()
@@ -362,7 +362,7 @@ export class MenuHeading<EventMap extends HTMLElementEventMap = HTMLElementEvent
         return this.ui.Children;
     }
     /** @inheritdoc */
-    public set Content(content: Phrase | Phrase[]) {
+    public set Content(content: Phrase | Phrases) {
         this.content(content);
     }
 
@@ -371,7 +371,7 @@ export class MenuHeading<EventMap extends HTMLElementEventMap = HTMLElementEvent
      * @param content The content of the menu heading.
      * @returns This instance.
      */
-    public content(content: Phrase | Phrase[]): this {
+    public content(content: Phrase | Phrases): this {
         this.ui.removeClass("text", "phrase");
         if (typeof content === "string") {
             this.ui.phrase(content);
@@ -403,7 +403,7 @@ export class MenuHeadingFactory<T> extends ComponentFactory<MenuHeading> {
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns MenuHeading component.
      */
-    public menuHeading(content: Phrase | Phrase[] | IElementComponent<HTMLElement>, data?: T): MenuHeading {
+    public menuHeading(content: Phrase | Phrases | IElementComponent<HTMLElement>, data?: T): MenuHeading {
         return this.setupComponent(new MenuHeading(content), data);
     }
 }

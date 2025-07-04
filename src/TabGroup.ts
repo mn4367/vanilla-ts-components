@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_EVENT_INIT_DICT, HTMLElementWithChildren, IElementWithChildrenComponent, INodeComponent, mixin, NullableString, Phrase } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_EVENT_INIT_DICT, HTMLElementWithChildren, IElementWithChildrenComponent, INodeComponent, mixin, NullableString, Phrases } from "@vanilla-ts/core";
 import { Div, Span, Text } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 import { ScrollContainer } from "./ScrollContainer.js";
@@ -646,7 +646,7 @@ export class TabGroupFactory<T> extends ComponentFactory<TabGroup> {
  */
 class TabContentContainer extends Div {
     /** @inheritdoc */
-    constructor(protected ownerTab: Tab, ...phrase: Phrase[]) {
+    constructor(protected ownerTab: Tab, ...phrase: Phrases) {
         super(...phrase);
         phrase.length === 0 || this.phrase(...phrase);
     }

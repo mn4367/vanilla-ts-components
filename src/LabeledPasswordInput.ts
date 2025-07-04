@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase } from "@vanilla-ts/core";
+import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { PasswordInput } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
 import { LabeledInputComponent } from "./LabeledInputComponent.js";
@@ -22,7 +22,7 @@ export class LabeledPasswordInput<EventMap extends HTMLElementEventMap = HTMLEle
      *   the password input element, if `labelAction` is `false`, clicking on the label does
      *   nothing.
      */
-    constructor(labelPhrase: Phrase | Phrase[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
         super(labelPhrase, id, lblPosition, lblAlignment, labelAction);
         (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
             ? this.ui.append(this.component = new PasswordInput(id, value, name))
@@ -58,7 +58,7 @@ export class LabeledPasswordInputFactory<T> extends ComponentFactory<LabeledPass
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledPasswordInput component.
      */
-    public labeledPasswordInput(labelPhrase: Phrase | Phrase[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledPasswordInput {
+    public labeledPasswordInput(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledPasswordInput {
         return this.setupComponent(new LabeledPasswordInput(labelPhrase, id, value, name, lblPosition, lblAlignment, labelAction), data);
     }
 }

@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase } from "@vanilla-ts/core";
+import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, Progress, ProgressValueEvent, Span } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
 
@@ -29,7 +29,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      */
-    constructor(labelPhrase: Phrase | Phrase[], max: number = 1, value: number | undefined, progressPhrase?: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
+    constructor(labelPhrase: Phrase | Phrases, max: number = 1, value: number | undefined, progressPhrase?: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
         super(labelPhrase, lblPosition, lblAlignment);
         this.initialize(undefined, max, value, progressPhrase);
     }
@@ -46,7 +46,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * Set the phrasing content of the components progress element. __The setter `Phrase` here is an
      * alias for the property `this.Progress.Phrase`.__
      */
-    public set Phrase(phrase: Phrase | Phrase[]) {
+    public set Phrase(phrase: Phrase | Phrases) {
         this.component.Phrase = phrase;
     }
 
@@ -57,7 +57,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * @param phrase The phrasing content to be set for the progress element.
      * @returns This instance.
      */
-    public phrase(...phrase: Phrase[]): this {
+    public phrase(...phrase: Phrases): this {
         this.component.phrase(...phrase);
         return this;
     }
@@ -66,7 +66,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * Set the phrasing content of the components progress element. __The setter `Rephrase` here is
      * an alias for the property `this.Progress.Rephrase`.__
      */
-    public set Rephrase(phrase: Phrase | Phrase[]) {
+    public set Rephrase(phrase: Phrase | Phrases) {
         this.component.Rephrase = phrase;
     }
 
@@ -77,7 +77,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * @param phrase The phrasing content to be set for the progress element.
      * @returns This instance.
      */
-    public rephrase(...phrase: Phrase[]): this {
+    public rephrase(...phrase: Phrases): this {
         this.component.rephrase(...phrase);
         return this;
     }
@@ -163,7 +163,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
     }
 
     /** @inheritdoc */
-    protected override buildUI(max: number = 1, value: number | undefined, progressPhrase: Phrase | Phrase[]): this {
+    protected override buildUI(max: number = 1, value: number | undefined, progressPhrase: Phrase | Phrases): this {
         this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
             ? new Div()
                 .append(
@@ -198,7 +198,7 @@ export class LabeledProgressFactory<T> extends ComponentFactory<LabeledProgress>
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledProgress component.
      */
-    public labeledProgress(labelPhrase: Phrase | Phrase[], max: number = 1, value: number | undefined, progressPhrase?: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledProgress {
+    public labeledProgress(labelPhrase: Phrase | Phrases, max: number = 1, value: number | undefined, progressPhrase?: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledProgress {
         return this.setupComponent(new LabeledProgress(labelPhrase, max, value, progressPhrase, lblPosition, lblAlignment), data);
     }
 }

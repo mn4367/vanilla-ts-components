@@ -1,4 +1,4 @@
-import { CheckedEvent, ComponentFactory, Phrase } from "@vanilla-ts/core";
+import { CheckedEvent, ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { RadioButton } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
 import { LabeledInputComponent } from "./LabeledInputComponent.js";
@@ -31,7 +31,7 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
      *   the radio button input element (if toggling is enabled), if `labelAction` is `false`,
      *   clicking on the label does nothing.
      */
-    constructor(labelPhrase: Phrase | Phrase[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
         super(labelPhrase, id, lblPosition ?? LabelPosition.END, lblAlignment, labelAction);
         this.component = new RadioButton(id, value, name)
             // Forward this event to make handling of the component easier.
@@ -120,7 +120,7 @@ export class LabeledRadioButtonFactory<T> extends ComponentFactory<LabeledRadioB
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledRadioButton component.
      */
-    public labeledRadioButton(labelPhrase: Phrase | Phrase[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledRadioButton {
+    public labeledRadioButton(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledRadioButton {
         return this.setupComponent(new LabeledRadioButton(labelPhrase, id, value, name, lblPosition, lblAlignment, labelAction), data);
     }
 }

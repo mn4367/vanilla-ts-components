@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase } from "@vanilla-ts/core";
+import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { TextInput } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
 import { LabeledInputComponent } from "./LabeledInputComponent.js";
@@ -21,7 +21,7 @@ export class LabeledTextInput<EventMap extends HTMLElementEventMap = HTMLElement
      * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label focuses
      *   the text input element, if `labelAction` is `false`, clicking on the label does nothing.
      */
-    constructor(labelPhrase: Phrase | Phrase[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
         super(labelPhrase, id, lblPosition, lblAlignment, labelAction);
         (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
             ? this.ui.append(this.component = new TextInput(id, value, name))
@@ -56,7 +56,7 @@ export class LabeledTextInputFactory<T> extends ComponentFactory<LabeledTextInpu
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledTextInput component.
      */
-    public labeledTextInput(labelPhrase: Phrase | Phrase[], id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledTextInput {
+    public labeledTextInput(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledTextInput {
         return this.setupComponent(new LabeledTextInput(labelPhrase, id, value, name, lblPosition, lblAlignment, labelAction), data);
     }
 }

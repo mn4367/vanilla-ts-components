@@ -1,4 +1,4 @@
-import { ComponentFactory, NullableString, Phrase } from "@vanilla-ts/core";
+import { ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, Span } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
 import { LabeledRadioButton } from "./LabeledRadioButton.js";
@@ -18,7 +18,7 @@ export class LabeledRadioButtonGroup<EventMap extends RadioButtonGroupEventMap =
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      */
-    constructor(labelPhrase: Phrase | Phrase[], radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
+    constructor(labelPhrase: Phrase | Phrases, radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
         super(labelPhrase, lblPosition ?? LabelPosition.TOP, lblAlignment);
         this.initialize(undefined, radioButtons, name, alignment);
     }
@@ -122,7 +122,7 @@ export class LabeledRadioButtonGroupFactory<T> extends ComponentFactory<LabeledR
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledRadioButtonGroup component.
      */
-    public labeledRadioButtonGroup(labelPhrase: Phrase | Phrase[], radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledRadioButtonGroup {
+    public labeledRadioButtonGroup(labelPhrase: Phrase | Phrases, radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledRadioButtonGroup {
         return this.setupComponent(new LabeledRadioButtonGroup(labelPhrase, radioButtons, name, alignment, lblPosition, lblAlignment), data);
     }
 }

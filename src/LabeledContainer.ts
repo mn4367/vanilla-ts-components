@@ -1,4 +1,4 @@
-import { AChildren, ComponentFactory, INodeComponent, mixin, Phrase } from "@vanilla-ts/core";
+import { AChildren, ComponentFactory, INodeComponent, mixin, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, Span } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
 
@@ -25,7 +25,7 @@ export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElement
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      */
-    constructor(labelPhrase: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
+    constructor(labelPhrase: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
         super(labelPhrase, lblPosition ?? LabelPosition.TOP, lblAlignment);
         this.initialize();
     }
@@ -96,7 +96,7 @@ export class LabeledContainerFactory<T> extends ComponentFactory<LabeledContaine
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledContainer component.
      */
-    public labeledContainer(labelPhrase: Phrase | Phrase[], lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledContainer {
+    public labeledContainer(labelPhrase: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledContainer {
         return this.setupComponent(new LabeledContainer(labelPhrase, lblPosition, lblAlignment), data);
     }
 }
