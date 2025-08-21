@@ -10,8 +10,8 @@ import { Div, Dialog as DOMDialog } from "@vanilla-ts/dom";
  */
 export type DialogOptions = {
     /**
-     * The left/top dialog position with regard to the viewport. This is done setting the
-     * `margin-left` and `margin-top` CSS properties on the dialog element.\
+     * The left/top dialog position with regard to the viewport. This is done by setting the
+     * `translate` CSS property on the dialog element.\
      * Default: `{ x: 0, y: 0 }`.
      */
     Position?: DOMPoint;
@@ -30,15 +30,15 @@ export type DialogOptions = {
      */
     VCentered?: boolean;
     /**
-     * If `true`, the dialog is canceled (and closed) when the `Esc` key is pressed. With `false`
-     * the dialog must be canceled/closed by other means (e.g. a button action or by calling
+     * If `true`, the dialog is cancelled (and closed) when the `Esc` key is pressed. With `false`
+     * the dialog must be cancelled/closed by other means (e.g. a button action or by calling
      * `dlg.close()`/`dlg.cancel()` elsewhere).\
      * Default: `true`.
      */
     CloseWithEscape?: boolean;
     /**
-     * If `true`, the focus remains within the dialog when pressing the `Tab` and `Shift-Tab` keys
-     * keys, i.e. if e.g. `Tab` is pressed when the last focusable element is focused, the focus
+     * If `true`, the focus remains within the dialog when pressing the `Tab` and `Shift-Tab` keys,
+     * so, for example, if `Tab` is pressed when the last focusable element is focused, the focus
      * will move to the first focusable element in the dialog and not to another element on the page
      * or to the browser itself.\
      * Default: `true`.
@@ -79,7 +79,8 @@ export class DialogShowEvent extends ACustomComponentEvent<"dlg-show", Dialog, {
     Modal: boolean;
 }> {
     /**
-     * Create dialog show event.
+     * Create dialog show event. Event handlers can prevent showing the dialog by calling
+     * `preventDefault()`.
      * @param sender The event emitter (always `Dialog`).
      * @param modal `true` if the dialog is about to be displayed modal, otherwise false.
      * @param customEventInitDict Optional event properties.
@@ -92,33 +93,34 @@ export class DialogShowEvent extends ACustomComponentEvent<"dlg-show", Dialog, {
 /** Custom 'dlg-close' event for dialogs. */
 export class DialogCloseEvent extends ACustomComponentEvent<"dlg-close", Dialog, {
     /**
-     * The `returnValue` with which the dialog is to be closed/canceled. If `cancel` is `true`,
-     * `returnValue` is always `DLG_CANCELED`.\
-     * __Important note:__ The `ReturnValue` property of the events `detail` property is the return
-     * value _which would be set_ if the dialog is closed/canceled, _not the current_ `ReturnValue`
-     * property of the dialog!
+     * The return value with which the dialog is to be closed/cancelled.\
+     * __Note:__ The `ReturnValue` property of the events `detail` property is either
+     * - the current `ReturnValue` property of the dialog,
+     * - the return value which has been set through calling `close(someValue)` (if any)
+     * - or `DLG_CANCELLED`, if the dialog is to be cancelled (then `Cancel` is also `true`).
      */
     ReturnValue: string;
     /**
-     * `true`, if the dialog was canceled instead of closed regularly, otherwise `false`. If
-     * `Cancel` is `true`, `ReturnValue` is always `DLG_CANCELED`.
+     * `true`, if the dialog was cancelled instead of closed regularly, otherwise `false`. If
+     * `Cancel` is `true`, `ReturnValue` is always `DLG_CANCELLED`.
      */
     Cancel: boolean;
 }> {
     /**
-     * Create dialog close event.
+     * Create dialog close event. Event handlers can prevent closing the dialog by calling
+     * `preventDefault()`.
      * @param sender The event emitter (always `Dialog`).
-     * @param returnValue The `returnValue` with which the dialog is to be closed/canceled. If
-     * `cancel` is `true`, `returnValue` is always `DLG_CANCELED`.\
-     * __Important note:__ The `ReturnValue` property of the events `detail` property is the return
-     * value _which would be set_ if the dialog is closed/canceled, _not the current_ `ReturnValue`
-     * property of the dialog!
-     * @param cancel `true`, if the dialog was canceled instead of closed regularly, otherwise
+     * @param returnValue The return value with which the dialog is to be closed/cancelled.\
+     * __Note:__ The `ReturnValue` property of the events `detail` property is either
+     * - the current `ReturnValue` property of the dialog,
+     * - the return value which has been set through calling `close(someReturnValue)` (if any)
+     * - or `DLG_CANCELLED`, if the dialog is to be cancelled (then `Cancel` is also `true`).
+     * @param cancel `true`, if the dialog was cancelled instead of closed regularly, otherwise
      * `false`.
      * @param customEventInitDict Optional event properties.
      */
     constructor(sender: Dialog, returnValue: string, cancel: boolean, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
-        super("dlg-close", sender, { ReturnValue: cancel ? DLG_CANCELED : returnValue, Cancel: cancel }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+        super("dlg-close", sender, { ReturnValue: cancel ? DLG_CANCELLED : returnValue, Cancel: cancel }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
     }
 }
 
@@ -130,14 +132,14 @@ export interface DialogEventMap extends HTMLElementEventMap {
      */
     "dlg-show": DialogShowEvent;
     /**
-     * A dialog is to be colsed. Event handlers can prevent closing the dialog by calling
+     * A dialog is to be closed. Event handlers can prevent closing the dialog by calling
      * `preventDefault()`.
      */
     "dlg-close": DialogCloseEvent;
 }
 
 /**
- * Special `returnValue` of dialogs in the case where the internal `Dialog` DOM element is closed
+ * Special return value of dialogs in the case where the internal `Dialog` DOM element is closed
  * bypassing the regular `close()`/`forceClose()` functions. This should never happen, except the
  * browser has a bug or the component is misused by accessing protected properties.\
  * __Note:__ Do _not_ use this constant as a regular return value for dialogs!
@@ -145,10 +147,10 @@ export interface DialogEventMap extends HTMLElementEventMap {
 export const DLG_IRREGULAR_CLOSE = "__DLG_IRREGULAR_CLOSE__";
 
 /**
- * Default `returnValue` of dialogs which have been canceled using `cancel()`/`forceCancel()`.\
+ * Default return value of dialogs which have been cancelled using `cancel()`/`forceCancel()`.\
  * __Note:__ Do _not_ use this constant as a regular return value for dialogs!
  */
-export const DLG_CANCELED = "__DLG_CANCELED__";
+export const DLG_CANCELLED = "__DLG_CANCELLED__";
 
 /**
  * Dialog component for displaying modal and non-modal dialogs.
@@ -174,7 +176,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      * a child element in `show()`/`showModal()` and removed again in `close()`.
      * @param options Options for the dialog.
      * @param components The initial components that make up the content of this dialog.\
-     * __Important note:__ If a dialog is disposed of (using`dispose()`), _all_ components given
+     * __Important note:__ If a dialog is disposed of (using `dispose()`), _all_ components given
      * in the constructor that are still children of this dialog (`Dialog` implements `IChildren`)
      * are also disposed of! If these components are to be used elsewhere after the dialog has been
      * disposed of, they must be extracted or removed using `dlg.extract(...)` or `dlg.remove()`
@@ -215,8 +217,9 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             BaseZIndex: Math.max(options.BaseZIndex ?? Dialog.baseZIndex ?? 1000, 0),
             /* eslint-enable */
         };
-        this.style("marginLeft", `${this._options.Position!.x}px`);
-        this.style("marginTop", `${this._options.Position!.y}px`);
+        // this.style("marginLeft", `${this._options.Position!.x}px`);
+        // this.style("marginTop", `${this._options.Position!.y}px`);
+        this.style("translate", `${this._options.Position!.x}px ${this._options.Position!.y}px`);
         this._options.HCentered ? this.addClass("h-centered") : this.removeClass("h-centered");
         this._options.VCentered ? this.addClass("v-centered") : this.removeClass("v-centered");
         Dialog.baseZIndex = this._options.BaseZIndex!;
@@ -246,7 +249,8 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 
     /**
-     * Get/set the `returnValue` property of the dialog.
+     * Get/set the `ReturnValue` property of the dialog (the `returnValue` of the internal DOM
+     * dialog element).
      */
     public get ReturnValue(): string {
         return this.dlg.ReturnValue;
@@ -257,7 +261,8 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 
     /**
-     * Set the `returnValue` property of the dialog.
+     * Set the `returnValue` property of the dialog (the `returnValue` of the internal DOM dialog
+     * element).
      * @param v The value to be set.
      * @returns This instance.
      */
@@ -268,18 +273,19 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
 
     /**
      * Closes the dialog. `dlg-close` event handlers may prevent closing the dialog.
-     * @param returnValue An updated value for the `returnValue` of the dialog.
+     * @param returnValue An overridden/individual value for the `ReturnValue` of the dialog. This does
+     * _not_ change the _current_ value of `ReturnValue` on this instance!
      * @returns This instance.
      */
     public close(returnValue?: string): this {
-        return this.dispatch(new DialogCloseEvent(this, returnValue ?? "", false))
+        return this.dispatch(new DialogCloseEvent(this, returnValue ?? this.ReturnValue, false))
             ? this.doClose(returnValue)
             : this;
     }
 
     /**
      * Forcibly closes the dialog. `dlg-close` event handlers _cannot_ prevent closing the dialog.
-     * @param returnValue An updated value for the `returnValue` of the dialog.
+     * @param returnValue An updated value for the `ReturnValue` of the dialog.
      * @returns This instance.
      */
     public forceClose(returnValue?: string): this {
@@ -288,22 +294,22 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
 
     /**
      * Cancels (and closes) the dialog. `dlg-close` event handlers may prevent canceling the dialog.
-     * The `returnValue` of the dialog is set to `DLG_CANCELED`.
+     * The `ReturnValue` of the dialog is set to `DLG_CANCELLED`.
      * @returns This instance.
      */
     public cancel(): this {
-        return this.dispatch(new DialogCloseEvent(this, DLG_CANCELED, true))
-            ? this.doClose(DLG_CANCELED)
+        return this.dispatch(new DialogCloseEvent(this, DLG_CANCELLED, true))
+            ? this.doClose(DLG_CANCELLED)
             : this;
     }
 
     /**
      * Forcibly cancels (and closes) the dialog. `dlg-close` event handlers _cannot_ prevent
-     * canceling the dialog. The `returnValue` of the dialog is set to `DLG_CANCELED`.
+     * canceling the dialog. The `ReturnValue` of the dialog is set to `DLG_CANCELLED`.
      * @returns This instance.
      */
     public forceCancel(): this {
-        return this.doClose(DLG_CANCELED);
+        return this.doClose(DLG_CANCELLED);
     }
 
     /**
@@ -354,7 +360,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
 
     /**
      * Closes the dialog.
-     * @param returnValue An updated value for the `returnValue` of the dialog.
+     * @param returnValue An updated value for the `ReturnValue` of the dialog.
      * @returns This instance.
      */
     protected doClose(returnValue?: string): this {
@@ -533,7 +539,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
 export interface Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AElementComponentWithInternalUI<DOMDialog, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
- * Factory for Dialog components.
+ * Factory for `Dialog` components.
  */
 export class DialogFactory<T> extends ComponentFactory<Dialog> {
     /**
@@ -545,7 +551,7 @@ export class DialogFactory<T> extends ComponentFactory<Dialog> {
      * a child element in `show()`/`showModal()` and removed again in `close()`.
      * @param options Options for the dialog.
      * @param components The initial components that make up the content of this dialog.\
-     * __Important note:__ If a dialog is disposed of (using`dispose()`), _all_ components given
+     * __Important note:__ If a dialog is disposed of (using `dispose()`), _all_ components given
      * in the constructor that are still children of this dialog (`Dialog` implements `IChildren`)
      * are also disposed of! If these components are to be used elsewhere after the dialog has been
      * disposed of, they must be extracted or removed using `dlg.extract(...)` or `dlg.remove()`

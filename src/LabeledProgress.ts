@@ -180,7 +180,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
 }
 
 /**
- * Factory for LabeledProgress components.
+ * Factory for `LabeledProgress` components.
  */
 export class LabeledProgressFactory<T> extends ComponentFactory<LabeledProgress> {
     /**

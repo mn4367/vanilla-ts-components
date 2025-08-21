@@ -836,7 +836,7 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
 }
 
 /**
- * Factory for PopupMenu components.
+ * Factory for `PopupMenu` components.
  */
 export class PopupMenuFactory<T> extends ComponentFactory<PopupMenu> {
     /**

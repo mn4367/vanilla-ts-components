@@ -83,7 +83,7 @@ export class LabeledTemporalInput<EventMap extends HTMLElementEventMap = HTMLEle
 }
 
 /**
- * Factory for LabeledTemporalInput components.
+ * Factory for `LabeledTemporalInput` components.
  */
 export class LabeledTemporalInputFactory<T> extends ComponentFactory<LabeledTemporalInput> {
     /**

@@ -25,17 +25,13 @@
         box-shadow: var(--1px) var(--5px) var(--20px) calc(-1 * var(--2px)) hsla(0 0% 0% / 0.25);
     }
     &.h-centered:not(.v-centered) {
-        left: 50%;
-        transform: translateX(-50%);
+        margin-inline: auto;
     }
     &.v-centered:not(.h-centered) {
-        top: 50%;
-        transform: translateY(-50%);
+        margin-block: auto;
     }
     &.v-centered.h-centered {
-        left: 50%;
-        top: 50%;
-        transform: translateX(-50%) translateY(-50%);
+        margin: auto;
     }
     > .content {
         padding: 1rem;

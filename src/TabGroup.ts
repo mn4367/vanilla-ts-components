@@ -616,7 +616,7 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
 }
 
 /**
- * Factory for TabGroup components.
+ * Factory for `TabGroup` components.
  */
 export class TabGroupFactory<T> extends ComponentFactory<TabGroup> {
     /**
@@ -921,7 +921,7 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
 export interface Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
- * Factory for Tab components.
+ * Factory for `Tab` components.
  */
 export class TabFactory<T> extends ComponentFactory<Tab> {
     /**

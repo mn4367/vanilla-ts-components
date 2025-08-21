@@ -206,7 +206,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
 }
 
 /**
- * Factory for RadioButtonGroup components.
+ * Factory for `RadioButtonGroup` components.
  */
 export class RadioButtonGroupFactory<T> extends ComponentFactory<RadioButtonGroup> {
     /**

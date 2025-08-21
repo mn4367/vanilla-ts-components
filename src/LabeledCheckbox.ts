@@ -100,7 +100,7 @@ export class LabeledCheckbox<EventMap extends LabeledCheckboxEventMap = LabeledC
 }
 
 /**
- * Factory for LabeledCheckbox components.
+ * Factory for `LabeledCheckbox` components.
  */
 export class LabeledCheckboxFactory<T> extends ComponentFactory<LabeledCheckbox> {
     /**

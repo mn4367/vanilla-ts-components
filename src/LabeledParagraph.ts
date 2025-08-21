@@ -97,7 +97,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
 }
 
 /**
- * Factory for LabeledParagraph components.
+ * Factory for `LabeledParagraph` components.
  */
 export class LabeledParagraphFactory<T> extends ComponentFactory<LabeledParagraph> {
     /**

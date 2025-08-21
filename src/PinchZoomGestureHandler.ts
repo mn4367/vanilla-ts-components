@@ -71,7 +71,7 @@ export const PINCH_ZOOM_STOP = Infinity;
  * screens. Notable exceptions, according to MDN, are the desktop versions of Opera and Safari.
  *
  * __Note__: Although the handler extends `ANodeComponent` and is therefore a UI component, it is
- * not intended to be mounted in another component. The reason for its dependency on
+ * _not_ intended to be mounted in another component. The reason for its dependency on
  * `ANodeComponent` is that the handler is able to emit/disptach events and uses the capabilities of
  * `ANodeComponent` for this. So if an instance of `PinchZoomGestureHandler` is created, it
  * must/should not be mounted in a component and thus disposed of manually! If, however, the handler

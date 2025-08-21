@@ -98,7 +98,7 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
 }
 
 /**
- * Factory for LabeledRadioButton components.
+ * Factory for `LabeledRadioButton` components.
  */
 export class LabeledRadioButtonFactory<T> extends ComponentFactory<LabeledRadioButton> {
     /**

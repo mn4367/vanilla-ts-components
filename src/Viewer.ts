@@ -1763,7 +1763,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
 }
 
 /**
- * Factory for Viewer components.
+ * Factory for `Viewer` components.
  */
 export class ViewerFactory<T> extends ComponentFactory<Viewer> {
     /**

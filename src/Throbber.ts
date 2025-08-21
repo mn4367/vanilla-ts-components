@@ -57,7 +57,7 @@ export class Throbber<EventMap extends HTMLElementEventMap = HTMLElementEventMap
 }
 
 /**
- * Factory for Throbber components.
+ * Factory for `Throbber` components.
  */
 export class ThrobberFactory<T> extends ComponentFactory<Throbber> {
     /**

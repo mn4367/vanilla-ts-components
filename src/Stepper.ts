@@ -700,7 +700,7 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
 }
 
 /**
- * Factory for Stepper components.
+ * Factory for `Stepper` components.
  */
 export class StepperFactory<T> extends ComponentFactory<Stepper> {
     /**

@@ -317,7 +317,7 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
 }
 
 /**
- * Factory for BusyOverlay components.
+ * Factory for `BusyOverlay` components.
  */
 export class BusyOverlayFactory<T> extends ComponentFactory<BusyOverlay> {
     /**

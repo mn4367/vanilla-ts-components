@@ -90,7 +90,7 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
 }
 
 /**
- * Factory for LabeledTextArea components.
+ * Factory for `LabeledTextArea` components.
  */
 export class LabeledTextAreaFactory<T> extends ComponentFactory<LabeledTextArea> {
     /**

@@ -110,7 +110,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
 }
 
 /**
- * Factory for LabeledAnchor components.
+ * Factory for `LabeledAnchor` components.
  */
 export class LabeledAnchorFactory<T> extends ComponentFactory<LabeledAnchor> {
     /**

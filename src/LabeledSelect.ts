@@ -58,7 +58,7 @@ export class LabeledSelect<EventMap extends HTMLElementEventMap = HTMLElementEve
 }
 
 /**
- * Factory for LabeledSelect components.
+ * Factory for `LabeledSelect` components.
  */
 export class LabeledSelectFactory<T> extends ComponentFactory<LabeledSelect> {
     /**

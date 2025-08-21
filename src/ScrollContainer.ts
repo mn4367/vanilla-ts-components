@@ -883,7 +883,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
 export interface ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
- * Factory for ScrollContainer components.
+ * Factory for `ScrollContainer` components.
  */
 export class ScrollContainerFactory<T> extends ComponentFactory<ScrollContainer> {
     /**

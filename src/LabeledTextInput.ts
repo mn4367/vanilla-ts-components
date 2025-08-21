@@ -38,7 +38,7 @@ export class LabeledTextInput<EventMap extends HTMLElementEventMap = HTMLElement
 }
 
 /**
- * Factory for LabeledTextInput components.
+ * Factory for `LabeledTextInput` components.
  */
 export class LabeledTextInputFactory<T> extends ComponentFactory<LabeledTextInput> {
     /**

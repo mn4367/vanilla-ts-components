@@ -39,7 +39,7 @@ export class LabeledPasswordInput<EventMap extends HTMLElementEventMap = HTMLEle
 }
 
 /**
- * Factory for LabeledPasswordInput components.
+ * Factory for `LabeledPasswordInput` components.
  */
 export class LabeledPasswordInputFactory<T> extends ComponentFactory<LabeledPasswordInput> {
     /**

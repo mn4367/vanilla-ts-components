@@ -223,7 +223,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
 }
 
 /**
- * Factory for IconButton components.
+ * Factory for `IconButton` components.
  */
 export class IconButtonFactory<T> extends ComponentFactory<IconButton> {
     /**

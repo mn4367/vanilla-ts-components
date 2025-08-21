@@ -85,7 +85,7 @@ export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElement
 export interface LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
- * Factory for LabeledContainer components.
+ * Factory for `LabeledContainer` components.
  */
 export class LabeledContainerFactory<T> extends ComponentFactory<LabeledContainer> {
     /**
