@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, ComponentFactory, mixinDOMAttributes, NameAttr, NullableString, Phrase, Phrases, ValueAttr } from "@vanilla-ts/core";
 import { Button, Span } from "@vanilla-ts/dom";
 
 
@@ -40,8 +40,8 @@ export type IconButtonOptions = {
  * background images or with an icon font like 'Material Icons'. In both cases the icon button
  * options are used to set the respective identifier for the icon, so styling should be easy. For
  * both icon spans (part one and three) the following rules apply:
- * - If the value of `IconStart`/`IconEnd` is an empty string or null, the current text content and
- *   the class name of the `Span` component are removed.
+ * - If the value of `IconStart`/`IconEnd` is an empty string or null, the current text content
+ *   _and_ the class name of the `Span` component are _removed_.
  * - If the value of `IconStart`/`IconEnd` begins with `-` (minus), the current text content of the
  *   `Span` component is removed and its class name is set to `<value>.substring(1)`, e.g.
  *   `-some-class` results in the class name `some-class`.
@@ -100,6 +100,13 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
             .options(options ?? {});
     }
 
+    /** @inheritdoc */
+    public override disabled(disabled: boolean): this {
+        // Uses the `NativeDisabled` property of `Button`.
+        this.ui.disabled(disabled);
+        return super.disabled(disabled);
+    }
+
     /**
      * Get/set the icon button options. The returned object is a _copy_, modifying this copy has no
      * effect on the corresponding icon button instance.
@@ -148,6 +155,8 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
         const icon = atStart
             ? this.spanStart
             : this.spanEnd;
+        const hasDisabled = icon.hasClass("disabled");
+        const hasParentDisabled = icon.hasClass("parent-disabled");
         icon.text(
             v === null || v.startsWith("-")
                 ? null
@@ -158,7 +167,11 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
                 : v.startsWith("-")
                     ? v.substring(1)
                     : v
-        ).addClass(atStart ? "start" : "end");
+        ).addClass(
+            atStart ? "start" : "end",
+            hasDisabled ? "disabled" : undefined,
+            hasParentDisabled ? "parent-disabled" : undefined
+        );
         return this;
     }
 
@@ -219,6 +232,20 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
                 this.spanEnd = new Span().style("order", "3").addClass("end")
             );
         return this;
+    }
+
+    static {
+        /**
+         * Mixin additional DOM attributes. Required because `IconButton` is actually just a `Button
+         * (with additional child components).
+         */
+        mixinDOMAttributes(
+            IconButton,
+            NameAttr<HTMLButtonElement>,
+            // !! Handled by `public override disabled()`
+            // NativeDisabledAttr<HTMLButtonElement>,
+            ValueAttr<HTMLButtonElement>
+        );
     }
 }
 
