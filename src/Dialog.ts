@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, INodeComponent, mixin } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, INodeComponent, mixin } from "@vanilla-ts/core";
 import { Div, Dialog as DOMDialog } from "@vanilla-ts/dom";
 
 
@@ -90,6 +90,22 @@ export class DialogShowEvent extends ACustomComponentEvent<"dlg-show", Dialog, {
     }
 }
 
+/** Custom 'dlg-shown' event for dialogs. */
+export class DialogShownEvent extends ACustomComponentEvent<"dlg-shown", Dialog, {
+    /** `true` if the dialog is shown modal, otherwise false. */
+    Modal: boolean;
+}> {
+    /**
+     * Create dialog shown event. This event is purely informative and can't be cancelled.
+     * @param sender The event emitter (always `Dialog`).
+     * @param modal `true` if the dialog is shown modal, otherwise false.
+     * @param customEventInitDict Optional event properties.
+     */
+    constructor(sender: Dialog, modal: boolean, customEventInitDict: EventInit = DEFAULT_EVENT_INIT_DICT) {
+        super("dlg-shown", sender, { Modal: modal }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
 /** Custom 'dlg-close' event for dialogs. */
 export class DialogCloseEvent extends ACustomComponentEvent<"dlg-close", Dialog, {
     /**
@@ -131,6 +147,11 @@ export interface DialogEventMap extends HTMLElementEventMap {
      * `preventDefault()`.
      */
     "dlg-show": DialogShowEvent;
+    /**
+     * This event is emitted, when the `show()` or `showModal()` functions of a dialog have been executed.
+     * This event is purely informative and can't be cancelled.
+     */
+    "dlg-shown": DialogShowEvent;
     /**
      * A dialog is to be closed. Event handlers can prevent closing the dialog by calling
      * `preventDefault()`.
@@ -402,6 +423,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
         this.state = DialogState.NON_MODAL;
         Dialog.nonModals.indexOf(this) !== -1 || Dialog.nonModals.push(this);
         this.makeTopMost();
+        this.emit(new DialogShownEvent(this, false));
         return this;
     }
 
@@ -428,6 +450,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             dlg.removeClass("modal-dialog-first");
         }
         Dialog.modals[0]?.addClass("modal-dialog-first");
+        this.emit(new DialogShownEvent(this, true));
         await new Promise(resolve => this.modalResolver = resolve);
         return this;
     }
