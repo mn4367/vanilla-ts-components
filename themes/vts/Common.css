@@ -45,15 +45,16 @@ textarea {
         }
     }
 }
-input[type="date"],
-input[type="time"],
-input[type="datetime-local"],
-input[type="week"],
-input[type="month"],
 input[type="checkbox"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="number"],
 input[type="radio"],
 input[type="range"],
 input[type="text"],
+input[type="time"],
+input[type="week"],
 select,
 textarea {
     border: var(--1px) solid var(--input-border-color);
