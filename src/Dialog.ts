@@ -10,22 +10,22 @@ import { Div, Dialog as DOMDialog } from "@vanilla-ts/dom";
  */
 export type DialogOptions = {
     /**
-     * The left/top dialog position with regard to the viewport. This is done by setting the
-     * `translate` CSS property on the dialog element.\
+     * The left/top dialog position with regard to the viewport (in pixels). This is done by setting
+     * the `translate` CSS property on the dialog element.\
      * Default: `{ x: 0, y: 0 }`.
      */
     Position?: DOMPoint;
     /**
-     * `true` if the dialog is to be centered horizontally, otherwise `false`. If `Position` is also
-     * given, `Position.x` is added as an offset to the calculated value of the horizontally
-     * centered position.\
+     * `true` if the dialog is to be centered horizontally with regard to the viewport, otherwise
+     * `false`. If `Position` is also given, `Position.x` is added as an offset to the calculated
+     * value of the horizontally centered position.\
      * Default: `true`.
      */
     HCentered?: boolean;
     /**
-     * `true` if the dialog is to be centered vertically, otherwise `false`. If `Position` is also
-     * given, `Position.y` is added as an offset to the calculated value of the vertically centered
-     * position.\
+     * `true` if the dialog is to be centered vertically with regard to the viewport, otherwise
+     * `false`. If `Position` is also given, `Position.y` is added as an offset to the calculated
+     * value of the vertically centered position.\
      * Default: `true`.
      */
     VCentered?: boolean;
@@ -238,9 +238,23 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             BaseZIndex: Math.max(options.BaseZIndex ?? Dialog.baseZIndex ?? 1000, 0),
             /* eslint-enable */
         };
-        // this.style("marginLeft", `${this._options.Position!.x}px`);
-        // this.style("marginTop", `${this._options.Position!.y}px`);
-        this.style("translate", `${this._options.Position!.x}px ${this._options.Position!.y}px`);
+        if (this._options.HCentered && this._options.VCentered) {
+            this.style("left", "50%");
+            this.style("top", "50%");
+            this.style("translate", `calc(-50% + ${this._options.Position!.x}px) calc(-50% + ${this._options.Position!.y}px)`);
+        } else if (this._options.HCentered) {
+            this.style("left", "50%");
+            this.style("top", `${this._options.Position!.y}px`);
+            this.style("translate", `calc(-50% + ${this._options.Position!.x}px) 0`);
+        } else if (this._options.VCentered) {
+            this.style("left", `${this._options.Position!.x}px`);
+            this.style("top", "50%");
+            this.style("translate", `0 calc(-50% + ${this._options.Position!.y}px)`);
+        } else {
+            this.style("left", "0");
+            this.style("top", "0");
+            this.style("translate", `${this._options.Position!.x}px ${this._options.Position!.y}px`);
+        }
         this._options.HCentered ? this.addClass("h-centered") : this.removeClass("h-centered");
         this._options.VCentered ? this.addClass("v-centered") : this.removeClass("v-centered");
         Dialog.baseZIndex = this._options.BaseZIndex!;

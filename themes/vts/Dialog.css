@@ -24,15 +24,10 @@
     &:focus-within {
         box-shadow: var(--1px) var(--5px) var(--20px) calc(-1 * var(--2px)) hsla(0 0% 0% / 0.25);
     }
-    &.h-centered:not(.v-centered) {
-        margin-inline: auto;
-    }
-    &.v-centered:not(.h-centered) {
-        margin-block: auto;
-    }
-    &.v-centered.h-centered {
-        margin: auto;
-    }
+    /* &.h-centered:not(.v-centered) {}
+    &.v-centered:not(.h-centered) {}
+    &.v-centered.h-centered {}
+    &:not(.v-centered):not(.h-centered) {} */
     > .content {
         padding: 1rem;
     }
