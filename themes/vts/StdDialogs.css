@@ -1,0 +1,70 @@
+.std-dialog {
+    > .content {
+        width: 100%;
+        > .dlg-title {
+            position: relative;
+            /* Example settings for a title bar */
+
+            left: calc(-1 * var(--base-size));
+            top: calc(-1 * var(--base-size));
+            margin-block-end: calc(-1 * var(--base-size));
+            width: calc(100% + 2 * var(--base-size));
+            padding: var(--base-size-half) var(--base-size);
+            background-color: lightgray;
+            > p {
+                margin: 0;
+            }
+
+        }
+        > .dlg-btn-bar {
+            display: flex;
+            justify-content: center;
+            padding-block-start: var(--base-size);
+            > .icon-button {
+                flex-grow: 0;
+            }
+            > .separator {
+                flex-grow: 1;
+            }
+        }
+    }
+    &.horizontal > .content > .dlg-btn-bar {
+        flex-direction: row;
+        > .icon-button:not(:last-child) {
+            margin-inline-end: var(--base-size-half);
+        }
+        > .separator {
+            min-width: calc(var(--base-size) + var(--base-size-half));
+        }
+    }
+    &.vertical > .content > .dlg-btn-bar {
+        flex-direction: column;
+        align-items: center;
+        > .icon-button:not(:last-child) {
+            margin-block-end: var(--base-size-half);
+        }
+        > .separator {
+            min-height: calc(var(--base-size) + var(--base-size-half));
+        }
+    }
+    /* Predefined standard dialogs */
+    &.msg-dlg,
+    &.yes-no {
+        max-width: 30rem;
+        /* > .content {} */
+    }
+    &.query-input {
+        max-width: 85%;
+        > .content {
+            > input[type=text] {
+                width: 100%;
+            }
+            > input[type=number] {
+                width: 6rem;
+            }
+            > textarea {
+                max-width: 100%;
+            }
+        }
+    }
+}

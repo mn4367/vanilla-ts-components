@@ -1,6 +1,8 @@
 export * from "./BusyOverlay.js";
 export * from "./Dialog.js";
 export * from "./DisclosureContainer.js";
+export * from "./I18N/StdDialogI18N_DE.js";
+export * from "./I18N/StdDialogI18N_EN.js";
 export * from "./IconButton.js";
 export * from "./LabeledAnchor.js";
 export * from "./LabeledCheckbox.js";
@@ -23,6 +25,8 @@ export * from "./Menu.js";
 export * from "./PinchZoomGestureHandler.js";
 export * from "./RadioButtonGroup.js";
 export * from "./ScrollContainer.js";
+export * from "./StdDialog.js";
+export * from "./StdDialogBtns.js";
 export * from "./Stepper.js";
 export * from "./TabGroup.js";
 export * from "./Throbber.js";
