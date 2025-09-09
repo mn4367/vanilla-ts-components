@@ -148,8 +148,8 @@ export interface DialogEventMap extends HTMLElementEventMap {
      */
     "dlg-show": DialogShowEvent;
     /**
-     * This event is emitted, when the `show()` or `showModal()` functions of a dialog have been executed.
-     * This event is purely informative and can't be cancelled.
+     * This event is emitted, when the `show()` or `showModal()` functions of a dialog have been
+     * executed. This event is purely informative and can't be cancelled.
      */
     "dlg-shown": DialogShowEvent;
     /**

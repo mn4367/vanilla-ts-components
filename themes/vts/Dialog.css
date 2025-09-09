@@ -29,6 +29,6 @@
     &.v-centered.h-centered {}
     &:not(.v-centered):not(.h-centered) {} */
     > .content {
-        padding: 1rem;
+        padding: var(--base-size);
     }
 }
