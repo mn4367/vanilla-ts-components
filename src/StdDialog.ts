@@ -1,7 +1,7 @@
 import { AElementComponent, toKebapCase } from "@vanilla-ts/core";
 import { Checkbox, Div, Input, Select, Span, Text, TextArea, TextInput } from "@vanilla-ts/dom";
 import { IElementComponent, INodeComponent } from "../../vanilla-ts-core/types/Interfaces.js";
-import { Dialog, DialogCloseEvent, DialogOptions } from "./Dialog.js";
+import { Dialog, DialogCloseEvent, DialogOptions, DLG_CANCELLED } from "./Dialog.js";
 import { StdDlgI18N_EN } from "./I18N/StdDialogI18N_EN.js";
 import { IconButton } from "./IconButton.js";
 import { LabeledCheckbox } from "./LabeledCheckbox.js";
@@ -75,6 +75,15 @@ export type StdDlgOptions = {
      */
     Focus?: symbol | IElementComponent<HTMLElement> | undefined | null;
     /**
+     * A callback that is executed, if one of the dialog buttons is clicked/pressed.
+     * @param btn The button which was clicked/pressed to close the dialog. If the dialog is closed
+     * by pressing the `Escape` key (provided `DlgOptions.CloseWithEscape` is `true`), `btn` is the
+     * symbol {@link STD_DLG_CANCELLED}.
+     * @param dlg The instance of `StdDialog` which is to be closed.
+     * @returns `true`, if the dialog can be closed, `false` if the dialog should remain open.
+     */
+    OnClose?: (btn: symbol, dlg: StdDialog) => Promise<boolean>;
+    /**
      * If `true`, the class name `vertical` is added to the dialog. This facilitates the creation of
      * CSS that is intended to layout the buttons vertically for common prompts, like on recent
      * editions of macOS.\
@@ -116,16 +125,18 @@ const I18N_UNKNOWN_BTN = "I18N_UNKNOWN_BTN";
  * parameters, display it (usually modally), and return a return value. Predefined examples are the
  * ready-made functions {@link msgDlg()}, {@link confirm()} and {@link queryInput()} in this module.
  * They also serve as examples of how to use `StdDialog`.\
- * __Note:__ `StdDialog` doesn't take regular buttons made out of components, instead JavaScript
- * symbols are used to define them in a more abstract way. Internally `StdDialog` then creates
- * buttons (`IconButton`) itself from the symbol definitions.
+ * __Notes:__
+ * - `StdDialog` doesn't take regular buttons made out of components, instead JavaScript symbols are
+ *   used to define them in a more abstract way. Internally `StdDialog` itself then creates buttons
+ *   (`IconButton`) from the symbol definitions.
+ * - Clicking/pressing any of the provided buttons always tries to close the dialog.
  */
 export class StdDialog {
     protected static i18n_ = StdDlgI18N_EN;
+    protected redispatchedDlgClose = Symbol();
     protected options: StdDlgOptions;
     protected dlg: Dialog;
-    protected buttons: IconButton[] = [];
-    protected buttonSymbols: symbol[] = [];
+    protected buttons = new Map<symbol, IconButton>();
     protected disposed = false;
 
     /**
@@ -139,6 +150,7 @@ export class StdDialog {
             Content: Array.isArray(options.Content) ? options.Content.slice(0) : options.Content,
             Buttons: Array.isArray(options.Buttons) ? options.Buttons.slice(0) : options.Buttons,
             Focus: options.Focus,
+            OnClose: options.OnClose,
             Vertical: options.Vertical ?? false,
             ClassNames: Array.isArray(options.ClassNames) ? options.ClassNames.slice() : [options.ClassNames],
             I18N: options.I18N ? { ...options.I18N } : StdDialog.i18n_,
@@ -198,7 +210,7 @@ export class StdDialog {
 
     /**
      * Get the current return value of the dialog. This is the symbol that corresponds to the button
-     * that has been clicked/pressed or the symbol `STD_DLG_CANCELLED`, if the dialog has been
+     * that has been clicked/pressed or the symbol {@link STD_DLG_CANCELLED}, if the dialog has been
      * cancelled by other means, e.g. by pressing the `Escape` key, if the underlying `Dialog`
      * instance was created with that option (`StdDlgOptions.DlgOptions.CloseWithEscape: true`).
      */
@@ -214,33 +226,12 @@ export class StdDialog {
     }
 
     /**
-     * Get the array of buttons (instances of `IconButton`) created by this standard dialog
-     * (as a copy). Can be used to further manipulate individual buttons. The order of the returned
-     * array reflects the order of the array obtained by `ButtonSymbols`.
+     * Get all buttons created by this standard dialog (as a copy, modifying this map has no effect
+     * on the underlying internal map). Can be used to further manipulate individual buttons.
      */
-    public get Buttons(): IconButton[] {
+    public get Buttons(): Map<symbol, IconButton> {
         this.checkDisposed();
-        return this.buttons.slice();
-    }
-
-    /**
-     * Get the array of buttons symbols created by this standard dialog (as a copy). Can be used to
-     * further manipulate individual buttons. The order of the returned array reflects the order of
-     * the array obtained by `Buttons`.
-     */
-    public get ButtonSymbols(): symbol[] {
-        this.checkDisposed();
-        return this.buttonSymbols.slice();
-    }
-
-    /**
-     * Get the `IconButton` instance which is associated to a button symbol.
-     * @param sym The button symbol for which the button is to be looked up.
-     * @returns The `IconButton` instance associated to `sym` or `undefined`, if no button can be
-     * found for `sym`.
-     */
-    public getButtonFor(sym: symbol): IconButton | undefined {
-        return this.buttons[this.buttonSymbols.findIndex(e => e === sym)];
+        return new Map(this.buttons);
     }
 
     /**
@@ -257,7 +248,7 @@ export class StdDialog {
      * @returns The symbol corresponding to the button which was clicked/pressed. If the standard
      * dialog was created with the option `StdDlgOptions.DlgOptions.CloseWithEscape = true` it is
      * also possible to close the dialog by pressing `Escape`; in this case the returned value is
-     * the symbol `STD_DLG_CANCELLED`.
+     * the symbol {@link STD_DLG_CANCELLED}.
      */
     public async showModal(): Promise<symbol> {
         this.checkDisposed();
@@ -288,8 +279,7 @@ export class StdDialog {
         this.dlg = undefined;
         // @ts-ignore
         this.options = undefined;
-        this.buttons.length = 0;
-        this.buttonSymbols.length = 0;
+        this.buttons.clear();
     }
 
     /**
@@ -306,7 +296,7 @@ export class StdDialog {
      */
     protected buildDlg(): void {
         this.checkDisposed();
-        this.buttons.length = 0;
+        this.buttons.clear();
         this.dlg = new Dialog(this.options.DlgOptions);
         const btnBar = new Div();
         this.dlg
@@ -337,22 +327,42 @@ export class StdDialog {
                         )
                     )
             )
-            .on("dlg-shown", () => {
+            .once("dlg-shown", () => {
                 toFocus
                     ? toFocus.focus()
                     : (<HTMLElement>document.activeElement)?.blur?.();
+            })
+            .on("dlg-close", async (ev: DialogCloseEvent) => {
+                type RedispatchedEvent = DialogCloseEvent & { detail: Record<symbol, boolean>; }; // eslint-disable-line jsdoc/require-jsdoc
+                if ((<RedispatchedEvent>ev).detail[this.redispatchedDlgClose]) {
+                    return;
+                }
+                if (ev.$.ReturnValue === DLG_CANCELLED) {
+                    ev.preventDefault();
+                    ev.stopImmediatePropagation();
+                    if (this.options?.OnClose && ![true, undefined, null].includes(await this.options.OnClose(STD_DLG_CANCELLED, this))) {
+                        return;
+                    }
+                    const newEvent = new DialogCloseEvent(this.dlg, DLG_CANCELLED, true);
+                    (<RedispatchedEvent>newEvent).detail[this.redispatchedDlgClose] = true;
+                    if (this.dlg.dispatch(newEvent)) {
+                        // `forceClose()` !!! Otherwise this would cause and endless `dlg-close`
+                        // event loop!
+                        this.dlg.forceClose(DLG_CANCELLED);
+                    }
+                }
             });
         let toFocus: IconButton | IElementComponent<HTMLElement> | undefined;
         if (this.options.Focus && this.options.Focus instanceof AElementComponent) {
             toFocus = this.options.Focus;
         } else if (this.options.Focus === undefined) {
-            toFocus = this.buttons[0];
+            toFocus = this.buttons.values().next().value;
         } else if (this.options.Focus === null) {
             toFocus = undefined;
         } else if (Array.isArray(this.options.Buttons)) {
-            toFocus = this.buttons[this.options.Buttons.indexOf(<symbol>this.options.Focus)];
+            toFocus = this.buttons.get(<symbol>this.options.Focus);
         } else {
-            toFocus = this.buttons[0];
+            toFocus = this.buttons.values().next().value;
         }
     }
 
@@ -366,9 +376,12 @@ export class StdDialog {
         this.checkDisposed();
         const btn = new IconButton({ Caption: [this.options.I18N![sym] || I18N_UNKNOWN_BTN] }) // eslint-disable-line jsdoc/require-jsdoc
             .addClass(IconButton.DefaultCSSClassName, "std-dlg-btn")
-            .on("click", () => { dlg.close(sym.description); });
-        this.buttons.push(btn);
-        this.buttonSymbols.push(sym);
+            .on("click", async () => {
+                if (!this.options?.OnClose || [true, undefined, null].includes(await this.options.OnClose(sym, this))) {
+                    dlg.close(sym.description);
+                }
+            });
+        this.buttons.set(sym, btn);
         return btn;
     }
 }
@@ -399,6 +412,14 @@ export type MsgDlgOptions = {
      * - `null`: Nothing is focused, so the user has to select a button manually.
      */
     Focus?: symbol;
+    /**
+     * A callback that is executed, if one of the dialog buttons is clicked/pressed.
+     * @param btn The button which was clicked/pressed to close the dialog. If the dialog is closed
+     * by pressing the `Escape` key, `btn` is the symbol {@link STD_DLG_CANCELLED}.
+     * @param dlg The instance of `StdDialog` which is to be closed.
+     * @returns `true`, if the dialog can be closed, `false` if the dialog should remain open.
+     */
+    OnClose?: (btn: symbol, dlg: StdDialog) => Promise<boolean>;
     /** If `true`, the buttons will be laid out vertically (see {@link StdDlgOptions.Vertical}). */
     Vertical?: boolean;
     /** A class name or an array of class names to be set on the dialog. */
@@ -416,8 +437,8 @@ export type MsgDlgOptions = {
  * function returns.
  * @param content The content for the message dialog.
  * @param options Options for the message dialog.
- * @returns The button (symbol) which was clicked or the symbol `STD_DLG_CANCELLED`, if the dialog
- * was closed by pressing the `Escape` key.
+ * @returns The button (symbol) which was clicked or the symbol {@link STD_DLG_CANCELLED}, if the
+ * dialog was closed by pressing the `Escape` key.
  */
 export async function msgDlg(content: StdDlgContent, options?: MsgDlgOptions): Promise<symbol> {
     const stdDlg = new StdDialog({
@@ -430,6 +451,7 @@ export async function msgDlg(content: StdDlgContent, options?: MsgDlgOptions): P
             : options?.Focus === null
                 ? null
                 : options.Focus,
+        OnClose: options?.OnClose,
         Vertical: options?.Vertical ?? false,
         ClassNames: ["msg-dlg", options?.ClassNames].flat(),
         I18N: options?.I18N
@@ -468,6 +490,14 @@ export type ConfirmOptions = {
      * - `null`: Nothing is focused, so the user has to select a button manually.
      */
     Focus?: symbol | undefined | null;
+    /**
+     * A callback that is executed, if one of the dialog buttons is clicked/pressed.
+     * @param btn The button which was clicked/pressed to close the dialog. If the dialog is closed
+     * by pressing the `Escape` key, `btn` is the symbol {@link STD_DLG_CANCELLED}.
+     * @param dlg The instance of `StdDialog` which is to be closed.
+     * @returns `true`, if the dialog can be closed, `false` if the dialog should remain open.
+     */
+    OnClose?: (btn: symbol, dlg: StdDialog) => Promise<boolean>;
     /** If `true`, the buttons will be laid out vertically (see {@link StdDlgOptions.Vertical}). */
     Vertical?: boolean;
     /** A class name or an array of class names to be set on the dialog. */
@@ -502,6 +532,7 @@ export async function confirm(content: StdDlgContent, options?: ConfirmOptions):
             : options?.Focus === null
                 ? null
                 : options.Focus,
+        OnClose: options?.OnClose,
         Vertical: options?.Vertical ?? false,
         ClassNames: ["confirm", options?.ClassNames].flat(),
         I18N: options?.I18N
@@ -542,13 +573,21 @@ export type QueryInputOptions = {
      */
     ConfirmButton?: symbol;
     /**
+     * A callback that is executed, if one of the dialog buttons is clicked/pressed.
+     * @param btn The button which was clicked/pressed to close the dialog. If the dialog is closed
+     * by pressing the `Escape` key, `btn` is the symbol {@link STD_DLG_CANCELLED}.
+     * @param dlg The instance of `StdDialog` which is to be closed.
+     * @returns `true`, if the dialog can be closed, `false` if the dialog should remain open.
+     */
+    OnClose?: (btn: symbol, dlg: StdDialog) => Promise<boolean>;
+    /**
      * If available, this function will be called, if the `ConfirmButton` is clicked/pressed. If the
      * function returns `true`, the dialog is closed, otherwise the dialog stays open.
      * @param value The `Value` property of the input component. This is always of type `string`,
      * except for inputs of type `Checkbox` or `LabeledCheckbox` where `value` is of type `boolean`.
      * @returns `true`, if the validation is successful, otherwise `false`.
      */
-    Validate?: ((value: string | boolean) => boolean) | ((value: string | boolean) => Promise<boolean>);
+    Validate?: (value: string | boolean) => Promise<boolean>;
     /** If `true`, the buttons will be laid out vertically (see {@link StdDlgOptions.Vertical}). */
     Vertical?: boolean;
     /** A class name or an array of class names to be set on the dialog. */
@@ -579,42 +618,43 @@ export type QueryInputOptions = {
  *   'Enter' key was pressed while the input component had the focus, otherwise `false`.
  * - `Value`: The value of the input component. If `Input` is an instance of `Checkbox` or
  *   `LabeledCheckbox` then `Value` reflects the `Checked` state of `Input` (`true` or `false`).
- * - `Button`: The button (symbol) which was clicked or the symbol `STD_DLG_CANCELLED`, if the
+ * - `Button`: The button (symbol) which was clicked or the symbol {@link STD_DLG_CANCELLED}, if the
  *   dialog was closed by pressing the `Escape` key.
  */
-export async function queryInput(content: StdDlgContent | null | undefined, options: QueryInputOptions): Promise<{ OK: boolean; Value: string | boolean; Button: symbol, }> { // eslint-disable-line jsdoc/require-jsdoc
-    const input = options.Input
+export async function queryInput(content: StdDlgContent | null | undefined, options?: QueryInputOptions): Promise<{ OK: boolean; Value: string | boolean; Button: symbol, }> { // eslint-disable-line jsdoc/require-jsdoc
+    const input = options?.Input
         ? options.Input
         : new TextInput;
     const stdDlg = new StdDialog({
         /* eslint-disable jsdoc/require-jsdoc */
-        Title: options.Title,
+        Title: options?.Title,
         Content: content ?? [],
-        Buttons: options.Buttons ? [options.Buttons].flat() : [btn_OK, btn_CANCEL],
+        Buttons: options?.Buttons ? [options.Buttons].flat() : [btn_OK, btn_CANCEL],
         Focus: input,
-        Vertical: options.Vertical ?? false,
-        ClassNames: ["query-input", "query-" + toKebapCase(input.ClassName), options.ClassNames].flat(),
-        I18N: options.I18N
+        OnClose: options?.OnClose,
+        Vertical: options?.Vertical ?? false,
+        ClassNames: ["query-input", "query-" + toKebapCase(input.ClassName), options?.ClassNames].flat(),
+        I18N: options?.I18N
         /* eslint-enable */
     });
     stdDlg.Dialog.insert(
         stdDlg.Dialog.Children.length - 1,
         input,
         ...[
-            typeof options.AfterInput === "function"
+            typeof options?.AfterInput === "function"
                 ? options.AfterInput(stdDlg)
-                : options.AfterInput
+                : options?.AfterInput
         ]
             .flat()
             .filter(e => e !== undefined && e !== null)
             .map(e => typeof e === "string" ? new Text(e) : e)
     );
-    const confirmButton = options.ConfirmButton ?? ([options.Buttons].flat())[0] ?? btn_OK;
+    const confirmButton = options?.ConfirmButton ?? ([options?.Buttons].flat())[0] ?? btn_OK;
     (input instanceof TextArea) || (<IElementComponent<HTMLElement>>input).on("keydown", async (ev: KeyboardEvent) => {
         if (ev.key === "Enter") {
             ev.preventDefault();
             ev.stopImmediatePropagation();
-            if (!options.Validate || await options.Validate((input instanceof Checkbox || input instanceof LabeledCheckbox) ? input.Checked : input.Value)) {
+            if (!options?.Validate || await options.Validate((input instanceof Checkbox || input instanceof LabeledCheckbox) ? input.Checked : input.Value)) {
                 stdDlg.Dialog.close(confirmButton.description);
             }
         }
@@ -625,7 +665,7 @@ export async function queryInput(content: StdDlgContent | null | undefined, opti
         if (ev.$.ReturnValue === confirmButton.description) {
             ev.preventDefault();
             ev.stopImmediatePropagation();
-            if (!options.Validate || await options.Validate((input instanceof Checkbox || input instanceof LabeledCheckbox) ? input.Checked : input.Value)) {
+            if (!options?.Validate || await options.Validate((input instanceof Checkbox || input instanceof LabeledCheckbox) ? input.Checked : input.Value)) {
                 // `forceClose()` !!! Otherwise this would cause and endless `dlg-close` event loop!
                 stdDlg.Dialog.forceClose(confirmButton.description);
             }
