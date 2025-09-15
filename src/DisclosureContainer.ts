@@ -137,7 +137,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      */
     public disclosedButtonOptions(v: IconButtonOptions): this {
         IconButton.mergeOptionsFromTo(v, this.disclosedBtnOptions);
-        !this._disclosed || this.disclosureButton.options(this.disclosedBtnOptions);
+        this._disclosed && this.disclosureButton.options(this.disclosedBtnOptions);
         return this;
     }
 
@@ -164,7 +164,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      */
     public undisclosedButtonOptions(v: IconButtonOptions): this {
         IconButton.mergeOptionsFromTo(v, this.undisclosedBtnOptions);
-        this._disclosed || this.disclosureButton.options(this.undisclosedBtnOptions);
+        !this._disclosed && this.disclosureButton.options(this.undisclosedBtnOptions);
         return this;
     }
 

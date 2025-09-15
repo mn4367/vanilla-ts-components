@@ -20,7 +20,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
         this.initialize(undefined, href);
         Array.isArray(anchorPhrase)
             ? this.component.phrase(...anchorPhrase)
-            : !anchorPhrase || this.component.phrase(anchorPhrase);
+            : anchorPhrase && this.component.phrase(anchorPhrase);
     }
 
     /**

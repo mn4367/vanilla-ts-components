@@ -413,7 +413,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this.item = wasEmpty
             ? this.items[0] ?? this.dummyItem
             : this.items[index ?? -1] ?? this.items.find(e => e === this.item) ?? this.items[0] ?? this.dummyItem;
-        !options.StepperOptions || this.stepper.options(options.StepperOptions);
+        options.StepperOptions && this.stepper.options(options.StepperOptions);
         this.itemContainer.native(opts.NativeScrollbars!);
         this.pinchZoomHandler.active(opts.PinchZoom!);
         opts.OmitToolbar

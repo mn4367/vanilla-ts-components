@@ -220,7 +220,7 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
                 if (!this.Parent) {
                     document.body.appendChild(this.DOM);
                 }
-                !delay || this.style("animationDelay", `${Math.max(0, delay)}ms`);
+                delay !== undefined && this.style("animationDelay", `${Math.max(0, delay)}ms`);
                 this.ui.showModal();
                 await new Promise(resolve => setTimeout(resolve, 1));
             }

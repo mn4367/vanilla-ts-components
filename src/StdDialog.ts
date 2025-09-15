@@ -340,6 +340,7 @@ export class StdDialog {
                 if (ev.$.ReturnValue === DLG_CANCELLED) {
                     ev.preventDefault();
                     ev.stopImmediatePropagation();
+                    // `[true, undefined, null].includes`: be lenient, if the callback returns nothing.
                     if (this.options?.OnClose && ![true, undefined, null].includes(await this.options.OnClose(STD_DLG_CANCELLED, this))) {
                         return;
                     }
@@ -377,6 +378,7 @@ export class StdDialog {
         const btn = new IconButton({ Caption: [this.options.I18N![sym] || I18N_UNKNOWN_BTN] }) // eslint-disable-line jsdoc/require-jsdoc
             .addClass(IconButton.DefaultCSSClassName, "std-dlg-btn")
             .on("click", async () => {
+                // `[true, undefined, null].includes`: be lenient, if the callback returns nothing.
                 if (!this.options?.OnClose || [true, undefined, null].includes(await this.options.OnClose(sym, this))) {
                     dlg.close(sym.description);
                 }

@@ -385,20 +385,20 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
         };
         const backwardButtons: IconButton[] = [];
         const forwardButtons: IconButton[] = [];
-        !this._options.First || backwardButtons.push(this.btnFirst);
-        !this._options.PageBackward || backwardButtons.push(this.btnPageBackward);
+        this._options.First && backwardButtons.push(this.btnFirst);
+        this._options.PageBackward && backwardButtons.push(this.btnPageBackward);
         // this.btnBackward.OnHeldDown = this.options.BackwardContinuous ? this.fncPageBackward : undefined;
         // this.btnBackward.OnHeldDownOptions = this.options.Continuous;
-        !this._options.Backward || backwardButtons.push(this.btnBackward);
+        this._options.Backward && backwardButtons.push(this.btnBackward);
         // this.btnPrevious.OnHeldDown = this.options.PreviousContinuous ? this.fncBackward : undefined;
         // this.btnPrevious.OnHeldDownOptions = this.options.Continuous;
-        !this._options.Forward || forwardButtons.push(this.btnForward);
+        this._options.Forward && forwardButtons.push(this.btnForward);
         // this.btnNext.OnHeldDown = this.options.NextContinuous ? this.fncForward : undefined;
         // this.btnNext.OnHeldDownOptions = this.options.Continuous;
-        !this._options.PageForward || forwardButtons.push(this.btnPageForward);
+        this._options.PageForward && forwardButtons.push(this.btnPageForward);
         // this.btnForward.OnHeldDown = this.options.ForwardContinuous ? this.fncPageForward : undefined;
         // this.btnForward.OnHeldDownOptions = this.options.Continuous;
-        !this._options.Last || forwardButtons.push(this.btnLast);
+        this._options.Last && forwardButtons.push(this.btnLast);
         this.ui.remove();
         this
             .appearance(this._options.Appearance!)

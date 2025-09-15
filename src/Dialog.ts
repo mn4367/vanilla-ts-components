@@ -406,12 +406,12 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
                 dlg.removeClass("modal-dialog-first");
             }
             const index = Dialog.modals.indexOf(this);
-            (index === -1) || Dialog.modals.splice(index, 1);
+            (index !== -1) && Dialog.modals.splice(index, 1);
             Dialog.modals[0]?.addClass("modal-dialog-first");
             this.modalResolver?.();
         } else if (this.state === DialogState.NON_MODAL) {
             const index = Dialog.nonModals.indexOf(this);
-            (index === -1) || Dialog.nonModals.splice(index, 1);
+            (index !== -1) && Dialog.nonModals.splice(index, 1);
             this.style("zIndex", null);
             this.setZIndexes();
         }
@@ -435,7 +435,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
         this.ui.show();
         this.closedRegularly = false;
         this.state = DialogState.NON_MODAL;
-        Dialog.nonModals.indexOf(this) !== -1 || Dialog.nonModals.push(this);
+        Dialog.nonModals.indexOf(this) === -1 && Dialog.nonModals.push(this);
         this.makeTopMost();
         this.emit(new DialogShownEvent(this, false));
         return this;
@@ -476,7 +476,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected makeTopMost(_ev?: FocusEvent): void {
         if (this.state === DialogState.NON_MODAL) {
             const index = Dialog.nonModals.indexOf(this);
-            index === -1 || Dialog.nonModals.push(Dialog.nonModals.splice(index, 1)[0]);
+            index !== -1 && Dialog.nonModals.push(Dialog.nonModals.splice(index, 1)[0]);
             this.setZIndexes();
         }
     }

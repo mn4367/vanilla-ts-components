@@ -648,7 +648,7 @@ class TabContentContainer extends Div {
     /** @inheritdoc */
     constructor(protected ownerTab: Tab, ...phrase: Phrases) {
         super(...phrase);
-        phrase.length === 0 || this.phrase(...phrase);
+        phrase.length > 0 && this.phrase(...phrase);
     }
 
     /** @inheritdoc */
