@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, ComponentFactory, mixinDOMAttributes, NameAttr, NullableString, Phrase, Phrases, ValueAttr } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, ComponentFactory, mixinDOMProperties, NameAttr, NullableString, Phrase, Phrases, ValueAttr } from "@vanilla-ts/core";
 import { Button, Span } from "@vanilla-ts/dom";
 
 
@@ -48,7 +48,7 @@ export type IconButtonOptions = {
  *
  * __Further notes:__
  * - Any component in the array `Caption` of an icon button options object will be disposed of if
- *   the icon button is disposed of.
+ *   the icon button is disposed of!
  * - The properties/functions `Phrase`/`Rephrase`/`phrase()`/`rephrase()` only affect the span
  *   component containing the phrasing content of the button (part two). See the corresponding
  *   properties and functions in `IElementWithChildrenComponent` in `@vanilla-ts/core`.
@@ -239,7 +239,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
          * Mixin additional DOM attributes. Required because `IconButton` is actually just a `Button
          * (with additional child components).
          */
-        mixinDOMAttributes(
+        mixinDOMProperties(
             IconButton,
             NameAttr<HTMLButtonElement>,
             // !! Handled by `public override disabled()`
