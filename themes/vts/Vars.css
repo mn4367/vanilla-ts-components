@@ -59,6 +59,11 @@
     --scroll-bar-thumb-min-size: calc(3 * var(--scroll-bar-size));
     --scroll-bar-thumb-gap: var(--1px);
     --scroll-bar-thumb-border-radius: 0.3rem;
+    /* Splitter */
+    --splitter-size: var(--1px);
+    --splitter-bleed: var(--4px);
+    --splitter-collapse-duration: 0.16s;
+    --splitter-collapse-easing: ease;
     /* #endregion */
 
     /* #region Colors, borders */
@@ -94,6 +99,8 @@
     --scroll-bar-border-color: hsla(0 0% 43% / 0.2);
     --scroll-bar-border: var(--1px) solid var(--scroll-bar-border-color);
     --scroll-bar-thumb-color: hsla(0 0% 43% / 0.8);
+    /* Splitter */
+    --splitter-color: hsla(0 0% 78% / 1);
     /* IconButton */
     --icon-button-margin: var(--base-size-half);
     /* #endregion */

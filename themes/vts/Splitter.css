@@ -1,0 +1,291 @@
+/**
+ * __Important note:__ The implementation of `Splitter.ts` is partially bound to this CSS. It is
+ * assumed that `margin`, `padding` and `border-width` of the elements `start` and `end` are always
+ * `0`! Any design that relies on margins, paddings or border styles for the _content_ of the
+ * splitter must therefore only be done by designing the parts _contained_ in `start`/`end`. The
+ * names of the animations for collapsing/uncollapsing the splitter parts (see below) are mandatory
+ * since the splitter listens for the end of them and then sets/removes class names. If
+ * collapsing/uncollapsing has to be done without animations, simply set
+ * `--splitter-collapse-duration` to `0`.
+ */
+.splitter,
+.vts-splitter {
+    --bleed-size: var(--splitter-bleed) solid transparent;
+    --bleed-size-neg: calc(-1 * var(--splitter-bleed));
+    --collapse-animation: var(--splitter-collapse-duration) var(--splitter-collapse-easing) forwards;
+    display: flex;
+    flex-wrap: nowrap;
+    /* Marker class for splitters whose `ActiveAreaSize` is absolute (not a percentage value). */
+    /* &.fixed {} */
+    > .start,
+    > .handle,
+    > .end {
+        position: relative;
+        margin: 0;
+        padding: 0;
+    }
+    > .start,
+    > .end {
+        flex-grow: 1;
+    }
+    &.active-area-start > .start,
+    &.active-area-end > .end {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+    > .handle {
+        flex-shrink: 0;
+        flex-grow: 0;
+        z-index: 1;
+        touch-action: none;
+        > div {
+            background-color: var(--splitter-color);
+        }
+    }
+    &.horizontal {
+        flex-direction: row;
+        > .handle {
+            margin-inline-start: var(--bleed-size-neg);
+            margin-inline-end: var(--bleed-size-neg);
+            border-inline-start: var(--bleed-size);
+            border-inline-end: var(--bleed-size);
+            cursor: col-resize;
+            > div {
+                width: var(--splitter-size);
+                height: 100%;
+                cursor: col-resize;
+            }
+        }
+        /* #region Collapsing */
+        /* #region Collapse start */
+        &.start-collapsing > .start,
+        &.start-uncollapsing > .start {
+            min-width: 0 !important;
+        }
+        &.start-collapsing.active-area-start {
+            > .start {
+                animation: var(--collapse-animation) hsplitter-to-0;
+            }
+        }
+        &.start-collapsing.active-area-end {
+            > .end {
+                animation: var(--collapse-animation) hsplitter-to-100;
+            }
+        }
+        &.start-uncollapsing.active-area-start {
+            > .start {
+                animation: var(--collapse-animation) hsplitter-from-0-to-previous;
+            }
+        }
+        &.start-uncollapsing.active-area-end {
+            > .end {
+                animation: var(--collapse-animation) hsplitter-from-100-to-previous;
+            }
+        }
+        /* #endregion */
+        /* #region Collapse end */
+        &.end-collapsing,
+        &.end-uncollapsing {
+            > .end {
+                min-width: 0 !important;
+            }
+        }
+        &.end-collapsing.active-area-start {
+            > .start {
+                animation: var(--collapse-animation) hsplitter-to-100;
+            }
+        }
+        &.end-collapsing.active-area-end {
+            > .end {
+                animation: var(--collapse-animation) hsplitter-to-0;
+            }
+        }
+        &.end-uncollapsing.active-area-start {
+            > .start {
+                animation: var(--collapse-animation) hsplitter-from-100-to-previous;
+            }
+        }
+        &.end-uncollapsing.active-area-end {
+            > .end {
+                animation: var(--collapse-animation) hsplitter-from-0-to-previous;
+            }
+        }
+        /* #endregion */
+        /*
+         * Both classes below are set, when one of the 'hsplitter-*' animations above has finished.
+         */
+        &.start-collapsed {
+            > .start {
+                display: none;
+            }
+            > .end {
+                width: 100% !important;
+            }
+        }
+        &.end-collapsed {
+            > .start {
+                width: 100% !important;
+            }
+            > .end {
+                display: none;
+            }
+        }
+        /* #endregion */
+    }
+    &.vertical {
+        flex-direction: column;
+        > .handle {
+            margin-block-start: var(--bleed-size-neg);
+            margin-block-end: var(--bleed-size-neg);
+            border-block-start: var(--bleed-size);
+            border-block-end: var(--bleed-size);
+            cursor: row-resize;
+            > div {
+                width: 100%;
+                height: var(--splitter-size);
+                cursor: row-resize;
+            }
+        }
+        /* #region Collapsing */
+        /* #region Collapse start */
+        &.start-collapsing > .start,
+        &.start-uncollapsing > .start {
+            min-height: 0 !important;
+        }
+        &.start-collapsing.active-area-start {
+            > .start {
+                animation: var(--collapse-animation) vsplitter-to-0;
+            }
+        }
+        &.start-collapsing.active-area-end {
+            > .end {
+                animation: var(--collapse-animation) vsplitter-to-100;
+            }
+        }
+        &.start-uncollapsing.active-area-start {
+            > .start {
+                animation: var(--collapse-animation) vsplitter-from-0-to-previous;
+            }
+        }
+        &.start-uncollapsing.active-area-end {
+            > .end {
+                animation: var(--collapse-animation) vsplitter-from-100-to-previous;
+            }
+        }
+        /* #endregion */
+        /* #region Collapse end */
+        &.end-collapsing,
+        &.end-uncollapsing {
+            > .end {
+                min-height: 0 !important;
+            }
+        }
+        &.end-collapsing.active-area-start {
+            > .start {
+                animation: var(--collapse-animation) vsplitter-to-100;
+            }
+        }
+        &.end-collapsing.active-area-end {
+            > .end {
+                animation: var(--collapse-animation) vsplitter-to-0;
+            }
+        }
+        &.end-uncollapsing.active-area-start {
+            > .start {
+                animation: var(--collapse-animation) vsplitter-from-100-to-previous;
+            }
+        }
+        &.end-uncollapsing.active-area-end {
+            > .end {
+                animation: var(--collapse-animation) vsplitter-from-0-to-previous;
+            }
+        }
+        /* #endregion */
+        /*
+         * Both classes below are set, when one of the 'vsplitter-*' animations above has finished.
+         */
+        &.start-collapsed {
+            > .start {
+                display: none;
+            }
+            > .end {
+                height: 100% !important;
+            }
+        }
+        &.end-collapsed {
+            > .start {
+                height: 100% !important;
+            }
+            > .end {
+                display: none;
+            }
+        }
+        /* #endregion */
+    }
+    &.inactive > .handle {
+        pointer-events: none;
+    }
+    &.off > .handle {
+        display: none;
+    }
+    &.resizing {
+        /* touch-action: none; */
+        /* Workarounds for a problem in WebKit. */
+        &.horizontal {
+            > .start,
+            > .start *,
+            > .end,
+            > .end * {
+                cursor: col-resize !important;
+            }
+        }
+        &.vertical {
+            > .start,
+            > .start *,
+            > .end,
+            > .end * {
+                cursor: row-resize !important;
+            }
+        }
+    }
+}
+@keyframes hsplitter-to-0 {
+    to {
+        width: 0;
+    }
+}
+@keyframes hsplitter-to-100 {
+    to {
+        width: 100%;
+    }
+}
+@keyframes hsplitter-from-0-to-previous {
+    from {
+        width: 0;
+    }
+}
+@keyframes hsplitter-from-100-to-previous {
+    from {
+        width: 100%;
+    }
+}
+@keyframes vsplitter-to-0 {
+    to {
+        height: 0;
+    }
+}
+@keyframes vsplitter-to-100 {
+    to {
+        height: 100%;
+    }
+}
+@keyframes vsplitter-from-0-to-previous {
+    from {
+        height: 0;
+    }
+}
+@keyframes vsplitter-from-100-to-previous {
+    from {
+        height: 100%;
+    }
+}

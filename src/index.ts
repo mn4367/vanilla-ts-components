@@ -25,6 +25,7 @@ export * from "./Menu.js";
 export * from "./PinchZoomGestureHandler.js";
 export * from "./RadioButtonGroup.js";
 export * from "./ScrollContainer.js";
+export * from "./Splitter.js";
 export * from "./StdDialog.js";
 export * from "./StdDialogBtns.js";
 export * from "./Stepper.js";
