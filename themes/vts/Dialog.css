@@ -28,6 +28,10 @@
     &.v-centered:not(.h-centered) {}
     &.v-centered.h-centered {}
     &:not(.v-centered):not(.h-centered) {} */
+    /** Set on holding down the pointer; removed on the first move. */
+    /* &.move-start {} */
+    /** Set while moving the dialog; removed when the pointer goes up. */
+    /* &.moving {} */
     > .content {
         padding: var(--base-size);
     }

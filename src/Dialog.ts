@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, INodeComponent, mixin } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, IElementComponent, INodeComponent, mixin } from "@vanilla-ts/core";
 import { Div, Dialog as DOMDialog } from "@vanilla-ts/dom";
 
 
@@ -17,14 +17,14 @@ export type DialogOptions = {
     Position?: DOMPoint;
     /**
      * `true` if the dialog is to be centered horizontally with regard to the viewport, otherwise
-     * `false`. If `Position` is also given, `Position.x` is added as an offset to the calculated
+     * `false`. If `Position` is also given, `Position.x` is added as an _offset_ to the calculated
      * value of the horizontally centered position.\
      * Default: `true`.
      */
     HCentered?: boolean;
     /**
      * `true` if the dialog is to be centered vertically with regard to the viewport, otherwise
-     * `false`. If `Position` is also given, `Position.y` is added as an offset to the calculated
+     * `false`. If `Position` is also given, `Position.y` is added as an _offset_ to the calculated
      * value of the vertically centered position.\
      * Default: `true`.
      */
@@ -36,6 +36,30 @@ export type DialogOptions = {
      * Default: `true`.
      */
     CloseWithEscape?: boolean;
+    /**
+     * If `true`, the dialog can be moved by the user by holding down and moving the pointer on (an
+     * element inside) the dialog. When set to `false`, the dialog remains fixed in the position
+     * configured with `HCentered`, `VCentered` and `Position` and cannot be moved interactively.\
+     * Default: `false`.
+     * @see {@link DialogOptions.MoveHandle}
+     */
+    Movable?: boolean;
+    /**
+     * The component that acts as the drag handle for moving the dialog (typically a title bar). If
+     * not set (and {@link DialogOptions.Movable} is `true`), the default handle is the dialog's
+     * inner content container. This container contains all child components of the dialog, but it
+     * isn't directly accessible as a property of the dialog.\
+     * __Notes:__
+     * - If `MoveHandle` is `undefined`, the `pointerdown` event will be handled _only for the inner
+     *   content container itself_ but not for any children that may have received the `pointerdown`
+     *   event first (`event.target === MoveHandle.DOM`).
+     * - If `MoveHandle` is a component, the `pointerdown` event will be handled for the given
+     *   component _and all of it's children_ (`MoveHandle.DOM.contains(event.target) === true`)!
+     * - If `MoveHandle` is not a child of the dialog, the behavior is undefined.
+     *
+     * Default: The dialog's inner content container.
+     */
+    MoveHandle?: IElementComponent<HTMLElement>;
     /**
      * If `true`, the focus remains within the dialog when pressing the `Tab` and `Shift-Tab` keys,
      * so, for example, if `Tab` is pressed when the last focusable element is focused, the focus
@@ -66,7 +90,7 @@ export type DialogOptions = {
  */
 export enum DialogState {
     /** The dialog is not showing (closed). */
-    Closed = 0,
+    CLOSED = 0,
     /** The dialog is shown non-modally. */
     NON_MODAL = 1,
     /** The dialog is shown modally. */
@@ -183,10 +207,16 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected dlg: DOMDialog;
     protected _options: DialogOptions = {};
     protected modalResolver: (value?: unknown) => void;
-    protected state: DialogState = DialogState.Closed;
+    protected state: DialogState = DialogState.CLOSED;
     protected contentContainer: Div;
     protected focusableElementsSelector = "button:not([tabindex='-1']), [href], input:not([tabindex='-1']), select:not([tabindex='-1']), textarea:not([tabindex='-1']), details:not([tabindex='-1']), [tabindex]:not([tabindex='-1'])";
     protected closedRegularly: boolean;
+    protected moving = false;
+    protected moveStart = new DOMPoint(0, 0);
+    protected moveStartPositionOffset = new DOMPoint(0, 0);
+    protected fncOnPointerDown = this.onPointerDown.bind(this);
+    protected fncOnPointerMove = this.onPointerMove.bind(this);
+    protected fncOnPointerUp = this.onPointerUp.bind(this);
 
     /**
      * Create dialog component.\
@@ -212,10 +242,11 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 
     /**
-     * Get/set the options for this dialog. The getter returns a _copy_ of the options.
+     * Get/set the options for this dialog. The getter returns a _copy_ of the options.\
+     * __Note:__ If the dialog is currently moved, setting `Options` does nothing.
      */
     public get Options(): DialogOptions {
-        return structuredClone(this._options);
+        return { ...this._options };
     }
     /** @inheritdoc */
     public set Options(v: DialogOptions) {
@@ -223,40 +254,36 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 
     /**
-     * Set the options for this dialog. See also the documentation for `DialogOptions`.
+     * Set the options for this dialog. See also the documentation for `DialogOptions`.\
+     * __Note:__ If the dialog is currently moved, `options()` does nothing.
      * @param options The new dialog options.
      * @returns This instance.
      */
     public options(options: DialogOptions): this {
+        if (this.moving) {
+            return this;
+        }
+        this._options.MoveHandle?.off("pointerup", this.fncOnPointerUp).off("pointerdown", this.fncOnPointerDown);
+        this.removeClass("h-centered", "v-centered", "movable");
         this._options = {
             /* eslint-disable jsdoc/require-jsdoc */
             Position: options.Position ? DOMPoint.fromPoint(options.Position) : this._options.Position ? DOMPoint.fromPoint(this._options.Position) : new DOMPoint(0, 0),
             HCentered: options.HCentered ?? this._options.HCentered ?? true,
             VCentered: options.VCentered ?? this._options.VCentered ?? true,
             CloseWithEscape: options.CloseWithEscape ?? this._options.CloseWithEscape ?? true,
+            Movable: options.Movable ?? this._options.Movable ?? false,
+            MoveHandle: options.MoveHandle ?? this._options.MoveHandle ?? this.contentContainer,
             LockFocusCycleInside: options.LockFocusCycleInside ?? this._options.LockFocusCycleInside ?? true,
             BaseZIndex: Math.max(options.BaseZIndex ?? Dialog.baseZIndex ?? 1000, 0),
             /* eslint-enable */
         };
-        if (this._options.HCentered && this._options.VCentered) {
-            this.style("left", "50%");
-            this.style("top", "50%");
-            this.style("translate", `calc(-50% + ${this._options.Position!.x}px) calc(-50% + ${this._options.Position!.y}px)`);
-        } else if (this._options.HCentered) {
-            this.style("left", "50%");
-            this.style("top", `${this._options.Position!.y}px`);
-            this.style("translate", `calc(-50% + ${this._options.Position!.x}px) 0`);
-        } else if (this._options.VCentered) {
-            this.style("left", `${this._options.Position!.x}px`);
-            this.style("top", "50%");
-            this.style("translate", `0 calc(-50% + ${this._options.Position!.y}px)`);
-        } else {
-            this.style("left", "0");
-            this.style("top", "0");
-            this.style("translate", `${this._options.Position!.x}px ${this._options.Position!.y}px`);
+        this._options.HCentered && this.addClass("h-centered");
+        this._options.VCentered && this.addClass("v-centered");
+        this.setPosition(this._options.HCentered!, this._options.VCentered!, this._options.Position!);
+        if (this._options.Movable) {
+            this.addClass("movable");
+            this._options.MoveHandle?.on("pointerdown", this.fncOnPointerDown).on("pointerup", this.fncOnPointerUp);
         }
-        this._options.HCentered ? this.addClass("h-centered") : this.removeClass("h-centered");
-        this._options.VCentered ? this.addClass("v-centered") : this.removeClass("v-centered");
         Dialog.baseZIndex = this._options.BaseZIndex!;
         this.setZIndexes();
         return this;
@@ -304,6 +331,15 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     public returnValue(v: string): this {
         this.dlg.ReturnValue = v;
         return this;
+    }
+
+    /**
+     * Get the current position of the dialog with regard to the viewport (in pixels). This value is
+     * only useful if the dialog is shown (`<dlg>.State !== DialogState.CLOSED`).
+     */
+    public get Position(): DOMPoint {
+        const pos = this.DOM.getBoundingClientRect();
+        return new DOMPoint(pos.left, pos.top);
     }
 
     /**
@@ -418,7 +454,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
         if (!this.Parent) {
             this.DOM.remove();
         }
-        this.state = DialogState.Closed;
+        this.state = DialogState.CLOSED;
         return this;
     }
 
@@ -467,6 +503,35 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
         this.emit(new DialogShownEvent(this, true));
         await new Promise(resolve => this.modalResolver = resolve);
         return this;
+    }
+
+    /**
+     * Set the position of the dialog.
+     * @param hCentered `true`, if the dialog is to be centered horizontally with regard to the
+     * viewport, otherwise `false`.
+     * @param vCentered `true`, if the dialog is to be centered vertically with regard to the
+     * viewport, otherwise `false`.
+     * @param offset The left/top dialog offset (in pixels) with regard to the position that is the
+     * result of applying `hCentered` and `vCentered`.
+     */
+    protected setPosition(hCentered: boolean, vCentered: boolean, offset: DOMPoint): void {
+        if (hCentered && vCentered) {
+            this.style("left", "50%");
+            this.style("top", "50%");
+            this.style("translate", `calc(-50% + ${offset.x}px) calc(-50% + ${offset.y}px)`);
+        } else if (hCentered) {
+            this.style("left", "50%");
+            this.style("top", `${offset.y}px`);
+            this.style("translate", `calc(-50% + ${offset.x}px) 0`);
+        } else if (vCentered) {
+            this.style("left", `${offset.x}px`);
+            this.style("top", "50%");
+            this.style("translate", `0 calc(-50% + ${offset.y}px)`);
+        } else {
+            this.style("left", "0");
+            this.style("top", "0");
+            this.style("translate", `${offset.x}px ${offset.y}px`);
+        }
     }
 
     /**
@@ -531,6 +596,54 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
                 break;
             default:
                 return;
+        }
+    }
+
+    /**
+     * Handle the `pointerdown` event on the component that is the drag handle.
+     * @param ev The pointer event.
+     */
+    protected onPointerDown(ev: PointerEvent): void {
+        if (
+            (!this.moving && ev.target instanceof HTMLElement)
+            && (
+                (this._options.MoveHandle === this.contentContainer && ev.target === this._options.MoveHandle?.DOM)
+                || (this._options.MoveHandle !== this.contentContainer && this._options.MoveHandle!.DOM.contains(ev.target))
+            )
+        ) {
+            this.moveStart.x = ev.clientX;
+            this.moveStart.y = ev.clientY;
+            this.moveStartPositionOffset.x = this._options.Position!.x;
+            this.moveStartPositionOffset.y = this._options.Position!.y;
+            this._options.MoveHandle!.DOM.setPointerCapture(ev.pointerId);
+            this._options.MoveHandle!.on("pointermove", this.fncOnPointerMove);
+            this.addClass("move-start");
+            this.moving = true;
+        }
+    }
+
+    /**
+     * Handle the `pointermove` event on the component that is the drag handle.
+     * @param ev The pointer event.
+     */
+    protected onPointerMove(ev: PointerEvent): void {
+        if (this.moving) {
+            this._options.Position = new DOMPoint(ev.clientX - this.moveStart.x + this.moveStartPositionOffset.x, ev.clientY - this.moveStart.y + this.moveStartPositionOffset.y);
+            this.removeClass("move-start").addClass("moving");
+            this.setPosition(this._options.HCentered!, this._options.VCentered!, this._options.Position);
+        }
+    }
+
+    /**
+     * Handle the `pointerup` event on the component that is the drag handle.
+     * @param ev The pointer event.
+     */
+    protected onPointerUp(ev: PointerEvent): void {
+        if (this.moving) {
+            this.moving = false;
+            this._options.MoveHandle?.DOM.releasePointerCapture(ev.pointerId);
+            this._options.MoveHandle?.off("pointermove", this.fncOnPointerMove);
+            this.removeClass("move-start", "moving");
         }
     }
 
