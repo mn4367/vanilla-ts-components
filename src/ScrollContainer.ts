@@ -535,6 +535,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
         const target = event.target;
         if ((target === this.#vBarThumb) || (target === this.#hBarThumb)) {
             event.preventDefault();
+            event.stopImmediatePropagation();
             this.#dragging = true;
             this.#contScrollHorizontal = this.#draggingThumb === this.#hBarThumb;
             this.#dragStart.x = event.clientX;
@@ -590,6 +591,8 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
      */
     #onDragThumbPointerUp(event: PointerEvent): void {
         if (this.#dragging) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
             setTimeout(() => {
                 this.#dragging = false;
                 this.#draggingThumb!.removeEventListener("pointermove", this.#fncOnDragThumbPointerMove, this.#passiveTrue);

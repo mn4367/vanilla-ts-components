@@ -64,6 +64,9 @@
     --splitter-bleed: var(--4px);
     --splitter-collapse-duration: 0.16s;
     --splitter-collapse-easing: ease;
+    /* Dialog */
+    --dlg-padding: var(--base-size);
+    --dlg-resizer-size: var(--6px);
     /* #endregion */
 
     /* #region Colors, borders */

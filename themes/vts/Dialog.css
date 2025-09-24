@@ -1,8 +1,15 @@
 .dialog,
 .vts-dialog {
-    position: absolute;
     width: fit-content;
     height: fit-content;
+    /*
+     * !! `min-width`/`min-height` should always be adapted to the size of the respective dialog.
+     * They also __must__ be given as a numeric CSS values, otherwise resizing the dialog doesn't
+     * work properly!.
+     */
+    min-width: 5rem;
+    min-height: 5rem;
+    overflow: hidden;
     margin: 0;
     padding: 0;
     border: var(--1px) solid var(--dialog-border-color);
@@ -24,15 +31,114 @@
     &:focus-within {
         box-shadow: var(--1px) var(--5px) var(--20px) calc(-1 * var(--2px)) hsla(0 0% 0% / 0.25);
     }
-    /* &.h-centered:not(.v-centered) {}
+    &.resized > .content {
+        height: 100%;
+    }
+    > .content {
+        position: relative;
+        width: 100%;
+        /* `height: 100%;` doesn't work in WebKit (why?), so it's set in the class `resized`. */
+        /* height: 100%; */
+        overflow: hidden;
+        padding: var(--dlg-padding);
+        border-radius: var(--border-radius-large);
+    }
+    /* Moving. */
+    /* Inner content container. */
+    .move-handle,
+    /* Custom move handle. */
+    .custom-move-handle,
+    .custom-move-handle * {
+        cursor: move;
+    }
+    /* Resizers. */
+    > [class*="rs-"] {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        background-color: transparent;
+        z-index: 1000;
+    }
+    > [class*="rs-n"] {
+        top: 0;
+    }
+    > .rs-ne,
+    > .rs-e,
+    > .rs-se {
+        right: 0;
+    }
+    > [class*="rs-s"] {
+        bottom: 0;
+    }
+    > .rs-sw,
+    > .rs-w,
+    > .rs-nw {
+        left: 0;
+    }
+    > [class*="rs-n"],
+    > [class*="rs-s"] {
+        height: var(--dlg-resizer-size);
+    }
+    > .rs-ne,
+    > .rs-e,
+    > .rs-se,
+    > .rs-sw,
+    > .rs-w,
+    > .rs-nw {
+        width: var(--dlg-resizer-size);
+    }
+    > .rs-n,
+    > .rs-s {
+        left: var(--dlg-resizer-size);
+        right: var(--dlg-resizer-size);
+    }
+    > .rs-e,
+    > .rs-w {
+        top: var(--dlg-resizer-size);
+        bottom: var(--dlg-resizer-size);
+    }
+    .rs-n {
+        cursor: row-resize;
+    }
+    .rs-ne {
+        cursor: nesw-resize;
+    }
+    .rs-e {
+        cursor: col-resize;
+    }
+    .rs-se {
+        cursor: nwse-resize;
+    }
+    .rs-s {
+        cursor: row-resize;
+    }
+    .rs-sw {
+        cursor: nesw-resize;
+    }
+    .rs-w {
+        cursor: col-resize;
+    }
+    .rs-nw {
+        cursor: nwse-resize;
+    }
+    /* Other classes. */
+    /*
+    Set depending on the state of `HCentered`/`VCentered`.
+    &.h-centered:not(.v-centered) {}
     &.v-centered:not(.h-centered) {}
     &.v-centered.h-centered {}
-    &:not(.v-centered):not(.h-centered) {} */
+    &:not(.v-centered):not(.h-centered) {}
+    */
+    /* Set if the dialog is shown modal. */
+    /* &.modal {} */
+    /* Set if the dialog is shown non-modal. */
+    /* &.non-modal {} */
     /** Set on holding down the pointer; removed on the first move. */
     /* &.move-start {} */
     /** Set while moving the dialog; removed when the pointer goes up. */
     /* &.moving {} */
-    > .content {
-        padding: var(--base-size);
-    }
+    /** Set on holding down the pointer on a resize handle; removed on the first resize. */
+    /* &.resize-start {} */
+    /** Set while resizing the dialog; removed when the pointer goes up. */
+    /* &.resizing {} */
 }

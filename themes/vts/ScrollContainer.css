@@ -5,7 +5,10 @@
      * value embed the scroll container into a parent and set `position` there.
      */
     position: relative;
-    /* !! Some height must be set, whether here or from outside. */
+    /*
+     * !! Some height must be set, whether here or from outside. In many cases this value has to
+     * be adapted to the layout of the element containing the scroll container.
+     */
     height: 100%;
     margin: 0;
     padding: 0;
