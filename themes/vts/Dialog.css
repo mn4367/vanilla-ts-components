@@ -1,5 +1,7 @@
 .dialog,
 .vts-dialog {
+    inset-block-start: 0;
+    inset-block-end: 0;
     width: fit-content;
     height: fit-content;
     /*

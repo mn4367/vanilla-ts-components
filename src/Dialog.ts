@@ -45,25 +45,26 @@ export const DLG_RESIZABLE_EAST_SOUTH =
  * `Dialog` options. The options are used to initialze the dialog _and_ they can be used to
  * completely re-configure an existing instance of a dialog. All option properties are optional, a
  * missing property will be replaced by its default value (using `new Dialog(options, ...)`) or by
- * the value already existing in the dialogs options (when reconfiguring a dialog instance).
+ * the value already existing in the dialogs options (when reconfiguring a dialog instance). Only
+ * the {@link DialogOptions.MoveHandle} property is handled slightly differently.
  */
 export type DialogOptions = {
     /**
      * The left/top dialog position with regard to the viewport (in pixels). This is done by setting
-     * the `translate` CSS property on the dialog element.\
+     * the `left` and/or `top` CSS property on the dialog element.\
      * Default: `{ x: 0, y: 0 }`.
      */
     Position?: DOMPoint;
     /**
      * `true` if the dialog is to be centered horizontally with regard to the viewport, otherwise
-     * `false`. If `Position` is also given, `Position.x` is added as an _offset_ to the calculated
+     * `false`. If `Position` is also given, `Position.x` is used as an _offset_ to the calculated
      * value of the horizontally centered position.\
      * Default: `true`.
      */
     HCentered?: boolean;
     /**
      * `true` if the dialog is to be centered vertically with regard to the viewport, otherwise
-     * `false`. If `Position` is also given, `Position.y` is added as an _offset_ to the calculated
+     * `false`. If `Position` is also given, `Position.y` is used as an _offset_ to the calculated
      * value of the vertically centered position.\
      * Default: `true`.
      */
@@ -216,6 +217,116 @@ export class DialogCloseEvent extends ACustomComponentEvent<"dlg-close", Dialog,
     }
 }
 
+/** Custom 'dlg-move-start' event for dialogs. */
+export class DialogMoveStartEvent extends ACustomComponentEvent<"dlg-move-start", Dialog> {
+    /**
+     * Create dialog move start event. Event handlers can prevent moving the dialog by calling
+     * `preventDefault()`.
+     * @param sender The event emitter (always `Dialog`).
+     * @param customEventInitDict Optional event properties.
+     */
+    constructor(sender: Dialog, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
+        super("dlg-move-start", sender, undefined, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
+/** Custom 'dlg-move' event for dialogs. */
+export class DialogMoveEvent extends ACustomComponentEvent<"dlg-move", Dialog, {
+    /** The offset of the move event. */
+    Offset: { X: number; Y: number; }; // eslint-disable-line jsdoc/require-jsdoc
+}> {
+    /**
+     * Create dialog move event. Event handlers can prevent moving the dialog by calling
+     * `preventDefault()`.
+     * @param sender The event emitter (always `Dialog`).
+     * @param offset The offset of the move event.
+     * @param offset.X Horizontal offset.
+     * @param offset.Y Vertical offset.
+     * @param customEventInitDict Optional event properties.
+     */
+    constructor(sender: Dialog, offset: { X: number; Y: number; }, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
+        super("dlg-move", sender, { Offset: offset }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
+/** Custom 'dlg-moved' event for dialogs. */
+export class DialogMovedEvent extends ACustomComponentEvent<"dlg-moved", Dialog, {
+    /** The offset of the move event. */
+    Offset: { X: number; Y: number; }; // eslint-disable-line jsdoc/require-jsdoc
+}> {
+    /**
+     * Create dialog moved event. This event is purely informative and can't be cancelled.
+     * @param sender The event emitter (always `Dialog`).
+     * @param offset The offset of the move event.
+     * @param offset.X Horizontal offset.
+     * @param offset.Y Vertical offset.
+     * @param customEventInitDict Optional event properties.
+     */
+    constructor(sender: Dialog, offset: { X: number; Y: number; }, customEventInitDict: EventInit = DEFAULT_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
+        super("dlg-moved", sender, { Offset: offset }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
+/** Custom 'dlg-resize-start' event for dialogs. */
+export class DialogResizeStartEvent extends ACustomComponentEvent<"dlg-resize-start", Dialog, {
+    /** The direction in which the dialog is to be resized. */
+    Direction: DlgResizable;
+}> {
+    /**
+     * Create dialog resize start event. Event handlers can prevent resizing the dialog by calling
+     * `preventDefault()`.
+     * @param sender The event emitter (always `Dialog`).
+     * @param direction The direction in which the dialog is to be resized.
+     * @param customEventInitDict Optional event properties.
+     */
+    constructor(sender: Dialog, direction: DlgResizable, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
+        super("dlg-resize-start", sender, { Direction: direction }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
+/** Custom 'dlg-resize' event for dialogs. */
+export class DialogResizeEvent extends ACustomComponentEvent<"dlg-resize", Dialog, {
+    /** The direction in which the dialog is resized. */
+    Direction: DlgResizable;
+    /** The offset of the resize event. */
+    Offset: { X: number; Y: number; }; // eslint-disable-line jsdoc/require-jsdoc
+}> {
+    /**
+     * Create dialog resize event. Event handlers can prevent resizing the dialog by calling
+     * `preventDefault()`.
+     * @param sender The event emitter (always `Dialog`).
+     * @param direction The direction in which the dialog is resized.
+     * @param offset The offset of the resize event.
+     * @param offset.X Horizontal offset.
+     * @param offset.Y Vertical offset.
+     * @param customEventInitDict Optional event properties.
+     */
+    constructor(sender: Dialog, direction: DlgResizable, offset: { X: number; Y: number; }, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
+        super("dlg-resize", sender, { Direction: direction, Offset: offset }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
+/** Custom 'dlg-resized' event for dialogs. */
+export class DialogResizedEvent extends ACustomComponentEvent<"dlg-resized", Dialog, {
+    /** The direction in which the dialog was resized. */
+    Direction: DlgResizable;
+    /** The offset of the resize event. */
+    Offset: { X: number; Y: number; }; // eslint-disable-line jsdoc/require-jsdoc
+}> {
+    /**
+     * Create dialog resized event. This event is purely informative and can't be cancelled.
+     * @param sender The event emitter (always `Dialog`).
+     * @param direction The direction in which the dialog was resized.
+     * @param offset The offset of the resize event.
+     * @param offset.X Horizontal offset.
+     * @param offset.Y Vertical offset.
+     * @param customEventInitDict Optional event properties.
+     */
+    constructor(sender: Dialog, direction: DlgResizable, offset: { X: number; Y: number; }, customEventInitDict: EventInit = DEFAULT_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
+        super("dlg-resized", sender, { Direction: direction, Offset: offset }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
 /** Additional event(s) for `Dialog`. */
 export interface DialogEventMap extends HTMLElementEventMap {
     /**
@@ -233,6 +344,34 @@ export interface DialogEventMap extends HTMLElementEventMap {
      * `preventDefault()`.
      */
     "dlg-close": DialogCloseEvent;
+    /**
+     * A dialog is to be moved. Event handlers can prevent moving the dialog at all by calling
+     * `preventDefault()`.
+     */
+    "dlg-move-start": DialogMoveStartEvent;
+    /**
+     * A dialog is moved. Event handlers can prevent moving the dialog by calling
+     * `preventDefault()`.
+     */
+    "dlg-move": DialogMoveEvent;
+    /**
+     * A dialog was moved. This event is purely informative and can't be cancelled.
+     */
+    "dlg-moved": DialogMovedEvent;
+    /**
+     * A dialog is to be resized. Event handlers can prevent resizing the dialog at all by calling
+     * `preventDefault()`.
+     */
+    "dlg-resize-start": DialogResizeStartEvent;
+    /**
+     * A dialog is resized. Event handlers can prevent resizing the dialog at all by calling
+     * `preventDefault()`.
+     */
+    "dlg-resize": DialogResizeEvent;
+    /**
+     * A dialog was resized. This event is purely informative and can't be cancelled.
+     */
+    "dlg-resized": DialogResizedEvent;
 }
 
 /**
@@ -266,6 +405,8 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected moving = false;
     protected pointerDownStart = new DOMPoint(0, 0);
     protected moveStartPositionOffset = new DOMPoint(0, 0);
+    protected moveFactorX = 1;
+    protected moveFactorY = 1;
     protected fncOnPointerDown = this.onPointerDown.bind(this);
     protected fncOnPointerMove = this.onPointerMove.bind(this);
     protected fncOnPointerUp = this.onPointerUp.bind(this);
@@ -282,6 +423,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected fncOnResizerPointerDown = this.onResizerPointerDown.bind(this);
     protected fncOnResizerPointerMove = this.onResizerPointerMove.bind(this);
     protected fncOnResizerPointerUp = this.onResizerPointerUp.bind(this);
+    protected resizeDir: DlgResizable;
     protected resizer?: HTMLDivElement;
     protected resizeStart = new DOMRect();
     protected minSize = new DOMPoint();
@@ -597,23 +739,10 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      * @returns This instance.
      */
     protected setPosition(hCentered: boolean, vCentered: boolean, offset: DOMPoint): this {
-        if (hCentered && vCentered) {
-            this.style("left", "50%");
-            this.style("top", "50%");
-            this.style("translate", `calc(-50% + ${offset.x}px) calc(-50% + ${offset.y}px)`);
-        } else if (hCentered) {
-            this.style("left", "50%");
-            this.style("top", `${offset.y}px`);
-            this.style("translate", `calc(-50% + ${offset.x}px) 0`);
-        } else if (vCentered) {
-            this.style("left", `${offset.x}px`);
-            this.style("top", "50%");
-            this.style("translate", `0 calc(-50% + ${offset.y}px)`);
-        } else {
-            this.style("left", "0");
-            this.style("top", "0");
-            this.style("translate", `${offset.x}px ${offset.y}px`);
-        }
+        this.style("marginInline", hCentered ? "auto" : null);
+        this.style("marginBlock", vCentered ? "auto" : null);
+        this.style("left", `${offset.x}px`);
+        this.style("top", `${offset.y}px`);
         return this;
     }
 
@@ -694,10 +823,15 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
                 || (this._options.MoveHandle !== this.contentContainer && this._options.MoveHandle!.DOM.contains(ev.target))
             )
         ) {
+            if (!this.dispatch(new DialogMoveStartEvent(this))) {
+                return;
+            }
             this.pointerDownStart.x = ev.clientX;
             this.pointerDownStart.y = ev.clientY;
-            this.moveStartPositionOffset.x = this._options.Position!.x;
-            this.moveStartPositionOffset.y = this._options.Position!.y;
+            this.moveStartPositionOffset.x = parseFloat(this.Style.left.slice(0, -2)) || 0;
+            this.moveStartPositionOffset.y = parseFloat(this.Style.top.slice(0, -2)) || 0;
+            this.moveFactorX = this._options.HCentered ? 2 : 1;
+            this.moveFactorY = this._options.VCentered ? 2 : 1;
             this._options.MoveHandle!.DOM.setPointerCapture(ev.pointerId);
             this._options.MoveHandle!.on("pointermove", this.fncOnPointerMove);
             this.addClass("move-start");
@@ -711,9 +845,13 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      */
     protected onPointerMove(ev: PointerEvent): void {
         if (this.moving) {
-            this._options.Position = new DOMPoint(ev.clientX - this.pointerDownStart.x + this.moveStartPositionOffset.x, ev.clientY - this.pointerDownStart.y + this.moveStartPositionOffset.y);
+            if (!this.dispatch(new DialogMoveEvent(this, { X: ev.clientX - this.pointerDownStart.x, Y: ev.clientY - this.pointerDownStart.y }))) { // eslint-disable-line jsdoc/require-jsdoc
+                return;
+            }
+            this._options.Position!.x = this.moveStartPositionOffset.x + this.moveFactorX * (ev.clientX - this.pointerDownStart.x);
+            this._options.Position!.y = this.moveStartPositionOffset.y + this.moveFactorY * (ev.clientY - this.pointerDownStart.y);
             this.removeClass("move-start").addClass("moving");
-            this.setPosition(this._options.HCentered!, this._options.VCentered!, this._options.Position);
+            this.setPosition(this._options.HCentered!, this._options.VCentered!, this._options.Position!);
         }
     }
 
@@ -727,6 +865,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             this._options.MoveHandle?.DOM.releasePointerCapture(ev.pointerId);
             this._options.MoveHandle?.off("pointermove", this.fncOnPointerMove);
             this.removeClass("move-start", "moving");
+            this.emit(new DialogMovedEvent(this, { X: ev.clientX - this.pointerDownStart.x, Y: ev.clientY - this.pointerDownStart.y })); // eslint-disable-line jsdoc/require-jsdoc
         }
     }
 
@@ -738,6 +877,21 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
         ev.preventDefault();
         ev.stopImmediatePropagation();
         if (!this.resizing && ev.target instanceof HTMLDivElement) {
+            switch (ev.target) {
+                case this.rsN: this.resizeDir = DlgResizable.N; break;
+                case this.rsNE: this.resizeDir = DlgResizable.NE; break;
+                case this.rsE: this.resizeDir = DlgResizable.E; break;
+                case this.rsSE: this.resizeDir = DlgResizable.SE; break;
+                case this.rsS: this.resizeDir = DlgResizable.S; break;
+                case this.rsSW: this.resizeDir = DlgResizable.SW; break;
+                case this.rsW: this.resizeDir = DlgResizable.W; break;
+                case this.rsNW: this.resizeDir = DlgResizable.NW; break;
+                default:
+                    return;
+            }
+            if (!this.dispatch(new DialogResizeStartEvent(this, this.resizeDir))) {
+                return;
+            }
             this.resizer = ev.target;
             this.resizer.setPointerCapture(ev.pointerId);
             this.resizer.addEventListener("pointermove", this.fncOnResizerPointerMove);
@@ -761,136 +915,117 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      * @param ev The pointer event.
      */
     protected onResizerPointerMove(ev: PointerEvent): void {
-        const offset = new DOMPoint(ev.clientX - this.pointerDownStart.x, ev.clientY - this.pointerDownStart.y);
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        const offset = { X: ev.clientX - this.pointerDownStart.x, Y: ev.clientY - this.pointerDownStart.y }; // eslint-disable-line jsdoc/require-jsdoc
+        if (!this.dispatch(new DialogResizeEvent(this, this.resizeDir, offset))) {
+            return;
+        }
         let width: number | undefined = undefined;
         let height: number | undefined = undefined;
         const rss = this.resizeStart;
         const minSize = this.minSize;
-        // - Return early if moving an edge violates the `minSize` constraint.
+        const pos = this._options.Position!;
+        // - Return early if resing violates the `minSize` constraint.
         // - For the edges the offset has to be adjusted.
+        let returnEarly = false;
         switch (this.resizer) {
             case this.rsN:
-                height = rss.height - offset.y;
-                if (rss.height - offset.y < minSize.y) {
+                height = rss.height - offset.Y;
+                if (rss.height - offset.Y < minSize.y) {
                     return;
                 }
+                pos.y = rss.y + offset.Y;
                 break;
             case this.rsNE:
-                width = rss.width + offset.x;
-                if (rss.width + offset.x < minSize.x) {
-                    offset.x = -(rss.width - minSize.x);
+                width = rss.width + offset.X;
+                if (rss.width + offset.X < minSize.x) {
+                    offset.X = -(rss.width - minSize.x);
+                    returnEarly = true;
                 }
-                height = rss.height - offset.y;
-                if (rss.height - offset.y < minSize.y) {
-                    offset.y = (rss.height - minSize.y);
+                height = rss.height - offset.Y;
+                if (rss.height - offset.Y < minSize.y) {
+                    if (returnEarly) {
+                        return;
+                    }
+                    offset.Y = (rss.height - minSize.y);
                 }
+                this._options.HCentered && (pos.x = rss.x + offset.X);
+                pos.y = rss.y + offset.Y;
                 break;
             case this.rsE:
-                width = rss.width + offset.x;
-                if (rss.width + offset.x < minSize.x) {
+                width = rss.width + offset.X;
+                if (rss.width + offset.X < minSize.x) {
                     return;
                 }
+                this._options.HCentered && (pos.x = rss.x + offset.X);
                 break;
             case this.rsSE:
-                width = rss.width + offset.x;
-                if (rss.width + offset.x < minSize.x) {
-                    offset.x = -(rss.width - minSize.x);
+                width = rss.width + offset.X;
+                if (rss.width + offset.X < minSize.x) {
+                    offset.X = -(rss.width - minSize.x);
                 }
-                height = rss.height + offset.y;
-                if (rss.height + offset.y < minSize.y) {
-                    offset.y = -(rss.height - minSize.y);
+                height = rss.height + offset.Y;
+                if (rss.height + offset.Y < minSize.y) {
+                    offset.Y = -(rss.height - minSize.y);
+                    returnEarly = true;
                 }
+                if (returnEarly) {
+                    return;
+                }
+                this._options.HCentered && (pos.x = rss.x + offset.X);
+                this._options.VCentered && (pos.y = rss.y + offset.Y);
                 break;
             case this.rsS:
-                height = rss.height + offset.y;
-                if (rss.height + offset.y < minSize.y) {
+                height = rss.height + offset.Y;
+                if (rss.height + offset.Y < minSize.y) {
                     return;
                 }
+                this._options.VCentered && (pos.y = rss.y + offset.Y);
                 break;
             case this.rsSW:
-                width = rss.width - offset.x;
-                if (rss.width - offset.x < minSize.x) {
-                    offset.x = (rss.width - minSize.x);
+                width = rss.width - offset.X;
+                if (rss.width - offset.X < minSize.x) {
+                    offset.X = (rss.width - minSize.x);
+                    returnEarly = true;
                 }
-                height = rss.height + offset.y;
-                if (rss.height + offset.y < minSize.y) {
-                    offset.y = -(rss.height - minSize.y);
+                height = rss.height + offset.Y;
+                if (rss.height + offset.Y < minSize.y) {
+                    if (returnEarly) {
+                        return;
+                    }
+                    offset.Y = -(rss.height - minSize.y);
                 }
+                pos.x = rss.x + offset.X;
+                this._options.VCentered && (pos.y = rss.y + offset.Y);
                 break;
             case this.rsW:
-                width = rss.width - offset.x;
-                if (rss.width - offset.x < minSize.x) {
+                width = rss.width - offset.X;
+                if (rss.width - offset.X < minSize.x) {
                     return;
                 }
+                pos.x = rss.x + offset.X;
                 break;
             case this.rsNW:
-                width = rss.width - offset.x;
-                if (rss.width - offset.x < minSize.x) {
-                    offset.x = (rss.width - minSize.x);
+                width = rss.width - offset.X;
+                if (rss.width - offset.X < minSize.x) {
+                    offset.X = (rss.width - minSize.x);
+                    returnEarly = true;
                 }
-                height = rss.height - offset.y;
-                if (rss.height - offset.y < minSize.y) {
-                    offset.y = (rss.height - minSize.y);
+                height = rss.height - offset.Y;
+                if (rss.height - offset.Y < minSize.y) {
+                    if (returnEarly) {
+                        return;
+                    }
+                    offset.Y = (rss.height - minSize.y);
                 }
+                pos.x = rss.x + offset.X;
+                pos.y = rss.y + offset.Y;
                 break;
             default:
                 return;
         }
-        ev.preventDefault();
-        ev.stopImmediatePropagation();
         this.removeClass("resize-start").addClass("resizing", "resized");
-        const resizer = this.resizer;
-        const pos = this._options.Position!;
-        if (this._options.HCentered && this._options.VCentered) {
-            if (resizer === this.rsN || resizer === this.rsS) {
-                pos.y = rss.y + (offset.y / 2);
-            } else if (resizer === this.rsE || resizer === this.rsW) {
-                pos.x = rss.x + (offset.x / 2);
-            } else {
-                pos.x = rss.x + (offset.x / 2);
-                pos.y = rss.y + (offset.y / 2);
-            }
-        } else if (this._options.HCentered) {
-            if (resizer === this.rsN) {
-                pos.y = rss.y + offset.y;
-            } else if (resizer === this.rsNE || resizer === this.rsNW) {
-                pos.x = rss.x + (offset.x / 2);
-                pos.y = rss.y + offset.y;
-            } else if (resizer === this.rsE || resizer === this.rsSE || resizer === this.rsSW || resizer === this.rsW) {
-                pos.x = rss.x + (offset.x / 2);
-            } else if (resizer === this.rsS) {
-                // pos.x = rss.x;
-                // pos.y = rss.y;
-            }
-        } else if (this._options.VCentered) {
-            if (resizer === this.rsN || resizer === this.rsNE || resizer === this.rsSE || resizer === this.rsS) {
-                pos.y = rss.y + (offset.y / 2);
-            } else if (resizer === this.rsE) {
-                // pos.x = rss.x;
-                // pos.y = rss.y;
-            } else if ((resizer === this.rsSW || resizer === this.rsNW)) {
-                pos.x = rss.x + offset.x;
-                pos.y = rss.y + (offset.y / 2);
-            } else if (resizer === this.rsW) {
-                pos.x = rss.x + offset.x;
-            }
-        } else {
-            if (resizer === this.rsN || resizer === this.rsNE) {
-                pos.y = rss.y + offset.y;
-            } else if (resizer === this.rsE) {
-                // pos.x = rss.x;
-            } else if (resizer === this.rsSE) {
-                // pos.x = rss.x;
-                // pos.y = rss.y;
-            } else if (resizer === this.rsS) {
-                // pos.y = rss.y;
-            } else if (resizer === this.rsSW || resizer === this.rsW) {
-                pos.x = rss.x + offset.x;
-            } else if (resizer === this.rsNW) {
-                pos.x = rss.x + offset.x;
-                pos.y = rss.y + offset.y;
-            }
-        }
         this.setPosition(this._options.HCentered!, this._options.VCentered!, pos);
         width !== undefined && this.style("width", `${Math.max(minSize.x, width)}px`);
         height !== undefined && this.style("height", `${Math.max(minSize.y, height)}px`);
@@ -909,6 +1044,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             this.resizer?.removeEventListener("pointermove", this.fncOnResizerPointerMove);
             this.resizer = undefined;
             this.removeClass("resize-start", "resizing");
+            this.emit(new DialogResizedEvent(this, this.resizeDir, { X: ev.clientX - this.pointerDownStart.x, Y: ev.clientY - this.pointerDownStart.y })); // eslint-disable-line jsdoc/require-jsdoc
         }
     }
 
