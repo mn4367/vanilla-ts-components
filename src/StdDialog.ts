@@ -18,7 +18,7 @@ import { btn_CANCEL, btn_NO, btn_OK, btn_YES, SEP, STD_DLG_CANCELLED, UNKNOWN_BT
  * If `StdDlgTitle` is a function, it will be called with the `StdDialog` instance into which the
  * title (bar) is to be mounted, so it is possible to use the dialog instance for advanced
  * customization like adding a button to the title (bar) which closes the dialog. This can be done,
- * for example, by installing a `once` event handler for the `dlg-show` event on `StdDialog.Dialog`
+ * for example, by installing a `once` event handler for the `dlg-shown` event on `StdDialog.Dialog`
  * since it is guaranteed that the dialog will have its final form when this event is triggered.\
  * The function must return the title bar as an instance of `IElementComponent<HTMLElement>` (which
  * will also receive the class name `dlg-title`).
@@ -30,7 +30,7 @@ export type StdDlgTitle = IElementComponent<HTMLElement> | ((dlg: StdDialog) => 
  * If `StdDlgContent` is a function, it will be called with the `StdDialog` instance into which the
  * content is to be mounted, so it is possible to use the dialog instance for advanced customization
  * of the content (parts). This can be done, for example, by installing a `once` event handler for
- * the `dlg-show` event on `StdDialog.Dialog` since it is guaranteed that the dialog will have its
+ * the `dlg-shown` event on `StdDialog.Dialog` since it is guaranteed that the dialog will have its
  * final form when this event is triggered.\
  * The function must return an array where each element must be either a
  * string, an instance of a `Text` component or an instance of `INodeComponent<HTMLElement>`.
@@ -52,8 +52,8 @@ export type StdDlgOptions = {
      */
     Title?: StdDlgTitle;
     /**
-     * Component(s)/text(s) for the inner content of the dialog, either as a single value or as an
-     * array of values.
+     * Component(s)/text(s) for the inner content of the dialog, either as a single value, as an
+     * array of values or as a function.
      */
     Content: StdDlgContent;
     /**
@@ -69,7 +69,8 @@ export type StdDlgOptions = {
      *   {@link StdDlgOptions.Buttons} itself) is focused.
      * - A symbol contained in or equal to {@link StdDlgOptions.Buttons}: This focuses the
      *   corresponding button.
-     * - `null`: Nothing is focused.
+     * - `null`: Nothing is focused (the focus is taken away from the current active element
+     *   (`document.activeElement`), if any).
      * - An instance of `IElementComponent<HTMLElement>`: This component is focused. The instance
      *   should be focusable and it must be contained in or equal to {@link StdDlgOptions.Content}.
      */
@@ -95,8 +96,9 @@ export type StdDlgOptions = {
     /**
      * A map with button caption translations _used only for the current standard dialog instance_.
      * A real world usage scenario would rather use a complete map that is statically set once on
-     * application start with `StdDialog.I18N = {...}`. Default: The current value of
-     * `StdDialog.I18N` (which initially is set to {@link StdDlgI18N_EN}).
+     * application start with `StdDialog.I18N = {...}`.\
+     * Default: The current value of `StdDialog.I18N` (which initially is set to
+     * {@link StdDlgI18N_EN}).
      */
     I18N?: StdDlgI18N;
     /**
@@ -114,15 +116,15 @@ const I18N_UNKNOWN_BTN = "I18N_UNKNOWN_BTN";
 
 /**
  * This class aims to ease the creation of common standard dialogs.
- * Standard dialogs often have the same structure: they have an title bar (optional), a content
- * area, and a bar with buttons.\
+ * Standard dialogs often have the same structure: they have a title bar (optional), a content area
+ * and a bar with buttons.\
  * In the content area, the user is shown a simple message, offered a selection, or presented with
  * an area containing several components. The user can close the dialog using one of the buttons,
  * whereby the button used is also the return value of the dialog. If a dialog to be created meets
  * these requirements, `StdDialog` helps with its creation.\
  * Although `StdDialog` can be used for each individual dialog if necessary, it is designed more for
  * creating such dialogs with simple functions that generate a suitable dialog with just a few
- * parameters, display it (usually modally), and return a return value. Predefined examples are the
+ * parameters, display it (usually modally), and return a value. Predefined examples are the
  * ready-made functions {@link msgDlg()}, {@link confirm()} and {@link queryInput()} in this module.
  * They also serve as examples of how to use `StdDialog`.\
  * __Notes:__
@@ -395,23 +397,23 @@ export class StdDialog {
  */
 
 /**
- * Options for the `msgDlg()` function.
+ * Base options for all common standard dialog functions.
  */
-export type MsgDlgOptions = {
+export type BaseCommonDlgOptions = {
     /** A component or function for the title (bar) of the dialog. */
     Title?: StdDlgTitle;
     /**
-     * By default the `msgDlg()` function displays only the button `btn_OK`. This can be overridden
-     * with the property `Buttons`.
+     * The button or buttons to be displayed.
      */
     Buttons?: symbol | symbol[];
     /**
      * The button to be focused when the dialog is shown (the first time). `Focus` can take the
      * following values:
-     * - `undefined` (or omitted): The button `btn_OK` or the first button of `Buttons` is focused.
+     * - `undefined` (or omitted): The first button of `Buttons` is focused.
      * - A button (symbol) contained in or equal to `Buttons`: This focuses the corresponding
      *   button.
-     * - `null`: Nothing is focused, so the user has to select a button manually.
+     * - `null`: Nothing is focused (the focus is taken away from the current active element
+     *   (`document.activeElement`), if any), so the user has to select a button manually.
      */
     Focus?: symbol;
     /**
@@ -431,18 +433,33 @@ export type MsgDlgOptions = {
      * translation map of `StdDialog` is used (see {@link StdDialog.I18N}).
      */
     I18N?: StdDlgI18N;
+    /**
+     * Further options for the `Dialog` instance that is created by `new StdDialog()`.
+     * @see {@link DialogOptions}
+     */
+    DlgOptions?: DialogOptions;
 };
 
 /**
+ * Options for the `msgDlg()` function.\
+ * __Notes:__
+ * - By default the `msgDlg()` function displays only the button `btn_OK`. This can be overridden
+ *   with the property `Buttons`.
+ * - If `Focus` is `undefined` (or omitted) the button `btn_OK` or the first button of `Buttons` is
+ *   focused.
+ */
+export type MsgDlgOptions = BaseCommonDlgOptions;
+
+/**
  * Displays a modal dialog with arbitray content. The dialog shows only the button `btn_OK` by
- * default (see also {@link MsgDlgOptions.Buttons}). The dialog will be disposed of, when the
+ * default (see also {@link BaseCommonDlgOptions.Buttons}). The dialog will be disposed of, when the
  * function returns.
  * @param content The content for the message dialog.
  * @param options Options for the message dialog.
  * @returns The button (symbol) which was clicked or the symbol {@link STD_DLG_CANCELLED}, if the
  * dialog was closed by pressing the `Escape` key.
  */
-export async function msgDlg(content: StdDlgContent, options?: MsgDlgOptions): Promise<symbol> {
+export async function msgDlg(content: StdDlgContent, options?: BaseCommonDlgOptions): Promise<symbol> {
     const stdDlg = new StdDialog({
         /* eslint-disable jsdoc/require-jsdoc */
         Title: options?.Title,
@@ -456,7 +473,8 @@ export async function msgDlg(content: StdDlgContent, options?: MsgDlgOptions): P
         OnClose: options?.OnClose,
         Vertical: options?.Vertical ?? false,
         ClassNames: ["msg-dlg", options?.ClassNames].flat(),
-        I18N: options?.I18N
+        I18N: options?.I18N,
+        DlgOptions: options?.DlgOptions ? { ...options.DlgOptions } : {}
         /* eslint-enable */
     });
     const btn = await stdDlg.showModal();
@@ -465,16 +483,14 @@ export async function msgDlg(content: StdDlgContent, options?: MsgDlgOptions): P
 }
 
 /**
- * Options for the `confirm()` function.
+ * Options for the `confirm()` function.\
+ * __Notes:__
+ * - By default the `confirm()` function displays the buttons `btn_YES` and `btn_NO`. This can be
+ *   overridden with the property `Buttons`.
+ * - If `Focus` is `undefined` (or omitted) the button `btn_YES` or the first button of `Buttons` is
+ *   focused.
  */
-export type ConfirmOptions = {
-    /** A component or function for the title (bar) of the dialog. */
-    Title?: StdDlgTitle;
-    /**
-     * By default the `confirm()` function displays the buttons `btn_YES` and `btn_NO`. This can be
-     * overridden with the property `Buttons`.
-     */
-    Buttons?: symbol | [symbol, symbol];
+export type ConfirmOptions = BaseCommonDlgOptions & {
     /**
      * If the default buttons are overridden with `Buttons`, `confirm()` has no way to decide
      * whether the user has selected the equivalent of 'Yes' or 'No' (as with `btn_YES`), so
@@ -483,32 +499,6 @@ export type ConfirmOptions = {
      * used.
      */
     ConfirmButton?: symbol;
-    /**
-     * The button to be focused when the dialog is shown (the first time). `Focus` can take the
-     * following values:
-     * - `undefined` (or omitted): The button `btn_YES` or the first button of `Buttons` is focused.
-     * - `btn_YES` or `btn_NO` or a button (symbol) contained in or equal to `Buttons`: This focuses
-     *   the corresponding button.
-     * - `null`: Nothing is focused, so the user has to select a button manually.
-     */
-    Focus?: symbol | undefined | null;
-    /**
-     * A callback that is executed, if one of the dialog buttons is clicked/pressed.
-     * @param btn The button which was clicked/pressed to close the dialog. If the dialog is closed
-     * by pressing the `Escape` key, `btn` is the symbol {@link STD_DLG_CANCELLED}.
-     * @param dlg The instance of `StdDialog` which is to be closed.
-     * @returns `true`, if the dialog can be closed, `false` if the dialog should remain open.
-     */
-    OnClose?: (btn: symbol, dlg: StdDialog) => Promise<boolean>;
-    /** If `true`, the buttons will be laid out vertically (see {@link StdDlgOptions.Vertical}). */
-    Vertical?: boolean;
-    /** A class name or an array of class names to be set on the dialog. */
-    ClassNames?: string | null | undefined | (string | null | undefined)[];
-    /**
-     * A translation map for the buttons of the dialog. If this is omitted, the current static
-     * translation map of `StdDialog` is used (see {@link StdDialog.I18N}).
-     */
-    I18N?: StdDlgI18N;
 };
 
 /**
@@ -537,7 +527,8 @@ export async function confirm(content: StdDlgContent, options?: ConfirmOptions):
         OnClose: options?.OnClose,
         Vertical: options?.Vertical ?? false,
         ClassNames: ["confirm", options?.ClassNames].flat(),
-        I18N: options?.I18N
+        I18N: options?.I18N,
+        DlgOptions: options?.DlgOptions ? { ...options.DlgOptions } : {}
         /* eslint-enable */
     });
     const btn = await stdDlg.showModal();
@@ -547,10 +538,11 @@ export async function confirm(content: StdDlgContent, options?: ConfirmOptions):
 
 /**
  * Options for the `queryInput()` function.
+ * __Notes:__
+ * - By default the `queryInput()` function displays the buttons `btn_OK` and `btn_CANCEL`. This can
+ *   be overridden with the property `Buttons`.
  */
-export type QueryInputOptions = {
-    /** A component or function for the title (bar) of the dialog. */
-    Title?: StdDlgTitle;
+export type QueryInputOptions = BaseCommonDlgOptions & {
     /**
      * An input component that is derived from the `Input`, `LabeledInputComponent`, `Select`,
      * `TextArea`, `RadioButtonGroup` or `LabeledRadioButtonGroup` component found in
@@ -562,26 +554,13 @@ export type QueryInputOptions = {
     /** The content to be displayed _after_ the input component. */
     AfterInput?: StdDlgContent;
     /**
-     * By default the `queryInput()` function displays the buttons `btn_OK` and `btn_CANCEL`. This
-     * can be overridden with the property `Buttons`.
-     */
-    Buttons?: symbol | symbol[];
-    /**
      * If the default buttons are overridden with `Buttons`, `queryInput()` has no way to decide
-     * whether the user has selected the equivalent of 'Yes' or 'No' (as with `btn_OK`), so
+     * whether the user has selected the equivalent of 'Ok' or 'Cancel' (as with `btn_OK`), so
      * `ConfirmButton` should be used. `ConfirmButton` must be equal to or contained in `Buttons`.
      * If `ConfirmButton` is omitted, the first entry in `Buttons` (or `Buttons` itself) will be
      * used.
      */
     ConfirmButton?: symbol;
-    /**
-     * A callback that is executed, if one of the dialog buttons is clicked/pressed.
-     * @param btn The button which was clicked/pressed to close the dialog. If the dialog is closed
-     * by pressing the `Escape` key, `btn` is the symbol {@link STD_DLG_CANCELLED}.
-     * @param dlg The instance of `StdDialog` which is to be closed.
-     * @returns `true`, if the dialog can be closed, `false` if the dialog should remain open.
-     */
-    OnClose?: (btn: symbol, dlg: StdDialog) => Promise<boolean>;
     /**
      * If available, this function will be called, if the `ConfirmButton` is clicked/pressed. If the
      * function returns `true`, the dialog is closed, otherwise the dialog stays open.
@@ -590,15 +569,6 @@ export type QueryInputOptions = {
      * @returns `true`, if the validation is successful, otherwise `false`.
      */
     Validate?: (value: string | boolean) => Promise<boolean>;
-    /** If `true`, the buttons will be laid out vertically (see {@link StdDlgOptions.Vertical}). */
-    Vertical?: boolean;
-    /** A class name or an array of class names to be set on the dialog. */
-    ClassNames?: string | null | undefined | (string | null | undefined)[];
-    /**
-     * A translation map for the buttons of the dialog. If this is omitted, the current static
-     * translation map of `StdDialog` is used (see {@link StdDialog.I18N}).
-     */
-    I18N?: StdDlgI18N;
 };
 
 /**
@@ -636,7 +606,8 @@ export async function queryInput(content: StdDlgContent | null | undefined, opti
         OnClose: options?.OnClose,
         Vertical: options?.Vertical ?? false,
         ClassNames: ["query-input", "query-" + toKebapCase(input.ClassName), options?.ClassNames].flat(),
-        I18N: options?.I18N
+        I18N: options?.I18N,
+        DlgOptions: options?.DlgOptions ? { ...options.DlgOptions } : {}
         /* eslint-enable */
     });
     stdDlg.Dialog.insert(
