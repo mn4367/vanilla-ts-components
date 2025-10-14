@@ -299,9 +299,7 @@ export class StdDialog {
     protected buildDlg(): void {
         this.checkDisposed();
         this.buttons.clear();
-        this.dlg = new Dialog(this.options.DlgOptions);
-        const btnBar = new Div();
-        this.dlg
+        this.dlg = new Dialog(this.options.DlgOptions)
             .addClass(
                 Dialog.DefaultCSSClassName,
                 "std-dialog",
@@ -317,15 +315,15 @@ export class StdDialog {
                             ? this.options.Content
                             : [this.options.Content]
                 ).map(e => typeof e === "string" ? new Text(e) : e),
-                btnBar
+                new Div()
                     .addClass("dlg-btn-bar")
                     .append(
                         ...(
                             Array.isArray(this.options.Buttons)
                                 ? this.options.Buttons.map(e => e === SEP
                                     ? new Span().addClass("separator")
-                                    : this.getButton(e, this.dlg))
-                                : [this.getButton(this.options.Buttons, this.dlg)]
+                                    : this.getButton(e))
+                                : [this.getButton(this.options.Buttons)]
                         )
                     )
             )
@@ -372,17 +370,16 @@ export class StdDialog {
     /**
      * Creates a button for the dialog.
      * @param sym A symbol that denotes the button to be created.
-     * @param dlg The `Dialog` instance containing the generated button.
      * @returns The button created.
      */
-    protected getButton(sym: symbol, dlg: Dialog): IconButton {
+    protected getButton(sym: symbol): IconButton {
         this.checkDisposed();
         const btn = new IconButton({ Caption: [this.options.I18N![sym] || I18N_UNKNOWN_BTN] }) // eslint-disable-line jsdoc/require-jsdoc
-            .addClass(IconButton.DefaultCSSClassName, "std-dlg-btn")
+            .addClass(IconButton.DefaultCSSClassName, "regular", "std-dlg-btn")
             .on("click", async () => {
                 // `[true, undefined, null].includes`: be lenient, if the callback returns nothing.
                 if (!this.options?.OnClose || [true, undefined, null].includes(await this.options.OnClose(sym, this))) {
-                    dlg.close(sym.description);
+                    this.dlg.close(sym.description);
                 }
             });
         this.buttons.set(sym, btn);
@@ -477,6 +474,7 @@ export async function msgDlg(content: StdDlgContent, options?: BaseCommonDlgOpti
         DlgOptions: options?.DlgOptions ? { ...options.DlgOptions } : {}
         /* eslint-enable */
     });
+    // stdDlg.Buttons.get(btn_OK)?.addClass("default");
     const btn = await stdDlg.showModal();
     stdDlg.dispose();
     return btn;
@@ -531,6 +529,7 @@ export async function confirm(content: StdDlgContent, options?: ConfirmOptions):
         DlgOptions: options?.DlgOptions ? { ...options.DlgOptions } : {}
         /* eslint-enable */
     });
+    // stdDlg.Buttons.get(confirmButton)?.addClass("default");
     const btn = await stdDlg.showModal();
     stdDlg.dispose();
     return btn === confirmButton;
@@ -623,6 +622,7 @@ export async function queryInput(content: StdDlgContent | null | undefined, opti
             .map(e => typeof e === "string" ? new Text(e) : e)
     );
     const confirmButton = options?.ConfirmButton ?? ([options?.Buttons].flat())[0] ?? btn_OK;
+    // stdDlg.Buttons.get(confirmButton)?.addClass("default");
     (input instanceof TextArea) || (<IElementComponent<HTMLElement>>input).on("keydown", async (ev: KeyboardEvent) => {
         if (ev.key === "Enter") {
             ev.preventDefault();
