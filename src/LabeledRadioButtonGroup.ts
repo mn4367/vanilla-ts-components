@@ -40,6 +40,30 @@ export class LabeledRadioButtonGroup<EventMap extends RadioButtonGroupEventMap =
     }
 
     /**
+     * Get/set `name` attribute value of the component. Internally the setter sets the `name`
+     * attribute on all contained radio buttons. `null` or an empty string removes the attribute.
+     * Equivalent to get/set `<instance>.RadioButtonGroup.Name`.
+     */
+    public get Name(): string {
+        return this.component.Name;
+    }
+    /** @inheritdoc */
+    public set Name(v: NullableString) {
+        this.name(v);
+    }
+
+    /**
+     * Set `name` attribute value of this radio button group. Internally this sets the `name`
+     * attribute on all contained radio buttons. Equivalent to `<instance>.RadioButtonGroup.name()`.
+     * @param v The value to be set. `null` or an empty string removes the attribute.
+     * @returns This instance.
+     */
+    public name(v: NullableString): this {
+        this.component.name(v);
+        return this;
+    }
+
+    /**
      * Gets/sets the value of this radio button group. For `get` this is the value of the first
      * checked radio button, for `set` a radio button with `<rb>.Value === v` is searched for and if
      * it is found, its status is set to checked. Also available via `RadioButtonGroup`, re-exported
@@ -103,6 +127,18 @@ export class LabeledRadioButtonGroup<EventMap extends RadioButtonGroupEventMap =
                     this.component,
                     this.label = new Span()
                 );
+        return this;
+    }
+
+    /** @inheritdoc */
+    public override focus(options?: FocusOptions): this {
+        this.component.focus(options);
+        return this;
+    }
+
+    /** @inheritdoc */
+    public override blur(): this {
+        this.component.blur();
         return this;
     }
 }
