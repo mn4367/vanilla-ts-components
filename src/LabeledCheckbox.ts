@@ -125,4 +125,30 @@ export class LabeledCheckboxFactory<T> extends ComponentFactory<LabeledCheckbox>
     public labeledCheckbox(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledCheckbox {
         return this.setupComponent(new LabeledCheckbox(labelPhrase, id, value, name, lblPosition, lblAlignment, labelAction), data);
     }
+
+    /**
+     * Create, set up and return LabeledCheckbox component. Identical to {@link labeledCheckbox()},
+     * but the class name `switch` is added to the inner checkbox.\
+     * __Note:__ Although all possible combinations of `LabelPosition` and `LabelAlignment` are
+     * implemented, using settings other than `LabelPosition.START`, `LabelPosition.END` and
+     * `LabelAlignment.START` can lead to a visually rather weird appearance.
+     * @param labelPhrase The phrasing content for the label.
+     * @param id The `id` attribute of the checkbox input element.
+     * @param value The value of the checkbox input element.
+     * @param name The `name` attribute of the checkbox input element.
+     * @param lblPosition The position of the label.
+     * @param lblAlignment The alignment of the label.
+     * @param labelAction Controls the following behavior:
+     * - If `id` isn't defined, clicking on the label does nothing.
+     * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label toggles
+     *   the checkbox input element, if `labelAction` is `false`, clicking on the label does
+     *   nothing.
+     * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+     * @returns LabeledCheckbox component.
+     */
+    public labeledSwitch(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledCheckbox {
+        const ls = new LabeledCheckbox(labelPhrase, id, value, name, lblPosition, lblAlignment, labelAction);
+        ls.Checkbox.addClass("switch");
+        return this.setupComponent(ls, data);
+    }
 }
