@@ -1,3 +1,6 @@
+html:has(dialog[open].modal) {
+    overflow: hidden;
+}
 .dialog,
 .vts-dialog {
     inset-block-start: 0;
@@ -33,25 +36,28 @@
     &:focus-within {
         box-shadow: var(--1px) var(--5px) var(--20px) calc(-1 * var(--2px)) hsla(0 0% 0% / 0.25);
     }
-    &.resized > .content {
-        height: 100%;
-    }
     > .content {
+        background-color: white;
         position: relative;
         width: 100%;
-        /* `height: 100%;` doesn't work in WebKit (why?), so it's set in the class `resized`. */
-        /* height: 100%; */
+        height: 100%;
+        /*
+         *`height: 100%;` alone doesn't work in WebKit (why?). Setting `display: table;` currently
+         * seems to be the only 'hack' to get the desired result if `content` has a setting like
+         *`height`, `min-height` or similar.
+         */
+        display: table;
         overflow: hidden;
         padding: var(--dlg-padding);
         border-radius: var(--border-radius-large);
-    }
-    /* Moving. */
-    /* Inner content container. */
-    .move-handle,
-    /* Custom move handle. */
-    .custom-move-handle,
-    .custom-move-handle * {
-        cursor: move;
+        /* Moving. */
+        /* Inner content container. */
+        &.move-handle,
+        /* Custom move handle. */
+        .custom-move-handle,
+        .custom-move-handle * {
+            cursor: move;
+        }
     }
     /* Resizers. */
     > [class*="rs-"] {
@@ -99,28 +105,28 @@
         top: var(--dlg-resizer-size);
         bottom: var(--dlg-resizer-size);
     }
-    .rs-n {
+    > .rs-n {
         cursor: row-resize;
     }
-    .rs-ne {
+    > .rs-ne {
         cursor: nesw-resize;
     }
-    .rs-e {
+    > .rs-e {
         cursor: col-resize;
     }
-    .rs-se {
+    > .rs-se {
         cursor: nwse-resize;
     }
-    .rs-s {
+    > .rs-s {
         cursor: row-resize;
     }
-    .rs-sw {
+    > .rs-sw {
         cursor: nesw-resize;
     }
-    .rs-w {
+    > .rs-w {
         cursor: col-resize;
     }
-    .rs-nw {
+    > .rs-nw {
         cursor: nwse-resize;
     }
     /* Other classes. */
@@ -135,12 +141,24 @@
     /* &.modal {} */
     /* Set if the dialog is shown non-modal. */
     /* &.non-modal {} */
+    /** Present on movable dialogs. */
+    /* &.movable {} */
     /** Set on holding down the pointer; removed on the first move. */
     /* &.move-start {} */
     /** Set while moving the dialog; removed when the pointer goes up. */
     /* &.moving {} */
+    /** Set after the dialog has been moved at least once. */
+    /* &.moved {} */
+    /** Present on resizable dialogs. */
+    /* &.resizable {} */
     /** Set on holding down the pointer on a resize handle; removed on the first resize. */
     /* &.resize-start {} */
     /** Set while resizing the dialog; removed when the pointer goes up. */
     /* &.resizing {} */
+    /** Set after the dialog has been resized at least once. */
+    /* &.resized {} */
+    /* Never change/remove this class nor its rules! */
+    &.--calc-size {
+        visibility: hidden !important;
+    }
 }

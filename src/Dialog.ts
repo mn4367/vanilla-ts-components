@@ -1,12 +1,12 @@
-import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, IElementComponent, INodeComponent, mixin } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, getProp, HTMLElementWithDisabled, IElementComponent, INodeComponent, mixin } from "@vanilla-ts/core";
 import { Div, Dialog as DOMDialog } from "@vanilla-ts/dom";
 
 
 /**
- * All corners/edges that can be used to change the size of a dialog box. The values must be set as
- * a bit mask on {@link DialogOptions.Resizable} in the dialog options.
+ * All corners/edges that can be used to change the size of a dialog. The values must be set as a
+ * bit mask on {@link DialogOptions.Resizers} in the dialog options.
  */
-export enum DlgResizable {
+export enum DlgResizers {
     NONE = 0,
     N = 1,
     NE = 2,
@@ -19,54 +19,73 @@ export enum DlgResizable {
 }
 
 /**
- * Bit mask for {@link DialogOptions.Resizable} in the dialog options that allows resizing the
+ * Bit mask for {@link DialogOptions.Resizers} in the dialog options that allows resizing the
  * dialog on _all_ corners/edges.
  */
-export const DLG_RESIZABLE_ALL =
-    DlgResizable.N |
-    DlgResizable.NE |
-    DlgResizable.E |
-    DlgResizable.SE |
-    DlgResizable.S |
-    DlgResizable.SW |
-    DlgResizable.W |
-    DlgResizable.NW;
+export const DLG_RESIZERS_ALL =
+    DlgResizers.N |
+    DlgResizers.NE |
+    DlgResizers.E |
+    DlgResizers.SE |
+    DlgResizers.S |
+    DlgResizers.SW |
+    DlgResizers.W |
+    DlgResizers.NW;
 
 /**
- * Bit mask for {@link DialogOptions.Resizable} in the dialog options that allows resizing the
+ * Bit mask for {@link DialogOptions.Resizers} in the dialog options that allows resizing the
  * dialog only on the right and bottom side and on the bottom right corner.
  */
-export const DLG_RESIZABLE_EAST_SOUTH =
-    DlgResizable.E |
-    DlgResizable.SE |
-    DlgResizable.S;
+export const DLG_RESIZERS_EAST_SOUTH =
+    DlgResizers.E |
+    DlgResizers.SE |
+    DlgResizers.S;
+
+/**
+ * Bit mask for {@link DialogOptions.Resizers} in the dialog options that allows resizing the
+ * dialog only on the left and bottom side and on the bottom left corner.
+ */
+export const DLG_RESIZERS_WEST_SOUTH =
+    DlgResizers.W |
+    DlgResizers.SW |
+    DlgResizers.S;
 
 /**
  * `Dialog` options. The options are used to initialze the dialog _and_ they can be used to
- * completely re-configure an existing instance of a dialog. All option properties are optional, a
- * missing property will be replaced by its default value (using `new Dialog(options, ...)`) or by
- * the value already existing in the dialogs options (when reconfiguring a dialog instance). Only
- * the {@link DialogOptions.MoveHandle} property is handled slightly differently.
+ * completely re-configure an existing instance of a dialog. All option properties are optional:
+ * - A _missing_ property does not change the current value of the respective property in the
+ *   current dialog options (set in the constructor or by calling `<instance>.options(opts)`).
+ * - A property _which is given_ but with the value `undefined` will set the property to its default
+ *   value.
  */
 export type DialogOptions = {
     /**
-     * The left/top dialog position with regard to the viewport (in pixels). This is done by setting
-     * the `left` and/or `top` CSS property on the dialog element.\
+     * The dialog position (offset in pixels) with regard to the viewport. This is done by setting
+     * the `inset-inline-start` and/or `inset-block-start` CSS property on the dialog element.\
+     * __Note__: If the dialog is centered horizontally or vertically this is _not_ the offset
+     * with regard to the viewport/parent but instead the offset with regard to the calculated
+     * horizontally and/or vertically centered position of the dialog.\
      * Default: `{ x: 0, y: 0 }`.
      */
-    Position?: DOMPoint;
+    Position?: { X: number; Y: number; }; // eslint-disable-line jsdoc/require-jsdoc
     /**
      * `true` if the dialog is to be centered horizontally with regard to the viewport, otherwise
-     * `false`. If `Position` is also given, `Position.x` is used as an _offset_ to the calculated
-     * value of the horizontally centered position.\
+     * `false`. If `Position` is also given, `Position.X` is used as an _offset_ to the calculated
+     * value of the horizontally centered position. As long as `HCentered` is `true` `Position.X` is
+     * only the offset to the calculated horizontal position of the dialog and not the horizontal
+     * offset to the viewport/parent.\
      * Default: `true`.
+     * @see {@link DialogOptions.Position}
      */
     HCentered?: boolean;
     /**
      * `true` if the dialog is to be centered vertically with regard to the viewport, otherwise
-     * `false`. If `Position` is also given, `Position.y` is used as an _offset_ to the calculated
-     * value of the vertically centered position.\
+     * `false`. If `Position` is also given, `Position.Y` is used as an _offset_ to the calculated
+     * value of the vertically centered position. As long as `VCentered` is `true` `Position.Y` is
+     * only the offset to the calculated vertical position of the dialog and not the vertical
+     * offset to the viewport/parent.\
      * Default: `true`.
+     * @see {@link DialogOptions.Position}
      */
     VCentered?: boolean;
     /**
@@ -77,9 +96,20 @@ export type DialogOptions = {
      */
     CloseWithEscape?: boolean;
     /**
+     * If `true`, the dialog is cancelled (and closed) when the user clicks outside the dialog. With
+     * `false` the dialog must be cancelled/closed by other means (e.g. a button action or by
+     * calling `dlg.close()`/`dlg.cancel()` elsewhere).\
+     * __Note:__ Setting `CloseWithClickOutside` to `true` for modal dialogs is possible, but
+     * somewhat defeats the purpose of modal dialogs.\
+     * Default: `false`.
+     */
+    CloseWithClickOutside?: boolean;
+    /**
      * If `true`, the dialog can be moved by the user by holding down and moving the pointer on (an
      * element inside) the dialog. When set to `false`, the dialog remains fixed in the position
      * configured with `HCentered`, `VCentered` and `Position` and cannot be moved interactively.\
+     * __Note__: If the dialog is moved, `HCentered` and `VCentered` are set to `false` and Position
+     * is updated accordingly.\
      * Default: `false`.
      * @see {@link DialogOptions.MoveHandle}
      */
@@ -87,15 +117,8 @@ export type DialogOptions = {
     /**
      * The component that acts as the drag handle for moving the dialog (typically a title bar). If
      * not set (and {@link DialogOptions.Movable} is `true`), the default handle is the dialog's
-     * inner content container. This container contains all child components of the dialog, but it
-     * isn't directly accessible as a property of the dialog.\
+     * inner content container. This container contains all child components of the dialog.\
      * __Notes:__
-     * - If `MoveHandle` _is not included_ in the options object, the move handle component is the
-     *   previous move handle component that was set via the constructor or by setting new options.
-     * - If `MoveHandle` _is included_ in the options object with the value `undefined`, the move
-     *   handle component is the inner content container. So actively setting `MoveHandle` to
-     *   `undefined` is the only way to switch the move handle to the inner content container from
-     *   another component.
      * - If `MoveHandle` is the inner content container, the `pointerdown` event will be handled
      *   _only for the inner content container itself_ but not for any children that may have
      *   received the `pointerdown` event first (`event.target === MoveHandle.DOM`).
@@ -107,12 +130,24 @@ export type DialogOptions = {
      */
     MoveHandle?: IElementComponent<HTMLElement>;
     /**
-     * If `Resizable` is given and is unequal to `Resizable.NONE` the dialog can be resized. The
-     * value must be set as a bit mask of values of `Resizable`.
-     * @see {@link DlgResizable} for possible values.\
-     * Default: `Resizable.NONE`.
+     * If `Resizers` is given and is unequal to `DlgResizers.NONE` the dialog can be resized. The
+     * value must be set as a bit mask of values of `DlgResizers`.\
+     * __Note__: If the dialog is resized, `HCentered` and `VCentered` are set to `false` and
+     * Position is updated accordingly.\
+     * Default: `DlgResizers.NONE`.
+     * @see {@link DlgResizers} for possible values.
      */
-    Resizable?: number;
+    Resizers?: number;
+    /**
+     * If `true`, the center of the dialog does not move when resizing. Instead, when a resizer is
+     * moved, the opposite corner/edge is also moved by the same amount in the opposite direction.
+     * If `CenteredResize` is a function, it will receive the current dialog instance as a
+     * parameter. If the function returns `true`, the behavior when resizing is as described above.
+     * Using a function is useful if, for example, the current status of a modifier key (Shift, Alt,
+     * etc.) is to be used to control the resizing behavior.\
+     * Default: `false`.
+     */
+    CenteredResize?: boolean | ((dlg: Dialog) => boolean);
     /**
      * If `true`, the focus remains within the dialog when pressing the `Tab` and `Shift-Tab` keys,
      * so, for example, if `Tab` is pressed when the last focusable element is focused, the focus
@@ -217,6 +252,39 @@ export class DialogCloseEvent extends ACustomComponentEvent<"dlg-close", Dialog,
     }
 }
 
+/** Custom 'dlg-closed' event for dialogs. */
+export class DialogClosedEvent extends ACustomComponentEvent<"dlg-closed", Dialog, {
+    /**
+     * The return value with which the dialog was closed/cancelled.\
+     * __Note:__ The `ReturnValue` property of the events `detail` property is either
+     * - the current `ReturnValue` property of the dialog,
+     * - the return value which has been set through calling `close(someValue)` (if any)
+     * - or `DLG_CANCELLED`, if the dialog was cancelled (then `Cancel` is also `true`).
+     */
+    ReturnValue: string;
+    /**
+     * `true`, if the dialog was cancelled instead of closed regularly, otherwise `false`. If
+     * `Cancel` is `true`, `ReturnValue` is always `DLG_CANCELLED`.
+     */
+    Cancel: boolean;
+}> {
+    /**
+     * Create dialog closed event. This event is purely informative and can't be cancelled.
+     * @param sender The event emitter (always `Dialog`).
+     * @param returnValue The return value with which the dialog was closed/cancelled.\
+     * __Note:__ The `ReturnValue` property of the events `detail` property is either
+     * - the current `ReturnValue` property of the dialog,
+     * - the return value which has been set through calling `close(someReturnValue)` (if any)
+     * - or `DLG_CANCELLED`, if the dialog was cancelled (then `Cancel` is also `true`).
+     * @param cancel `true`, if the dialog was cancelled instead of closed regularly, otherwise
+     * `false`.
+     * @param customEventInitDict Optional event properties.
+     */
+    constructor(sender: Dialog, returnValue: string, cancel: boolean, customEventInitDict: EventInit = DEFAULT_EVENT_INIT_DICT) {
+        super("dlg-closed", sender, { ReturnValue: cancel ? DLG_CANCELLED : returnValue, Cancel: cancel }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
 /** Custom 'dlg-move-start' event for dialogs. */
 export class DialogMoveStartEvent extends ACustomComponentEvent<"dlg-move-start", Dialog> {
     /**
@@ -269,25 +337,25 @@ export class DialogMovedEvent extends ACustomComponentEvent<"dlg-moved", Dialog,
 
 /** Custom 'dlg-resize-start' event for dialogs. */
 export class DialogResizeStartEvent extends ACustomComponentEvent<"dlg-resize-start", Dialog, {
-    /** The direction in which the dialog is to be resized. */
-    Direction: DlgResizable;
+    /** The resizer which is used to resize the dialog. */
+    Resizer: DlgResizers;
 }> {
     /**
      * Create dialog resize start event. Event handlers can prevent resizing the dialog by calling
      * `preventDefault()`.
      * @param sender The event emitter (always `Dialog`).
-     * @param direction The direction in which the dialog is to be resized.
+     * @param resizer The resizer which is used to resize the dialog.
      * @param customEventInitDict Optional event properties.
      */
-    constructor(sender: Dialog, direction: DlgResizable, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
-        super("dlg-resize-start", sender, { Direction: direction }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    constructor(sender: Dialog, resizer: DlgResizers, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
+        super("dlg-resize-start", sender, { Resizer: resizer }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
     }
 }
 
 /** Custom 'dlg-resize' event for dialogs. */
 export class DialogResizeEvent extends ACustomComponentEvent<"dlg-resize", Dialog, {
-    /** The direction in which the dialog is resized. */
-    Direction: DlgResizable;
+    /** The resizer which is used to resize the dialog. */
+    Resizer: DlgResizers;
     /** The offset of the resize event. */
     Offset: { X: number; Y: number; }; // eslint-disable-line jsdoc/require-jsdoc
 }> {
@@ -295,35 +363,35 @@ export class DialogResizeEvent extends ACustomComponentEvent<"dlg-resize", Dialo
      * Create dialog resize event. Event handlers can prevent resizing the dialog by calling
      * `preventDefault()`.
      * @param sender The event emitter (always `Dialog`).
-     * @param direction The direction in which the dialog is resized.
+     * @param resizer The resizer which is used to resize the dialog.
      * @param offset The offset of the resize event.
      * @param offset.X Horizontal offset.
      * @param offset.Y Vertical offset.
      * @param customEventInitDict Optional event properties.
      */
-    constructor(sender: Dialog, direction: DlgResizable, offset: { X: number; Y: number; }, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
-        super("dlg-resize", sender, { Direction: direction, Offset: offset }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    constructor(sender: Dialog, resizer: DlgResizers, offset: { X: number; Y: number; }, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
+        super("dlg-resize", sender, { Resizer: resizer, Offset: offset }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
     }
 }
 
 /** Custom 'dlg-resized' event for dialogs. */
 export class DialogResizedEvent extends ACustomComponentEvent<"dlg-resized", Dialog, {
-    /** The direction in which the dialog was resized. */
-    Direction: DlgResizable;
+    /** The resizer which was used to resize the dialog. */
+    Resizer: DlgResizers;
     /** The offset of the resize event. */
     Offset: { X: number; Y: number; }; // eslint-disable-line jsdoc/require-jsdoc
 }> {
     /**
      * Create dialog resized event. This event is purely informative and can't be cancelled.
      * @param sender The event emitter (always `Dialog`).
-     * @param direction The direction in which the dialog was resized.
+     * @param resizer The resizer which was used to resize the dialog.
      * @param offset The offset of the resize event.
      * @param offset.X Horizontal offset.
      * @param offset.Y Vertical offset.
      * @param customEventInitDict Optional event properties.
      */
-    constructor(sender: Dialog, direction: DlgResizable, offset: { X: number; Y: number; }, customEventInitDict: EventInit = DEFAULT_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
-        super("dlg-resized", sender, { Direction: direction, Offset: offset }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    constructor(sender: Dialog, resizer: DlgResizers, offset: { X: number; Y: number; }, customEventInitDict: EventInit = DEFAULT_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
+        super("dlg-resized", sender, { Resizer: resizer, Offset: offset }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
     }
 }
 
@@ -335,27 +403,33 @@ export interface DialogEventMap extends HTMLElementEventMap {
      */
     "dlg-show": DialogShowEvent;
     /**
-     * This event is emitted, when the `show()` or `showModal()` functions of a dialog have been
+     * This event is emitted, when the `show()` or `showModal()` function of a dialog has been
      * executed. This event is purely informative and can't be cancelled.
      */
-    "dlg-shown": DialogShowEvent;
+    "dlg-shown": DialogShownEvent;
     /**
      * A dialog is to be closed. Event handlers can prevent closing the dialog by calling
      * `preventDefault()`.
      */
     "dlg-close": DialogCloseEvent;
     /**
+     * This event is emitted, when the `close()` function of a dialog has been executed. This event
+     * is purely informative and can't be cancelled.
+     */
+    "dlg-closed": DialogClosedEvent;
+    /**
      * A dialog is to be moved. Event handlers can prevent moving the dialog at all by calling
      * `preventDefault()`.
      */
     "dlg-move-start": DialogMoveStartEvent;
     /**
-     * A dialog is moved. Event handlers can prevent moving the dialog by calling
+     * A dialog is being moved. Event handlers can prevent moving the dialog by calling
      * `preventDefault()`.
      */
     "dlg-move": DialogMoveEvent;
     /**
-     * A dialog was moved. This event is purely informative and can't be cancelled.
+     * A dialog was moved (the pointer was released). This event is purely informative and can't be
+     * cancelled.
      */
     "dlg-moved": DialogMovedEvent;
     /**
@@ -364,12 +438,13 @@ export interface DialogEventMap extends HTMLElementEventMap {
      */
     "dlg-resize-start": DialogResizeStartEvent;
     /**
-     * A dialog is resized. Event handlers can prevent resizing the dialog at all by calling
+     * A dialog is being resized. Event handlers can prevent resizing the dialog at all by calling
      * `preventDefault()`.
      */
     "dlg-resize": DialogResizeEvent;
     /**
-     * A dialog was resized. This event is purely informative and can't be cancelled.
+     * A dialog was resized (the pointer was released). This event is purely informative and can't
+     * be cancelled.
      */
     "dlg-resized": DialogResizedEvent;
 }
@@ -400,13 +475,18 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected modalResolver: (value?: unknown) => void;
     protected state: DialogState = DialogState.CLOSED;
     protected contentContainer: Div;
-    protected focusableElementsSelector = "button:not([tabindex='-1']), [href], input:not([tabindex='-1']), select:not([tabindex='-1']), textarea:not([tabindex='-1']), details:not([tabindex='-1']), [tabindex]:not([tabindex='-1'])";
+    protected lastActiveElement?: HTMLElement;
+    protected focusableElementsSelector = "[href], button:not([tabindex='-1']), input:not([tabindex='-1']), select:not([tabindex='-1']), textarea:not([tabindex='-1']), details:not([tabindex='-1']), [tabindex]:not([tabindex='-1'])";
     protected closedRegularly: boolean;
+    protected isRTL: boolean;
+    protected rsObserver: ResizeObserver;
+    protected fncOnResize = this.onResize.bind(this);
+    protected moveResizeStart: boolean;
+    protected pointerDownStart = { X: 0, Y: 0 }; // eslint-disable-line jsdoc/require-jsdoc
     protected moving = false;
-    protected pointerDownStart = new DOMPoint(0, 0);
-    protected moveStartPositionOffset = new DOMPoint(0, 0);
-    protected moveFactorX = 1;
-    protected moveFactorY = 1;
+    protected moveStartPositionOffset = { X: 0, Y: 0 }; // eslint-disable-line jsdoc/require-jsdoc
+    protected fncOnNonModalPointerDown = this.onNonModalPointerDown.bind(this);
+    protected fncOnModalPointerDown = this.onModalPointerDown.bind(this);
     protected fncOnPointerDown = this.onPointerDown.bind(this);
     protected fncOnPointerMove = this.onPointerMove.bind(this);
     protected fncOnPointerUp = this.onPointerUp.bind(this);
@@ -423,18 +503,23 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected fncOnResizerPointerDown = this.onResizerPointerDown.bind(this);
     protected fncOnResizerPointerMove = this.onResizerPointerMove.bind(this);
     protected fncOnResizerPointerUp = this.onResizerPointerUp.bind(this);
-    protected resizeDir: DlgResizable;
+    protected resizeDir: DlgResizers;
     protected resizer?: HTMLDivElement;
-    protected resizeStart = new DOMRect();
-    protected minSize = new DOMPoint();
+    protected resizeStart = { X: 0, Y: 0, W: 0, H: 0 }; // eslint-disable-line jsdoc/require-jsdoc
+    protected minSize = { W: 0, H: 0 }; // eslint-disable-line jsdoc/require-jsdoc
+    protected maxSize = { W: 0, H: 0 }; // eslint-disable-line jsdoc/require-jsdoc
 
     /**
      * Create dialog component.\
      * __Note:__ In contrast to the vast majority of other components, instances of `Dialog` usually
      * should not be mounted in another component (with `append()` or insert()) since this can cause
-     * problems when centering or positioning the dialog relative to the viewport. If an instance of
-     * `Dialog` is not mounted in another component, it is automatically added to `document.body` as
-     * a child element in `show()`/`showModal()` and removed again in `close()`.
+     * problems when centering or positioning the dialog (by default relative to the viewport). This
+     * is especially true for modal dialogs where it can be hard to calculate the position of the
+     * dialog with regard to its parent. For non-modal dialogs centering and positioning the dialog
+     * relative to its parent usually works as expected, but use cases for this scenario are rather
+     * rare.\
+     * If an instance of `Dialog` is not mounted in another component, it is automatically added to
+     * `document.body` as a child element in `show()`/`showModal()` and removed again in `close()`.
      * @param options Options for the dialog.
      * @param components The initial components that make up the content of this dialog.\
      * __Important note:__ If a dialog is disposed of (using `dispose()`), _all_ components given
@@ -465,50 +550,54 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
 
     /**
      * Set the options for this dialog. See also the documentation for `DialogOptions`.\
-     * __Note:__ If the dialog is currently moved, `options()` does nothing.
-     * @param options The new dialog options.
+     * __Note:__ If the dialog is currently moved or resized, `options()` does nothing.
+     * @param opts The new dialog options.
      * @returns This instance.
      */
-    public options(options: DialogOptions): this {
-        if (this.moving) {
+    public options(opts: DialogOptions): this {
+        if (this.moving || this.resizing) {
             return this;
         }
-        this._options.MoveHandle?.off("pointerup", this.fncOnPointerUp).off("pointerdown", this.fncOnPointerDown).removeClass("move-handle", "custom-move-handle");
-        const moveHandle = (Object.hasOwn(options, "MoveHandle") && options.MoveHandle === undefined)
-            ? this.contentContainer
-            : options.MoveHandle;
-        this.removeClass("h-centered", "v-centered", "movable");
+        this._options.MoveHandle?.off("pointerup", this.fncOnPointerUp)
+            .off("pointerdown", this.fncOnPointerDown)
+            .removeClass("move-handle", "custom-move-handle");
         this._options = {
             /* eslint-disable jsdoc/require-jsdoc */
-            Position: options.Position ? DOMPoint.fromPoint(options.Position) : this._options.Position ? DOMPoint.fromPoint(this._options.Position) : new DOMPoint(0, 0),
-            HCentered: options.HCentered ?? this._options.HCentered ?? true,
-            VCentered: options.VCentered ?? this._options.VCentered ?? true,
-            CloseWithEscape: options.CloseWithEscape ?? this._options.CloseWithEscape ?? true,
-            Movable: options.Movable ?? this._options.Movable ?? false,
-            MoveHandle: moveHandle ?? this._options.MoveHandle ?? this.contentContainer,
-            Resizable: options.Resizable ?? this._options.Resizable ?? DlgResizable.NONE,
-            LockFocusCycleInside: options.LockFocusCycleInside ?? this._options.LockFocusCycleInside ?? true,
-            BaseZIndex: Math.max(options.BaseZIndex ?? Dialog.baseZIndex ?? 1000, 0),
+            Position: getProp(opts, this._options, "Position", { X: 0, Y: 0 }),
+            HCentered: getProp(opts, this._options, "HCentered", true),
+            VCentered: getProp(opts, this._options, "VCentered", true),
+            CloseWithEscape: getProp(opts, this._options, "CloseWithEscape", true),
+            CloseWithClickOutside: getProp(opts, this._options, "CloseWithClickOutside", false),
+            Movable: getProp(opts, this._options, "Movable", false),
+            MoveHandle: getProp(opts, this._options, "MoveHandle", this.contentContainer),
+            Resizers: getProp(opts, this._options, "Resizers", DlgResizers.NONE),
+            CenteredResize: getProp(opts, this._options, "CenteredResize", false),
+            LockFocusCycleInside: getProp(opts, this._options, "LockFocusCycleInside", true),
+            BaseZIndex: Math.max(getProp(opts, this._options, "BaseZIndex", 1000), 0),
             /* eslint-enable */
         };
-        this._options.HCentered && this.addClass("h-centered");
-        this._options.VCentered && this.addClass("v-centered");
-        this.setPosition(this._options.HCentered!, this._options.VCentered!, this._options.Position!);
         if (this._options.Movable) {
-            this.addClass("movable");
-            this._options.MoveHandle?.on("pointerdown", this.fncOnPointerDown).on("pointerup", this.fncOnPointerUp);
-            this._options.MoveHandle === this.contentContainer
-                ? this._options.MoveHandle.addClass("move-handle")
-                : this._options.MoveHandle!.addClass("custom-move-handle");
+            this._options.MoveHandle!.on("pointerdown", this.fncOnPointerDown)
+                .on("pointerup", this.fncOnPointerUp)
+                .addClass(this._options.MoveHandle === this.contentContainer ? "move-handle" : "custom-move-handle");
         }
-        const resizable = [DlgResizable.N, DlgResizable.NE, DlgResizable.E, DlgResizable.SE, DlgResizable.S, DlgResizable.SW, DlgResizable.W, DlgResizable.NW];
+        const resizable = [DlgResizers.N, DlgResizers.NE, DlgResizers.E, DlgResizers.SE, DlgResizers.S, DlgResizers.SW, DlgResizers.W, DlgResizers.NW];
         for (let i = 0; i < this.resizers.length; i++) {
-            ((this._options.Resizable! & resizable[i]) === resizable[i]) // eslint-disable-line @typescript-eslint/no-unsafe-enum-comparison
+            ((this._options.Resizers! & resizable[i]) === resizable[i]) // eslint-disable-line @typescript-eslint/no-unsafe-enum-comparison
                 ? this.ui.DOM.appendChild(this.resizers[i])
                 : this.resizers[i].remove();
         }
         Dialog.baseZIndex = this._options.BaseZIndex!;
         this.setZIndexes();
+        this
+            .removeClass("h-centered", "v-centered", "movable", "resizable")
+            .addClass(
+                this._options.HCentered ? "h-centered" : null,
+                this._options.VCentered ? "v-centered" : null,
+                this._options.Movable ? "movable" : null,
+                (this._options.Resizers !== DlgResizers.NONE) ? "resizable" : null
+            );
+        this.state !== DialogState.CLOSED && this.placeDlg(this.getPosition());
         return this;
     }
 
@@ -557,18 +646,27 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 
     /**
-     * Get the current position of the dialog with regard to the viewport (in pixels). This value is
-     * only useful if the dialog is shown (`<dlg>.State !== DialogState.CLOSED`).
+     * Get the inner content container of the dialog.\
+     * __Note:__ This property __must not be used to add/remove/... components__, instead use the
+     * respective functions of `Dialog` itself! `Content` should only be used for styling or other
+     * (readonly) purposes!
      */
-    public get Position(): DOMPoint {
-        const pos = this.DOM.getBoundingClientRect();
-        return new DOMPoint(pos.left, pos.top);
+    public get Content(): IElementComponent<HTMLElement> {
+        return this.contentContainer;
+    }
+
+    /**
+     * Get the current bounding rectangle of the dialog with regard to the viewport (in pixels).
+     * This value is only useful if the dialog is shown (`<dlg>.State !== DialogState.CLOSED`).
+     */
+    public get BoundingRect(): DOMRect {
+        return this.DOM.getBoundingClientRect();
     }
 
     /**
      * Closes the dialog. `dlg-close` event handlers may prevent closing the dialog.
-     * @param returnValue An overridden/individual value for the `ReturnValue` of the dialog. This does
-     * _not_ change the _current_ value of `ReturnValue` on this instance!
+     * @param returnValue An overridden/individual value for the `ReturnValue` of the dialog. This
+     * does _not_ change the _current_ value of `ReturnValue` on this instance!
      * @returns This instance.
      */
     public close(returnValue?: string): this {
@@ -578,8 +676,10 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 
     /**
-     * Forcibly closes the dialog. `dlg-close` event handlers _cannot_ prevent closing the dialog.
-     * @param returnValue An updated value for the `ReturnValue` of the dialog.
+     * Forcibly closes the dialog. `dlg-close` event handlers _are not called_ and thus _cannot_
+     * prevent closing the dialog.
+     * @param returnValue An overridden/individual value for the `ReturnValue` of the dialog. This
+     * does _not_ change the _current_ value of `ReturnValue` on this instance!
      * @returns This instance.
      */
     public forceClose(returnValue?: string): this {
@@ -588,7 +688,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
 
     /**
      * Cancels (and closes) the dialog. `dlg-close` event handlers may prevent canceling the dialog.
-     * The `ReturnValue` of the dialog is set to `DLG_CANCELLED`.
+     * The `ReturnValue` of the dialog is set to {@link DLG_CANCELLED}.
      * @returns This instance.
      */
     public cancel(): this {
@@ -598,8 +698,9 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 
     /**
-     * Forcibly cancels (and closes) the dialog. `dlg-close` event handlers _cannot_ prevent
-     * canceling the dialog. The `ReturnValue` of the dialog is set to `DLG_CANCELLED`.
+     * Forcibly cancels (and closes) the dialog. `dlg-close` event handlers _are not called_ and
+     * thus _cannot_ prevent canceling the dialog. The `ReturnValue` of the dialog is set to
+     * {@link DLG_CANCELLED}.
      * @returns This instance.
      */
     public forceCancel(): this {
@@ -609,47 +710,73 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     /**
      * Displays the dialog (non-modal) and adds the class name `non-modal` to the dialog. `dlg-show`
      * event handlers may prevent showing the dialog.
+     * @param focus The component to be focused after showing the dialog. `focus` can have the
+     * following values:
+     * - An instance of `IElementComponent`: if the instance is a child of this dialog this instance
+     *   is focused, otherwise the dialog itself is focused.
+     * - Not given or `undefined`: If the dialog is shown _for the first time_ the dialog will be
+     *   focused. Subsequent calls to `show()` or `show(undefined)` try to focus the element that
+     *   was active _immediately before the dialog was closed_ (if the dialog contains it, otherwise
+     *   the dialog itself is focused).
+     * - `null`: Normally, displaying a dialog removes the focus from the currently active element
+     *   in the document (`document.activeElement`). By passing `null`, the currently active element
+     *   is saved before the dialog is displayed and refocused after the dialog became visible (of
+     *   course, this only works if `document.activeElement` is not `null`, otherwise the dialog
+     *   itself is focused).\
+     *   `null` can be useful for creating toolbars/palettes/overlays, etc. that do not destroy the
+     *   current focus state when displayed.
      * @throws `InvalidStateError` (if the dialog is already open and modal).
      * @returns This instance.
      */
-    public show(): this {
+    public show(focus?: IElementComponent<HTMLElement> | null): this {
         return this.dispatch(new DialogShowEvent(this, false))
-            ? this.doShow()
+            ? this.doShow(focus)
             : this;
     }
 
     /**
      * Forcibly displays the dialog (non-modal) and adds the class name `non-modal` to the dialog.
-     * `dlg-show` event handlers _cannot_ prevent showing the dialog.
-     * @throws `InvalidStateError` (if the dialog is already open and modal).
+     * `dlg-show` event handlers _are not called_ and thus _cannot_ prevent showing the dialog.
+     * @param focus see {@link show()}
+     * @throws see {@link show()}
      * @returns This instance.
      */
-    public forceShow(): this {
-        return this.doShow();
+    public forceShow(focus?: IElementComponent<HTMLElement> | null): this {
+        return this.doShow(focus);
     }
 
     /**
      * Displays the dialog (modal) and adds the class name `modal` to the dialog. If this is the
      * first modal dialog instance currently open, the class name `modal-dialog-first` is added to
      * the dialog. `dlg-show` event handlers may prevent showing the dialog.
+     * @param focus The component to be focused after showing the dialog. `focus` can have the
+     * following values:
+     * - An instance of `IElementComponent`: if the instance is a child of this dialog this instance
+     *   is focused, otherwise the dialog itself is focused.
+     * - Not given or `undefined`: If the dialog is shown _for the first time_ the dialog will be
+     *   focused. Subsequent calls to `show()` or `show(undefined)` try to focus the element that
+     *   was active _immediately before the dialog was closed_ (if the dialog contains it, otherwise
+     *   the dialog itself is focused).
      * @throws `InvalidStateError` (if the dialog is already open and non-modal).
      * @returns This instance.
      */
-    public async showModal(): Promise<this> {
+    public async showModal(focus?: IElementComponent<HTMLElement>): Promise<this> {
         return this.dispatch(new DialogShowEvent(this, true))
-            ? await this.doShowModal()
+            ? await this.doShowModal(focus)
             : this;
     }
 
     /**
      * Forcibly displays the dialog (modal) and adds the class name `modal` to the dialog. If this
      * is the first modal dialog instance currently open, the class name `modal-dialog-first` is
-     * added to the dialog. `dlg-show` event handlers _cannot_ prevent showing the dialog.
-     * @throws `InvalidStateError` (if the dialog is already open and non-modal).
+     * added to the dialog. `dlg-show` event handlers  _are not called_ and thus _cannot_ prevent
+     * showing the dialog.
+     * @param focus see {@link showModal()}
+     * @throws see {@link showModal()}
      * @returns This instance.
      */
-    public async forceShowModal(): Promise<this> {
-        return await this.doShowModal();
+    public async forceShowModal(focus?: IElementComponent<HTMLElement>): Promise<this> {
+        return await this.doShowModal(focus);
     }
 
     /**
@@ -659,7 +786,14 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      */
     protected doClose(returnValue?: string): this {
         this.closedRegularly = true;
+        this.Parent
+            ? this.rsObserver.unobserve(this.Parent.DOM)
+            : window.removeEventListener("resize", this.fncOnResize); // eslint-disable-line jsdoc/require-jsdoc
+        const lastActive = document.activeElement;
+        this.lastActiveElement = (lastActive instanceof HTMLElement && this.DOM.contains(lastActive)) ? lastActive : undefined;
         this.ui.close(returnValue);
+        document.removeEventListener("pointerdown", this.fncOnNonModalPointerDown);
+        this.off("pointerdown", this.fncOnModalPointerDown);
         if (this.state === DialogState.MODAL) {
             for (const dlg of Dialog.modals) {
                 dlg.removeClass("modal-dialog-first");
@@ -678,40 +812,54 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             this.DOM.remove();
         }
         this.state = DialogState.CLOSED;
+        this.emit(new DialogClosedEvent(this, returnValue ?? this.ReturnValue, false));
         return this;
     }
 
     /**
-     * Displays the dialog (non-modal) and adds the class name `non-modal` to the dialog.
-     * @throws `InvalidStateError` (if the dialog is already open and modal).
+     * See {@link show()} and {@link forceShow()}.
+     * @param focus see {@link show()}
+     * @throws see {@link show()}
      * @returns This instance.
      */
-    protected doShow(): this {
-        if (!this.Parent) {
-            document.body.appendChild(this.DOM);
-        }
-        this.addClass("non-modal");
+    protected doShow(focus?: IElementComponent<HTMLElement> | null): this {
+        this.addClass("non-modal", "--calc-size");
+        const lastActive = document.activeElement;
+        this.Parent || document.body.appendChild(this.DOM);
+        document.addEventListener("pointerdown", this.fncOnNonModalPointerDown);
         this.ui.show();
         this.closedRegularly = false;
         this.state = DialogState.NON_MODAL;
         Dialog.nonModals.indexOf(this) === -1 && Dialog.nonModals.push(this);
         this.makeTopMost();
+        this.placeDlg(this.getPosition());
+        this.Parent
+            ? this.rsObserver.observe(this.Parent.DOM)
+            : window.addEventListener("resize", this.fncOnResize); // eslint-disable-line jsdoc/require-jsdoc
+        this.removeClass("--calc-size");
+        (
+            focus === null && lastActive && lastActive instanceof HTMLElement
+                ? lastActive
+                : focus === undefined && this.lastActiveElement
+                    ? this.lastActiveElement
+                    : focus instanceof AElementComponent && this.contains(focus)
+                        ? focus
+                        : this
+        ).focus();
         this.emit(new DialogShownEvent(this, false));
         return this;
     }
 
     /**
-     * Displays the dialog (modal) and adds the class name `modal` to the dialog. If this is the
-     * first modal dialog instance currently open, the class name `modal-dialog-first` is added to
-     * the dialog.
-     * @throws `InvalidStateError` (if the dialog is already open and non-modal).
+     * See {@link showModal()} and {@link forceShowModal()}.
+     * @param focus see {@link showModal()}
+     * @throws see {@link showModal()}
      * @returns This instance.
      */
-    protected async doShowModal(): Promise<this> {
-        if (!this.Parent) {
-            document.body.appendChild(this.DOM);
-        }
-        this.addClass("modal");
+    protected async doShowModal(focus?: IElementComponent<HTMLElement>): Promise<this> {
+        this.addClass("modal", "--calc-size");
+        this.Parent || document.body.appendChild(this.DOM);
+        this.on("pointerdown", this.fncOnModalPointerDown);
         this.ui.showModal();
         this.closedRegularly = false;
         this.state = DialogState.MODAL;
@@ -723,26 +871,38 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             dlg.removeClass("modal-dialog-first");
         }
         Dialog.modals[0]?.addClass("modal-dialog-first");
+        this.placeDlg(this.getPosition());
+        this.Parent
+            ? this.rsObserver.observe(this.Parent.DOM)
+            : window.addEventListener("resize", this.fncOnResize); // eslint-disable-line jsdoc/require-jsdoc
+        this.removeClass("--calc-size");
+        (
+            focus === undefined && this.lastActiveElement
+                ? this.lastActiveElement
+                : focus instanceof AElementComponent && this.contains(focus)
+                    ? focus
+                    : this
+        ).focus();
         this.emit(new DialogShownEvent(this, true));
         await new Promise(resolve => this.modalResolver = resolve);
         return this;
     }
 
     /**
-     * Set the position of the dialog.
-     * @param hCentered `true`, if the dialog is to be centered horizontally with regard to the
-     * viewport, otherwise `false`.
-     * @param vCentered `true`, if the dialog is to be centered vertically with regard to the
-     * viewport, otherwise `false`.
-     * @param offset The left/top dialog offset (in pixels) with regard to the position that is the
-     * result of applying `hCentered` and `vCentered`.
+     * Set the position and size of the dialog.
+     * @param offset The left/top dialog offset (in pixels)
+     * @param offset.X Horizontal offset.
+     * @param offset.Y Vertical offset.
+     * @param width The width of the dialog.
+     * @param height The height of the dialog.
      * @returns This instance.
      */
-    protected setPosition(hCentered: boolean, vCentered: boolean, offset: DOMPoint): this {
-        this.style("marginInline", hCentered ? "auto" : null);
-        this.style("marginBlock", vCentered ? "auto" : null);
-        this.style("left", `${offset.x}px`);
-        this.style("top", `${offset.y}px`);
+    protected placeDlg(offset: { X: number; Y: number; }, width?: number, height?: number): this { // eslint-disable-line jsdoc/require-jsdoc
+        width !== undefined && this.style("width", width + "px");
+        height !== undefined && this.style("height", height + "px");
+        this
+            .style("insetInlineStart", `${offset.X}px`)
+            .style("insetBlockStart", `${offset.Y}px`);
         return this;
     }
 
@@ -788,7 +948,11 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
                 break;
             case "Tab":
                 if (this._options.LockFocusCycleInside && !ev.ctrlKey && !ev.altKey && !ev.metaKey) {
-                    const focusableElements = this.dlg.DOM.querySelectorAll(this.focusableElementsSelector);
+                    const focusableElements = Array.from(this.dlg.DOM.querySelectorAll(this.focusableElementsSelector))
+                        .filter(e => {
+                            return !e.classList.contains("disabled")
+                                && !(<HTMLElementWithDisabled>e).disabled;
+                        });
                     const firstFocusableElement = <HTMLElement>focusableElements[0];
                     const lastFocusableElement = <HTMLElement>focusableElements[focusableElements.length - 1];
                     if (ev.shiftKey) {
@@ -812,12 +976,57 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 
     /**
+     * Handle window and parente resizing.
+     */
+    protected onResize(): void {
+        this.state == DialogState.CLOSED || this.placeDlg(this.getPosition());
+    }
+
+    /**
+     * Handle the `pointerdown` event on the document in non-modal state.
+     * @param ev The pointer event.
+     */
+    protected onNonModalPointerDown(ev: PointerEvent): void {
+        if (
+            this._options.CloseWithClickOutside
+            && ev.target
+            && ev.target instanceof HTMLElement
+            && !this.DOM.contains(ev.target)
+        ) {
+            this.cancel();
+        }
+    }
+
+    /**
+     * Handle the `pointerdown` event on the dialog in modal state.
+     * @param ev The pointer event.
+     */
+    protected onModalPointerDown(ev: PointerEvent): void {
+        const rect = this.BoundingRect;
+        if (
+            ev.offsetX < 0
+            || ev.offsetY < 0
+            || ev.offsetX > rect.width
+            || ev.offsetY > rect.height
+        ) {
+            if (this._options.CloseWithClickOutside) {
+                this.cancel();
+            } else {
+                ev.preventDefault();
+                ev.stopImmediatePropagation();
+            }
+        }
+    }
+
+    /**
      * Handle the `pointerdown` event on the component that is the drag handle.
      * @param ev The pointer event.
      */
     protected onPointerDown(ev: PointerEvent): void {
-        if (
-            (!this.moving && ev.target instanceof HTMLElement)
+        if (this.moving) {
+            return;
+        }
+        if (ev.target instanceof HTMLElement
             && (
                 (this._options.MoveHandle === this.contentContainer && ev.target === this._options.MoveHandle?.DOM)
                 || (this._options.MoveHandle !== this.contentContainer && this._options.MoveHandle!.DOM.contains(ev.target))
@@ -826,15 +1035,15 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             if (!this.dispatch(new DialogMoveStartEvent(this))) {
                 return;
             }
-            this.pointerDownStart.x = ev.clientX;
-            this.pointerDownStart.y = ev.clientY;
-            this.moveStartPositionOffset.x = parseFloat(this.Style.left.slice(0, -2)) || 0;
-            this.moveStartPositionOffset.y = parseFloat(this.Style.top.slice(0, -2)) || 0;
-            this.moveFactorX = this._options.HCentered ? 2 : 1;
-            this.moveFactorY = this._options.VCentered ? 2 : 1;
+            this.isRTL = this.DOM.parentElement !== null && getComputedStyle(this.DOM.parentElement).direction === "rtl";
+            this.pointerDownStart.X = ev.clientX;
+            this.pointerDownStart.Y = ev.clientY;
+            this.moveStartPositionOffset.X = parseFloat(this.Style.insetInlineStart?.slice(0, -2)) || 0;
+            this.moveStartPositionOffset.Y = parseFloat(this.Style.insetBlockStart?.slice(0, -2)) || 0;
+            this.addClass("move-start");
             this._options.MoveHandle!.DOM.setPointerCapture(ev.pointerId);
             this._options.MoveHandle!.on("pointermove", this.fncOnPointerMove);
-            this.addClass("move-start");
+            this.moveResizeStart = true;
             this.moving = true;
         }
     }
@@ -844,15 +1053,29 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      * @param ev The pointer event.
      */
     protected onPointerMove(ev: PointerEvent): void {
-        if (this.moving) {
-            if (!this.dispatch(new DialogMoveEvent(this, { X: ev.clientX - this.pointerDownStart.x, Y: ev.clientY - this.pointerDownStart.y }))) { // eslint-disable-line jsdoc/require-jsdoc
-                return;
-            }
-            this._options.Position!.x = this.moveStartPositionOffset.x + this.moveFactorX * (ev.clientX - this.pointerDownStart.x);
-            this._options.Position!.y = this.moveStartPositionOffset.y + this.moveFactorY * (ev.clientY - this.pointerDownStart.y);
-            this.removeClass("move-start").addClass("moving");
-            this.setPosition(this._options.HCentered!, this._options.VCentered!, this._options.Position!);
+        if (!this.moving) {
+            return;
         }
+        const offset = {
+            /* eslint-disable jsdoc/require-jsdoc */
+            X: ev.clientX - this.pointerDownStart.X,
+            Y: ev.clientY - this.pointerDownStart.Y
+            /* eslint-enable */
+        };
+        if (!this.dispatch(new DialogMoveEvent(this, offset))) {
+            return;
+        }
+        if (this.moveResizeStart) {
+            this.moveResizeStart = false;
+            this._options.HCentered = false;
+            this._options.VCentered = false;
+            this
+                .removeClass("h-centered", "v-centered", "move-start")
+                .addClass("moving", "moved");
+        }
+        this._options.Position!.X = this.moveStartPositionOffset.X + (this.isRTL ? -offset.X : offset.X);
+        this._options.Position!.Y = this.moveStartPositionOffset.Y + offset.Y;
+        this.placeDlg(this._options.Position!);
     }
 
     /**
@@ -860,13 +1083,18 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      * @param ev The pointer event.
      */
     protected onPointerUp(ev: PointerEvent): void {
-        if (this.moving) {
-            this.moving = false;
-            this._options.MoveHandle?.DOM.releasePointerCapture(ev.pointerId);
-            this._options.MoveHandle?.off("pointermove", this.fncOnPointerMove);
-            this.removeClass("move-start", "moving");
-            this.emit(new DialogMovedEvent(this, { X: ev.clientX - this.pointerDownStart.x, Y: ev.clientY - this.pointerDownStart.y })); // eslint-disable-line jsdoc/require-jsdoc
+        if (!this.moving) {
+            return;
         }
+        this.moveResizeStart = false;
+        this.moving = false;
+        this._options.MoveHandle?.DOM.releasePointerCapture(ev.pointerId);
+        this._options.MoveHandle?.off("pointermove", this.fncOnPointerMove);
+        this
+            .removeClass("move-start")
+            .addClass(this.hasClass("moving") ? "moved" : null)
+            .removeClass("moving");
+        this.emit(new DialogMovedEvent(this, { X: ev.clientX - this.pointerDownStart.X, Y: ev.clientY - this.pointerDownStart.Y })); // eslint-disable-line jsdoc/require-jsdoc
     }
 
     /**
@@ -876,38 +1104,44 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected onResizerPointerDown(ev: PointerEvent): void {
         ev.preventDefault();
         ev.stopImmediatePropagation();
-        if (!this.resizing && ev.target instanceof HTMLDivElement) {
-            switch (ev.target) {
-                case this.rsN: this.resizeDir = DlgResizable.N; break;
-                case this.rsNE: this.resizeDir = DlgResizable.NE; break;
-                case this.rsE: this.resizeDir = DlgResizable.E; break;
-                case this.rsSE: this.resizeDir = DlgResizable.SE; break;
-                case this.rsS: this.resizeDir = DlgResizable.S; break;
-                case this.rsSW: this.resizeDir = DlgResizable.SW; break;
-                case this.rsW: this.resizeDir = DlgResizable.W; break;
-                case this.rsNW: this.resizeDir = DlgResizable.NW; break;
-                default:
-                    return;
-            }
-            if (!this.dispatch(new DialogResizeStartEvent(this, this.resizeDir))) {
-                return;
-            }
-            this.resizer = ev.target;
-            this.resizer.setPointerCapture(ev.pointerId);
-            this.resizer.addEventListener("pointermove", this.fncOnResizerPointerMove);
-            this.pointerDownStart.x = ev.clientX;
-            this.pointerDownStart.y = ev.clientY;
-            this.resizeStart.x = this._options.Position!.x;
-            this.resizeStart.y = this._options.Position!.y;
-            const rect = this.DOM.getBoundingClientRect();
-            this.resizeStart.width = rect.width;
-            this.resizeStart.height = rect.height;
-            this.addClass("resize-start");
-            this.resizing = true;
-            const gcs = getComputedStyle(this.DOM);
-            this.minSize.x = parseFloat(gcs.minWidth.slice(0, -2)) || 0;
-            this.minSize.y = parseFloat(gcs.minHeight.slice(0, -2)) || 0;
+        if (this.resizing || !(ev.target instanceof HTMLDivElement)) {
+            return;
         }
+        switch (ev.target) {
+            case this.rsN: this.resizeDir = DlgResizers.N; break;
+            case this.rsNE: this.resizeDir = DlgResizers.NE; break;
+            case this.rsE: this.resizeDir = DlgResizers.E; break;
+            case this.rsSE: this.resizeDir = DlgResizers.SE; break;
+            case this.rsS: this.resizeDir = DlgResizers.S; break;
+            case this.rsSW: this.resizeDir = DlgResizers.SW; break;
+            case this.rsW: this.resizeDir = DlgResizers.W; break;
+            case this.rsNW: this.resizeDir = DlgResizers.NW; break;
+            default:
+                return;
+        }
+        if (!this.dispatch(new DialogResizeStartEvent(this, this.resizeDir))) {
+            return;
+        }
+        this.isRTL = this.DOM.parentElement !== null && getComputedStyle(this.DOM.parentElement).direction === "rtl";
+        this.pointerDownStart.X = ev.clientX;
+        this.pointerDownStart.Y = ev.clientY;
+        const pos = this.getPosition();
+        const rect = this.DOM.getBoundingClientRect();
+        this.resizeStart.X = pos.X;
+        this.resizeStart.Y = pos.Y;
+        this.resizeStart.W = rect.width;
+        this.resizeStart.H = rect.height;
+        const gcs = getComputedStyle(this.DOM);
+        this.minSize.W = parseFloat(gcs.minWidth.slice(0, -2)) || 0;
+        this.minSize.H = parseFloat(gcs.minHeight.slice(0, -2)) || 0;
+        this.maxSize.W = parseFloat(gcs.maxWidth.slice(0, -2)) || Infinity;
+        this.maxSize.H = parseFloat(gcs.maxHeight.slice(0, -2)) || Infinity;
+        this.addClass("resize-start");
+        this.resizer = ev.target;
+        this.resizer.setPointerCapture(ev.pointerId);
+        this.resizer.addEventListener("pointermove", this.fncOnResizerPointerMove);
+        this.moveResizeStart = true;
+        this.resizing = true;
     }
 
     /**
@@ -917,118 +1151,192 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected onResizerPointerMove(ev: PointerEvent): void {
         ev.preventDefault();
         ev.stopImmediatePropagation();
-        const offset = { X: ev.clientX - this.pointerDownStart.x, Y: ev.clientY - this.pointerDownStart.y }; // eslint-disable-line jsdoc/require-jsdoc
+        if (!this.resizing) {
+            return;
+        }
+        const offset = {
+            /* eslint-disable jsdoc/require-jsdoc */
+            X: ev.clientX - this.pointerDownStart.X,
+            Y: ev.clientY - this.pointerDownStart.Y
+            /* eslint-enable */
+        };
         if (!this.dispatch(new DialogResizeEvent(this, this.resizeDir, offset))) {
             return;
         }
         let width: number | undefined = undefined;
         let height: number | undefined = undefined;
+        const centered = typeof this._options.CenteredResize === "boolean"
+            ? this._options.CenteredResize
+            : this._options.CenteredResize!(this);
+        const fCentered = centered ? 2 : 1;
         const rss = this.resizeStart;
         const minSize = this.minSize;
-        const pos = this._options.Position!;
-        // - Return early if resing violates the `minSize` constraint.
-        // - For the edges the offset has to be adjusted.
-        let returnEarly = false;
+        const maxSize = this.maxSize;
+        const pos = this.moveResizeStart
+            ? this.getPosition()
+            : { ...this._options.Position! };
+        // - Return early if resizing violates the `minSize` constraint.
+        // - For the edges and corners the offset and position have to be adjusted.
+        let cv = false; // constraintViolation
         switch (this.resizer) {
             case this.rsN:
-                height = rss.height - offset.Y;
-                if (rss.height - offset.Y < minSize.y) {
+                height = rss.H - offset.Y;
+                if (rss.H - offset.Y < minSize.H || rss.H - offset.Y > maxSize.H) {
                     return;
                 }
-                pos.y = rss.y + offset.Y;
+                pos.Y = rss.Y + offset.Y / fCentered;
                 break;
             case this.rsNE:
-                width = rss.width + offset.X;
-                if (rss.width + offset.X < minSize.x) {
-                    offset.X = -(rss.width - minSize.x);
-                    returnEarly = true;
+                width = rss.W + offset.X;
+                if (rss.W + offset.X < minSize.W) {
+                    offset.X = -(rss.W - minSize.W);
+                    cv = true;
                 }
-                height = rss.height - offset.Y;
-                if (rss.height - offset.Y < minSize.y) {
-                    if (returnEarly) {
+                if (rss.W + offset.X > maxSize.W) {
+                    offset.X = -(rss.W - maxSize.W);
+                    cv = true;
+                }
+                height = rss.H - offset.Y;
+                if (rss.H - offset.Y < minSize.H) {
+                    if (cv) {
                         return;
                     }
-                    offset.Y = (rss.height - minSize.y);
+                    offset.Y = rss.H - minSize.H;
                 }
-                this._options.HCentered && (pos.x = rss.x + offset.X);
-                pos.y = rss.y + offset.Y;
+                if (rss.H - offset.Y > maxSize.H) {
+                    if (cv) {
+                        return;
+                    }
+                    offset.Y = rss.H - maxSize.H;
+                }
+                this.isRTL
+                    ? pos.X = rss.X - offset.X / fCentered
+                    : centered && (pos.X = rss.X - offset.X / fCentered);
+                pos.Y = rss.Y + offset.Y / fCentered;
                 break;
             case this.rsE:
-                width = rss.width + offset.X;
-                if (rss.width + offset.X < minSize.x) {
+                width = rss.W + offset.X;
+                if ((rss.W + offset.X < minSize.W) || (rss.W + offset.X > maxSize.W)) {
                     return;
                 }
-                this._options.HCentered && (pos.x = rss.x + offset.X);
+                this.isRTL
+                    ? pos.X = rss.X - offset.X / fCentered
+                    : centered && (pos.X = rss.X - offset.X / fCentered);
                 break;
             case this.rsSE:
-                width = rss.width + offset.X;
-                if (rss.width + offset.X < minSize.x) {
-                    offset.X = -(rss.width - minSize.x);
+                width = rss.W + offset.X;
+                if (rss.W + offset.X < minSize.W) {
+                    offset.X = -(rss.W - minSize.W);
+                    cv = true;
                 }
-                height = rss.height + offset.Y;
-                if (rss.height + offset.Y < minSize.y) {
-                    offset.Y = -(rss.height - minSize.y);
-                    returnEarly = true;
+                if (rss.W + offset.X > maxSize.W) {
+                    offset.X = -(rss.W - maxSize.W);
+                    cv = true;
                 }
-                if (returnEarly) {
-                    return;
+                height = rss.H + offset.Y;
+                if (rss.H + offset.Y < minSize.H) {
+                    if (cv) {
+                        return;
+                    }
+                    offset.Y = -(rss.H - minSize.H);
                 }
-                this._options.HCentered && (pos.x = rss.x + offset.X);
-                this._options.VCentered && (pos.y = rss.y + offset.Y);
+                if (rss.H + offset.Y > maxSize.H) {
+                    if (cv) {
+                        return;
+                    }
+                    offset.Y = -(rss.H - maxSize.H);
+                }
+                this.isRTL
+                    ? pos.X = rss.X - offset.X / fCentered
+                    : centered && (pos.X = rss.X - offset.X / fCentered);
+                centered && (pos.Y = rss.Y - offset.Y / fCentered);
                 break;
             case this.rsS:
-                height = rss.height + offset.Y;
-                if (rss.height + offset.Y < minSize.y) {
+                height = rss.H + offset.Y;
+                if (rss.H + offset.Y < minSize.H || rss.H + offset.Y > maxSize.H) {
                     return;
                 }
-                this._options.VCentered && (pos.y = rss.y + offset.Y);
+                centered && (pos.Y = rss.Y - offset.Y / fCentered);
                 break;
             case this.rsSW:
-                width = rss.width - offset.X;
-                if (rss.width - offset.X < minSize.x) {
-                    offset.X = (rss.width - minSize.x);
-                    returnEarly = true;
+                width = rss.W - offset.X;
+                if (rss.W - offset.X < minSize.W) {
+                    offset.X = (rss.W - minSize.W);
+                    cv = true;
                 }
-                height = rss.height + offset.Y;
-                if (rss.height + offset.Y < minSize.y) {
-                    if (returnEarly) {
+                if (rss.W - offset.X > maxSize.W) {
+                    offset.X = (rss.W - maxSize.W);
+                    cv = true;
+                }
+                height = rss.H + offset.Y;
+                if (rss.H + offset.Y < minSize.H) {
+                    if (cv) {
                         return;
                     }
-                    offset.Y = -(rss.height - minSize.y);
+                    offset.Y = -(rss.H - minSize.H);
                 }
-                pos.x = rss.x + offset.X;
-                this._options.VCentered && (pos.y = rss.y + offset.Y);
+                if (rss.H + offset.Y > maxSize.H) {
+                    if (cv) {
+                        return;
+                    }
+                    offset.Y = -(rss.H - maxSize.H);
+                }
+                this.isRTL
+                    ? centered && (pos.X = rss.X + offset.X / fCentered)
+                    : pos.X = rss.X + offset.X / fCentered;
+                centered && (pos.Y = rss.Y - offset.Y / fCentered);
                 break;
             case this.rsW:
-                width = rss.width - offset.X;
-                if (rss.width - offset.X < minSize.x) {
+                width = rss.W - offset.X;
+                if ((rss.W - offset.X < minSize.W) || (rss.W - offset.X > maxSize.W)) {
                     return;
                 }
-                pos.x = rss.x + offset.X;
+                this.isRTL
+                    ? centered && (pos.X = rss.X + offset.X / fCentered)
+                    : pos.X = rss.X + offset.X / fCentered;
                 break;
             case this.rsNW:
-                width = rss.width - offset.X;
-                if (rss.width - offset.X < minSize.x) {
-                    offset.X = (rss.width - minSize.x);
-                    returnEarly = true;
+                width = rss.W - offset.X;
+                if (rss.W - offset.X < minSize.W) {
+                    offset.X = (rss.W - minSize.W);
+                    cv = true;
                 }
-                height = rss.height - offset.Y;
-                if (rss.height - offset.Y < minSize.y) {
-                    if (returnEarly) {
+                if (rss.W - offset.X > maxSize.W) {
+                    offset.X = (rss.W - maxSize.W);
+                    cv = true;
+                }
+                height = rss.H - offset.Y;
+                if (rss.H - offset.Y < minSize.H) {
+                    if (cv) {
                         return;
                     }
-                    offset.Y = (rss.height - minSize.y);
+                    offset.Y = (rss.H - minSize.H);
                 }
-                pos.x = rss.x + offset.X;
-                pos.y = rss.y + offset.Y;
+                if (rss.H - offset.Y > maxSize.H) {
+                    if (cv) {
+                        return;
+                    }
+                    offset.Y = (rss.H - maxSize.H);
+                }
+                this.isRTL
+                    ? centered && (pos.X = rss.X + offset.X / fCentered)
+                    : pos.X = rss.X + offset.X / fCentered;
+                pos.Y = rss.Y + offset.Y / fCentered;
                 break;
             default:
                 return;
         }
-        this.removeClass("resize-start").addClass("resizing", "resized");
-        this.setPosition(this._options.HCentered!, this._options.VCentered!, pos);
-        width !== undefined && this.style("width", `${Math.max(minSize.x, width)}px`);
-        height !== undefined && this.style("height", `${Math.max(minSize.y, height)}px`);
+        if (this.moveResizeStart) {
+            this.moveResizeStart = false;
+            this._options.HCentered = false;
+            this._options.VCentered = false;
+            this
+                .removeClass("h-centered", "v-centered", "resize-start")
+                .addClass("resizing", "resized");
+        }
+        this._options.Position!.X = pos.X;
+        this._options.Position!.Y = pos.Y;
+        this.placeDlg(pos, Math.min(maxSize.W, Math.max(minSize.W, width ?? rss.W)), Math.min(maxSize.H, Math.max(minSize.H, height ?? rss.H)));
     }
 
     /**
@@ -1038,14 +1346,36 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected onResizerPointerUp(ev: PointerEvent): void {
         ev.preventDefault();
         ev.stopImmediatePropagation();
-        if (this.resizing) {
-            this.resizing = false;
-            this.resizer?.releasePointerCapture(ev.pointerId);
-            this.resizer?.removeEventListener("pointermove", this.fncOnResizerPointerMove);
-            this.resizer = undefined;
-            this.removeClass("resize-start", "resizing");
-            this.emit(new DialogResizedEvent(this, this.resizeDir, { X: ev.clientX - this.pointerDownStart.x, Y: ev.clientY - this.pointerDownStart.y })); // eslint-disable-line jsdoc/require-jsdoc
+        if (!this.resizing) {
+            return;
         }
+        this.moveResizeStart = false;
+        this.resizing = false;
+        this.resizer?.releasePointerCapture(ev.pointerId);
+        this.resizer?.removeEventListener("pointermove", this.fncOnResizerPointerMove);
+        this.resizer = undefined;
+        this.removeClass("resize-start")
+            .addClass(this.hasClass("resizing") ? "resized" : null)
+            .removeClass("resizing");
+        this.emit(new DialogResizedEvent(this, this.resizeDir, { X: ev.clientX - this.pointerDownStart.X, Y: ev.clientY - this.pointerDownStart.Y })); // eslint-disable-line jsdoc/require-jsdoc
+    }
+
+    /**
+     * Calculate the position of the dialog according to its current settings (offset, centered).
+     * @returns An object containing the calculated position of the dialog.
+     */
+    protected getPosition(): { X: number; Y: number; } { // eslint-disable-line jsdoc/require-jsdoc
+        const rect = this.DOM.getBoundingClientRect();
+        return {
+            /* eslint-disable jsdoc/require-jsdoc */
+            X: this._options.HCentered
+                ? (this.Parent ? this.Parent.DOM.clientWidth : window.innerWidth) / 2 - rect.width / 2 + this._options.Position!.X
+                : this._options.Position!.X,
+            Y: this._options.VCentered
+                ? (this.Parent ? this.Parent.DOM.clientHeight : window.innerHeight) / 2 - rect.height / 2 + this._options.Position!.Y
+                : this._options.Position!.Y
+            /* eslint-enable */
+        };
     }
 
     /** @inheritdoc */
@@ -1096,6 +1426,9 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             this.resizers[i].addEventListener("pointerdown", this.fncOnResizerPointerDown);
             this.resizers[i].addEventListener("pointerup", this.fncOnResizerPointerUp);
         }
+        this.rsObserver = new ResizeObserver(() => {
+            this.fncOnResize();
+        });
         // Set target DOM for the `IChildren` mixin!!
         this.setChildrenDOMTarget(this.contentContainer.DOM);
         return this;
@@ -1103,7 +1436,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
 
     static {
         /** Mixin the IChildren implementation (which targets `this.contentContainer`). */
-        mixin(false, Dialog, AChildren);
+        mixin(false, this, AChildren);
     }
 }
 
@@ -1115,12 +1448,16 @@ export interface Dialog<EventMap extends DialogEventMap = DialogEventMap> extend
  */
 export class DialogFactory<T> extends ComponentFactory<Dialog> {
     /**
-     * Create, set up and return Dialog component.\
+     * Create dialog component.\
      * __Note:__ In contrast to the vast majority of other components, instances of `Dialog` usually
      * should not be mounted in another component (with `append()` or insert()) since this can cause
-     * problems when centering or positioning the dialog relative to the viewport. If an instance of
-     * `Dialog` is not mounted in another component, it is automatically added to `document.body` as
-     * a child element in `show()`/`showModal()` and removed again in `close()`.
+     * problems when centering or positioning the dialog (by default relative to the viewport). This
+     * is especially true for modal dialogs where it can be hard to calculate the position of the
+     * dialog with regard to its parent. For non-modal dialogs centering and positioning the dialog
+     * relative to its parent usually works as expected, but use cases for this scenario are rather
+     * rare.\
+     * If an instance of `Dialog` is not mounted in another component, it is automatically added to
+     * `document.body` as a child element in `show()`/`showModal()` and removed again in `close()`.
      * @param options Options for the dialog.
      * @param components The initial components that make up the content of this dialog.\
      * __Important note:__ If a dialog is disposed of (using `dispose()`), _all_ components given

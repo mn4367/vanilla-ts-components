@@ -5,6 +5,10 @@ html {
     box-sizing: border-box;
     /* -webkit-font-smoothing: antialiased; */
 }
+dialog {
+    color: var(--font-color);
+}
+
 *,
 *::before,
 *::after {

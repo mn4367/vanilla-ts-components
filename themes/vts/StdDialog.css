@@ -1,10 +1,9 @@
 .std-dialog {
     > .content {
         width: 100%;
+        /* #region Example settings for a title bar. */
         > .dlg-title {
             position: relative;
-            /* Example settings for a title bar */
-
             left: calc(-1 * var(--base-size));
             top: calc(-1 * var(--base-size));
             margin-block-end: calc(-1 * var(--base-size));
@@ -14,8 +13,8 @@
             > p {
                 margin: 0;
             }
-
         }
+        /* #endregion */
         > .dlg-btn-bar {
             display: flex;
             justify-content: center;
@@ -54,7 +53,7 @@
         /* > .content {} */
     }
     &.query-input {
-        max-width: 85%;
+        max-width: 85vw;
         > .content {
             > input[type=text] {
                 width: 100%;
