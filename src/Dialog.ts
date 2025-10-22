@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, getProp, HTMLElementWithDisabled, IElementComponent, INodeComponent, mixin } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, getProp, IElementComponent, INodeComponent, mixin, tabKeyFocusCycle } from "@vanilla-ts/core";
 import { Div, Dialog as DOMDialog } from "@vanilla-ts/dom";
 
 
@@ -155,7 +155,7 @@ export type DialogOptions = {
      * or to the browser itself.\
      * Default: `true`.
      */
-    LockFocusCycleInside?: boolean;
+    LockFocusInside?: boolean;
     /**
      * The `Dialog` component changes the Z-order of currently open non-modal dialogs automatically
      * if one of those dialogs receives focus by setting the CSS property `z-index` accordingly (the
@@ -476,7 +476,6 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     protected state: DialogState = DialogState.CLOSED;
     protected contentContainer: Div;
     protected lastActiveElement?: HTMLElement;
-    protected focusableElementsSelector = "[href], button:not([tabindex='-1']), input:not([tabindex='-1']), select:not([tabindex='-1']), textarea:not([tabindex='-1']), details:not([tabindex='-1']), [tabindex]:not([tabindex='-1'])";
     protected closedRegularly: boolean;
     protected isRTL: boolean;
     protected rsObserver: ResizeObserver;
@@ -572,7 +571,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
             MoveHandle: getProp(opts, this._options, "MoveHandle", this.contentContainer),
             Resizers: getProp(opts, this._options, "Resizers", DlgResizers.NONE),
             CenteredResize: getProp(opts, this._options, "CenteredResize", false),
-            LockFocusCycleInside: getProp(opts, this._options, "LockFocusCycleInside", true),
+            LockFocusInside: getProp(opts, this._options, "LockFocusInside", true),
             BaseZIndex: Math.max(getProp(opts, this._options, "BaseZIndex", 1000), 0),
             /* eslint-enable */
         };
@@ -947,28 +946,11 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
                 }
                 break;
             case "Tab":
-                if (this._options.LockFocusCycleInside && !ev.ctrlKey && !ev.altKey && !ev.metaKey) {
-                    const focusableElements = Array.from(this.dlg.DOM.querySelectorAll(this.focusableElementsSelector))
-                        .filter(e => {
-                            return !e.classList.contains("disabled")
-                                && !(<HTMLElementWithDisabled>e).disabled;
-                        });
-                    const firstFocusableElement = <HTMLElement>focusableElements[0];
-                    const lastFocusableElement = <HTMLElement>focusableElements[focusableElements.length - 1];
-                    if (ev.shiftKey) {
-                        if (!firstFocusableElement || ev.target === firstFocusableElement) {
-                            ev.preventDefault();
-                            ev.stopImmediatePropagation();
-                            lastFocusableElement?.focus?.();
-                        }
-                    } else {
-                        if (!lastFocusableElement || ev.target === lastFocusableElement) {
-                            ev.preventDefault();
-                            ev.stopImmediatePropagation();
-                            firstFocusableElement?.focus?.();
-                        }
-                    }
-                }
+                this._options.LockFocusInside
+                    && !ev.ctrlKey
+                    && !ev.altKey
+                    && !ev.metaKey
+                    && tabKeyFocusCycle(this.dlg.DOM, ev);
                 break;
             default:
                 return;

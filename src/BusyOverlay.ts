@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, IElementComponent } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, IElementComponent, tabKeyFocusCycle } from "@vanilla-ts/core";
 import { Dialog, Div, Span } from "@vanilla-ts/dom";
 
 
@@ -61,7 +61,6 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
     protected defaultBusyIndicator: Span = new Span();
     protected content: Div;
     protected busyCount: number = 0;
-    protected focusableElementsSelector = "button:not([tabindex='-1']), [href], input:not([tabindex='-1']), select:not([tabindex='-1']), textarea:not([tabindex='-1']), details:not([tabindex='-1']), [tabindex]:not([tabindex='-1'])";
     protected _allowEscape: boolean = false;
 
     /**
@@ -279,24 +278,10 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
                         break;
                     case "Tab":
                         // Keep focus inside the overlay.
-                        if (!ev.ctrlKey && !ev.altKey && !ev.metaKey) {
-                            const focusableElements = this.DOM.querySelectorAll(this.focusableElementsSelector);
-                            const firstFocusableElement = <HTMLElement>focusableElements[0];
-                            const lastFocusableElement = <HTMLElement>focusableElements[focusableElements.length - 1];
-                            if (ev.shiftKey) {
-                                if (ev.target === firstFocusableElement) {
-                                    ev.preventDefault();
-                                    ev.stopImmediatePropagation();
-                                    lastFocusableElement?.focus?.();
-                                }
-                            } else {
-                                if (ev.target === lastFocusableElement) {
-                                    ev.preventDefault();
-                                    ev.stopImmediatePropagation();
-                                    firstFocusableElement?.focus?.();
-                                }
-                            }
-                        }
+                        !ev.ctrlKey
+                            && !ev.altKey
+                            && !ev.metaKey
+                            && tabKeyFocusCycle(this.DOM, ev);
                         break;
                     default:
                         return;
