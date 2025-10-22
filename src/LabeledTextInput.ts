@@ -1,7 +1,6 @@
 import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { TextInput } from "@vanilla-ts/dom";
-import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
-import { LabeledInputComponent } from "./LabeledInputComponent.js";
+import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
 
 /**
@@ -16,16 +15,20 @@ export class LabeledTextInput<EventMap extends HTMLElementEventMap = HTMLElement
      * @param name The `name` attribute of the text input element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param labelAction Controls the following behavior:
+     * @param lblAction Controls the following behavior:
      * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label focuses
-     *   the text input element, if `labelAction` is `false`, clicking on the label does nothing.
+     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label focuses
+     *   the text input element, if `lblAction` is `false`, clicking on the label does nothing.
      */
-    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
-        super(labelPhrase, id, lblPosition, lblAlignment, labelAction);
-        (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? this.ui.append(this.component = new TextInput(id, value, name))
-            : this.ui.insert(0, this.component = new TextInput(id, value, name));
+    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+        super(
+            new TextInput(id, value, name),
+            labelPhrase,
+            id,
+            lblPosition,
+            lblAlignment,
+            lblAction
+        );
     }
 
     /**
@@ -49,14 +52,14 @@ export class LabeledTextInputFactory<T> extends ComponentFactory<LabeledTextInpu
      * @param name The `name` attribute of the text input element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param labelAction Controls the following behavior:
+     * @param lblAction Controls the following behavior:
      * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label focuses
-     *   the text input element, if `labelAction` is `false`, clicking on the label does nothing.
+     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label focuses
+     *   the text input element, if `lblAction` is `false`, clicking on the label does nothing.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledTextInput component.
      */
-    public labeledTextInput(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledTextInput {
-        return this.setupComponent(new LabeledTextInput(labelPhrase, id, value, name, lblPosition, lblAlignment, labelAction), data);
+    public labeledTextInput(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledTextInput {
+        return this.setupComponent(new LabeledTextInput(labelPhrase, id, value, name, lblPosition, lblAlignment, lblAction), data);
     }
 }

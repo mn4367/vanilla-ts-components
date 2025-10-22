@@ -1,6 +1,5 @@
 import { ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
-import { Div, Span } from "@vanilla-ts/dom";
-import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
+import { LabelAlignment, LabelPosition, LabeledComponentGroup } from "./LabeledComponents.js";
 import { LabeledRadioButton } from "./LabeledRadioButton.js";
 import { LabeledRadioButtons, RadioButtonGroup, RadioButtonGroupAlignment, RadioButtonGroupEventMap } from "./RadioButtonGroup.js";
 
@@ -8,7 +7,7 @@ import { LabeledRadioButtons, RadioButtonGroup, RadioButtonGroupAlignment, Radio
 /**
  * Labeled radio button group component.
  */
-export class LabeledRadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioButtonGroupEventMap> extends LabeledComponent<Span, RadioButtonGroup, EventMap> {
+export class LabeledRadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioButtonGroupEventMap> extends LabeledComponentGroup<RadioButtonGroup, EventMap> {
     /**
      * Create LabeledRadioButtonGroup component.
      * @param labelPhrase The phrasing content for the label.
@@ -20,7 +19,8 @@ export class LabeledRadioButtonGroup<EventMap extends RadioButtonGroupEventMap =
      */
     constructor(labelPhrase: Phrase | Phrases, radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
         super(labelPhrase, lblPosition ?? LabelPosition.TOP, lblAlignment);
-        this.initialize(undefined, radioButtons, name, alignment);
+        // !! Mandatory.
+        this.setContent(new RadioButtonGroup(radioButtons, name, alignment));
     }
 
     /**
@@ -109,24 +109,6 @@ export class LabeledRadioButtonGroup<EventMap extends RadioButtonGroupEventMap =
      */
     public toggle(toggle: boolean): this {
         this.component.toggle(toggle);
-        return this;
-    }
-
-    /** @inheritdoc */
-    protected override buildUI(radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment): this {
-        this.component = new RadioButtonGroup(radioButtons, name, alignment)
-            .addClass(RadioButtonGroup.DefaultCSSClassName);
-        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? new Div()
-                .append(
-                    this.label = new Span(),
-                    this.component
-                )
-            : new Div()
-                .append(
-                    this.component,
-                    this.label = new Span()
-                );
         return this;
     }
 

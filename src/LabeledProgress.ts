@@ -1,6 +1,6 @@
 import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
-import { Div, Progress, ProgressValueEvent, Span } from "@vanilla-ts/dom";
-import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
+import { Progress, ProgressValueEvent } from "@vanilla-ts/dom";
+import { LabelAlignment, LabeledComponentWithSpan, LabelPosition } from "./LabeledComponents.js";
 
 
 /** Additional event(s) for `LabeledProgressEventMap`. */
@@ -15,7 +15,7 @@ export interface LabeledProgressEventMap extends HTMLElementEventMap {
 /**
  * Labeled progress component.
  */
-export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledProgressEventMap> extends LabeledComponent<Span, Progress, EventMap> {
+export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledProgressEventMap> extends LabeledComponentWithSpan<Progress, EventMap> {
     /**
      * Create LabeledProgress component.
      * @param labelPhrase The phrasing content for the label.
@@ -30,8 +30,12 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * @param lblAlignment The alignment of the label.
      */
     constructor(labelPhrase: Phrase | Phrases, max: number = 1, value: number | undefined, progressPhrase?: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
-        super(labelPhrase, lblPosition, lblAlignment);
-        this.initialize(undefined, max, value, progressPhrase);
+        super(
+            new Progress(max, value, ...[progressPhrase ?? []].flat()),
+            labelPhrase,
+            lblPosition,
+            lblAlignment
+        );
     }
 
     /**
@@ -159,22 +163,6 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      */
     public value(v?: number) {
         this.component.value(v);
-        return this;
-    }
-
-    /** @inheritdoc */
-    protected override buildUI(max: number = 1, value: number | undefined, progressPhrase: Phrase | Phrases): this {
-        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? new Div()
-                .append(
-                    this.label = new Span(),
-                    this.component = new Progress(max, value, ...[progressPhrase].flat())
-                )
-            : new Div()
-                .append(
-                    this.component = new Progress(max, value, ...[progressPhrase].flat()),
-                    this.label = new Span()
-                );
         return this;
     }
 }

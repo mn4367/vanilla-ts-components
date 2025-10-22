@@ -1,0 +1,206 @@
+.labeled-component {
+    /* #region common */
+    display: flex;
+    position: relative;
+    padding-block: var(--2px);
+    > .lc-label {
+        flex-shrink: 0;
+    }
+    /* > .lc-component {
+    } */
+    &:first-child {
+        padding-block-start: 0;
+    }
+    &:last-child {
+        padding-block-end: 0;
+    }
+    &.a-start > .lc-label {
+        text-align: start;
+    }
+    &.a-center > .lc-label {
+        text-align: center;
+    }
+    &.a-end > .lc-label {
+        text-align: end;
+    }
+    /* #endregion */
+    /* #region top/bottom */
+    /* Note for `LabeledCheckbox` and `LabeledRadioButton`:
+       The following styles are technically 'correct', but in practice this arrangement is not
+       really usable visually. */
+    &.p-top,
+    &.p-bottom {
+        flex-direction: column;
+        justify-content: center;
+    }
+    &.p-top > .lc-label {
+        padding-block-end: 0.5rem;
+    }
+    &.p-bottom > .lc-label {
+        padding-block-start: 0.5rem;
+    }
+    /* #endregion */
+    /* #region start/end */
+    &.p-start,
+    &.p-end {
+        flex-direction: row;
+        align-items: center;
+    }
+    &.p-start > .lc-label {
+        padding-inline-end: 0.5rem;
+    }
+    &.p-end > .lc-label {
+        padding-inline-start: 0.5rem;
+    }
+    /* #endregion */
+}
+.labeled-component-group {
+    /* #region common */
+    display: block;
+    position: relative;
+    border: var(--1px) solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    background-color: inherit;
+    > .lc-label,
+    > .lc-component {
+        background-color: inherit;
+    }
+    > .lc-label {
+        position: absolute;
+        padding-inline-start: 0.5rem;
+        padding-inline-end: 0.5rem;
+        line-height: 1;
+    }
+    > .lc-component {
+        width: 100%;
+        height: 100%;
+    }
+    /* #endregion */
+    /* #region top/bottom */
+    &.p-top,
+    &.p-bottom {
+        padding-inline: 1rem;
+    }
+    &.p-top {
+        margin-block-start: 0.5rem;
+        padding-block: 1.25rem 1rem;
+        > .lc-label {
+            inset-block-start: -0.5rem;
+        }
+        /* > .lc-component {
+            margin-block-start: 0.5rem;
+        } */
+    }
+    &.p-bottom {
+        margin-block-end: 0.5rem;
+        padding-block: 1rem 1.25rem;
+        > .lc-label {
+            inset-block-end: -0.5rem;
+        }
+        /* > .lc-component {
+            margin-block-end: 0.5rem;
+        } */
+    }
+    &.p-top.a-start,
+    &.p-bottom.a-start {
+        > .lc-label {
+            inset-inline-start: 1rem;
+        }
+    }
+    &.p-top.a-center,
+    &.p-bottom.a-center {
+        > .lc-label {
+            inset-inline-start: 0;
+            inset-inline-end: 0;
+            margin-inline-start: auto;
+            margin-inline-end: auto;
+        }
+    }
+    &.p-top.a-end,
+    &.p-bottom.a-end {
+        > .lc-label {
+            inset-inline-end: 1rem;
+        }
+    }
+    /* #endregion */
+    /* #region start/end */
+    &.p-start,
+    &.p-end {
+        padding-block: 1rem;
+        > .lc-label {
+            writing-mode: vertical-lr;
+        }
+        > .lc-label:dir(rtl) {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+    }
+    &.p-start {
+        margin-inline-start: 0.5rem;
+        padding-inline: 1.25rem 1rem;
+        > .lc-label {
+            inset-block-start: -0.5rem;
+            transform: rotate(180deg);
+            &:dir(rtl) {
+                transform: unset;
+            }
+        }
+        /* > .lc-component {
+            margin-inline-start: 0.5rem;
+        } */
+    }
+    &.p-end {
+        margin-inline-end: 0.5rem;
+        padding-inline: 1rem 1.25rem;
+        > .lc-label {
+            inset-block-end: -0.5rem;
+            /* Workaround for behavior in Gecko. */
+            width: unset;
+        }
+        /* > .lc-component {
+            margin-inline-end: 0.5rem;
+        } */
+    }
+    &.p-start.a-start {
+        > .lc-label:not(:dir(rtl)) {
+            inset-inline-end: 1rem;
+        }
+        > .lc-label:dir(rtl) {
+            inset-inline-start: 1rem;
+        }
+    }
+    &.p-end.a-start {
+        > .lc-label:not(:dir(rtl)) {
+            inset-inline-start: 1rem;
+        }
+        > .lc-label:dir(rtl) {
+            inset-inline-end: 1rem;
+        }
+    }
+    &.p-start.a-center,
+    &.p-end.a-center {
+        > .lc-label {
+            inset-inline-start: 0;
+            inset-inline-end: 0;
+            margin-inline-start: auto;
+            margin-inline-end: auto;
+        }
+    }
+    &.p-start.a-end {
+        > .lc-label:not(:dir(rtl)) {
+            inset-inline-start: 1rem;
+        }
+        > .lc-label:dir(rtl) {
+            inset-inline-end: 1rem;
+        }
+    }
+    &.p-end.a-end {
+        > .lc-label:not(:dir(rtl)) {
+            inset-inline-end: 1rem;
+        }
+        > .lc-label:dir(rtl) {
+            inset-inline-start: 1rem;
+        }
+    }
+    /* #endregion */
+}

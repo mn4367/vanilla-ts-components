@@ -1,7 +1,6 @@
 import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { PasswordInput } from "@vanilla-ts/dom";
-import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
-import { LabeledInputComponent } from "./LabeledInputComponent.js";
+import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
 
 /**
@@ -16,17 +15,20 @@ export class LabeledPasswordInput<EventMap extends HTMLElementEventMap = HTMLEle
      * @param name The `name` attribute of the password input element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param labelAction Controls the following behavior:
+     * @param lblAction Controls the following behavior:
      * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label focuses
-     *   the password input element, if `labelAction` is `false`, clicking on the label does
-     *   nothing.
+     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label focuses
+     *   the password input element, if `lblAction` is `false`, clicking on the label does nothing.
      */
-    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
-        super(labelPhrase, id, lblPosition, lblAlignment, labelAction);
-        (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? this.ui.append(this.component = new PasswordInput(id, value, name))
-            : this.ui.insert(0, this.component = new PasswordInput(id, value, name));
+    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+        super(
+            new PasswordInput(id, value, name),
+            labelPhrase,
+            id,
+            lblPosition,
+            lblAlignment,
+            lblAction
+        );
     }
 
     /**
@@ -50,15 +52,14 @@ export class LabeledPasswordInputFactory<T> extends ComponentFactory<LabeledPass
      * @param name The `name` attribute of the password input element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param labelAction Controls the following behavior:
+     * @param lblAction Controls the following behavior:
      * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label focuses
-     *   the password input element, if `labelAction` is `false`, clicking on the label does
-     * nothing.
+     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label focuses
+     *   the password input element, if `lblAction` is `false`, clicking on the label does nothing.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledPasswordInput component.
      */
-    public labeledPasswordInput(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledPasswordInput {
-        return this.setupComponent(new LabeledPasswordInput(labelPhrase, id, value, name, lblPosition, lblAlignment, labelAction), data);
+    public labeledPasswordInput(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledPasswordInput {
+        return this.setupComponent(new LabeledPasswordInput(labelPhrase, id, value, name, lblPosition, lblAlignment, lblAction), data);
     }
 }

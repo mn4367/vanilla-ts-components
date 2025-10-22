@@ -1,6 +1,6 @@
 import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, RadioButton } from "@vanilla-ts/dom";
-import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
+import { LabelAlignment, LabelPosition } from "./LabeledComponents.js";
 import { LabeledRadioButton } from "./LabeledRadioButton.js";
 
 

@@ -1,12 +1,12 @@
 import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
-import { A, Div, Span } from "@vanilla-ts/dom";
-import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
+import { A } from "@vanilla-ts/dom";
+import { LabelAlignment, LabeledComponentWithSpan, LabelPosition } from "./LabeledComponents.js";
 
 
 /**
  * Labeled anchor component.
  */
-export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, A, EventMap> {
+export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentWithSpan<A, EventMap> {
     /**
      * Create LabeledAnchor component.
      * @param href The `href` attribute for the `<a>` element.
@@ -16,11 +16,12 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @param lblAlignment The alignment of the label.
      */
     constructor(href: string, labelPhrase: Phrase | Phrases, anchorPhrase?: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
-        super(labelPhrase, lblPosition, lblAlignment);
-        this.initialize(undefined, href);
-        Array.isArray(anchorPhrase)
-            ? this.component.phrase(...anchorPhrase)
-            : anchorPhrase && this.component.phrase(anchorPhrase);
+        super(
+            new A(href).phrase(...[anchorPhrase ?? []].flat()),
+            labelPhrase,
+            lblPosition,
+            lblAlignment
+        );
     }
 
     /**
@@ -89,22 +90,6 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      */
     public rephrase(...phrase: Phrases): this {
         this.component.rephrase(...phrase);
-        return this;
-    }
-
-    /** @inheritdoc */
-    protected override buildUI(href: string): this {
-        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? new Div()
-                .append(
-                    this.label = new Span(),
-                    this.component = new A(href)
-                )
-            : new Div()
-                .append(
-                    this.component = new A(href),
-                    this.label = new Span()
-                );
         return this;
     }
 }

@@ -1,12 +1,12 @@
 import { ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
-import { Div, Label, TextArea } from "@vanilla-ts/dom";
-import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
+import { TextArea } from "@vanilla-ts/dom";
+import { LabelAlignment, LabeledComponentWithLabel, LabelPosition } from "./LabeledComponents.js";
 
 
 /**
  * Labeled textarea component.
  */
-export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Label, TextArea, EventMap> {
+export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentWithLabel<TextArea, EventMap> {
     /**
      * Create LabeledTextArea component.
      * @param labelPhrase The phrasing content for the label.
@@ -17,14 +17,20 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
      * @param name The `name` attribute for the textarea element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param labelAction Controls the following behavior:
+     * @param lblAction Controls the following behavior:
      * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label focuses
-     *   the textarea element, if `labelAction` is `false`, clicking on the label does nothing.
+     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label focuses
+     *   the textarea element, if `lblAction` is `false`, clicking on the label does nothing.
      */
-    constructor(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
-        super(labelPhrase, lblPosition ?? LabelPosition.TOP, lblAlignment);
-        this.initialize(undefined, text, rows, cols, id, name, labelAction);
+    constructor(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+        super(
+            new TextArea(text, rows, cols, id, name),
+            labelPhrase,
+            id,
+            lblPosition ?? LabelPosition.TOP,
+            lblAlignment,
+            lblAction
+        );
     }
 
     /**
@@ -33,6 +39,28 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
      */
     public get TextArea(): TextArea {
         return this.component;
+    }
+
+    /**
+     * __The property `Value` here is an alias for the property `this.TextArea.Value`.__
+     */
+    public get Value(): string {
+        return this.component.DOM.value;
+    }
+    /** @inheritdoc */
+    public set Value(v: string) {
+        this.component.DOM.value = v;
+    }
+
+    /**
+     * __The function `value()` here is an alias for the function `this.TextArea.value()` but it
+     * returns _this_ instance instead of the 'TextArea' instance.__
+     * @param v The value to be set.
+     * @returns This instance.
+     */
+    public value(v: string): this {
+        this.component.DOM.value = v;
+        return this;
     }
 
     /**
@@ -65,28 +93,6 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
         this.component.DOM.textContent = text;
         return this;
     }
-
-    /** @inheritdoc */
-    protected override buildUI(text?: string, rows?: number, cols?: number, id?: string, name?: string, labelAction?: boolean): this {
-        this.label = new Label(
-            id && (labelAction === undefined || labelAction === true)
-                ? id
-                : undefined
-        );
-        this.component = new TextArea(text, rows, cols, id, name);
-        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? new Div()
-                .append(
-                    this.label,
-                    this.component
-                )
-            : new Div()
-                .append(
-                    this.component,
-                    this.label
-                );
-        return this;
-    }
 }
 
 /**
@@ -103,14 +109,14 @@ export class LabeledTextAreaFactory<T> extends ComponentFactory<LabeledTextArea>
      * @param name The `name` attribute for the textarea element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param labelAction Controls the following behavior:
+     * @param lblAction Controls the following behavior:
      * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label focuses
-     *   the textarea element, if `labelAction` is `false`, clicking on the label does nothing.
+     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label focuses
+     *   the textarea element, if `lblAction` is `false`, clicking on the label does nothing.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledTextArea component.
      */
-    public labeledTextArea(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledTextArea {
-        return this.setupComponent(new LabeledTextArea(labelPhrase, text, rows, cols, id, name, lblPosition, lblAlignment, labelAction), data);
+    public labeledTextArea(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledTextArea {
+        return this.setupComponent(new LabeledTextArea(labelPhrase, text, rows, cols, id, name, lblPosition, lblAlignment, lblAction), data);
     }
 }

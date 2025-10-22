@@ -5,7 +5,7 @@ import { Dialog, DialogCloseEvent, DialogOptions, DLG_CANCELLED } from "./Dialog
 import { StdDlgI18N_EN } from "./I18N/StdDialogI18N_EN.js";
 import { IconButton } from "./IconButton.js";
 import { LabeledCheckbox } from "./LabeledCheckbox.js";
-import { LabeledInputComponent } from "./LabeledInputComponent.js";
+import { LabeledInputComponent } from "./LabeledComponents.js";
 import { LabeledRadioButtonGroup } from "./LabeledRadioButtonGroup.js";
 import { RadioButtonGroup } from "./RadioButtonGroup.js";
 import { btn_CANCEL, btn_NO, btn_OK, btn_YES, SEP, STD_DLG_CANCELLED, UNKNOWN_BTN } from "./StdDialogBtns.js";

@@ -1,7 +1,6 @@
 import { CheckedEvent, ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
 import { RadioButton } from "@vanilla-ts/dom";
-import { LabelAlignment, LabelPosition } from "./LabeledComponent.js";
-import { LabeledInputComponent } from "./LabeledInputComponent.js";
+import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
 
 /** Additional event(s) for `LabeledRadioButton`. */
@@ -25,24 +24,27 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
      * @param name The `name` attribute of the radio button input element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param labelAction Controls the following behavior:
+     * @param lblAction Controls the following behavior:
      * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label toggles
-     *   the radio button input element (if toggling is enabled), if `labelAction` is `false`,
+     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label toggles
+     *   the radio button input element (if toggling is enabled), if `lblAction` is `false`,
      *   clicking on the label does nothing.
      */
-    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean) {
-        super(labelPhrase, id, lblPosition ?? LabelPosition.END, lblAlignment, labelAction);
-        this.component = new RadioButton(id, value, name)
-            // Forward this event to make handling of the component easier.
-            .on("checked", (ev) => {
-                // ev.preventDefault();
-                ev.stopImmediatePropagation();
-                this.emit(new CheckedEvent("checked", this, { Checked: ev.$.Checked })); // eslint-disable-line jsdoc/require-jsdoc
-            });
-        (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? this.ui.append(this.component)
-            : this.ui.insert(0, this.component);
+    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+        super(
+            new RadioButton(id, value, name)
+                // Forward this event to make handling of the component easier.
+                .on("checked", (ev) => {
+                    // ev.preventDefault();
+                    ev.stopImmediatePropagation();
+                    this.emit(new CheckedEvent("checked", this, { Checked: ev.$.Checked })); // eslint-disable-line jsdoc/require-jsdoc
+                }),
+            labelPhrase,
+            id,
+            lblPosition ?? LabelPosition.END,
+            lblAlignment,
+            lblAction
+        );
     }
 
     /**
@@ -112,15 +114,15 @@ export class LabeledRadioButtonFactory<T> extends ComponentFactory<LabeledRadioB
      * @param name The `name` attribute of the radio button input element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param labelAction Controls the following behavior:
+     * @param lblAction Controls the following behavior:
      * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `labelAction` is `true` or `undefined`, a click on the label toggles
-     *   the radio button input element (if toggling is enabled), if `labelAction` is `false`,
+     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label toggles
+     *   the radio button input element (if toggling is enabled), if `lblAction` is `false`,
      *   clicking on the label does nothing.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledRadioButton component.
      */
-    public labeledRadioButton(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, labelAction?: boolean, data?: T): LabeledRadioButton {
-        return this.setupComponent(new LabeledRadioButton(labelPhrase, id, value, name, lblPosition, lblAlignment, labelAction), data);
+    public labeledRadioButton(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledRadioButton {
+        return this.setupComponent(new LabeledRadioButton(labelPhrase, id, value, name, lblPosition, lblAlignment, lblAction), data);
     }
 }

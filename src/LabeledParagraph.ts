@@ -1,6 +1,6 @@
 import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
-import { Div, P, Span } from "@vanilla-ts/dom";
-import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
+import { P } from "@vanilla-ts/dom";
+import { LabelAlignment, LabeledComponentWithSpan, LabelPosition } from "./LabeledComponents.js";
 
 
 /**
@@ -15,7 +15,7 @@ import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledCompon
  * text by, for example, appending `Span`, `Em` and other components to it. The same applies for the
  * label, which is a `Span` component.
  */
-export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, P, EventMap> {
+export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentWithSpan<P, EventMap> {
     /**
      * Create LabeledParagraph component.
      * @param labelPhrase The phrasing content for the label.
@@ -24,11 +24,12 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * @param lblAlignment The alignment of the label.
      */
     constructor(labelPhrase: Phrase | Phrases, paragraphPhrase: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
-        super(labelPhrase, lblPosition, lblAlignment);
-        this.initialize();
-        Array.isArray(paragraphPhrase)
-            ? this.component.phrase(...paragraphPhrase)
-            : this.component.phrase(paragraphPhrase);
+        super(
+            new P().phrase(...[paragraphPhrase ?? []].flat()),
+            labelPhrase,
+            lblPosition,
+            lblAlignment
+        );
     }
 
     /**
@@ -76,22 +77,6 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      */
     public rephrase(...phrase: Phrases): this {
         this.component.rephrase(...phrase);
-        return this;
-    }
-
-    /** @inheritdoc */
-    protected override buildUI(): this {
-        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? new Div()
-                .append(
-                    this.label = new Span(),
-                    this.component = new P()
-                )
-            : new Div()
-                .append(
-                    this.component = new P(),
-                    this.label = new Span()
-                );
         return this;
     }
 }

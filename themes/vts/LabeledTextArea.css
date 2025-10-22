@@ -1,57 +1,7 @@
 .labeled-text-area,
 .vts-labeled-text-area {
-    /* #region common */
-    display: flex;
-    position: relative;
-    padding-block: var(--2px);
-    > label,
-    > textarea {
-        margin: 0;
-        padding: 0;
-    }
-    > label {
-        flex-shrink: 0;
-    }
-    &:first-child {
-        padding-block-start: 0;
-    }
-    &:last-child {
-        padding-block-end: 0;
-    }
-    &.a-start > label {
-        text-align: start;
-    }
-    &.a-center > label {
-        text-align: center;
-    }
-    &.a-end > label {
-        text-align: end;
-    }
-    /* #endregion */
-    /* #region start/end */
     &.p-start,
     &.p-end {
-        flex-direction: row;
         align-items: flex-start;
     }
-    &.p-start > label {
-        padding-inline-end: 0.5rem;
-    }
-    &.p-end > label {
-        padding-inline-start: 0.5rem;
-    }
-    /* #endregion */
-    /* #region top/bottom */
-    &.p-top,
-    &.p-bottom {
-        flex-direction: column;
-        justify-items: start
-    }
-    &.p-top > label {
-        padding-block-end: 0.5rem;
-    }
-    &.p-bottom > label {
-        padding-block-start: 0.5rem;
-    }
-    /* #endregion */
 }

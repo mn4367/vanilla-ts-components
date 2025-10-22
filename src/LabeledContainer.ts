@@ -1,6 +1,6 @@
-import { AChildren, ComponentFactory, INodeComponent, mixin, Phrase, Phrases } from "@vanilla-ts/core";
-import { Div, Span } from "@vanilla-ts/dom";
-import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledComponent.js";
+import { AChildren, ComponentFactory, IElementWithChildrenComponent, INodeComponent, mixin, Phrase, Phrases } from "@vanilla-ts/core";
+import { Div } from "@vanilla-ts/dom";
+import { LabelAlignment, LabeledComponentGroup, LabelPosition } from "./LabeledComponents.js";
 
 
 /**
@@ -10,15 +10,17 @@ import { LabelAlignment, LabeledComponent, LabelPosition } from "./LabeledCompon
  *
  * - Although it may seem that `LabeledContainer` is a simple replacement for `Div` components (it
  *   implements `IChildren` like `Div`), this is not the case (see following points).
- * - Using `Container` or `Component` to add/remove/... components isn't wrong but unnecessary,
- *   instead use the respective functions of `LabeledContainer` itself.
+ * - The property `Component`or `Container` __must not be used to add/remove/... components__,
+ *   instead use the respective functions of `LabeledContainer` itself! `Component` should only be
+ *   used for styling  or other (readonly) purposes!
  * - `clear()` is a destryoing operation(!), for an alternative see `clearContent()`.
  * - Children of `LabeledContainer` _may_ traverse the component hierarchy with `someChild.Parent`,
  *   but a single call to `Parent` is not enough. Due to the internal component tree and the use of
- *   `AElementComponentWithInternalUI`, `someChild.Parent?.Parent?.Parent` must be called to reach
- *   the containing `LabeledContainer` instance!
+ *   `AElementComponentWithInternalUI` (through the inheritance chain),
+ *   `someChild.Parent?.Parent?.Parent` must be called to reach the containing `LabeledContainer`
+ *   instance!
  */
-export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentGroup<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     /**
      * Create LabeledContainer component.
      * @param labelPhrase The phrasing content for the label.
@@ -27,14 +29,18 @@ export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElement
      */
     constructor(labelPhrase: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
         super(labelPhrase, lblPosition ?? LabelPosition.TOP, lblAlignment);
-        this.initialize();
+        this
+            // !! Mandatory.
+            .setContent(new Div())
+            // Set target DOM for the `IChildren` mixin!!
+            .setChildrenDOMTarget(this.component.DOM);
     }
 
     /**
-     * Get the internal container holding all children of this container. Equivalent to `Component`,
-     * just with a more descriptive name.
+     * Get Container component of this component. Equivalent to `Component`, just with a more
+     * descriptive name.
      */
-    public get Container(): Div {
+    public get Container(): IElementWithChildrenComponent<HTMLElement> {
         return this.component;
     }
 
@@ -57,32 +63,14 @@ export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElement
         return this;
     }
 
-    /** @inheritdoc */
-    protected override buildUI(): this {
-        this.ui = (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? new Div()
-                .append(
-                    this.label = new Span(),
-                    this.component = new Div()
-                )
-            : new Div()
-                .append(
-                    this.component = new Div(),
-                    this.label = new Span()
-                );
-        // Set target DOM for the `IChildren` mixin!!
-        this.setChildrenDOMTarget(this.component.DOM);
-        return this;
-    }
-
     static {
         /** Mixin the IChildren implementation (which targets the `this.component`). */
-        mixin(false, LabeledContainer, AChildren);
+        mixin(false, this, AChildren);
     }
 }
 
 // Augment class definition with `IChildren` (see `static`).
-export interface LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
+export interface LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentGroup<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
 
 /**
  * Factory for `LabeledContainer` components.
