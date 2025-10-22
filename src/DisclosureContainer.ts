@@ -48,6 +48,7 @@ export interface DisclosureContainerEventMap extends HTMLElementEventMap {
  * Container whose content can be disclosed/undisclosed.
  */
 export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = DisclosureContainerEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+    protected initialized = false;
     protected headerContainer: IElementWithChildrenComponent<HTMLDivElement>;
     protected disclosureButton: IconButton;
     protected headerContent: IElementWithChildrenComponent<HTMLDivElement>;
@@ -57,6 +58,9 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
     protected disclosedBtnOptions: IconButtonOptions = {};
     protected undisclosedBtnOptions: IconButtonOptions = {};
     protected _appearance: DisclosureContainerAppearance;
+    protected vertical: boolean;
+    protected _animatable: boolean = false;
+    protected fncOnTransitionEnd = this.onTransitionEnd.bind(this);
 
     /**
      * Creates DisclosureContainer component.
@@ -85,6 +89,9 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      * container will be _removed/added_ from/to the internal DOM.\
      * `weakUndisclosed` can help to animate the states `disclosed`/`undisclosed`. Default: `false`.
      * @param appearance The disclosure container appearance (header position and orientation).
+     * @param animatable `true`, to enable animations on disclosed state changes.\
+     * __Note:__ If `animated` is `true`, `weakUndisclosed` must also be `true`!\
+     *  Default: `false`.
      */
     constructor(
         header?: (INodeComponent<Node> | undefined | null)[] | string,
@@ -93,7 +100,8 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
         undisclosedBtnOptions: IconButtonOptions = { Caption: ["+"] }, // eslint-disable-line jsdoc/require-jsdoc
         disclosed: boolean = true,
         weakUndisclosed: boolean = false,
-        appearance: DisclosureContainerAppearance = DisclosureContainerAppearance.TOP_START
+        appearance: DisclosureContainerAppearance = DisclosureContainerAppearance.TOP_START,
+        animatable: boolean = false
     ) {
         super();
         super.initialize()
@@ -102,8 +110,10 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
             .disclosedButtonOptions(disclosedBtnOptions)
             .undisclosedButtonOptions(undisclosedBtnOptions)
             .appearance(appearance)
+            .animatable(animatable)
             .header(header)
             .append(...(content ?? []));
+        this.initialized = true;
     }
 
     /**
@@ -176,6 +186,16 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
     }
 
     /**
+     * Get the container component, that holds the content of the disclosure container.\
+     * __Note:__ This property __must not be used to add/remove/... components__, instead use the
+     * respective functions of `DisclosureContainer` itself! `Content` should only be used for
+     * styling or other (readonly) purposes!
+     */
+    public get Content(): IElementWithChildrenComponent<HTMLDivElement> {
+        return this.contentContainer;
+    }
+
+    /**
      * Set new content for the header (the disclosure button is retained). Setting new content for
      * the header _disposes the former content if `extractTo is `undefined`_!
      * @param header The new header content (components or string). In the case of a string, the
@@ -218,6 +238,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
                 return this;
             }
             this._disclosed = disclosed;
+            this.initialized && this._animatable && this.supportAnimation();
             if (this._disclosed) {
                 this
                     .removeClass("undisclosed")
@@ -270,7 +291,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      * will be left as is (mounted). If `weak` is `false`, the inner content container will be
      * _removed/added_ from/to the internal DOM.
      *
-     * `weakUndisclosed` can help to animate the states `disclosed`/`undisclosed`.
+     * `weakUndisclosed` must also be `true` for the disclosure container to be {@link animatable}.
      * @returns This instance.
      */
     public weakUndisclosed(weak: boolean): this {
@@ -335,12 +356,49 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
                     clazz = "start-bottom";
                     break;
                 default:
-                    clazz = "top-left";
+                    clazz = "top-start";
                     break;
             }
+            this.vertical = ![
+                DisclosureContainerAppearance.START_TOP,
+                DisclosureContainerAppearance.START_BOTTOM,
+                DisclosureContainerAppearance.END_TOP,
+                DisclosureContainerAppearance.END_BOTTOM
+            ].includes(this._appearance);
             this.ui
                 .removeClass("top-start", "top-end", "end-top", "end-bottom", "bottom-start", "bottom-end", "start-top", "start-bottom")
-                .addClass(clazz);
+                .addClass(clazz, this.vertical ? "vertical" : "horizontal");
+        }
+        return this;
+    }
+
+    /**
+     * Enable/disable disclosure animations on the disclosure container.
+     */
+    public get Animatable(): boolean {
+        return this._animatable;
+    }
+    /** @inheritdoc */
+    public set Animatable(v: boolean) {
+        this.animatable(v);
+    }
+
+    /**
+     * Enable/disable disclosure animations on the disclosure container.
+     * @param animatable `true`, if the disclosure container is animatable, otherwise `false`.\
+     * __Note:__ If `animatable` is set to `true`, `WeakUndisclosed` must also be set to `true`!
+     * @returns This instance.
+     */
+    public animatable(animatable: boolean): this {
+        if (this._animatable !== animatable) {
+            this._animatable = animatable;
+            if (this._animatable) {
+                this.contentContainer.on("transitionend", this.fncOnTransitionEnd);
+                this.addClass("animatable");
+            } else {
+                this.contentContainer.off("transitionend", this.fncOnTransitionEnd);
+                this.removeClass("animatable");
+            }
         }
         return this;
     }
@@ -356,6 +414,38 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
             component.dispose();
         }
         return this;
+    }
+
+    /**
+     * Support disclosure/undisclosure animations by setting the needed size.
+     */
+    protected supportAnimation(): void {
+        const el = this.contentContainer.DOM;
+        const size = this.vertical
+            ? el.scrollHeight + "px"
+            : el.scrollWidth + "px";
+        const prop = this.vertical
+            ? "height"
+            : "width";
+        el.style[prop] = size;
+        // A variant of the hack shown in https://codepen.io/Sormano/pen/PReMjZ (forcibly prevent
+        // render skipping, here without modifying any style).
+        this.vertical
+            ? el.style.setProperty("", el.scrollHeight + "")
+            : el.style.setProperty("", el.scrollWidth + "");
+        el.style[prop] = this._disclosed ? size : "0px";
+    }
+
+    /**
+     * Removes the corresponding property after a width/heigth transitions.
+     * @param ev The transition event.
+     */
+    protected onTransitionEnd(ev: TransitionEvent): void {
+        if (this._disclosed && ev.target === this.contentContainer.DOM) {
+            ev.propertyName === "height"
+                ? this.contentContainer.style("height", null)
+                : ev.propertyName === "width" && this.contentContainer.style("width", null);
+        }
     }
 
     /** @inheritdoc */
@@ -387,19 +477,26 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
                             .on("click", () => this.Disclosed = !this.Disclosed),
                         this.headerContent = new Div()
                             .addClass("header-content")
-                        // .on("pointerup", (_ev: PointerEvent) => this.Disclosed = !this.Disclosed),
+                        // Support toggling by clicking anywhere on the header content.
+                        // .on("pointerup", (_ev: PointerEvent) => this.toggleDisclosed()),
                     ),
                 this.contentContainer = new Div()
-                    .addClass("content-container"),
+                    .addClass("content-container")
             );
         // Set target DOM for the `IChildren` mixin!!
         this.setChildrenDOMTarget(this.contentContainer.DOM);
         return this;
     }
 
+    /** @inheritdoc */
+    public override dispose(): void {
+        this._animatable && this.contentContainer.off("transitionend", this.fncOnTransitionEnd);
+        super.dispose();
+    }
+
     static {
         /** Mixin the IChildren implementation (which targets the `this.contentContainer`). */
-        mixin(false, DisclosureContainer, AChildren);
+        mixin(false, this, AChildren);
     }
 }
 

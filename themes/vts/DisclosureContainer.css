@@ -1,5 +1,6 @@
 .disclosure-container,
 .vts-disclosure-container {
+    --dc-disclose-animation: 0.16s ease-in-out;
     display: flex;
     > .header-container {
         position: relative;
@@ -26,15 +27,34 @@
             text-overflow: ellipsis;
         }
         /*
-         * Mark the first element (usually the caption span) as clickable. Note: This needs a click
-         * handler to beimplemented.
+         * Mark the first element (usually the caption span) as clickable. __Note:__ This needs a
+         * click handler to be implemented (see DisclosureContainer.buildUI() for an example).
          */
         /* > .header-content > :first-child {
+            cursor: pointer;
+        } */
+        /*
+         * Mark the complete header as clickable. __Note:__ This needs a click handler to be
+         * implemented (see DisclosureContainer.buildUI() for an example).
+         */
+        /* .header-container,
+        .header-container * {
             cursor: pointer;
         } */
     }
     > .content-container {
         position: relative;
+    }
+    &.animatable {
+        > .content-container {
+            overflow: hidden;
+        }
+        &.vertical > .content-container {
+            transition: height var(--dc-disclose-animation);
+        }
+        &.hotizontal > .content-container {
+            transition: width var(--dc-disclose-animation);
+        }
     }
     &.top-start,
     &.top-end {
@@ -97,24 +117,24 @@
         &.top-end {
             .disclose {
                 /* Arrow down */
-                clip-path: polygon(0% 6.666%, 100% 6.666%, 50% 93.333%);
+                clip-path: var(--cp-arrow-down);
             }
         }
         &.bottom-start,
         &.bottom-end {
             .disclose {
                 /* Arrow up */
-                clip-path: polygon(0% 93.333%, 50% 6.666%, 100% 93.333%);
+                clip-path: var(--cp-arrow-up);
             }
         }
         &.start-top,
         &.start-bottom {
             .disclose {
                 /* Arrow right */
-                clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+                clip-path: var(--cp-arrow-right);
                 &:dir(rtl) {
                     /* Arrow left */
-                    clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+                    clip-path: var(--cp-arrow-left);
                 }
             }
         }
@@ -122,26 +142,28 @@
         &.end-bottom {
             .disclose {
                 /* Arrow left */
-                clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+                clip-path: var(--cp-arrow-left);
                 &:dir(rtl) {
                     /* Arrow right */
-                    clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+                    clip-path: var(--cp-arrow-right);
                 }
             }
         }
     }
     &.undisclosed {
-        > .content-container {
-            display: none;
+        &:not(.animatable) {
+            > .content-container {
+                display: none;
+            }
         }
         &.top-start,
         &.bottom-start {
             .disclose {
                 /* Arrow right */
-                clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+                clip-path: var(--cp-arrow-right);
                 &:dir(rtl) {
                     /* Arrow left */
-                    clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+                    clip-path: var(--cp-arrow-left);
                 }
             }
         }
@@ -149,10 +171,10 @@
         &.bottom-end {
             .disclose {
                 /* Arrow left */
-                clip-path: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
+                clip-path: var(--cp-arrow-left);
                 &:dir(rtl) {
                     /* Arrow right */
-                    clip-path: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
+                    clip-path: var(--cp-arrow-right);
                 }
             }
         }
@@ -160,14 +182,14 @@
         &.end-top {
             .disclose {
                 /* Arrow down */
-                clip-path: polygon(0% 6.666%, 100% 6.666%, 50% 93.333%);
+                clip-path: var(--cp-arrow-down);
             }
         }
         &.start-bottom,
         &.end-bottom {
             .disclose {
                 /* Arrow up */
-                clip-path: polygon(0% 93.333%, 50% 6.666%, 100% 93.333%);
+                clip-path: var(--cp-arrow-up);
             }
         }
     }
