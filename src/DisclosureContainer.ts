@@ -48,7 +48,7 @@ export interface DisclosureContainerEventMap extends HTMLElementEventMap {
  * Container whose content can be disclosed/undisclosed.
  */
 export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = DisclosureContainerEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
-    protected initialized = false;
+    protected _initialized = false;
     protected headerContainer: IElementWithChildrenComponent<HTMLDivElement>;
     protected disclosureButton: IconButton;
     protected headerContent: IElementWithChildrenComponent<HTMLDivElement>;
@@ -113,7 +113,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
             .animatable(animatable)
             .header(header)
             .append(...(content ?? []));
-        this.initialized = true;
+        this._initialized = true;
     }
 
     /**
@@ -238,7 +238,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
                 return this;
             }
             this._disclosed = disclosed;
-            this.initialized && this._animatable && this.supportAnimation();
+            this._initialized && this._animatable && this.supportAnimation();
             if (this._disclosed) {
                 this
                     .removeClass("undisclosed")

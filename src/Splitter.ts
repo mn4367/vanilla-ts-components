@@ -314,7 +314,7 @@ export interface SplitterEventMap extends HTMLElementEventMap {
  * repainting the splitter.
  */
 export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> extends AElementComponentWithInternalUI<Div, EventMap> {
-    protected initialized = false;
+    protected _initialized = false;
     protected mountedOnce = false;
     protected tmpCSSStyleSheet?: CSSStyleSheet;
     protected tmpCSSClass?: string;
@@ -361,7 +361,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             .initialize(undefined, startContent, endContent)
             .on("animationend", (ev) => this.onAnimationEnd(ev))
             .options(options ?? this._options);
-        this.initialized = true;
+        this._initialized = true;
     }
 
     /**
@@ -386,10 +386,10 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      * @returns This instance.
      */
     public options(options: SplitterOptions) {
-        if (this.resizing || (this.initialized && !this.dispatch(new SplitterOptionsEvent(this, options)))) {
+        if (this.resizing || (this._initialized && !this.dispatch(new SplitterOptionsEvent(this, options)))) {
             return this;
         }
-        if (this.initialized && !this.isVisible()) {
+        if (this._initialized && !this.isVisible()) {
             this.recordedChanges.push(options);
             return this;
         }
@@ -703,7 +703,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
                     ? "end-collapsed"
                     : "start-collapsed"
             );
-            this.initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed!));
+            this._initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed!));
         } else if (this._options.Collapsed === SplitterCollapsedState.NONE) {
             this.ui.insert(this.end, this.handle);
             // Only use animations if the splitter is visible and isn't applying recorded changes.
@@ -714,7 +714,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
                     this.addClass("end-uncollapsing");
                 }
             } else {
-                this.initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed));
+                this._initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed));
             }
         } else {
             this.ui.remove(this.handle);
@@ -731,7 +731,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
                         ? "start-collapsed"
                         : "end-collapsed"
                 );
-                this.initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed!));
+                this._initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed!));
             }
         }
         this.updateGeometry();
