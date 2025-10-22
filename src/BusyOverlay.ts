@@ -67,9 +67,9 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
     /**
      * Create BusyOverlay component.
      * @param delay Set the default delay after which the overlay will be shown. See
-     * function/property `delay()`/`Delay`.
+     * function/property `delay()`/`Delay`. Default: `0`.
      * @param allowEscape `true`, if the `Esc` key can be used to hide the overlay, otherwise
-     * `false`. See function/property `allowEscape()`/`AllowEscape`.
+     * `false`. See function/property `allowEscape()`/`AllowEscape`. Default: `false`.
      * @param busyIndicator A component which is displayed to visualize the 'busy' state. If
      * `undefined` an animated `Span` component is used by default.
      */
@@ -118,7 +118,7 @@ export class BusyOverlay<EventMap extends BusyOverlayEventMap = BusyOverlayEvent
 
     /**
      * Enable/disable using the 'Esc' button to hide the overlay.
-     *  {@link BusyOverlay.allowEscape()}
+     * {@link BusyOverlay.allowEscape()}
      */
     public get AllowEscape(): boolean {
         return this._allowEscape;

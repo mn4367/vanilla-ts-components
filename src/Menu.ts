@@ -580,23 +580,23 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         const v = this.DOM.style.visibility;
         const layoutViewportWidth = document.documentElement.scrollWidth;
         const layoutViewportHeight = document.documentElement.scrollHeight;
-        this.style("visibility", "hidden");
-        this.style("display", "");
+        this.style("visibility", "hidden")
+            .style("display", "");
         this.adjustMenuItemWidths();
         if (position) {
             this.adjustMenuPosition(position, layoutViewportWidth, layoutViewportHeight);
         }
-        this.style("visibility", v);
-        this.style("display", d);
+        this.style("visibility", v)
+            .style("display", d);
         window.addEventListener("pointerdown", this.fncRemovePopupMenu);
         window.addEventListener("resize", this.fncRemovePopupMenu);
         window.addEventListener("blur", this.fncRemovePopupMenu);
-        this.on("click", this.fncOnClick);
-        this.on("keydown", this.fncOnKeyDown);
-        this.on("pointermove", this.fncOnPointerMove, this.passiveTrue);
-        this.on("pointerleave", this.fncOnPointerLeave, this.passiveTrue);
-        this.visible(true);
-        this.focus();
+        this.on("click", this.fncOnClick)
+            .on("keydown", this.fncOnKeyDown)
+            .on("pointermove", this.fncOnPointerMove, this.passiveTrue)
+            .on("pointerleave", this.fncOnPointerLeave, this.passiveTrue)
+            .visible(true)
+            .focus();
         this.menuMutationObserver.observe(this.ui.DOM, { childList: true, subtree: true }); // eslint-disable-line jsdoc/require-jsdoc
         return this;
     }
@@ -610,15 +610,15 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         window.removeEventListener("pointerdown", this.fncRemovePopupMenu);
         window.removeEventListener("resize", this.fncRemovePopupMenu);
         window.removeEventListener("blur", this.fncRemovePopupMenu);
-        this.off("click", this.fncOnClick);
-        this.off("keydown", this.fncOnKeyDown);
-        this.off("pointermove", this.fncOnPointerMove, this.passiveTrue);
-        this.off("pointerleave", this.fncOnPointerLeave, this.passiveTrue);
-        this.visible(false);
+        this.off("click", this.fncOnClick)
+            .off("keydown", this.fncOnKeyDown)
+            .off("pointermove", this.fncOnPointerMove, this.passiveTrue)
+            .off("pointerleave", this.fncOnPointerLeave, this.passiveTrue)
+            .visible(false);
         this.DOM.remove();
-        this.emit(new PopupMenuHideEvent(this));
-        this.style("left", "");
-        this.style("top", "");
+        this.emit(new PopupMenuHideEvent(this))
+            .style("left", "")
+            .style("top", "");
         this.lastFocusedElement instanceof HTMLElement
             ? this.lastFocusedElement.focus()
             : undefined;

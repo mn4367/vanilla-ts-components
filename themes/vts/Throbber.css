@@ -1,8 +1,8 @@
 .throbber,
 .vts-throbber {
-    /* `width` and `height` must be set explicitly (with width === height). */
+    /* `width` must be set explicitly. */
     /* width: <value>; */
-    /* height: <value>; */
+    aspect-ratio: 1;
     margin: 0;
     padding: 0;
     flex-grow: 0;

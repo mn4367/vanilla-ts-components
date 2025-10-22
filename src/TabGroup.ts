@@ -813,8 +813,12 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
 
     /**
      * Get the container component, that holds content of the tab.\
-     * __Note:__ This property never should be used outside the context of a tab group. It only
-     * exists to enable `TabGroup` to mount/unmount the content of tabs!
+     * __Notes:__
+     * - This property __must not be used to add/remove/... components__, instead use the respective
+     *   functions of `ScrollContainer` itself! `Content` should only be used for styling or other
+     *   (readonly) purposes!
+     * - This property should also never be used outside the context of a tab group. It only exists
+     *   to enable `TabGroup` to mount/unmount the content of tabs!
      */
     public get Content(): IElementWithChildrenComponent<HTMLDivElement> {
         return this.contentContainer;
@@ -913,7 +917,7 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
 
     static {
         /** Mixin the IChildren implementation (which targets the `this.contentContainer`). */
-        mixin(false, Tab, AChildren);
+        mixin(false, this, AChildren);
     }
 }
 

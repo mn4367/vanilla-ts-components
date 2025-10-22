@@ -10,7 +10,7 @@
  */
 .splitter,
 .vts-splitter {
-    --bleed-size: var(--splitter-bleed) solid transparent;
+    --bleed-border: var(--splitter-bleed) solid transparent;
     --bleed-size-neg: calc(-1 * var(--splitter-bleed));
     --collapse-animation: var(--splitter-collapse-duration) var(--splitter-collapse-easing) forwards;
     display: flex;
@@ -47,8 +47,8 @@
         > .handle {
             margin-inline-start: var(--bleed-size-neg);
             margin-inline-end: var(--bleed-size-neg);
-            border-inline-start: var(--bleed-size);
-            border-inline-end: var(--bleed-size);
+            border-inline-start: var(--bleed-border);
+            border-inline-end: var(--bleed-border);
             cursor: col-resize;
             > div {
                 width: var(--splitter-size);
@@ -137,8 +137,8 @@
         > .handle {
             margin-block-start: var(--bleed-size-neg);
             margin-block-end: var(--bleed-size-neg);
-            border-block-start: var(--bleed-size);
-            border-block-end: var(--bleed-size);
+            border-block-start: var(--bleed-border);
+            border-block-end: var(--bleed-border);
             cursor: row-resize;
             > div {
                 width: 100%;

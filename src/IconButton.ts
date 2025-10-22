@@ -240,7 +240,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
          * (with additional child components).
          */
         mixinDOMProperties(
-            IconButton,
+            this,
             NameAttr<HTMLButtonElement>,
             // !! Handled by `public override disabled()`
             // NativeDisabledAttr<HTMLButtonElement>,

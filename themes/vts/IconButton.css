@@ -8,8 +8,7 @@
         > .start:not(:empty):has(+ .phrase:not(:empty)) {
             margin-inline-end: var(--icon-button-margin);
             /* Example for using a background image and hiding the text content
-             * if no icon font is used.
-             */
+               if no icon font is used. */
             /*
             width: 1rem;
             height: 1rem;

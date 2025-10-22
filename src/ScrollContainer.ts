@@ -345,7 +345,10 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
     }
 
     /**
-     * Get the inner content container (the one which holds the components of the scrollable area).
+     * Get the inner content container (the one which holds the components of the scrollable area).\
+     * __Note:__ This property __must not be used to add/remove/... components__, instead use the
+     * respective functions of `ScrollContainer` itself! `Content` should only be used for styling
+     * or other (readonly) purposes!
      */
     public get Content(): IElementWithChildrenComponent<HTMLElement> {
         return this.#contentContainer;
@@ -878,7 +881,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
 
     static {
         /** Mixin the IChildren implementation (which targets `this.#contentContainer`). */
-        mixin(false, ScrollContainer, AChildren);
+        mixin(false, this, AChildren);
     }
 }
 
