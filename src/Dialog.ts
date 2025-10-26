@@ -900,8 +900,12 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
         width !== undefined && this.style("width", width + "px");
         height !== undefined && this.style("height", height + "px");
         this
-            .style("insetInlineStart", `${offset.X}px`)
-            .style("insetBlockStart", `${offset.Y}px`);
+            .style({
+                /* eslint-disable jsdoc/require-jsdoc */
+                insetInlineStart: `${offset.X}px`,
+                insetBlockStart: `${offset.Y}px`
+                /* eslint-enable */
+            });
         return this;
     }
 

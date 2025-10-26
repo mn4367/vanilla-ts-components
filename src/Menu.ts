@@ -525,7 +525,7 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         super
             .initialize()
             .items(...items)
-            .tabIndex(0);
+            .tabbable(true);
     }
 
     /**
@@ -580,14 +580,22 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         const v = this.DOM.style.visibility;
         const layoutViewportWidth = document.documentElement.scrollWidth;
         const layoutViewportHeight = document.documentElement.scrollHeight;
-        this.style("visibility", "hidden")
-            .style("display", "");
+        this.style({
+            /* eslint-disable jsdoc/require-jsdoc */
+            visibility: "hidden",
+            display: null
+            /* eslint-enable */
+        });
         this.adjustMenuItemWidths();
         if (position) {
             this.adjustMenuPosition(position, layoutViewportWidth, layoutViewportHeight);
         }
-        this.style("visibility", v)
-            .style("display", d);
+        this.style({
+            /* eslint-disable jsdoc/require-jsdoc */
+            visibility: v,
+            display: d
+            /* eslint-enable */
+        });
         window.addEventListener("pointerdown", this.fncRemovePopupMenu);
         window.addEventListener("resize", this.fncRemovePopupMenu);
         window.addEventListener("blur", this.fncRemovePopupMenu);
@@ -617,8 +625,12 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
             .visible(false);
         this.DOM.remove();
         this.emit(new PopupMenuHideEvent(this))
-            .style("left", "")
-            .style("top", "");
+            .style({
+                /* eslint-disable jsdoc/require-jsdoc */
+                left: null,
+                top: null
+                /* eslint-enable */
+            });
         this.lastFocusedElement instanceof HTMLElement
             ? this.lastFocusedElement.focus()
             : undefined;
@@ -673,8 +685,12 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         position.y = Math.max(0, position.y);
         // this.style("insetInlineStart", `${position?.x}px`);
         // Initial position of the popup menu.
-        this.style("left", `${position?.x}px`);
-        this.style("top", `${position?.y}px`);
+        this.style({
+            /* eslint-disable jsdoc/require-jsdoc */
+            left: `${position?.x}px`,
+            top: `${position?.y}px`
+            /* eslint-enable */
+        });
         /**
          * Adjust potential clipped positon at the right and the bottom.
          * @todo Handle other extreme positions?

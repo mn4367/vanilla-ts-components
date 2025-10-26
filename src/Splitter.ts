@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, CSSRuleNames, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, getClientRect, getDebouncedFnc, IElementWithChildrenComponent, INodeComponent } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, CSSPropertyNames, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, getClientRect, getDebouncedFnc, IElementWithChildrenComponent, INodeComponent } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 
 
@@ -326,8 +326,8 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
     protected end: Div;
     protected activeArea: Div;
     protected activeAreaFixed: boolean;
-    protected sizeProp: CSSRuleNames = "width";
-    protected minSizeProp: CSSRuleNames = "minWidth";
+    protected sizeProp: CSSPropertyNames = "width";
+    protected minSizeProp: CSSPropertyNames = "minWidth";
     protected clientSizeProp: "clientWidth" | "clientHeight" = "clientWidth";
     protected startMinSize = 0;
     protected endMinSize = 0;
@@ -539,9 +539,9 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             .hidden(true)
             .style("position", "relative");
         this.ui.append(div);
-        div.style(this.minSizeProp, this._options.StartMinSize!, true);
+        div.style(this.minSizeProp, this._options.StartMinSize, true);
         this.startMinSize = parseFloat((<string>getComputedStyle(div.DOM)[this.sizeProp]).slice(0, -2));
-        div.style(this.minSizeProp, this._options.EndMinSize!, true);
+        div.style(this.minSizeProp, this._options.EndMinSize, true);
         this.endMinSize = parseFloat((<string>getComputedStyle(div.DOM)[this.sizeProp]).slice(0, -2));
         div.style(this.minSizeProp, <string>this.activeArea.Style[this.sizeProp], true);
         this.activeAreaSize = parseFloat((<string>getComputedStyle(div.DOM)[this.sizeProp]).slice(0, -2));
@@ -569,9 +569,12 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             // minsize = this.activeArea.DOM[this.clientSizeProp] + oppositeMinSize + handleSize;
             minsize = this.activeAreaSize + oppositeMinSize + handleSize;
         }
-        this
-            .style(this._options.Horizontal ? "minHeight" : "minWidth", null)
-            .style(this.minSizeProp, minsize + "px");
+        this.style({
+            /* eslint-disable jsdoc/require-jsdoc */
+            [this._options.Horizontal ? "minHeight" : "minWidth"]: null,
+            [this.minSizeProp]: minsize + "px"
+            /* eslint-enable */
+        });
     }
 
     /**
@@ -592,15 +595,15 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      */
     protected setMinSizes(): void {
         if (!this.isVisible()) {
-            this.start.style(this.minSizeProp, this._options.StartMinSize!);
-            this.end.style(this.minSizeProp, this._options.EndMinSize!);
+            this.start.style(this.minSizeProp, this._options.StartMinSize);
+            this.end.style(this.minSizeProp, this._options.EndMinSize);
             return;
         }
         const prevStartMinSize = this.startMinSize;
         const prevEndMinSize = this.endMinSize;
         this.getAreaMinSizes();
-        this.start.style(this.minSizeProp, this._options.StartMinSize!);
-        this.end.style(this.minSizeProp, this._options.EndMinSize!);
+        this.start.style(this.minSizeProp, this._options.StartMinSize);
+        this.end.style(this.minSizeProp, this._options.EndMinSize);
         this.setSplitterMinSize();
         // Update the style of the active area if one of the minimum sizes has become larger. Only
         // necessary if resizing is based on absolute values.
@@ -626,10 +629,14 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             .removeClass("active-area-start", "active-area-end")
             .addClass(isActiveAreaStart ? "active-area-start" : "active-area-end");
         [this.start, this.end].forEach((e) => {
-            e.style("width", null)
-                .style("height", null)
-                .style("minWidth", null)
-                .style("minHeight", null);
+            e.style({
+                /* eslint-disable jsdoc/require-jsdoc */
+                width: null,
+                height: null,
+                minWidth: null,
+                minHeight: null
+                /* eslint-enable */
+            });
         });
         if (this._options.Horizontal) {
             this.replaceClass("vertical", "horizontal");
@@ -642,8 +649,8 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             this.minSizeProp = "minHeight";
             this.clientSizeProp = "clientHeight";
         }
-        this.start.style(this.minSizeProp, this._options.StartMinSize!);
-        this.end.style(this.minSizeProp, this._options.EndMinSize!);
+        this.start.style(this.minSizeProp, this._options.StartMinSize);
+        this.end.style(this.minSizeProp, this._options.EndMinSize);
         // Set sizes based on the previous relative sizes.
         isActiveAreaStart
             ? this.start.style(this.sizeProp, this.geometry.StartPercentage + "%")
@@ -667,7 +674,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      * Set the size of the active area.
      */
     protected setSize(): void {
-        this.activeArea.style(this.sizeProp, this._options.ActiveAreaSize!);
+        this.activeArea.style(this.sizeProp, this._options.ActiveAreaSize);
         if (!this.isVisible()) {
             return;
         }
