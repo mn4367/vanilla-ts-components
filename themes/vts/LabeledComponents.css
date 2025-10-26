@@ -110,6 +110,7 @@
     &.p-top.a-center,
     &.p-bottom.a-center {
         > .lc-label {
+            width: fit-content;
             inset-inline-start: 0;
             inset-inline-end: 0;
             margin-inline-start: auto;
@@ -180,6 +181,7 @@
     &.p-start.a-center,
     &.p-end.a-center {
         > .lc-label {
+            height: fit-content;
             inset-inline-start: 0;
             inset-inline-end: 0;
             margin-inline-start: auto;
