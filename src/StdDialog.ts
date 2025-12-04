@@ -195,7 +195,21 @@ export class StdDialog {
      */
     public get Options(): StdDlgOptions {
         this.checkDisposed();
-        return structuredClone(this.options);
+        return {
+            ...this.options,
+            /* eslint-disable jsdoc/require-jsdoc */
+            Title: this.options.Title,
+            Content: Array.isArray(this.options.Content) ? [...this.options.Content.slice(0)] : this.options.Content,
+            Buttons: Array.isArray(this.options.Buttons) ? [...this.options.Buttons.slice(0)] : this.options.Buttons,
+            Focus: this.options.Focus,
+            OnClose: this.options.OnClose,
+            CloseDlg: this.options.CloseDlg,
+            Vertical: this.options.Vertical,
+            ClassNames: Array.isArray(this.options.ClassNames) ? this.options.ClassNames.slice() : [this.options.ClassNames],
+            I18N: { ...this.options.I18N },
+            DlgOptions: { ...this.options.DlgOptions },
+            /* eslint-enable */
+        };
     }
 
     /**
