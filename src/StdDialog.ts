@@ -1,7 +1,7 @@
 import { AElementComponent, toKebapCase } from "@vanilla-ts/core";
 import { Checkbox, Div, Input, Select, Span, Text, TextArea, TextInput } from "@vanilla-ts/dom";
 import { IElementComponent, INodeComponent } from "../../vanilla-ts-core/types/Interfaces.js";
-import { Dialog, DialogCloseEvent, DialogOptions, DLG_CANCELLED } from "./Dialog.js";
+import { Dialog, DialogCloseEvent, DialogOptions, DialogState, DLG_CANCELLED } from "./Dialog.js";
 import { StdDlgI18N_EN } from "./I18N/StdDialogI18N_EN.js";
 import { IconButton } from "./IconButton.js";
 import { LabeledCheckbox } from "./LabeledCheckbox.js";
@@ -85,6 +85,34 @@ export type StdDlgOptions = {
      */
     OnClose?: (btn: symbol, dlg: StdDialog) => Promise<boolean>;
     /**
+     * __Important:__ This is not a property that the user of `StdDialog` sets. Instead it is a
+     * function that is created by `StdDialog` itself and set on the options object passed to the
+     * constructor of `StdDialog`! Sometimes this is called an out parameter. It is also guaranteed
+     * that this function is always present on the options object _after_ the constructor of
+     * `StdDialog` is executed (setting this property is not an error but it has no effect).
+     *
+     * Calling this function forcibly closes the dialog _even if it is shown modally and some code
+     * is awaiting the modal dialog/function_. A {@link StdDlgOptions.OnClose} even handler (if
+     * present) _is not called_ and thus _cannot_ prevent closing the dialog. The return value of
+     * the dialog in this case is always {@link STD_DLG_CANCELLED}.
+     *
+     * `FncClose()` is the only way to programmatically close dialogs created by {@link msgDlg()},
+     * {@link confirm()} and {@link queryInput()}. This can be useful, for example, in situations
+     * where an event in an application requires the dialog to be closed. If the dialog is already
+     * closed or disposed of, calling the function has no effect.
+     * @example
+     * ```typescript
+     * const opts: BaseCommonDlgOptions = {};
+     * setTimeout(() => {
+     *     // The `!` is safe since `CloseFnc()` is always set.
+     *     opts.CloseFnc!();
+     * }, 1000);
+     * const result = await msgDlg("Click 'OK' to win a trip to Eyjafjallajökull!", opts);
+     * console.log(`You won: ${result === STD_DLG_CANCELLED ? "No" : "Yes"} (${StdDialogBtnNames[result]} clicked).`);
+     * ```
+     */
+    CloseFnc?: () => void;
+    /**
      * If `true`, the class name `vertical` is added to the dialog. This facilitates the creation of
      * CSS that is intended to layout the buttons vertically for common prompts, like on recent
      * editions of macOS.\
@@ -145,7 +173,7 @@ export class StdDialog {
      * Create a new standard dialog.
      * @param options Options for the new standard dialog.
      */
-    constructor(options: StdDlgOptions,) {
+    constructor(options: StdDlgOptions) {
         this.options = {
             /* eslint-disable jsdoc/require-jsdoc */
             Title: options.Title,
@@ -153,12 +181,14 @@ export class StdDialog {
             Buttons: Array.isArray(options.Buttons) ? options.Buttons.slice(0) : options.Buttons,
             Focus: options.Focus,
             OnClose: options.OnClose,
+            CloseFnc: this.closeDialogHandler.bind(this),
             Vertical: options.Vertical ?? false,
             ClassNames: Array.isArray(options.ClassNames) ? options.ClassNames.slice() : [options.ClassNames],
             I18N: options.I18N ? { ...options.I18N } : StdDialog.i18n_,
             DlgOptions: options.DlgOptions ? { ...options.DlgOptions } : {}
             /* eslint-enable */
         };
+        options.CloseFnc = this.options.CloseFnc;
         this.buildDlg();
     }
 
@@ -203,7 +233,7 @@ export class StdDialog {
             Buttons: Array.isArray(this.options.Buttons) ? [...this.options.Buttons.slice(0)] : this.options.Buttons,
             Focus: this.options.Focus,
             OnClose: this.options.OnClose,
-            CloseDlg: this.options.CloseDlg,
+            CloseFnc: this.options.CloseFnc,
             Vertical: this.options.Vertical,
             ClassNames: Array.isArray(this.options.ClassNames) ? this.options.ClassNames.slice() : [this.options.ClassNames],
             I18N: { ...this.options.I18N },
@@ -232,11 +262,12 @@ export class StdDialog {
      */
     public get ReturnValue(): symbol {
         this.checkDisposed();
-        return this.dlg.ReturnValue === "__DLG_CANCELLED__"
+        const retVal = this.dlg.ReturnValue;
+        return retVal === DLG_CANCELLED
             ? STD_DLG_CANCELLED
             : Array.isArray(this.options.Buttons)
-                ? this.options.Buttons.find((e) => e.description === this.dlg.ReturnValue) || UNKNOWN_BTN
-                : this.options.Buttons.description === this.dlg.ReturnValue
+                ? this.options.Buttons.find((e) => e.description === retVal) || UNKNOWN_BTN
+                : this.options.Buttons.description === retVal
                     ? this.options.Buttons
                     : UNKNOWN_BTN;
     }
@@ -248,6 +279,13 @@ export class StdDialog {
     public get Buttons(): Map<symbol, IconButton> {
         this.checkDisposed();
         return new Map(this.buttons);
+    }
+
+    /**
+     * `true`, if the dialog has been disposed of, otherwise `false`.
+     */
+    public get Disposed(): boolean {
+        return this.disposed;
     }
 
     /**
@@ -296,6 +334,15 @@ export class StdDialog {
         // @ts-ignore
         this.options = undefined;
         this.buttons.clear();
+    }
+
+    /**
+     * Forcibly closes the dialog. An `OnClose` event handler (if present) _is not called_ and thus
+     * _cannot_ prevent closing the dialog. If the dialog is already closed or disposed of, calling
+     * the function has no effect.
+     */
+    protected closeDialogHandler(): void {
+        (this.disposed || this.dlg.State === DialogState.CLOSED) || this.dlg.forceClose(DLG_CANCELLED);
     }
 
     /**
@@ -435,6 +482,8 @@ export type BaseCommonDlgOptions = {
      * @returns `true`, if the dialog can be closed, `false` if the dialog should remain open.
      */
     OnClose?: (btn: symbol, dlg: StdDialog) => Promise<boolean>;
+    /** @see {@link StdDlgOptions.CloseFnc} */
+    CloseFnc?: () => void;
     /** If `true`, the buttons will be laid out vertically (see {@link StdDlgOptions.Vertical}). */
     Vertical?: boolean;
     /** A class name or an array of class names to be set on the dialog. */
@@ -488,6 +537,7 @@ export async function msgDlg(content: StdDlgContent, options?: BaseCommonDlgOpti
         DlgOptions: options?.DlgOptions ? { ...options.DlgOptions } : {}
         /* eslint-enable */
     });
+    options && (options.CloseFnc = stdDlg.Options.CloseFnc);
     // stdDlg.Buttons.get(btn_OK)?.addClass("default");
     const btn = await stdDlg.showModal();
     stdDlg.dispose();
@@ -543,6 +593,7 @@ export async function confirm(content: StdDlgContent, options?: ConfirmOptions):
         DlgOptions: options?.DlgOptions ? { ...options.DlgOptions } : {}
         /* eslint-enable */
     });
+    options && (options.CloseFnc = stdDlg.Options.CloseFnc);
     // stdDlg.Buttons.get(confirmButton)?.addClass("default");
     const btn = await stdDlg.showModal();
     stdDlg.dispose();
@@ -658,6 +709,7 @@ export async function queryInput(content: StdDlgContent | null | undefined, opti
             }
         }
     });
+    options && (options.CloseFnc = stdDlg.Options.CloseFnc);
     const btn = await stdDlg.showModal();
     const result = {
         /* eslint-disable jsdoc/require-jsdoc */
