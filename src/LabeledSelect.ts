@@ -39,6 +39,28 @@ export class LabeledSelect<EventMap extends HTMLElementEventMap = HTMLElementEve
     public get Select(): Select {
         return this.component;
     }
+
+    /**
+     * __The property `Value` here is an alias for the property `this.Select.Value`.__
+     */
+    public get Value(): string {
+        return this.component.Value;
+    }
+    /** @inheritdoc */
+    public set Value(v: string) {
+        this.component.Value = v;
+    }
+
+    /**
+     * __The function `value()` here is an alias for the function `this.Select.value()` but it
+     * returns _this_ instance instead of the 'TextArea' instance.__
+     * @param v The value to be set.
+     * @returns This instance.
+     */
+    public value(v: string): this {
+        this.component.value(v);
+        return this;
+    }
 }
 
 /**
