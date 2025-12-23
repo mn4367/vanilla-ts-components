@@ -1,5 +1,5 @@
 import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, IElementWithChildrenComponent, INodeComponent, mixin } from "@vanilla-ts/core";
-import { Div, Span } from "@vanilla-ts/dom";
+import { Div, Span, Text } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 
 
@@ -64,10 +64,13 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
 
     /**
      * Creates DisclosureContainer component.
-     * @param header The header content (components or string). In the case of a string, the header
-     * content is a `Span` component with the string as the content. If `undefined` or an empty
-     * array, the header is empty.
-     * @param content The content components for the disclosure container.
+     * @param header The header content (components or string). In the case of a single string, the
+     * header content is a `Span` component with the string as the content. In the case of an array,
+     * every string element in the array is converted to a `Text` component. If `undefined` or an
+     * empty array, the header is empty.
+     * @param content The content components for the disclosure container. In the case of an array,
+     * every string element in the array is converted to a `Text` component. If `undefined` or an
+     * empty array, the header is empty.
      * @param disclosedBtnOptions The options for the disclosure button (`IconButton`) if the
      * disclosure container is in _disclosed_ state. Default: `{ Caption: ["-"] }`.\
      * __Note:__ When the disclosure container is disposed of it will also dispose of any component
@@ -94,8 +97,8 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      *  Default: `false`.
      */
     constructor(
-        header?: (INodeComponent<Node> | undefined | null)[] | string,
-        content?: (INodeComponent<Node> | undefined | null)[],
+        header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null,
+        content?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null,
         disclosedBtnOptions: IconButtonOptions = { Caption: ["-"] }, // eslint-disable-line jsdoc/require-jsdoc
         undisclosedBtnOptions: IconButtonOptions = { Caption: ["+"] }, // eslint-disable-line jsdoc/require-jsdoc
         disclosed: boolean = true,
@@ -105,14 +108,23 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
     ) {
         super();
         super.initialize()
-            .weakUndisclosed(weakUndisclosed)
-            .disclosed(disclosed)
             .disclosedButtonOptions(disclosedBtnOptions)
             .undisclosedButtonOptions(undisclosedBtnOptions)
             .appearance(appearance)
+            .weakUndisclosed(weakUndisclosed)
             .animatable(animatable)
+            .disclosed(disclosed)
             .header(header)
-            .append(...(content ?? []));
+            .append(
+                ...(
+                    Array.isArray(content)
+                        ? content
+                        : [content]
+                ).map(e => typeof e === "string" ? new Text(e) : e),
+            );
+        if (this._animatable && this._disclosed) {
+            this.contentContainer.style({ "width": null, "height": null }); // eslint-disable-line jsdoc/require-jsdoc
+        }
         this._initialized = true;
     }
 
@@ -204,14 +216,18 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      * @param extractTo An array, that, if given, will receive the former header component(s).
      * @returns This instance.
      */
-    public header(header?: (INodeComponent<Node> | undefined | null)[] | string, extractTo?: INodeComponent<Node>[]): this {
+    public header(header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null, extractTo?: INodeComponent<Node>[]): this {
         extractTo
             ? this.headerContent.extract(extractTo)
             : this.headerContent.clear();
         this.headerContent.removeClass("header-text");
-        typeof header === "string"
-            ? this.headerContent.append(new Span(header).addClass("header-text"))
-            : this.headerContent.append(...(header ?? []));
+        this.headerContent.append(
+            ...(
+                Array.isArray(header)
+                    ? header
+                    : [typeof header === "string" ? new Span(header).addClass("header-text") : header]
+            ).map(e => typeof e === "string" ? new Text(e) : e),
+        );
         return this;
     }
 
@@ -291,15 +307,20 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      * will be left as is (mounted). If `weak` is `false`, the inner content container will be
      * _removed/added_ from/to the internal DOM.
      *
-     * `weakUndisclosed` must also be `true` for the disclosure container to be {@link animatable}.
+     * __Note:__ `WeakUndisclosed` must also be `true` for the disclosure container to be
+     * {@link animatable}. If `WeakUndisclosed` is set to `false` the property `Animatable`
+     * will automatically be set to `false` as well!
      * @returns This instance.
      */
     public weakUndisclosed(weak: boolean): this {
         if (this._weakUndisclosed !== weak) {
             this._weakUndisclosed = weak;
-            this._weakUndisclosed
-                ? this.addClass("weak")
-                : this.removeClass("weak");
+            if (this._weakUndisclosed) {
+                this.addClass("weak");
+            } else {
+                this.animatable(false);
+                this.removeClass("weak");
+            }
             if (!this.Disclosed) {
                 this._weakUndisclosed
                     ? this.ui.append(this.contentContainer)
@@ -328,6 +349,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      */
     public appearance(appearance: DisclosureContainerAppearance): this {
         if (this._appearance !== appearance) {
+            const wasVertical = this.vertical;
             this._appearance = appearance;
             let clazz: string;
             switch (this._appearance) {
@@ -366,8 +388,14 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
                 DisclosureContainerAppearance.END_BOTTOM
             ].includes(this._appearance);
             this.ui
-                .removeClass("top-start", "top-end", "end-top", "end-bottom", "bottom-start", "bottom-end", "start-top", "start-bottom")
+                .removeClass("vertical", "horizontal", "top-start", "top-end", "end-top", "end-bottom", "bottom-start", "bottom-end", "start-top", "start-bottom")
                 .addClass(clazz, this.vertical ? "vertical" : "horizontal");
+            if (wasVertical !== this.vertical && !this._disclosed && this._animatable) {
+                this.removeClass("animatable");
+                this.contentContainer.style({ "width": null, "height": null }); // eslint-disable-line jsdoc/require-jsdoc
+                this.supportAnimation();
+                this.addClass("animatable");
+            }
         }
         return this;
     }
@@ -386,18 +414,22 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
     /**
      * Enable/disable disclosure animations on the disclosure container.
      * @param animatable `true`, if the disclosure container is animatable, otherwise `false`.\
-     * __Note:__ If `animatable` is set to `true`, `WeakUndisclosed` must also be set to `true`!
+     * __Note:__ If `Animatable` is set to `true`, `WeakUndisclosed` will automatically be set to
+     * `true` as well!
      * @returns This instance.
      */
     public animatable(animatable: boolean): this {
         if (this._animatable !== animatable) {
             this._animatable = animatable;
             if (this._animatable) {
+                this.weakUndisclosed(true);
+                this._disclosed || this.supportAnimation();
                 this.contentContainer.on("transitionend", this.fncOnTransitionEnd);
                 this.addClass("animatable");
             } else {
                 this.contentContainer.off("transitionend", this.fncOnTransitionEnd);
                 this.removeClass("animatable");
+                this.contentContainer.style({ "height": null, "width": null }); // eslint-disable-line jsdoc/require-jsdoc
             }
         }
         return this;
@@ -474,7 +506,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
                     .append(
                         this.disclosureButton = new IconButton()
                             .addClass("disclose", IconButton.DefaultCSSClassName)
-                            .on("click", () => this.Disclosed = !this.Disclosed),
+                            .on("click", () => this.disclosed(!this.Disclosed)),
                         this.headerContent = new Div()
                             .addClass("header-content")
                         // Support toggling by clicking anywhere on the header content.
@@ -509,10 +541,13 @@ export interface DisclosureContainer<EventMap extends DisclosureContainerEventMa
 export class DisclosureContainerFactory<T> extends ComponentFactory<DisclosureContainer> {
     /**
      * Create, set up and return DisclosureContainer component.
-     * @param header The header content (components or string). In the case of a string, the header
-     * content is a `Span` component with the string as the content. If `undefined` or an empty
-     * array, the header is empty.
-     * @param content The content components for the disclosure container.
+     * @param header The header content (components or string). In the case of a single string, the
+     * header content is a `Span` component with the string as the content. In the case of an array,
+     * every string element in the array is converted to a `Text` component. If `undefined` or an
+     * empty array, the header is empty.
+     * @param content The content components for the disclosure container. In the case of an array,
+     * every string element in the array is converted to a `Text` component. If `undefined` or an
+     * empty array, the header is empty.
      * @param disclosedBtnOptions The options for the disclosure button (`IconButton`) if the
      * disclosure container is in _disclosed_ state. Default: `{ Caption: ["-"] }`.\
      * __Note:__ When the disclosure container is disposed of it will also dispose of any component
@@ -534,19 +569,23 @@ export class DisclosureContainerFactory<T> extends ComponentFactory<DisclosureCo
      * container will be _removed/added_ from/to the internal DOM.\
      * `weakUndisclosed` can help to animate the states `disclosed`/`undisclosed`. Default: `false`.
      * @param appearance The disclosure container appearance (header position and orientation).
+     * @param animatable `true`, to enable animations on disclosed state changes.\
+     * __Note:__ If `animated` is `true`, `weakUndisclosed` must also be `true`!\
+     *  Default: `false`.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns DisclosureContainer component.
      */
     public disclosureContainer(
-        header?: (INodeComponent<Node> | undefined | null)[] | string,
-        content?: (INodeComponent<Node> | undefined | null)[],
+        header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null,
+        content?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null,
         disclosedBtnOptions: IconButtonOptions = { Caption: ["-"] }, // eslint-disable-line jsdoc/require-jsdoc
         undisclosedBtnOptions: IconButtonOptions = { Caption: ["+"] }, // eslint-disable-line jsdoc/require-jsdoc
         disclosed: boolean = true,
         weakUndisclosed: boolean = false,
         appearance: DisclosureContainerAppearance = DisclosureContainerAppearance.TOP_START,
+        animatable: boolean = false,
         data?: T
     ): DisclosureContainer {
-        return this.setupComponent(new DisclosureContainer(header, content, disclosedBtnOptions, undisclosedBtnOptions, disclosed, weakUndisclosed, appearance), data);
+        return this.setupComponent(new DisclosureContainer(header, content, disclosedBtnOptions, undisclosedBtnOptions, disclosed, weakUndisclosed, appearance, animatable), data);
     }
 }

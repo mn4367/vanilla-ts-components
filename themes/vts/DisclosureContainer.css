@@ -1,7 +1,18 @@
 .disclosure-container,
 .vts-disclosure-container {
     --dc-disclose-animation: 0.16s ease-in-out;
+    /* --dc-disclose-container-padding: var(--base-size-half); */
+    /* --dc-disclose-container-border: var(--1px) solid var(--border-color); */
+    /* --dc-disclose-container-border-radius: var(--3px); */
+    /* --dc-disclose-container-background: var(--black-2); */
+    --dc-disclose-button-size: 1rem;
+    --dc-disclose-button-background: var(--black-45);
+    --dc-disclose-button-background-disabled: var(--black-25);
     display: flex;
+    /* padding: var(--dc-disclose-container-padding); */
+    /* border: var(--dc-disclose-container-border); */
+    /* border-radius: var(--dc-disclose-container-border-radius); */
+    /* background: var(--dc-disclose-container-background); */
     > .header-container {
         position: relative;
         display: flex;
@@ -9,22 +20,24 @@
             flex-shrink: 0;
             margin: 0;
             padding: 0;
-            width: 1rem;
-            height: 1rem;
+            width: var(--dc-disclose-button-size);
+            height: var(--dc-disclose-button-size);
             appearance: none;
             border: none;
             font-size: 0;
-            background-color: darkgray;
+            background: var(--dc-disclose-button-background);
             cursor: pointer;
             &:hover {
                 filter: brightness(0.75);
             }
         }
-        > .header-content > .header-text {
-            margin-inline-start: 0.25rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        > .header-content {
+            padding-inline: var(--base-size-half);
+            > .header-text {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
         /*
          * Mark the first element (usually the caption span) as clickable. __Note:__ This needs a
@@ -52,64 +65,8 @@
         &.vertical > .content-container {
             transition: height var(--dc-disclose-animation);
         }
-        &.hotizontal > .content-container {
+        &.horizontal > .content-container {
             transition: width var(--dc-disclose-animation);
-        }
-    }
-    &.top-start,
-    &.top-end {
-        flex-direction: column;
-    }
-    &.bottom-start,
-    &.bottom-end {
-        flex-direction: column-reverse;
-    }
-    &.start-top,
-    &.start-bottom {
-        flex-direction: row;
-    }
-    &.end-top,
-    &.end-bottom {
-        flex-direction: row-reverse;
-    }
-    &.top-start,
-    &.bottom-start {
-        > .header-container {
-            flex-direction: row;
-        }
-    }
-    &.top-end,
-    &.bottom-end {
-        > .header-container {
-            flex-direction: row-reverse;
-        }
-    }
-    &.start-top,
-    &.end-top {
-        > .header-container {
-            flex-direction: column;
-        }
-    }
-    &.start-bottom,
-    &.end-bottom {
-        > .header-container {
-            flex-direction: column-reverse;
-        }
-    }
-    &.top-start,
-    &.top-end,
-    &.bottom-start,
-    &.bottom-end {
-        > .header-container {
-            align-items: center;
-        }
-    }
-    &.start-top,
-    &.start-bottom,
-    &.end-top,
-    &.end-bottom {
-        > .header-container {
-            align-items: center;
         }
     }
     &.disclosed {
@@ -191,6 +148,71 @@
                 /* Arrow up */
                 clip-path: var(--cp-arrow-up);
             }
+        }
+    }
+    &.disabled,
+    &:disabled {
+        color: var(--font-disabled-color);
+        > .header-container {
+            > .disclose {
+                background: var(--dc-disclose-button-background-disabled);
+            }
+        }
+    }
+    &.top-start,
+    &.top-end {
+        flex-direction: column;
+    }
+    &.bottom-start,
+    &.bottom-end {
+        flex-direction: column-reverse;
+    }
+    &.start-top,
+    &.start-bottom {
+        flex-direction: row;
+    }
+    &.end-top,
+    &.end-bottom {
+        flex-direction: row-reverse;
+    }
+    &.top-start,
+    &.bottom-start {
+        > .header-container {
+            flex-direction: row;
+        }
+    }
+    &.top-end,
+    &.bottom-end {
+        > .header-container {
+            flex-direction: row-reverse;
+        }
+    }
+    &.start-top,
+    &.end-top {
+        > .header-container {
+            flex-direction: column;
+        }
+    }
+    &.start-bottom,
+    &.end-bottom {
+        > .header-container {
+            flex-direction: column-reverse;
+        }
+    }
+    &.top-start,
+    &.top-end,
+    &.bottom-start,
+    &.bottom-end {
+        > .header-container {
+            align-items: center;
+        }
+    }
+    &.start-top,
+    &.start-bottom,
+    &.end-top,
+    &.end-bottom {
+        > .header-container {
+            align-items: center;
         }
     }
     &.end-top,
