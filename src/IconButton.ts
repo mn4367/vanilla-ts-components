@@ -11,13 +11,27 @@ import { Button, Span } from "@vanilla-ts/dom";
  * @see {@link IconButton}
  */
 export type IconButtonOptions = {
-    /** Icon for the logical start icon element of the button. Default: `null`. */
+    /**
+     * Icon for the logical start icon element of the button. The value here is set as the text
+     * content _and_ class name of the respective inner `Span` component so make sure that only
+     * valid class names are used here.\
+     * Default: `null`.
+     */
     IconStart?: NullableString;
     /** Caption for the button. Default: []. */
     Caption?: Phrases;
-    /** Icon for the logical end icon element of the button. Default: `null`. */
+    /**
+     * Icon for the logical end icon element of the button. The value here is set as the text
+     * content _and_ class name of the respective inner `Span` component so make sure that only
+     * valid class names are used here.\
+     * Default: `null`.
+     */
     IconEnd?: NullableString;
-    /** Title (tooltip) for the button. Default: `null`. */
+    /**
+     * Title (tooltip) for the button. This is equivalent to setting the `Title` property of the
+     * `IconButton` component.\
+     * Default: `null`.
+     */
     Title?: NullableString;
     /**
      * Alignment of the three inner button parts. `true` for a horizontal alignment, `false` for a
@@ -31,17 +45,19 @@ export type IconButtonOptions = {
  * IconButton component to display buttons with icons and/or text. The component consists of three
  * inner parts:
  * - A `Span` component at the logical start side of the button (on the left side in 'ltr'
- *   direction, otherwise on right side).
- * - A `span` component containing the phrasing content of the button.
- * - A `Span` component at the logical end side of the button (on the right side in 'ltr'
- *   direction, otherwise on left side).
+ *   direction, otherwise on right side; with a vertical layout the component is placed at the top
+ *   side).
+ * - A `Span` component containing the phrasing content of the button.
+ * - A `Span` component at the logical end side of the button (on the right side in 'ltr' direction,
+ *   otherwise on left side; with a vertical layout the component is placed at the bottom side).
  *
  * The intended use of this component is that the icons (part one and three) are styled by
- * background images or with an icon font like 'Material Icons'. In both cases the icon button
- * options are used to set the respective identifier for the icon, so styling should be easy. For
- * both icon spans (part one and three) the following rules apply:
+ * background images or (preferably) with an icon font like 'Material Icons'. In both cases the icon
+ * button options are used to set the respective identifier for the icon, so styling should be easy.
+ * For both icon spans (part one and three) the following rules apply:
  * - If the value of `IconStart`/`IconEnd` is an empty string or null, the current text content
- *   _and_ the class name of the `Span` component are _removed_.
+ *   _and_ the class name of the `Span` component are _removed_. __Note:__ This also sets the class
+ *   `empty` on the respective span element!
  * - If the value of `IconStart`/`IconEnd` begins with `-` (minus), the current text content of the
  *   `Span` component is removed and its class name is set to `<value>.substring(1)`, e.g.
  *   `-some-class` results in the class name `some-class`.
@@ -129,14 +145,62 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
      */
     public options(options: IconButtonOptions) {
         IconButton.mergeOptionsFromTo(options, this._options);
-        this
+        return this
             .setIcon(this._options.IconStart!, true)
             .rephrase(...this._options.Caption!)
             .setIcon(this._options.IconEnd!, false)
             .title(this._options.Title!)
+            .setSingleIcon()
             .removeClass("horizontal", "vertical")
             .addClass(this._options.Horizontal ? "horizontal" : "vertical");
-        return this;
+    }
+
+    /**
+     * @inheritdoc
+     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Phrase}
+     */
+    public get Phrase(): never {
+        throw new Error("'Phrase' is a writeonly property.");
+    }
+    /**
+     * @inheritdoc
+     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Phrase}
+     */
+    public set Phrase(phrase: Phrase | Phrases) {
+        this.btnPhrase.Phrase = phrase;
+    }
+
+    /**
+     * @inheritdoc
+     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.phrase()}
+     */
+    public phrase(...phrase: Phrases): this {
+        this.btnPhrase.phrase(...phrase);
+        return this.setSingleIcon();
+    }
+
+    /**
+     * @inheritdoc
+     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Rephrase}
+     */
+    public get Rephrase(): never {
+        throw new Error("'Rephrase' is a writeonly property.");
+    }
+    /**
+     * @inheritdoc
+     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Rephrase}
+     */
+    public set Rephrase(phrase: Phrase | Phrases) {
+        this.btnPhrase.Rephrase = phrase;
+    }
+
+    /**
+     * @inheritdoc
+     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.rephrase()}
+     */
+    public rephrase(...phrase: Phrases): this {
+        this.btnPhrase.rephrase(...phrase);
+        return this.setSingleIcon();
     }
 
     /**
@@ -170,56 +234,27 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
         ).addClass(
             atStart ? "start" : "end",
             hasDisabled ? "disabled" : undefined,
-            hasParentDisabled ? "parent-disabled" : undefined
+            hasParentDisabled ? "parent-disabled" : undefined,
+            v === null ? "empty" : undefined
         );
         return this;
     }
 
     /**
-     * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Phrase}
+     * Set or unset the `single-icon` CSS class according to the current icon button options. The
+     * `single-icon` class is set if either `IconStart` or `IconEnd` is set, but not both, and the
+     * `Caption` is empty.
+     * @returns This instance.
      */
-    public get Phrase(): never {
-        throw new Error("'Phrase' is a writeonly property.");
-    }
-    /**
-     * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Phrase}
-     */
-    public set Phrase(phrase: Phrase | Phrases) {
-        this.btnPhrase.Phrase = phrase;
-    }
-
-    /**
-     * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.phrase()}
-     */
-    public phrase(...phrase: Phrases): this {
-        this.btnPhrase.phrase(...phrase);
-        return this;
-    }
-
-    /**
-     * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Rephrase}
-     */
-    public get Rephrase(): never {
-        throw new Error("'Rephrase' is a writeonly property.");
-    }
-    /**
-     * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Rephrase}
-     */
-    public set Rephrase(phrase: Phrase | Phrases) {
-        this.btnPhrase.Rephrase = phrase;
-    }
-
-    /**
-     * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.rephrase()}
-     */
-    public rephrase(...phrase: Phrases): this {
-        this.btnPhrase.rephrase(...phrase);
+    protected setSingleIcon(): this {
+        this.removeClass("single-icon");
+        if (
+            ((this._options.IconStart && !this._options.IconEnd)
+                || (!this._options.IconStart && this._options.IconEnd))
+            && ((this.btnPhrase.Text ?? "").trim() === "")
+        ) {
+            this.addClass("single-icon");
+        }
         return this;
     }
 
@@ -236,8 +271,8 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
 
     static {
         /**
-         * Mixin additional DOM attributes. Required because `IconButton` is actually just a `Button
-         * (with additional child components).
+         * Mixin additional DOM attributes. Required because `IconButton` is actually just a
+         * `Button` (with additional child components).
          */
         mixinDOMProperties(
             this,
