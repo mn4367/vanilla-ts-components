@@ -1,4 +1,4 @@
-import { ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { TextArea } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentWithLabel, LabelPosition } from "./LabeledComponents.js";
 
@@ -13,20 +13,30 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
      * @param text The text content for the textarea element.
      * @param rows The number of visible text lines for the textarea element.
      * @param cols The visible width of the textarea element, in average character widths.
-     * @param id The `id` attribute for the textarea element.
+     * @param id The id (attribute) of the textarea element. If `id` is `undefined` or omitted, a
+     * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
+     * attribute will be set. Any other value will be used as the id attribute.
      * @param name The `name` attribute for the textarea element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      * @param lblAction Controls the following behavior:
-     * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label focuses
-     *   the textarea element, if `lblAction` is `false`, clicking on the label does nothing.
+     * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+     *   or `undefined`, a click on the label focuses the textarea element (a unique ID has been set
+     *   automatically on the textarea element), if `lblAction` is `false`, clicking on the label
+     *   does nothing.
+     * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+     *   has been set on the textarea element).
      */
-    constructor(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: NullableString, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+        const _id = id === undefined
+            ? cid()
+            : id === null || id === ""
+                ? null
+                : id;
         super(
-            new TextArea(text, rows, cols, id, name),
+            new TextArea(text, rows, cols, _id, name),
             labelPhrase,
-            id,
+            _id,
             lblPosition ?? LabelPosition.TOP,
             lblAlignment,
             lblAction
@@ -105,18 +115,23 @@ export class LabeledTextAreaFactory<T> extends ComponentFactory<LabeledTextArea>
      * @param text The text content for the textarea element.
      * @param rows The number of visible text lines for the textarea element.
      * @param cols The visible width of the textarea element, in average character widths.
-     * @param id The `id` attribute for the textarea element.
+     * @param id The id (attribute) of the textarea element. If `id` is `undefined` or omitted, a
+     * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
+     * attribute will be set. Any other value will be used as the id attribute.
      * @param name The `name` attribute for the textarea element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      * @param lblAction Controls the following behavior:
-     * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label focuses
-     *   the textarea element, if `lblAction` is `false`, clicking on the label does nothing.
+     * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+     *   or `undefined`, a click on the label focuses the textarea element (a unique ID has been set
+     *   automatically on the textarea element), if `lblAction` is `false`, clicking on the label
+     *   does nothing.
+     * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+     *   has been set on the textarea element).
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledTextArea component.
      */
-    public labeledTextArea(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledTextArea {
+    public labeledTextArea(labelPhrase: Phrase | Phrases, text?: string, rows?: number, cols?: number, id?: NullableString, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledTextArea {
         return this.setupComponent(new LabeledTextArea(labelPhrase, text, rows, cols, id, name, lblPosition, lblAlignment, lblAction), data);
     }
 }

@@ -10,8 +10,12 @@ import { LabeledRadioButton } from "./LabeledRadioButton.js";
 export type LabeledRadioButtons = Array<{
     /** The phrasing content for the label of a radio button. */
     Label: Phrase | Phrases;
-    /** The `id` attribute of a radio button. */
-    ID: string;
+    /**
+     * The `id` attribute of a radio button. If `ID` is `undefined` or omitted, a unique ID will be
+     * generated. If `ID` is explicitely set to `null` or an empty string, no id attribute will be
+     * set. Any other value will be used as the id attribute.
+     */
+    ID?: NullableString;
     /** The value of a radio button. */
     Value: string;
     /** The label position of a radio button. */

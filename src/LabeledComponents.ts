@@ -260,18 +260,21 @@ export abstract class LabeledComponentWithLabel<C extends IElementComponent<HTML
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      * @param lblAction Controls the following behavior:
-     * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label focuses
-     *   the textarea element, if `lblAction` is `false`, clicking on the label does nothing.
+     * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+     *   or `undefined`, a click on the label focuses/toggles/... the component (a unique ID has
+     *   been set automatically on the component), if `lblAction` is `false`, clicking on the label
+     *   does nothing.
+     * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+     *   has been set on the component).
      */
-    constructor(component: C, labelPhrase: Phrase | Phrases, id?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+    constructor(component: C, labelPhrase: Phrase | Phrases, id?: NullableString, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
         super(labelPhrase, lblPosition, lblAlignment);
         this.component = component.addClass(LabeledComponent.LCComponentClassname);
         this.initialize(undefined, labelPhrase, id, lblAction);
     }
 
     /** @inheritdoc */
-    protected override buildUI(labelPhrase: Phrase | Phrases, id?: string, lblAction?: boolean): this {
+    protected override buildUI(labelPhrase: Phrase | Phrases, id?: NullableString, lblAction?: boolean): this {
         this.label = new Label(
             id && (lblAction === undefined || lblAction === true)
                 ? id
@@ -297,16 +300,20 @@ export abstract class LabeledInputComponent<I extends Input, EventMap extends HT
      * Create LabeledInputComponent component.
      * @param input The input component.
      * @param labelPhrase The phrasing content for the label.
-     * @param id The `id` attribute of the target input element.
+     * @param id The id (attribute) of the target input component. If `id` is `undefined` or
+     * omitted, a unique ID will be generated. If `id` is explicitely set to `null` or an empty
+     * string, no id attribute will be set. Any other value will be used as the id attribute.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      * @param lblAction Controls the following behavior:
-     * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label causes
-     *   the corresponding action on the input element; if `lblAction` is `false`, clicking on the
-     *   label does nothing.
+     * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+     *   or `undefined`, a click on the label focuses/toggles/... the input component (a unique ID
+     *   has been set automatically on the input component), if `lblAction` is `false`, clicking on
+     *   the label does nothing.
+     * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+     *   has been set on the input component).
      */
-    constructor(input: I, labelPhrase: Phrase | Phrases, id?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+    constructor(input: I, labelPhrase: Phrase | Phrases, id?: NullableString, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
         super(input, labelPhrase, id, lblPosition, lblAlignment, lblAction);
     }
 

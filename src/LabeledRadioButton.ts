@@ -1,4 +1,4 @@
-import { CheckedEvent, ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
+import { CheckedEvent, cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { RadioButton } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
@@ -19,20 +19,29 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
      * implemented, using settings other than `LabelPosition.START`, `LabelPosition.END` and
      * `LabelAlignment.START` can lead to a visually rather weird appearance.
      * @param labelPhrase The phrasing content for the label.
-     * @param id The `id` attribute of the radio button input element.
-     * @param value The value of the radio button input element.
-     * @param name The `name` attribute of the radio button input element.
+     * @param id The id (attribute) of the radio button element. If `id` is `undefined` or omitted,
+     * a unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
+     * attribute will be set. Any other value will be used as the id attribute.
+     * @param value The value of the radio button element.
+     * @param name The `name` attribute of the radio button element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      * @param lblAction Controls the following behavior:
-     * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label toggles
-     *   the radio button input element (if toggling is enabled), if `lblAction` is `false`,
+     * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+     *   or `undefined`, a click on the label focuses/toggles the radio button element (a unique ID
+     *   has been set automatically on the radio button element), if `lblAction` is `false`,
      *   clicking on the label does nothing.
+     * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+     *   has been set on the radio button element).
      */
-    constructor(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, id?: NullableString, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+        const _id = id === undefined
+            ? cid()
+            : id === null || id === ""
+                ? null
+                : id;
         super(
-            new RadioButton(id, value, name)
+            new RadioButton(_id, value, name)
                 // Forward this event to make handling of the component easier.
                 .on("checked", (ev) => {
                     // ev.preventDefault();
@@ -40,7 +49,7 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
                     this.emit(new CheckedEvent("checked", this, { Checked: ev.$.Checked })); // eslint-disable-line jsdoc/require-jsdoc
                 }),
             labelPhrase,
-            id,
+            _id,
             lblPosition ?? LabelPosition.END,
             lblAlignment,
             lblAction
@@ -109,20 +118,24 @@ export class LabeledRadioButtonFactory<T> extends ComponentFactory<LabeledRadioB
      * implemented, using settings other than `LabelPosition.START`, `LabelPosition.END` and
      * `LabelAlignment.START` can lead to a visually rather weird appearance.
      * @param labelPhrase The phrasing content for the label.
-     * @param id The `id` attribute of the radio button input element.
-     * @param value The value of the radio button input element.
-     * @param name The `name` attribute of the radio button input element.
+     * @param id The id (attribute) of the radio button element. If `id` is `undefined` or omitted,
+     * a unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
+     * attribute will be set. Any other value will be used as the id attribute.
+     * @param value The value of the radio button element.
+     * @param name The `name` attribute of the radio button element.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      * @param lblAction Controls the following behavior:
-     * - If `id` isn't defined, clicking on the label does nothing.
-     * - If `id` is defined: if `lblAction` is `true` or `undefined`, a click on the label toggles
-     *   the radio button input element (if toggling is enabled), if `lblAction` is `false`,
+     * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+     *   or `undefined`, a click on the label focuses/toggles the radio button element (a unique ID
+     *   has been set automatically on the radio button element), if `lblAction` is `false`,
      *   clicking on the label does nothing.
+     * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+     *   has been set on the radio button element).
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledRadioButton component.
      */
-    public labeledRadioButton(labelPhrase: Phrase | Phrases, id?: string, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledRadioButton {
+    public labeledRadioButton(labelPhrase: Phrase | Phrases, id?: NullableString, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledRadioButton {
         return this.setupComponent(new LabeledRadioButton(labelPhrase, id, value, name, lblPosition, lblAlignment, lblAction), data);
     }
 }
