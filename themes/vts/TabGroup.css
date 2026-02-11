@@ -17,11 +17,12 @@
         }
     }
     > .scroll-container {
-        --scroll-bar-size: 0.3rem;
-        --scroll-bar-border-radius: 0;
-        --scroll-bar-background-color: transparent;
-        --scroll-bar-border: 0;
-        --scroll-bar-thumb-border-radius: var(--2px);
+        /* These variable names must be kept in sync with those in `ScrollContainer.css` */
+        --scrollbar-size: 0.3rem;
+        --scrollbar-border-radius: 0;
+        --scrollbar-background: transparent;
+        --scrollbar-border: 0;
+        --scrollbar-thumb-border-radius: var(--2px);
         height: revert;
         > .content {
             position: relative;
@@ -37,12 +38,12 @@
     }
     &.top {
         > .scroll-container > .h-bar-overlay {
-            inset-block-start: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap) - 0.5rem);
+            inset-block-start: calc(100% - var(--scrollbar-size) - var(--scrollbar-thumb-gap) - 0.5rem);
         }
     }
     /* &.bottom {
         > .scroll-container > .h-bar-overlay {
-            inset-block-start: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap) - 0.1rem);
+            inset-block-start: calc(100% - var(--scrollbar-size) - var(--scrollbar-thumb-gap) - 0.1rem);
         }
     } */
     &.start,
@@ -56,13 +57,13 @@
     &.start,
     &.start-alt {
         > .scroll-container > .v-bar-overlay {
-            inset-inline-start: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap) - 0.5rem);
+            inset-inline-start: calc(100% - var(--scrollbar-size) - var(--scrollbar-thumb-gap) - 0.5rem);
         }
     }
     &.end,
     &.end-alt {
         > .scroll-container > .v-bar-overlay {
-            inset-inline-start: calc(0.5rem + var(--scroll-bar-thumb-gap));
+            inset-inline-start: calc(0.5rem + var(--scrollbar-thumb-gap));
         }
     }
     > .scroll-container > .tab-headers {

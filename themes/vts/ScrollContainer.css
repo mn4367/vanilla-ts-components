@@ -1,5 +1,20 @@
+/* -------------------------------------------------- */
+/* Inspired by the design of the scrollbars on macOS. */
+/* -------------------------------------------------- */
 .scroll-container,
 .vts-scroll-container {
+    --scrollbar-background: hsla(0 0% 100% / 0.75);
+    --scrollbar-border-color: hsla(0 0% 43% / 0.2);
+    --scrollbar-border: var(--1px) solid var(--scrollbar-border-color);
+    --scrollbar-thumb-color: hsla(0 0% 43% / 0.8);
+    --scrollbar-overlay-fade-in: opacity 0.1s ease-in;
+    --scrollbar-overlay-fade-out: opacity 0.2s ease-in 0.7s;
+    --scrollbar-size: 0.6rem;
+    --scrollbar-border-radius: 0.2rem;
+    --scrollbar-thumb-min-size: calc(3 * var(--scrollbar-size));
+    /* Never change the name of the following variable (it is used in code)!!! */
+    --scrollbar-thumb-gap: var(--1px);
+    --scrollbar-thumb-border-radius: 0.3rem;
     /*
      * Mandatory because of `> . content { position: absolute; }`. If `position` needs a different
      * value embed the scroll container into a parent and set `position` there.
@@ -51,17 +66,17 @@
         position: absolute;
         z-index: 1000;
         opacity: 0;
-        transition: var(--scroll-bar-overlay-fade-out);
+        transition: var(--scrollbar-overlay-fade-out);
     }
     > .h-bar-overlay {
-        inset-block-start: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap));
+        inset-block-start: calc(100% - var(--scrollbar-size) - var(--scrollbar-thumb-gap));
         height: 0;
     }
     &.v-off > .h-bar-overlay {
         width: 100%;
     }
     > .v-bar-overlay {
-        inset-inline-start: calc(100% - var(--scroll-bar-size) - var(--scroll-bar-thumb-gap));
+        inset-inline-start: calc(100% - var(--scrollbar-size) - var(--scrollbar-thumb-gap));
         width: 0;
     }
     &.h-off > .v-bar-overlay {
@@ -72,44 +87,44 @@
     &.scrolling > .h-bar-overlay,
     &.scrolling > .v-bar-overlay {
         opacity: 1;
-        transition: var(--scroll-bar-overlay-fade-in);
+        transition: var(--scrollbar-overlay-fade-in);
     }
     > .h-bar-overlay > .h-bar,
     > .v-bar-overlay > .v-bar {
         position: relative;
-        /* border-radius: var(--scroll-bar-border-radius); */
+        /* border-radius: var(--scrollbar-border-radius); */
     }
     > .h-bar-overlay > .h-bar {
         width: 100%;
-        height: var(--scroll-bar-size);
+        height: var(--scrollbar-size);
     }
     > .v-bar-overlay > .v-bar {
         height: 100%;
-        width: var(--scroll-bar-size);
+        width: var(--scrollbar-size);
     }
     > .h-bar-overlay > .h-bar:hover,
     > .v-bar-overlay > .v-bar:hover {
-        background-color: var(--scroll-bar-background-color);
+        background-color: var(--scrollbar-background);
     }
     > .h-bar-overlay > .h-bar:hover {
-        border-block-start: var(--scroll-bar-border);
-        border-block-end: var(--scroll-bar-border);
+        border-block-start: var(--scrollbar-border);
+        border-block-end: var(--scrollbar-border);
     }
     > .v-bar-overlay > .v-bar:hover {
-        border-inline-start: var(--scroll-bar-border);
-        border-inline-end: var(--scroll-bar-border);
+        border-inline-start: var(--scrollbar-border);
+        border-inline-end: var(--scrollbar-border);
     }
     > .h-bar-overlay > .h-bar > .h-bar-thumb,
     > .v-bar-overlay > .v-bar > .v-bar-thumb {
         position: relative;
-        border-radius: var(--scroll-bar-thumb-border-radius);
+        border-radius: var(--scrollbar-thumb-border-radius);
     }
     > .h-bar-overlay > .h-bar > .h-bar-thumb {
         will-change: width, left, inset-inline-start, right, inset-inline-end;
         width: 100%;
         height: 100%;
-        min-width: var(--scroll-bar-thumb-min-size);
-        background-color: var(--scroll-bar-thumb-color);
+        min-width: var(--scrollbar-thumb-min-size);
+        background-color: var(--scrollbar-thumb-color);
     }
     > .h-bar-overlay > .h-bar:hover > .h-bar-thumb {
         inset-block-start: calc(-1 * var(--1px));
@@ -119,8 +134,8 @@
         will-change: height, top, inset-block-start, bottom, inset-block-end;
         width: 100%;
         height: 100%;
-        min-height: var(--scroll-bar-thumb-min-size);
-        background-color: var(--scroll-bar-thumb-color);
+        min-height: var(--scrollbar-thumb-min-size);
+        background-color: var(--scrollbar-thumb-color);
     }
     > .v-bar-overlay > .v-bar:hover > .v-bar-thumb {
         inset-inline-start: calc(-1 * var(--1px));

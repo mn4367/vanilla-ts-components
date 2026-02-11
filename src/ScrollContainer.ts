@@ -423,13 +423,15 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
         let repositionScrollBars = false;
         if (this.#_horizontal && !this.#scrollable.classList.contains("v-off")) {
             this.#hBarOverlay.style.width = !hasVOff
-                ? `calc(${Math.max(this.#scrollable.clientWidth - this.#hBarStartOffset - this.#hBarReduceWidth - this.#vBar.offsetWidth, 0)}px - var(--scroll-bar-thumb-gap))`
+                // FIXME: Don't use a CSS variable in code.
+                ? `calc(${Math.max(this.#scrollable.clientWidth - this.#hBarStartOffset - this.#hBarReduceWidth - this.#vBar.offsetWidth, 0)}px - var(--scrollbar-thumb-gap))`
                 : hboWidth;
             repositionScrollBars = true;
         }
         if (this.#_vertical && !this.#scrollable.classList.contains("h-off")) {
             this.#vBarOverlay.style.height = !hasHOff
-                ? `calc(${Math.max(this.#scrollable.clientHeight - this.#vBarStartOffset - this.#vBarReduceHeight - this.#hBar.offsetHeight, 0)}px - var(--scroll-bar-thumb-gap))`
+                // FIXME: Don't use a CSS variable in code.
+                ? `calc(${Math.max(this.#scrollable.clientHeight - this.#vBarStartOffset - this.#vBarReduceHeight - this.#hBar.offsetHeight, 0)}px - var(--scrollbar-thumb-gap))`
                 : vboHeight;
             repositionScrollBars = true;
         }
