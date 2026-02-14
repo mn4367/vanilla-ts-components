@@ -16,7 +16,7 @@ import { Throbber } from "./Throbber.js";
  * ```typescript
  * // Get a viewer instance and display image 'Img05.svg' initally.
  * const viewer = new Viewer({
- *   ItemURLs: ["Img01.png", "Img02.png", "Img03.jpg", "Img05.svg"]
+ *   Items: ["Img01.png", "Img02.png", "Img03.jpg", "Img05.svg"]
  * }, 3)
  *
  * // Always show the toolbar, enable handling of pinch zoom gestures and use native scroll bars.
@@ -34,7 +34,7 @@ import { Throbber } from "./Throbber.js";
  * // direction), disable the handling of pinch zoom gestures and display 'Img06.gif' at `200%`
  * // magnification).
  * viewer.options({
- *   ItemURLs: ["Img06.gif"],
+ *   Items: ["Img06.gif"],
  *   ToolbarPosition: ToolbarPosition.END,
  *   ToolbarHidden: true,
  *   Zoom: Z200,
@@ -46,9 +46,22 @@ import { Throbber } from "./Throbber.js";
  * // interface, for example with separate buttons that call `viewer.First()`, `viewer.Forward()`
  * // etc. themselves.
  * viewer.options({
- *   ItemURLs: ["Img01.png", "Img02.png", "Img03.jpg", "Img05.svg"]
+ *   Items: ["Img01.png", "Img02.png", "Img03.jpg", "Img05.svg"]
  *   OmitToolbar: true,
  *   PinchZoom: true
+ * });
+ *
+ * // Set new images on the viewer. The zoom level of the image with the URL `Img02.png` is set to
+ * // `Zoom.FITWIDTH` so that it fits the width of the viewer, the scaling of the image with the URL
+ * // `Img03.jpg` is set to an initialvalue of `1.5` and is scrolled so that its lower right corner
+ * // is visible.
+ * viewer.options({
+ *   Items: [
+ *     "Img01.png",
+ *     { URL: "Img02.png", Zoom: Zoom.FITWIDTH },
+ *     { URL: "Img03.jpg", Scale: 1.5, ScrollPos: new DOMPoint(100000, 100000) },
+ *     "Img05.svg"
+ *   ]
  * });
  *
  * // Show only the current item index and the current zoom level in the toolbar, extract the
@@ -127,11 +140,27 @@ export interface ViewerOptions {
      */
     Zoom?: Zoom;
     /**
-     * URLs of the items to be displayed in the viewer. If this is an empty array, no toolbar is
-     * shown.\
+     * An array of items to be displayed in the viewer. If an array element is of type `string`
+     * the element must denote a valid URL. Otherwise, the element must be an object
+     * that has at least the propertiy `URL`. If `Items` is an empty array, no toolbar is shown.\
      * Default: `[]`.
      */
-    ItemURLs?: string[];
+    Items?: (string | {
+        /** The URL of the item. */
+        URL: string;
+        /**
+         * The initial zoom level of the item. If `Zoom` is set and not `Zoom.ZOTHER` it always
+         * takes precedence over `Scale` (`Scale` is set to `0` in this case).
+         */
+        Zoom?: Zoom;
+        /**
+         * The initial magnification level of the item. This value is only used if `Zoom` is not set
+         * or is set to `Zoom.ZOTHER`, otherwise it is ignored.
+         */
+        Scale?: number;
+        /** The initial scroll position of the item in its container. */
+        ScrollPos?: DOMPoint;
+    })[];
     /**
      * Support pinch zoom gestures.\
      * Default: `false`.
@@ -285,6 +314,50 @@ export class ViewerSteppedEvent extends ACustomComponentEvent<"viewer-stepped", 
     }
 }
 
+/** Custom 'viewer-scroll' event for viewers. */
+export class ViewerScrollEvent extends ACustomComponentEvent<"viewer-scroll", Viewer, {
+    /** The index of the current item in the viewer. */
+    Index: number;
+    /** The new scroll offset in the viewer. */
+    ScrollOffset: { X: number; Y: number; }; // eslint-disable-line jsdoc/require-jsdoc
+}> {
+    /**
+     * Create ViewerScrollEvent event. This event is purely informative and can't be cancelled.
+     * @param sender The event emitter (always `Viewer`).
+     * @param index The index of the current item in the viewer.
+     * @param offsetX The horizontal scroll offset in the viewer.
+     * @param offsetY The vertical scroll offset in the viewer.
+     * @param customEventInitDict Optional event properties.
+     */
+    /* */
+    constructor(sender: Viewer, index: number, offsetX: number, offsetY: number, customEventInitDict: EventInit = DEFAULT_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
+        super("viewer-scroll", sender, { Index: index, ScrollOffset: { X: offsetX, Y: offsetY } }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
+/** Custom 'viewer-zoom' event for viewers. */
+export class ViewerZoomEvent extends ACustomComponentEvent<"viewer-zoom", Viewer, {
+    /** The index of the current item in the viewer. */
+    Index: number;
+    /** The new zoom level in the viewer. */
+    Zoom: Zoom;
+    /** The new magnification level in the viewer. */
+    Scale: number;
+}> {
+    /**
+     * Create ViewerZoomEvent event. This event is purely informative and can't be cancelled.
+     * @param sender The event emitter (always `Viewer`).
+     * @param index The index of the current item in the viewer.
+     * @param zoom The zoom level in the viewer.
+     * @param scale The magnification level in the viewer.
+     * @param customEventInitDict Optional event properties.
+     */
+    /* */
+    constructor(sender: Viewer, index: number, zoom: Zoom, scale: number, customEventInitDict: EventInit = DEFAULT_EVENT_INIT_DICT) { // eslint-disable-line jsdoc/require-jsdoc
+        super("viewer-zoom", sender, { Index: index, Zoom: zoom, Scale: scale }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
 /** Additional event(s) for `Viewer`. */
 export interface ViewerEventMap extends HTMLElementEventMap {
     /**
@@ -296,6 +369,16 @@ export interface ViewerEventMap extends HTMLElementEventMap {
      * The viewer has changed its index. This event is purely informative and can't be cancelled.
      */
     "viewer-stepped": ViewerSteppedEvent;
+    /**
+     * The viewer has changed its scroll position. This event is purely informative and can't be
+     * cancelled.
+     */
+    "viewer-scroll": ViewerScrollEvent;
+    /**
+     * The viewer has changed its zoom level/magnification level. This event is purely informative
+     * and can't be cancelled.
+     */
+    "viewer-zoom": ViewerZoomEvent;
 }
 
 /** A transparent GIF image with one pixel. */
@@ -335,6 +418,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     protected pinchZoomHandler: PinchZoomGestureHandler;
     protected pinchZoomStartScale: number;
     protected fncOnPinchZoom = this.onPinchZoom.bind(this);
+    protected lastDisplayState: { Zoom: Zoom; Scale: number; ScrollPos: DOMPoint; } = { Zoom: Zoom.ZOTHER, Scale: -Infinity, ScrollPos: new DOMPoint(0, 0) }; // eslint-disable-line jsdoc/require-jsdoc
     // #pointerDot: Div;
 
     /**
@@ -356,7 +440,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         return {
             /* eslint-disable jsdoc/require-jsdoc */
             ...this._options,
-            ItemURLs: [...this._options.ItemURLs!],
+            Items: [...this._options.Items!],
             StepperOptions: this.stepper.Options,
             ZoomInBtnOptions: this.btnZoomIn.Options,
             ZoomOutBtnOptions: this.btnZoomOut.Options,
@@ -376,8 +460,8 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param options Options for this viewer.
      * @param index The index of the item to be displayed. If there is no item for the specified
      * `index` or if `index` is `undefined`, the last active item is displayed. If the last item is
-     * no longer available because it has been disposed of by setting new item URLs, the first item
-     * is displayed (if available, otherwise the viewer is empty).
+     * no longer available because it has been disposed of by setting new items, the first item is
+     * displayed (if available, otherwise the viewer is empty).
      * @returns This instance.
      */
     public options(options: ViewerOptions, index?: number): this {
@@ -403,11 +487,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             /* eslint-enable */
         };
         const wasEmpty = this.items.length === 0;
-        if (options.ItemURLs) {
-            this.replaceItemsWith(options.ItemURLs);
-            opts.ItemURLs = [...options.ItemURLs];
+        if (options.Items) {
+            this.replaceItemsWith(options.Items);
+            opts.Items = options.Items.map(e => typeof e === "string" ? e : { ...e });
         } else {
-            opts.ItemURLs = [...(this._options.ItemURLs ?? [])];
+            opts.Items = [...(this._options.Items ?? [])];
         }
         this._options = opts;
         this.item = wasEmpty
@@ -480,7 +564,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                 ? this.ui.append(this.itemContainer)
                 : this.ui.append(this.itemContainer, this.toolBar);
         }
-        this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
+        this.scrollOffset(this.item.ScrollPos.x, this.item.ScrollPos.y);
         this.zoomRange.vertical((this._options.ToolbarPosition === ToolbarPosition.START) || (this._options.ToolbarPosition === ToolbarPosition.END));
         return this;
     }
@@ -540,6 +624,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                 }
             }
         }
+        this.emitZoomEvent();
         return this;
     }
 
@@ -574,6 +659,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                 }
             }
         }
+        this.emitZoomEvent();
         return this;
     }
 
@@ -596,6 +682,8 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      */
     public scrollOffset(x: number, y: number): this {
         this.itemContainer.scroll(x, y);
+        this.item.ScrollPos.x = this.itemContainer.ScrollOffset.X;
+        this.item.ScrollPos.y = this.itemContainer.ScrollOffset.Y;
         return this;
     }
 
@@ -606,6 +694,8 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         return this.stepper;
     }
 
+    /////////////////////////
+    // #region Borrow/return components
     /**
      * Unmounts the stepper component from the toolbar (if it is mounted there) and returns it. The
      * returned component can then be mounted elsewhere.\
@@ -847,6 +937,8 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         }
         return this.rebuildToolbar();
     }
+    // #endregion Borrow/return components
+    /////////////////////////
 
     /////////////////////////
     // #region ISteppable/IStepper
@@ -896,7 +988,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         const result = (this.items.length > 0) && this.dispatch(new ViewerStepEvent(this, 0))
             ? this.stepper.First()
             : false;
-        result ? this.emit(new ViewerSteppedEvent(this, this.Index)) : undefined;
+        result && this.emit(new ViewerSteppedEvent(this, this.Index));
         return result;
     }
 
@@ -908,7 +1000,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         const result = (this.items.length > 0) && (this.PageSize !== -1) && this.dispatch(new ViewerStepEvent(this, this.adjustIndex(this.Index - this.PageSize)))
             ? this.stepper.PageBackward()
             : false;
-        result ? this.emit(new ViewerSteppedEvent(this, this.Index)) : undefined;
+        result && this.emit(new ViewerSteppedEvent(this, this.Index));
         return result;
     }
 
@@ -917,7 +1009,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         const result = (this.items.length > 0) && this.dispatch(new ViewerStepEvent(this, this.adjustIndex(this.Index - 1)))
             ? this.stepper.Backward()
             : false;
-        result ? this.emit(new ViewerSteppedEvent(this, this.Index)) : undefined;
+        result && this.emit(new ViewerSteppedEvent(this, this.Index));
         return result;
     }
 
@@ -926,7 +1018,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         const result = (this.items.length > 0) && this.dispatch(new ViewerStepEvent(this, this.adjustIndex(this.Index - 1)))
             ? this.stepper.Forward()
             : false;
-        result ? this.emit(new ViewerSteppedEvent(this, this.Index)) : undefined;
+        result && this.emit(new ViewerSteppedEvent(this, this.Index));
         return result;
     }
 
@@ -935,7 +1027,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         const result = (this.items.length > 0) && (this.PageSize !== -1) && this.dispatch(new ViewerStepEvent(this, this.adjustIndex(this.Index + this.PageSize)))
             ? this.stepper.PageForward()
             : false;
-        result ? this.emit(new ViewerSteppedEvent(this, this.Index)) : undefined;
+        result && this.emit(new ViewerSteppedEvent(this, this.Index));
         return result;
     }
 
@@ -944,7 +1036,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         const result = (this.items.length > 0) && this.dispatch(new ViewerStepEvent(this, this.adjustIndex(this.items.length - 1)))
             ? this.stepper.Last()
             : false;
-        result ? this.emit(new ViewerSteppedEvent(this, this.Index)) : undefined;
+        result && this.emit(new ViewerSteppedEvent(this, this.Index));
         return result;
     }
 
@@ -980,7 +1072,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                     ? this.ui.append(this.itemContainer)
                     : this.ui.append(this.itemContainer, this.toolBar);
             }
-            this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
+            this.scrollOffset(this.item.ScrollPos.x, this.item.ScrollPos.y);
         }
     }
 
@@ -1005,10 +1097,27 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     }
 
     /**
+     * Checks if the zoom/scale level or scroll position of the current item has changed compared to
+     * the state that was active when `displayItem()` was called.
+     * @returns `true` if the zoom/magnification level or scroll position of the current item was
+     * changed since the last call of `displayItem()`, otherwise `false`.
+     */
+    protected lastDisplayStateChanged(): boolean {
+        return this.lastDisplayState.Zoom !== this.item.Zoom
+            || this.lastDisplayState.Scale !== this.item.Scale
+            || this.lastDisplayState.ScrollPos.x !== this.item.ScrollPos.x
+            || this.lastDisplayState.ScrollPos.y !== this.item.ScrollPos.y;
+    }
+
+    /**
      * Display an item
      * @param item The item to be displayed.
      */
     protected displayItem(item: IViewerItem): void {
+        this.lastDisplayState.Zoom = item.Zoom;
+        this.lastDisplayState.Scale = item.Scale;
+        this.lastDisplayState.ScrollPos.x = item.ScrollPos.x;
+        this.lastDisplayState.ScrollPos.y = item.ScrollPos.y;
         this.setZoomControlsVisibility(!item.LoadError);
         if (!item.Loaded && !item.Component) {
             item.Component = new Img(
@@ -1032,19 +1141,20 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             this.itemContainer.append(item.Throbber);
         }
         if (item.Loaded && !item.LoadError) {
+            [Zoom.FIT, Zoom.FITWIDTH, Zoom.FITHEIGHT].includes(item.Zoom) && this.calcScaleForZoomFit(item);
             this.updateZoomControls(this.item);
-            this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
+            this.scrollOffset(this.item.ScrollPos.x, this.item.ScrollPos.y);
         }
     }
 
     /**
-     * Updates the list of items based on new item URLs. An attempt is made to retain as many
-     * existing media files and their DOM objects as possible.
-     * @param itemURLs An array with the URLs of the new items to be used.
+     * Updates the list of items based on new items. An attempt is made to retain as many existing
+     * media files and their DOM objects as possible.
+     * @param items An array with new items to be used.
      * @returns This instance.
      */
-    protected replaceItemsWith(itemURLs: string[]): this {
-        if (itemURLs.length === 0) {
+    protected replaceItemsWith(items: (string | { URL: string; Zoom?: Zoom; Scale?: number; ScrollPos?: DOMPoint; })[]): this { // eslint-disable-line jsdoc/require-jsdoc
+        if (items.length === 0) {
             for (const item of this.items) {
                 item.Component?.Parent?.remove(item.Component);
                 item.Component?.dispose();
@@ -1055,11 +1165,25 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             return this;
         }
         const newItems: IViewerItem[] = [];
-        for (const url of itemURLs) {
-            const idx = this.items.findIndex(e => e.URL === url);
-            idx !== -1
-                ? newItems.push(this.items.splice(idx, 1)[0])
-                : newItems.push(this.getItem(url, this._options.Zoom));
+        for (const item of items) {
+            const idx = this.items.findIndex(e => e.URL === (typeof item === "string" ? item : item.URL));
+            // Update an existing item with settings from the given item. For the handling of `Zoom`
+            // and `Scale` see the documentation of `ViewerItem` and `getItem()`.
+            if ((idx !== -1) && (typeof item !== "string")) {
+                const existing = this.items[idx];
+                if (item.Zoom && item.Zoom !== Zoom.ZOTHER) {
+                    this.zoomItem(existing, item.Zoom);
+                } else if (item.Scale !== undefined) {
+                    existing.Zoom = Zoom.ZOTHER;
+                    this.scaleItem(existing, item.Scale);
+                }
+                existing.ScrollPos = item.ScrollPos ? DOMPoint.fromPoint(item.ScrollPos) : existing.ScrollPos;
+            }
+            newItems.push(
+                idx !== -1
+                    ? this.items.splice(idx, 1)[0]
+                    : this.getItem(item)
+            );
         }
         for (const item of this.items) {
             item.Component?.Parent?.remove(item.Component);
@@ -1091,7 +1215,17 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             if (item) {
                 item.Loaded = true;
                 if (item === this.item) {
-                    this.zoom(item.Zoom);
+                    if (item.Zoom === Zoom.ZOTHER) {
+                        this.scaleItem(item, item.Scale);
+                    } else {
+                        this.zoomItem(item, item.Zoom);
+                    }
+                    this.updateZoomControls(item);
+                    this.scrollOffset(item.ScrollPos.x, item.ScrollPos.y);
+                    this.lastDisplayState.Zoom = item.Zoom;
+                    this.lastDisplayState.Scale = item.Scale;
+                    this.lastDisplayState.ScrollPos.x = item.ScrollPos.x;
+                    this.lastDisplayState.ScrollPos.y = item.ScrollPos.y;
                 }
                 item.Component!.Hidden = false;
                 item.Throbber?.Parent?.remove(item.Throbber);
@@ -1165,10 +1299,10 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      */
     protected zoomItem(item: IViewerItem, zoom: Zoom): void {
         item.Zoom = zoom;
-        this.removeZoomClasses(item);
         if (!item.Component) {
             return;
         }
+        this.removeZoomClasses(item);
         item.Component.addClass(item.Zoom);
         switch (item.Zoom) {
             case Zoom.FIT:
@@ -1283,6 +1417,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         (ev instanceof MouseEvent || ev instanceof PointerEvent) && ev.target instanceof HTMLImageElement
             ? this.centerZoomToPointer(this.item, zoom, scale, newScale, ev)
             : this.centerOnZoomOrScale(this.item, zoom, scale);
+        this.emitZoomEvent();
     }
 
     /**
@@ -1342,6 +1477,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         (ev instanceof MouseEvent || ev instanceof PointerEvent) && ev.target instanceof HTMLImageElement
             ? this.centerZoomToPointer(this.item, zoom, scale, newScale, ev)
             : this.centerOnZoomOrScale(this.item, zoom, scale);
+        this.emitZoomEvent();
     }
 
     /**
@@ -1377,7 +1513,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             + ((prevScrollPos.x - Math.max(prevScrollRangeHalf.x, 0)) * scaleFactor);
         const newScrollPosY = ((ctrlDOM.offsetHeight - containerDOM.offsetHeight) / 2)
             + ((prevScrollPos.y - Math.max(prevScrollRangeHalf.y, 0)) * scaleFactor);
-        this.itemContainer.scroll(
+        this.scrollOffset(
             // `+0.5` gives more precision with repeated zoom actions(?).
             rtlN * (newScrollPosX) + (pointerOffset.x * scaleFactor) - pointerOffset.x + 0.5,
             newScrollPosY + (pointerOffset.y * scaleFactor) - pointerOffset.y + 0.5
@@ -1407,7 +1543,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             + ((prevScrollPos.x - Math.max(prevScrollRangeHalf.x, 0)) * scaleFactor);
         const newScrollPosY = ((ctrlDOM.offsetHeight - containerDOM.offsetHeight) / 2)
             + ((prevScrollPos.y - Math.max(prevScrollRangeHalf.y, 0)) * scaleFactor);
-        this.itemContainer.scroll(
+        this.scrollOffset(
             // `+0.5` gives more precision with repeated zoom actions(?).
             rtlN * (newScrollPosX + 0.5),
             newScrollPosY + 0.5
@@ -1472,9 +1608,9 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      */
     protected scaleItem(item: IViewerItem, scale: number): void {
         scale = Math.min(Math.max(0.01, scale), 4);
-        if (scale === item.Scale) {
-            return;
-        }
+        // if (scale === item.Scale) {
+        //     return;
+        // }
         switch (scale) {
             case 0.1:
                 this.zoomItem(item, Zoom.Z10);
@@ -1517,10 +1653,12 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                 break;
             default:
                 item.Zoom = Zoom.ZOTHER;
-                this.removeZoomClasses(item);
-                item.Component!.addClass(item.Zoom);
                 item.Scale = scale;
-                item.Component!.scale(item.Scale);
+                if (item.Component) {
+                    this.removeZoomClasses(item);
+                    item.Component.addClass(item.Zoom);
+                    item.Component.scale(item.Scale);
+                }
         }
     }
 
@@ -1543,6 +1681,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                 if (newScale >= 0.01) {
                     this.centerZoomToPointer(this.item, newScale, this.item.Scale, newScale, origin);
                 }
+                this.emitZoomEvent();
             }
         }
     }
@@ -1554,25 +1693,82 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     protected onItemContainerScroll(_ev: Event): AnyType {
         this.item.ScrollPos.x = this.itemContainer.ScrollOffset.X;
         this.item.ScrollPos.y = this.itemContainer.ScrollOffset.Y;
+        this.emitScrollEvent();
     }
 
     /**
-     * Create a new item based on a URL with a predefined zoom level.
-     * @param url The URL of the item
-     * @param zoom Initial predefined zoom level.
-     * @returns A new item based on `url`.
+     * Emits a `ViewerZoomEvent` if the zoom/magnification level of the current item has changed
+     * since the last call of `displayItem()`.
      */
-    protected getItem(url: string, zoom?: Zoom): IViewerItem {
+    protected emitZoomEvent(): void {
+        if (this.item.Loaded && !this.item.LoadError && this.lastDisplayStateChanged()) {
+            this.emit(new ViewerZoomEvent(this, this.Index, this.item.Zoom, this.item.Scale)); // eslint-disable-line jsdoc/require-jsdoc
+            // Force `lastDisplayStateChanged()` to return `true` until the next call of
+            // `displayItem()` by setting `Scale` to an invalid value.
+            this.lastDisplayState.Scale = -Infinity;
+        }
+    }
+
+    /**
+     * Emits a `ViewerScrollEvent` if the scroll position of the current item has changed since the
+     * last call of `displayItem()`.
+     */
+    protected emitScrollEvent(): void {
+        if (this.item.Loaded && !this.item.LoadError && this.lastDisplayStateChanged()) {
+            this.emit(new ViewerScrollEvent(this, this.Index, this.item.ScrollPos.x, this.item.ScrollPos.y)); // eslint-disable-line jsdoc/require-jsdoc
+            // Force `lastDisplayStateChanged()` to return `true` until the next call of
+            // `displayItem()` by setting `Scale` to an invalid value.
+            this.lastDisplayState.Scale = -Infinity;
+        }
+    }
+
+    /**
+     * Create a new complete `IViewerItem` based on a URL or a (partially) predefined item.
+     * @param from Either the URL of the item or a (partially) predefined item.
+     * @param from.URL The URL of the item
+     * @param from.Zoom The zoom level of the item.
+     * @param from.Scale The scale level of the item.
+     * @param from.ScrollPos The scroll position of the item.
+     * @returns A new complete `IViewerItem` based on `from`.
+     */
+    protected getItem(from: string | { URL: string; Zoom?: Zoom; Scale?: number; ScrollPos?: DOMPoint; }): IViewerItem { // eslint-disable-line jsdoc/require-jsdoc
+        let url: string;
+        let zoom: Zoom;
+        let scale: number;
+        let scrollPos: DOMPoint;
+        // If `Zoom` is set and not `ZOTHER` it always takes precedence over `Scale` so `Scale` is
+        // set to `0`. Otherwise an existing `Scale` value always sets `Zoom` to `ZOTHER`. If
+        // neither `Zoom` nor `Scale` is set, the default zoom level from the viewer options is
+        // used or, if that is not set, `Zoom.FIT`.
+        if (typeof from === "string") {
+            url = from;
+            zoom = this._options.Zoom || Zoom.FIT;
+            scale = 0;
+            scrollPos = new DOMPoint(0, 0);
+        } else {
+            url = from.URL;
+            if (from.Zoom && from.Zoom !== Zoom.ZOTHER) {
+                zoom = from.Zoom;
+                scale = 0;
+            } else if (from.Scale !== undefined) {
+                zoom = Zoom.ZOTHER;
+                scale = from.Scale;
+            } else {
+                zoom = this._options.Zoom || Zoom.FIT;
+                scale = 0;
+            }
+            scrollPos = from.ScrollPos ? DOMPoint.fromPoint(from.ScrollPos) : new DOMPoint(0, 0);
+        }
         return {
             /* eslint-disable jsdoc/require-jsdoc */
             URL: url,
+            Zoom: zoom,
+            Scale: scale,
+            ScrollPos: scrollPos,
             Component: undefined,
             Throbber: undefined,
-            Zoom: zoom ? zoom : Zoom.FIT,
-            Scale: 0,
-            ScrollPos: new DOMPoint(0, 0),
             Loaded: false,
-            LoadError: false,
+            LoadError: false
             /* eslint-enable */
         };
     }
@@ -1583,7 +1779,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @returns An item with a one pixel transparent GIF image.
      */
     protected getDummyItem(): IViewerItem {
-        const result = this.getItem(IMAGE_ONE_PIXEL_TRANSPARENT, Zoom.Z100);
+        const result = this.getItem({ URL: IMAGE_ONE_PIXEL_TRANSPARENT, Zoom: Zoom.Z100 }); // eslint-disable-line jsdoc/require-jsdoc
         result.Loaded = true;
         result.Component = new Img(IMAGE_ONE_PIXEL_TRANSPARENT, 1, 1, "Placeholder item for empty viewer", false);
         result.Component.Hidden = true;

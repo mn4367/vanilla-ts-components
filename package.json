@@ -3,7 +3,7 @@
   "description": "TypeScript Web UI Library -- Components",
   "companyname": "mn4367",
   "copyright": "©2025 mn4367",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "type": "module",
   "identifier": "mn4367.vanilla-ts.components",
   "keywords": [
@@ -27,13 +27,12 @@
   "bugs": {
     "url": "https://github.com/mn4367/vanilla-ts-components/issues"
   },
-  "private": "false",
   "license": "MIT",
   "main": "./lib/index.js",
   "types": "./types/index.d.ts",
   "dependencies": {
-    "@vanilla-ts/core": "file:../vanilla-ts-core",
-    "@vanilla-ts/dom": "file:../vanilla-ts-dom"
+    "@vanilla-ts/core": "0.0.1",
+    "@vanilla-ts/dom": "0.0.1"
   },
   "sideEffects": false,
   "devDependencies": {
@@ -59,6 +58,14 @@
     "compile:example": "tsc -p ./example/tsconfig.example.json",
     "pack:example": "rollup --silent -c ./build/rollup.config.example.mjs",
     "pack:example:compress": "rollup --silent -c ./build/rollup.config.example.mjs --environment COMPRESS",
+    "publish": "npm-run-all -s Clean compile:src && npm publish",
     "lint": "eslint -c ./eslintrc.json --parser-options=project:./tsconfig.json --ext .ts ."
-  }
+  },
+  "files": [
+    "build",
+    "lib",
+    "src",
+    "themes",
+    "types"
+  ]
 }
