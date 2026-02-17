@@ -564,7 +564,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                 ? this.ui.append(this.itemContainer)
                 : this.ui.append(this.itemContainer, this.toolBar);
         }
-        this.scrollOffset(this.item.ScrollPos.x, this.item.ScrollPos.y);
+        this.item.Loaded && this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
         this.zoomRange.vertical((this._options.ToolbarPosition === ToolbarPosition.START) || (this._options.ToolbarPosition === ToolbarPosition.END));
         return this;
     }
@@ -1072,7 +1072,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                     ? this.ui.append(this.itemContainer)
                     : this.ui.append(this.itemContainer, this.toolBar);
             }
-            this.scrollOffset(this.item.ScrollPos.x, this.item.ScrollPos.y);
+            this.item.Loaded && this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
         }
     }
 
@@ -1691,9 +1691,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param _ev The pointer event.
      */
     protected onItemContainerScroll(_ev: Event): AnyType {
-        this.item.ScrollPos.x = this.itemContainer.ScrollOffset.X;
-        this.item.ScrollPos.y = this.itemContainer.ScrollOffset.Y;
-        this.emitScrollEvent();
+        if (this.item.Loaded) {
+            this.item.ScrollPos.x = this.itemContainer.ScrollOffset.X;
+            this.item.ScrollPos.y = this.itemContainer.ScrollOffset.Y;
+            this.emitScrollEvent();
+        }
     }
 
     /**
