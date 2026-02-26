@@ -221,7 +221,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
  * Abstract `LabeledComponentWithSpan` class. This class allows to implement components that use a
  * `Span` component for its label.
  */
-export abstract class LabeledComponentWithSpan<C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, C, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export abstract class LabeledComponentWithSpan<C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, C, EventMap> {
     /**
      * Create LabeledComponentWithSpan component.
      * @param component The inner component of the labeled component.
@@ -251,7 +251,7 @@ export abstract class LabeledComponentWithSpan<C extends IElementComponent<HTMLE
  * Abstract `LabeledComponentWithLabel` class. This class allows to implement components that use a
  * `Label` component for its label.
  */
-export abstract class LabeledComponentWithLabel<C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Label, C, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export abstract class LabeledComponentWithLabel<C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Label, C, EventMap> {
     /**
      * Create LabeledComponentWithLabel component.
      * @param component The inner component of the labeled component.
@@ -384,7 +384,7 @@ export abstract class LabeledInputComponent<I extends Input, EventMap extends HT
  * other components in a container which itself is decorated with a label. Examples can be found in
  * {@link LabeledContainer} and {@link LabeledRadioButtonGroup}.
  */
-export abstract class LabeledComponentGroup<C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, C, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export abstract class LabeledComponentGroup<C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, C, EventMap> {
     /**
      * Create LabeledComponentGroup component.
      * @param labelPhrase The phrasing content for the label.

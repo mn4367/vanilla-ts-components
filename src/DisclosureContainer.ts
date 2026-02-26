@@ -97,8 +97,8 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      *  Default: `false`.
      */
     constructor(
-        header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null,
-        content?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null,
+        header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null,
+        content?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null,
         disclosedBtnOptions: IconButtonOptions = { Caption: ["-"] }, // eslint-disable-line jsdoc/require-jsdoc
         undisclosedBtnOptions: IconButtonOptions = { Caption: ["+"] }, // eslint-disable-line jsdoc/require-jsdoc
         disclosed: boolean = true,
@@ -216,7 +216,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      * @param extractTo An array, that, if given, will receive the former header component(s).
      * @returns This instance.
      */
-    public header(header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null, extractTo?: INodeComponent<Node>[]): this {
+    public header(header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null, extractTo?: INodeComponent<Node>[]): this {
         extractTo
             ? this.headerContent.extract(extractTo)
             : this.headerContent.clear();
@@ -250,7 +250,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      */
     public disclosed(disclosed: boolean): this {
         if (disclosed !== this._disclosed) {
-            if (!this.dispatch(new DiscloseEvent(this, disclosed))) { // eslint-disable-line jsdoc/require-jsdoc
+            if (!this.dispatch(new DiscloseEvent(this, disclosed))) {
                 return this;
             }
             this._disclosed = disclosed;
@@ -260,17 +260,13 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
                     .removeClass("undisclosed")
                     .addClass("disclosed");
                 this.disclosureButton.options(this.disclosedBtnOptions);
-                this._weakUndisclosed
-                    ? undefined
-                    : this.ui.append(this.contentContainer);
+                this._weakUndisclosed || this.ui.append(this.contentContainer);
             } else {
                 this
                     .removeClass("disclosed")
                     .addClass("undisclosed");
                 this.disclosureButton.options(this.undisclosedBtnOptions);
-                this._weakUndisclosed
-                    ? undefined
-                    : this.ui.remove(this.contentContainer);
+                this._weakUndisclosed || this.ui.remove(this.contentContainer);
             }
         }
         return this;
@@ -576,8 +572,8 @@ export class DisclosureContainerFactory<T> extends ComponentFactory<DisclosureCo
      * @returns DisclosureContainer component.
      */
     public disclosureContainer(
-        header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null,
-        content?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | undefined | null,
+        header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null,
+        content?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null,
         disclosedBtnOptions: IconButtonOptions = { Caption: ["-"] }, // eslint-disable-line jsdoc/require-jsdoc
         undisclosedBtnOptions: IconButtonOptions = { Caption: ["+"] }, // eslint-disable-line jsdoc/require-jsdoc
         disclosed: boolean = true,

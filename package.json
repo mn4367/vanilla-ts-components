@@ -60,6 +60,6 @@
     "compile:example": "tsc -p ./example/tsconfig.example.json",
     "pack:example": "rollup --silent -c ./build/rollup.config.example.mjs",
     "pack:example:compress": "rollup --silent -c ./build/rollup.config.example.mjs --environment COMPRESS",
-    "lint": "eslint -c ./eslintrc.json --parser-options=project:./tsconfig.json --ext .ts ."
+    "lint": "eslint -c ./eslint.config.mjs"
   }
 }

@@ -402,7 +402,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
             this.#hBarOverlay.style.insetInlineStart = this.#hBarStartOffset + this.#hBarReduceWidth + "px";
             hasHOff = w >= sw;
             hasHOff ? this.#_dom_.classList.add("h-off") : this.#_dom_.classList.remove("h-off");
-            hasHOff ? this.#vBarOverlay.style.height = "" : undefined;
+            hasHOff && (this.#vBarOverlay.style.height = "");
             this.#hBarThumb.style.width = w < sw ? (w / sw * 100) + "%" : "100%";
         } else {
             this.#hBarOverlay.style.display = "none";
@@ -415,7 +415,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
             this.#vBarOverlay.style.insetBlockStart = this.#vBarStartOffset + this.#vBarReduceHeight + "px";
             hasVOff = h >= sh;
             hasVOff ? this.#_dom_.classList.add("v-off") : this.#_dom_.classList.remove("v-off");
-            hasVOff ? this.#hBarOverlay.style.width = "" : undefined;
+            hasVOff && (this.#hBarOverlay.style.width = "");
             this.#vBarThumb.style.height = h < sh ? (h / sh * 100) + "%" : "100%";
         } else {
             this.#vBarOverlay.style.display = "none";
@@ -439,9 +439,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
         this.#hBarScrollRange = this.#hBar.offsetWidth - this.#hBarThumb.offsetWidth;
         this.#vScrollRange = this.#scrollable.scrollHeight - this.#scrollable.offsetHeight;
         this.#vBarScrollRange = this.#vBar.offsetHeight - this.#vBarThumb.offsetHeight;
-        repositionScrollBars
-            ? this.#repositionScrollBars()
-            : undefined;
+        repositionScrollBars && this.#repositionScrollBars();
     }
 
     /**
@@ -828,14 +826,10 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
         this.#mutationObserver = new MutationObserver(records => {
             for (const record of records) {
                 for (const node of record.removedNodes) {
-                    node instanceof Element
-                        ? this.#resizeObserver.unobserve(node)
-                        : undefined;
+                    node instanceof Element && this.#resizeObserver.unobserve(node);
                 }
                 for (const node of record.addedNodes) {
-                    node instanceof Element
-                        ? this.#resizeObserver.observe(node)
-                        : undefined;
+                    node instanceof Element && this.#resizeObserver.observe(node);
                 }
             }
             // console.log("mutate");
@@ -863,9 +857,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
                     this.#vBarReduceHeight = ref.offsetHeight;
                     syncScrollBarGeometry = true;
                 }
-                syncScrollBarGeometry
-                    ? this.#syncScrollBarGeometry()
-                    : undefined;
+                syncScrollBarGeometry && this.#syncScrollBarGeometry();
             }
         });
         // Mount inner components.

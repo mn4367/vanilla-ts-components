@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, ComponentFactory, mixinDOMProperties, NameAttr, NullableString, Phrase, Phrases, ValueAttr } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, ComponentFactory, IElementWithChildrenComponent, mixinDOMProperties, NameAttr, NullableString, Phrase, Phrases, ValueAttr } from "@vanilla-ts/core";
 import { Button, Span } from "@vanilla-ts/dom";
 
 
@@ -72,7 +72,7 @@ export type IconButtonOptions = {
  * @see {@link IconButtonOptions}
  */
 export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Button, EventMap> {
-    protected _options: IconButtonOptions = {}; // eslint-disable-line jsdoc/require-jsdoc
+    protected _options: IconButtonOptions = {};
     protected btnPhrase: Span;
     protected spanStart: Span;
     protected spanEnd: Span;
@@ -157,14 +157,14 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
 
     /**
      * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Phrase}
+     * @see {@link IElementWithChildrenComponent.Phrase}
      */
     public get Phrase(): never {
         throw new Error("'Phrase' is a writeonly property.");
     }
     /**
      * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Phrase}
+     * @see {@link IElementWithChildrenComponent.Phrase}
      */
     public set Phrase(phrase: Phrase | Phrases) {
         this.btnPhrase.Phrase = phrase;
@@ -172,7 +172,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
 
     /**
      * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.phrase()}
+     * @see {@link IElementWithChildrenComponent.phrase()}
      */
     public phrase(...phrase: Phrases): this {
         this.btnPhrase.phrase(...phrase);
@@ -181,14 +181,14 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
 
     /**
      * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Rephrase}
+     * @see {@link IElementWithChildrenComponent.Rephrase}
      */
     public get Rephrase(): never {
         throw new Error("'Rephrase' is a writeonly property.");
     }
     /**
      * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.Rephrase}
+     * @see {@link IElementWithChildrenComponent.Rephrase}
      */
     public set Rephrase(phrase: Phrase | Phrases) {
         this.btnPhrase.Rephrase = phrase;
@@ -196,7 +196,7 @@ export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventM
 
     /**
      * @inheritdoc
-     * @see {@link @vanilla-ts/core/Interfaces.ts/IElementWithChildrenComponent.rephrase()}
+     * @see {@link IElementWithChildrenComponent.rephrase()}
      */
     public rephrase(...phrase: Phrases): this {
         this.btnPhrase.rephrase(...phrase);

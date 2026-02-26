@@ -631,9 +631,7 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
                 top: null
                 /* eslint-enable */
             });
-        this.lastFocusedElement instanceof HTMLElement
-            ? this.lastFocusedElement.focus()
-            : undefined;
+        this.lastFocusedElement instanceof HTMLElement && this.lastFocusedElement.focus();
         return this;
     }
 

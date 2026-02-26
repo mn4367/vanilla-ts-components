@@ -294,7 +294,7 @@ export class DialogMoveStartEvent extends ACustomComponentEvent<"dlg-move-start"
      * @param customEventInitDict Optional event properties.
      */
     constructor(sender: Dialog, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
-        super("dlg-move-start", sender, undefined, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+        super("dlg-move-start", sender, undefined, customEventInitDict);
     }
 }
 
@@ -724,7 +724,8 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      *   itself is focused).\
      *   `null` can be useful for creating toolbars/palettes/overlays, etc. that do not destroy the
      *   current focus state when displayed.
-     * @throws `InvalidStateError` (if the dialog is already open and modal).
+     * @throws {DOMException} `DOMException.InvalidStateError` (if the dialog is already open and
+     * modal).
      * @returns This instance.
      */
     public show(focus?: IElementComponent<HTMLElement> | null): this {
@@ -737,7 +738,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      * Forcibly displays the dialog (non-modal) and adds the class name `non-modal` to the dialog.
      * `dlg-show` event handlers _are not called_ and thus _cannot_ prevent showing the dialog.
      * @param focus see {@link show()}
-     * @throws see {@link show()}
+     * @throws {DOMException} `DOMException.InvalidStateError` (see {@link show()}).
      * @returns This instance.
      */
     public forceShow(focus?: IElementComponent<HTMLElement> | null): this {
@@ -756,7 +757,8 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      *   focused. Subsequent calls to `show()` or `show(undefined)` try to focus the element that
      *   was active _immediately before the dialog was closed_ (if the dialog contains it, otherwise
      *   the dialog itself is focused).
-     * @throws `InvalidStateError` (if the dialog is already open and non-modal).
+     * @throws {DOMException} `DOMException.InvalidStateError` (if the dialog is already open and
+     * non-modal).
      * @returns This instance.
      */
     public async showModal(focus?: IElementComponent<HTMLElement>): Promise<this> {
@@ -771,7 +773,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      * added to the dialog. `dlg-show` event handlers  _are not called_ and thus _cannot_ prevent
      * showing the dialog.
      * @param focus see {@link showModal()}
-     * @throws see {@link showModal()}
+     * @throws {DOMException} `DOMException.InvalidStateError` (see {@link showModal()}).
      * @returns This instance.
      */
     public async forceShowModal(focus?: IElementComponent<HTMLElement>): Promise<this> {
@@ -787,7 +789,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
         this.closedRegularly = true;
         this.Parent
             ? this.rsObserver.unobserve(this.Parent.DOM)
-            : window.removeEventListener("resize", this.fncOnResize); // eslint-disable-line jsdoc/require-jsdoc
+            : window.removeEventListener("resize", this.fncOnResize);
         const lastActive = document.activeElement;
         this.lastActiveElement = (lastActive instanceof HTMLElement && this.DOM.contains(lastActive)) ? lastActive : undefined;
         this.ui.close(returnValue);
@@ -818,7 +820,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     /**
      * See {@link show()} and {@link forceShow()}.
      * @param focus see {@link show()}
-     * @throws see {@link show()}
+     * @throws {DOMException} `DOMException.InvalidStateError` (see {@link show()}).
      * @returns This instance.
      */
     protected doShow(focus?: IElementComponent<HTMLElement> | null): this {
@@ -834,7 +836,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
         this.placeDlg(this.getPosition());
         this.Parent
             ? this.rsObserver.observe(this.Parent.DOM)
-            : window.addEventListener("resize", this.fncOnResize); // eslint-disable-line jsdoc/require-jsdoc
+            : window.addEventListener("resize", this.fncOnResize);
         this.removeClass("--calc-size");
         (
             focus === null && lastActive && lastActive instanceof HTMLElement
@@ -852,7 +854,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     /**
      * See {@link showModal()} and {@link forceShowModal()}.
      * @param focus see {@link showModal()}
-     * @throws see {@link showModal()}
+     * @throws {DOMException} `DOMException.InvalidStateError` (see {@link showModal()}).
      * @returns This instance.
      */
     protected async doShowModal(focus?: IElementComponent<HTMLElement>): Promise<this> {
@@ -873,7 +875,7 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
         this.placeDlg(this.getPosition());
         this.Parent
             ? this.rsObserver.observe(this.Parent.DOM)
-            : window.addEventListener("resize", this.fncOnResize); // eslint-disable-line jsdoc/require-jsdoc
+            : window.addEventListener("resize", this.fncOnResize);
         this.removeClass("--calc-size");
         (
             focus === undefined && this.lastActiveElement

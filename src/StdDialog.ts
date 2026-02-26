@@ -329,9 +329,9 @@ export class StdDialog {
         this.checkDisposed();
         this.disposed = true;
         this.dlg.dispose();
-        // @ts-ignore
+        // @ts-expect-error ---
         this.dlg = undefined;
-        // @ts-ignore
+        // @ts-expect-error ---
         this.options = undefined;
         this.buttons.clear();
     }

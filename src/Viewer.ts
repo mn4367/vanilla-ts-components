@@ -280,7 +280,7 @@ interface IViewerItem {
 }
 
 /** Public properties of an item. */
-export interface ViewerItem extends Readonly<Omit<IViewerItem, "Component" | "Throbber">> { }
+export interface ViewerItem extends Readonly<Omit<IViewerItem, "Component" | "Throbber">> { } // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 /** Custom 'viewer-step' event for viewers. */
 export class ViewerStepEvent extends ACustomComponentEvent<"viewer-step", Viewer, {
@@ -1704,7 +1704,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      */
     protected emitZoomEvent(): void {
         if (this.item.Loaded && !this.item.LoadError && this.lastDisplayStateChanged()) {
-            this.emit(new ViewerZoomEvent(this, this.Index, this.item.Zoom, this.item.Scale)); // eslint-disable-line jsdoc/require-jsdoc
+            this.emit(new ViewerZoomEvent(this, this.Index, this.item.Zoom, this.item.Scale));
             // Force `lastDisplayStateChanged()` to return `true` until the next call of
             // `displayItem()` by setting `Scale` to an invalid value.
             this.lastDisplayState.Scale = -Infinity;
@@ -1717,7 +1717,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      */
     protected emitScrollEvent(): void {
         if (this.item.Loaded && !this.item.LoadError && this.lastDisplayStateChanged()) {
-            this.emit(new ViewerScrollEvent(this, this.Index, this.item.ScrollPos.x, this.item.ScrollPos.y)); // eslint-disable-line jsdoc/require-jsdoc
+            this.emit(new ViewerScrollEvent(this, this.Index, this.item.ScrollPos.x, this.item.ScrollPos.y));
             // Force `lastDisplayStateChanged()` to return `true` until the next call of
             // `displayItem()` by setting `Scale` to an invalid value.
             this.lastDisplayState.Scale = -Infinity;
@@ -1887,7 +1887,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             );
         this.itemIndex = new Span()
             .addClass("item-index")
-            .phrase(`0/0`);
+            .phrase("0/0");
         this.zoomLevel = new Span()
             .addClass("zoom-level");
         this.zoomRange = new RangeInput(undefined, "0.5", undefined, "0.0025", "1", "0.0025")

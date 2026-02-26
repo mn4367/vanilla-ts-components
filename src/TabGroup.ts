@@ -170,9 +170,7 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
             }
         }
         this.activeTab = tab;
-        makeVisisble
-            ? tab.DOM.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" }) // eslint-disable-line jsdoc/require-jsdoc
-            : undefined;
+        makeVisisble && tab.DOM.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" }); // eslint-disable-line jsdoc/require-jsdoc
         this.tabContent.remove();
         this.tabContent.append(tab.Content);
         this.emit(new TabEvent(this, tab, true));
@@ -334,9 +332,7 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
         this.emit(new TabCloseEvent(this, tab));
         this.remove(tab);
         tab.dispose();
-        wasActive
-            ? this.active(this.tabs[index] ?? this.tabs.at(-1))
-            : undefined;
+        wasActive && (this.active(this.tabs[index] ?? this.tabs.at(-1)));
         return true;
     }
 
@@ -370,9 +366,7 @@ export class TabGroup<EventMap extends TabGroupEventMap = TabGroupEventMap> exte
         const wasEmpty = this.tabs.length === 0;
         this.tabHeadersContainer.append(...newTabs);
         this.syncTabs();
-        wasEmpty
-            ? this.active(firstTab, true)
-            : undefined;
+        wasEmpty && this.active(firstTab, true);
         return this;
     }
 

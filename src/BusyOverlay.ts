@@ -10,7 +10,7 @@ export class BusyOverlayBusyEvent extends ACustomComponentEvent<"busy", BusyOver
      * @param customEventInitDict Optional event properties.
      */
     constructor(sender: BusyOverlay, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
-        super("busy", sender, undefined, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+        super("busy", sender, undefined, customEventInitDict);
     }
 }
 

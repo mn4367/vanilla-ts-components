@@ -835,7 +835,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             return;
         }
         this.handle.DOM.releasePointerCapture(ev.pointerId);
-        this.handle.off("pointermove", this.fncOnPointerMove, this.listenerOptions); // eslint-disable-line jsdoc/require-jsdoc
+        this.handle.off("pointermove", this.fncOnPointerMove, this.listenerOptions);
         this.onResizeEnd();
     }
 

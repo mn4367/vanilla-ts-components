@@ -29,15 +29,11 @@
             "lang*.json": "jsonc",
             "package.json": "json"
         },
-        "eslint.options": {
-            "overrideConfigFile": "./eslintrc.json"
-        },
         "-eslint.format.enable": true,
         "eslint.validate": [
             "typescript"
         ],
         "eslint.alwaysShowStatus": true,
-        "eslint.nodePath": ".",
     },
     "extensions": {
         "recommendations": [
