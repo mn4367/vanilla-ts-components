@@ -38,10 +38,10 @@
   "sideEffects": false,
   "devDependencies": {
     "@rollup/plugin-node-resolve": "16.0.3",
-    "@rollup/plugin-terser": "0.4.4",
+    "@rollup/plugin-terser": "1.0.0",
     "eslint-plugin-jsdoc": "62.7.1",
-    "eslint": "10.0.2",
-    "globals": "17.3.0",
+    "eslint": "10.0.3",
+    "globals": "17.4.0",
     "npm-run-all2": "8.0.4",
     "onchange": "7.1.0",
     "rollup": "4.59.0",
