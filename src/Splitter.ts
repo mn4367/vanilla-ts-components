@@ -87,6 +87,18 @@ export type SplitterOptions = {
      */
     readonly Collapsed?: SplitterCollapsedState;
     /**
+     * The size of the logical start area when collapsed (as a numeric CSS length). __Note:__ A
+     * value of `0` will automatically be set to `0px`.\
+     * Default: `0px`.
+     */
+    readonly CollapsedStartSize?: string;
+    /**
+     * The size of the logical end area when collapsed (as a numeric CSS length). __Note:__ A value
+     * of `0` will automatically be set to `0px`.\
+     * Default: `0px`.
+     */
+    readonly CollapsedEndSize?: string;
+    /**
      * Alignment of the splitter areas (`true` for horizontal, `false` for vertical). If the
      * alignment is changed during runtime, the splitter attempts to maintain the relative sizes of
      * the inner splitter parts in relation to the splitter size itself.\
@@ -184,6 +196,13 @@ export class SplitterAreaResizeEvent extends ACustomComponentEvent<"splitter-are
      * constraints for the minimum sizes given through the options.
      */
     Size: number;
+    /**
+     * The desired size of the active area in pixels. This size is the size that would be set _if
+     * there were no constraints_ for the minimum sizes given through the options. The difference
+     * between `Size` and `DesiredSize` can be used to implement, for example, a 'snap' effect when
+     * the pointer is moved a certain amount beyond the minimum size.
+     */
+    DesiredSize: number;
 }> {
     /**
      * Create SplitterAreaResizeEvent event. Event handlers can prevent changing the size by calling
@@ -191,10 +210,14 @@ export class SplitterAreaResizeEvent extends ACustomComponentEvent<"splitter-are
      * @param sender The event emitter (always `Splitter`).
      * @param size The new size of the active area in pixels. This size is the actual size after
      * applying the constraints for the minimum sizes given through the options.
+     * @param desiredSize The desired size of the active area in pixels. This size is the size that
+     * would be set _if there were no constraints_ for the minimum sizes given through the options.
+     * The difference between `Size` and `DesiredSize` can be used to implement, for example, a
+     * 'snap' effect when the pointer is moved a certain amount beyond the minimum size.
      * @param customEventInitDict Optional event properties.
      */
-    constructor(sender: Splitter, size: number, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
-        super("splitter-area-resize", sender, { Size: size }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+    constructor(sender: Splitter, size: number, desiredSize: number, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
+        super("splitter-area-resize", sender, { Size: size, DesiredSize: desiredSize }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
     }
 }
 
@@ -402,6 +425,10 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
         const prevOptions = { ...this._options };
         this._options.State = options.State ?? this._options.State ?? SplitterState.ACTIVE;
         this._options.Collapsed = options.Collapsed ?? this._options.Collapsed ?? SplitterCollapsedState.NONE;
+        this._options.CollapsedStartSize = (options.CollapsedStartSize ?? this._options.CollapsedStartSize ?? "0px").trim();
+        ["0", ""].includes(this._options.CollapsedStartSize) && (this._options.CollapsedStartSize = "0px");
+        this._options.CollapsedEndSize = (options.CollapsedEndSize ?? this._options.CollapsedEndSize ?? "0px").trim();
+        ["0", ""].includes(this._options.CollapsedEndSize) && (this._options.CollapsedEndSize = "0px");
         this._options.Horizontal = options.Horizontal ?? this._options.Horizontal ?? true;
         this._options.ActiveArea = options.ActiveArea ?? this._options.ActiveArea ?? SplitterActiveArea.START;
         this._options.ActiveAreaSize = (options.ActiveAreaSize ?? this._options.ActiveAreaSize ?? "50%").trim();
@@ -426,6 +453,8 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
         if (prevOptions.Collapsed !== this._options.Collapsed) {
             this.setCollapsed();
         }
+        this.ui.DOM.style.setProperty("--splitter-collapsed-start-size", this._options.CollapsedStartSize);
+        this.ui.DOM.style.setProperty("--splitter-collapsed-end-size", this._options.CollapsedEndSize);
         return this;
     }
 
@@ -705,16 +734,20 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
                 "start-collapsing",
                 "start-uncollapsing",
                 "start-collapsed",
+                "start-collapsed0",
                 "end-collapsing",
                 "end-uncollapsing",
-                "end-collapsed"
+                "end-collapsed",
+                "end-collapsed0"
             );
         // Skip animations, if the splitter only switches between collapsed states.
         if (this._options.Collapsed !== SplitterCollapsedState.NONE && (isStartCollapsed || isEndCollapsed)) {
             this.addClass(
                 isStartCollapsed
                     ? "end-collapsed"
-                    : "start-collapsed"
+                    : "start-collapsed",
+                isStartCollapsed && this.isCSSRulePropZero(this._options.CollapsedEndSize) ? "end-collapsed0" : null,
+                isEndCollapsed && this.isCSSRulePropZero(this._options.CollapsedStartSize) ? "start-collapsed0" : null,
             );
             this._initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed!));
         } else if (this._options.Collapsed === SplitterCollapsedState.NONE) {
@@ -739,11 +772,15 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
                         : "end-collapsing"
                 );
             } else {
-                this.addClass(
-                    this._options.Collapsed === SplitterCollapsedState.START
-                        ? "start-collapsed"
-                        : "end-collapsed"
-                );
+                this._options.Collapsed === SplitterCollapsedState.START
+                    ? this.addClass(
+                        "start-collapsed",
+                        this.isCSSRulePropZero(this._options.CollapsedStartSize) ? "start-collapsed0" : null,
+                    )
+                    : this.addClass(
+                        "end-collapsed",
+                        this.isCSSRulePropZero(this._options.CollapsedEndSize) ? "end-collapsed0" : null,
+                    );
                 this._initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed!));
             }
         }
@@ -880,13 +917,15 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             ? f1 * (ev.clientX - this.resizeStart.X)
             : f1 * (ev.clientY - this.resizeStart.Y);
         const newSize = Math.max(minSize, Math.min((this.resizeAreaSize + f2 * dist), this._dom[this.clientSizeProp] - this.handle.DOM[this.clientSizeProp] - oppositeMinSize));
-        if (this.dispatch(new SplitterAreaResizeEvent(this, newSize))) {
+        if (this.dispatch(new SplitterAreaResizeEvent(this, newSize, this.resizeAreaSize + (this.isRTL ? -dist : dist)))) {
             this.activeArea.style(
                 this.sizeProp,
                 this.activeAreaFixed
                     ? newSize + "px"
                     : newSize / this._dom[this.clientSizeProp] * 100 + "%"
             );
+        } else {
+            this.onResizeEnd();
         }
     }
 
@@ -915,11 +954,11 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
         ) {
             return;
         }
-        this.removeClass("start-collapsed", "start-collapsing", "start-uncollapsing", "end-collapsed", "end-collapsing", "end-uncollapsing");
+        this.removeClass("start-collapsed", "start-collapsed0", "start-collapsing", "start-uncollapsing", "end-collapsed", "end-collapsed0", "end-collapsing", "end-uncollapsing");
         if (this._options.Collapsed === SplitterCollapsedState.START) {
-            this.addClass("start-collapsed");
+            this.addClass("start-collapsed", this.isCSSRulePropZero(this._options.CollapsedStartSize) ? "start-collapsed0" : null);
         } else if (this._options.Collapsed === SplitterCollapsedState.END) {
-            this.addClass("end-collapsed");
+            this.addClass("end-collapsed", this.isCSSRulePropZero(this._options.CollapsedEndSize) ? "end-collapsed0" : null);
         }
         this.updateGeometry();
         this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed!));
@@ -931,6 +970,16 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      */
     protected isVisible(): boolean {
         return this.DOM.checkVisibility();
+    }
+
+    /**
+     * Checks, if the given CSS rule property is zero. This is true, if the rule without the unit is
+     * `0` or if the rule is explicitly set to `0`.
+     * @param prop The CSS rule property to be checked, e.g. `CollapsedEndSize`, `StartMinSize` etc.
+     * @returns `true`, if the CSS rule property is zero, otherwise `false`.
+     */
+    protected isCSSRulePropZero(prop?: string): boolean {
+        return (prop ?? "").trim().replace(/[a-z%]+$/i, "") === "0";
     }
 
     /**
