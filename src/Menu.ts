@@ -536,7 +536,7 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
      *   menu!
      */
     public get Items(): MenuEntry[] {
-        return <MenuEntry[]>this.ui.Children;
+        return <MenuEntry[]><unknown>this.ui.Children;
     }
     /** @inheritdoc */
     public set Items(v: MenuEntry[]) {
@@ -552,7 +552,7 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
      */
     public items(...items: MenuEntry[]): this {
         this.ui.clear();
-        this.ui.append(...items);
+        this.ui.append(...<LiUl[]><unknown>items);
         this.setFocusableItems();
         return this;
     }
@@ -665,7 +665,7 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         this.focusableItems.length = 0;
         for (const item of this.ui.Children) {
             if (item instanceof MenuItem && !item.Disabled /* !! */) {
-                this.focusableItems.push(item); // eslint-disable-line @typescript-eslint/no-unsafe-argument
+                this.focusableItems.push(item);
             }
         }
     }

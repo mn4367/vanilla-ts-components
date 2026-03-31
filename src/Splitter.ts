@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, CSSPropertyNames, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, getClientRect, getDebouncedFnc, IElementWithChildrenComponent, INodeComponent } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, CSSPropertyNames, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, FlowContents, getClientRect, getDebouncedFnc, IElementWithChildrenComponent } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 
 
@@ -356,10 +356,12 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
     /**
      * Create Splitter component.
      * @param options The options for the splitter.
-     * @param startContent An array of components to be added to the start area of the splitter.
-     * @param endContent An array of components to be added to the end area of the splitter.
+     * @param startContent The content (components or strings) to be added to the start area of the
+     * splitter.
+     * @param endContent The content (components or strings) to be added to the end area of the
+     * splitter.
      */
-    constructor(options: SplitterOptions = {}, startContent: INodeComponent<Node>[] = [], endContent: INodeComponent<Node>[] = []) {
+    constructor(options: SplitterOptions = {}, startContent: FlowContents = [], endContent: FlowContents = []) {
         super();
         super
             .initialize(undefined, startContent, endContent)
@@ -937,7 +939,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      * @param endContent An array of components to be added to the end area of the splitter.
      * @returns This instance.
      */
-    protected buildUI(startContent: INodeComponent<Node>[], endContent: INodeComponent<Node>[]) {
+    protected buildUI(startContent: FlowContents, endContent: FlowContents) {
         this.tmpCSSClass = "r" + Math.floor(Math.random() * 1000000);
         this.tmpCSSStyleSheet = new CSSStyleSheet();
         this.tmpCSSStyleSheet.insertRule(`.${this.tmpCSSClass} {visibility: hidden !important;}`);
@@ -1031,12 +1033,14 @@ export class SplitterFactory<T> extends ComponentFactory<Splitter> {
     /**
      * Create, set up and return Splitter component.
      * @param options The options for the splitter.
-     * @param startContent An array of components to be added to the start area of the splitter.
-     * @param endContent An array of components to be added to the end area of the splitter.
+     * @param startContent The content (components or strings) to be added to the start area of the
+     * splitter.
+     * @param endContent The content (components or strings) to be added to the end area of the
+     * splitter.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns Splitter component.
      */
-    public splitter(options: SplitterOptions = {}, startContent: INodeComponent<Node>[] = [], endContent: INodeComponent<Node>[] = [], data?: T): Splitter {
+    public splitter(options: SplitterOptions = {}, startContent: FlowContents = [], endContent: FlowContents = [], data?: T): Splitter {
         return this.setupComponent(new Splitter(options, startContent, endContent), data);
     }
 }

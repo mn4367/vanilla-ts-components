@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, getProp, IElementComponent, INodeComponent, mixin, tabKeyFocusCycle } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, FlowContent, getProp, IChildrenMixin, IElementComponent, mixin, tabKeyFocusCycle } from "@vanilla-ts/core";
 import { Div, Dialog as DOMDialog } from "@vanilla-ts/dom";
 
 
@@ -466,7 +466,7 @@ export const DLG_CANCELLED = "__DLG_CANCELLED__";
 /**
  * Dialog component for displaying modal and non-modal dialogs.
  */
-export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AElementComponentWithInternalUI<DOMDialog, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export class Dialog<Child extends FlowContent = FlowContent, EventMap extends DialogEventMap = DialogEventMap> extends AElementComponentWithInternalUI<DOMDialog, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     protected static nonModals: Array<Dialog> = [];
     protected static modals: Array<Dialog> = [];
     protected static baseZIndex: number;
@@ -520,19 +520,19 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
      * If an instance of `Dialog` is not mounted in another component, it is automatically added to
      * `document.body` as a child element in `show()`/`showModal()` and removed again in `close()`.
      * @param options Options for the dialog.
-     * @param components The initial components that make up the content of this dialog.\
+     * @param children The initial components that make up the content of this dialog.\
      * __Important note:__ If a dialog is disposed of (using `dispose()`), _all_ components given
      * in the constructor that are still children of this dialog (`Dialog` implements `IChildren`)
      * are also disposed of! If these components are to be used elsewhere after the dialog has been
      * disposed of, they must be extracted or removed using `dlg.extract(...)` or `dlg.remove()`
      * before the dialog is disposed of!
      */
-    constructor(options?: DialogOptions, ...components: INodeComponent<Node>[]) {
+    constructor(options?: DialogOptions, ...children: Child[]) {
         super();
         super
             .initialize()
             .options(options ?? {})
-            .append(...components);
+            .append(...children);
     }
 
     /**
@@ -1367,14 +1367,13 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
     }
 
     /** @inheritdoc */
-    protected override clearOwner(): this {
+    protected override clearOwner(): void {
         for (const resizer of this.resizers) {
             resizer.remove();
             resizer.removeEventListener("pointerdown", this.fncOnResizerPointerDown);
             resizer.removeEventListener("pointerup", this.fncOnResizerPointerUp);
         }
         super.clearOwner();
-        return this;
     }
 
     /**
@@ -1429,12 +1428,12 @@ export class Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AE
 }
 
 // Augment class definition with `IChildren` (see `static`).
-export interface Dialog<EventMap extends DialogEventMap = DialogEventMap> extends AElementComponentWithInternalUI<DOMDialog, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
+export interface Dialog<Child extends FlowContent = FlowContent> extends IChildrenMixin<Child> { } // eslint-disable-line jsdoc/require-jsdoc,@typescript-eslint/no-empty-object-type
 
 /**
  * Factory for `Dialog` components.
  */
-export class DialogFactory<T> extends ComponentFactory<Dialog> {
+export class DialogFactory<Child extends FlowContent = FlowContent, T = unknown> extends ComponentFactory<Dialog<Child>> {
     /**
      * Create dialog component.\
      * __Note:__ In contrast to the vast majority of other components, instances of `Dialog` usually
@@ -1447,7 +1446,7 @@ export class DialogFactory<T> extends ComponentFactory<Dialog> {
      * If an instance of `Dialog` is not mounted in another component, it is automatically added to
      * `document.body` as a child element in `show()`/`showModal()` and removed again in `close()`.
      * @param options Options for the dialog.
-     * @param components The initial components that make up the content of this dialog.\
+     * @param children The initial components that make up the content of this dialog.\
      * __Important note:__ If a dialog is disposed of (using `dispose()`), _all_ components given
      * in the constructor that are still children of this dialog (`Dialog` implements `IChildren`)
      * are also disposed of! If these components are to be used elsewhere after the dialog has been
@@ -1456,7 +1455,7 @@ export class DialogFactory<T> extends ComponentFactory<Dialog> {
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns Dialog component.
      */
-    public dialog(options: DialogOptions | undefined = undefined, components: INodeComponent<Node>[] = [], data?: T): Dialog {
-        return this.setupComponent(new Dialog(options, ...components), data);
+    public dialog(options: DialogOptions | undefined = undefined, children: Child[] = [], data?: T): Dialog<Child> {
+        return this.setupComponent(new Dialog<Child>(options, ...children), data);
     }
 }

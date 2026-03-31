@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_EVENT_INIT_DICT, HTMLElementWithChildren, IElementWithChildrenComponent, INodeComponent, mixin, NullableString, Phrases } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_EVENT_INIT_DICT, FlowContent, HTMLElementWithChildren, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin, NullableString, Phrases } from "@vanilla-ts/core";
 import { Div, Span, Text } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 import { ScrollContainer } from "./ScrollContainer.js";
@@ -672,7 +672,7 @@ class TabContentContainer extends Div {
  * separate non-mounted tab content container which both will be used, mounted and handled by
  * `TabGroup`.
  */
-export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export class Tab<Child extends FlowContent = FlowContent, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     protected headerContent: IElementWithChildrenComponent<HTMLDivElement>;
     protected closeTabBtn: IconButton;
     protected showCloseTabBtn: boolean;
@@ -695,8 +695,8 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
      * Default: `{ IconStart: null, Caption: ["X"], IconEnd: null, Title: null, Horizontal: true }`.
      */
     constructor(
-        header?: (INodeComponent<Node> | undefined | null)[] | string,
-        content?: (INodeComponent<Node> | undefined | null | string)[],
+        header?: (FlowContent | undefined | null)[] | string,
+        content?: (Child | undefined | null | string)[],
         showCloseTabBtn: boolean = true,
         closeTabBtnOptions: IconButtonOptions = { Caption: ["X"] } // eslint-disable-line jsdoc/require-jsdoc
     ) {
@@ -705,7 +705,7 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
             .initialize()
             .showCloseTabButton(showCloseTabBtn)
             .header(header)
-            .append(...(content ? content.map(e => typeof e === "string" ? new Text(e) : e) : []))
+            .append(...((content ?? []).map(e => typeof e === "string" ? <Child><unknown>new Text(e) : e)))
             .CloseTabButton.options(closeTabBtnOptions);
     }
 
@@ -794,7 +794,7 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
      * @param extractTo An array, that, if given, will receive the former header component(s).
      * @returns This instance.
      */
-    public header(header?: (INodeComponent<Node> | undefined | null)[] | string, extractTo?: INodeComponent<Node>[]): this {
+    public header(header?: (FlowContent | undefined | null)[] | string, extractTo?: INodeComponent<Node>[]): this {
         extractTo
             ? this.headerContent.extract(extractTo)
             : this.headerContent.clear();
@@ -823,7 +823,7 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
      * @returns This instance.
      */
     public clearContent(): this {
-        const extracted: INodeComponent<Node>[] = [];
+        const extracted: Child[] = [];
         this.extract(extracted);
         for (const component of extracted) {
             component.dispose();
@@ -832,7 +832,7 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
     }
 
     /** @inheritdoc */
-    public override onDidMount(parent: IElementWithChildrenComponent<HTMLElementWithChildren, EventMap>): void {
+    public override onDidMount(parent: IElementWithChildrenComponent<HTMLElementWithChildren, INodeComponent<Node>, EventMap>): void {
         super.onDidMount(parent);
         this.tabGroup = parent.Parent?.Parent instanceof TabGroup
             ? parent.Parent.Parent
@@ -867,9 +867,8 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
     /**
      * Removes _and_ disposes of _all_ child components from the content container and this
      * component (`this.ui`).
-     * @returns This instance.
      */
-    protected override clearOwner(): this {
+    protected override clearOwner(): void {
         // If the button is shown/mounted it is a child of `this.ui` and handled by `clear()`,
         // otherwise it has to be disposed of manually.
         this.showCloseTabBtn || this.closeTabBtn.dispose();
@@ -879,7 +878,6 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
         this.contentContainer.Parent?.remove(this.contentContainer);
         this.contentContainer.dispose();
         super.clearOwner();
-        return this;
     }
 
     /** @inheritdoc */
@@ -916,12 +914,12 @@ export class Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> ext
 }
 
 // Augment class definition with `IChildren` (see `static`).
-export interface Tab<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
+export interface Tab<Child extends FlowContent = FlowContent> extends IChildrenMixin<Child> { } // eslint-disable-line jsdoc/require-jsdoc,@typescript-eslint/no-empty-object-type
 
 /**
  * Factory for `Tab` components.
  */
-export class TabFactory<T> extends ComponentFactory<Tab> {
+export class TabFactory<Child extends FlowContent = FlowContent, T = unknown> extends ComponentFactory<Tab<Child>> {
     /**
      * Create, set up and return Tab component.
      * @param header The header content (components or string). In the case of a string, the header
@@ -937,13 +935,13 @@ export class TabFactory<T> extends ComponentFactory<Tab> {
      * @returns TabGroup component.
      */
     public tab(
-        header?: INodeComponent<Node>[] | string,
-        content?: (INodeComponent<Node> | undefined | null | string)[],
+        header?: (FlowContent | undefined | null)[] | string,
+        content?: (Child | undefined | null | string)[],
         showCloseTabBtn: boolean = true,
         closeTabBtnOptions: IconButtonOptions = { Caption: ["X"] }, // eslint-disable-line jsdoc/require-jsdoc
         data?: T
-    ): Tab {
-        return this.setupComponent(new Tab(header, content, showCloseTabBtn, closeTabBtnOptions), data);
+    ): Tab<Child> {
+        return this.setupComponent(new Tab<Child>(header, content, showCloseTabBtn, closeTabBtnOptions), data);
     }
 }
 // #endregion

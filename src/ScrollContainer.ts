@@ -1,4 +1,4 @@
-import { AChildren, AElementComponentWithInternalUI, ComponentFactory, IElementWithChildrenComponent, INodeComponent, mixin } from "@vanilla-ts/core";
+import { AChildren, AElementComponentWithInternalUI, clamp, ComponentFactory, FlowContent, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin, rectContains } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 
 
@@ -43,7 +43,7 @@ export type ScrollbarAdjustment = { Offset: number | INodeComponent<HTMLElement>
  *   `AElementComponentWithInternalUI`, `someChild.Parent?.Parent?.Parent` must be called to reach
  *   the containing `ScrollContainer` instance!
  */
-export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export class ScrollContainer<Child extends FlowContent = FlowContent, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     #_dom_: HTMLDivElement;
     #contentContainer: Div;
     #scrollable: HTMLDivElement;
@@ -359,7 +359,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
      * @returns This instance.
      */
     public clearContent(): this {
-        const extracted: INodeComponent<Node>[] = [];
+        const extracted: Child[] = [];
         this.extract(extracted);
         for (const component of extracted) {
             component.dispose();
@@ -469,7 +469,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
          */
         if (this.#_horizontal && this.#hBarScrollRange > 0) {
             // ---
-            this.#hBarThumb.style.insetInlineStart = this.#putIntoRange(
+            this.#hBarThumb.style.insetInlineStart = clamp(
                 this.#hBarScrollRange * (this.#isRTL ? -this.#scrollable.scrollLeft : this.#scrollable.scrollLeft) / this.#hScrollRange,
                 0, this.#hBarScrollRange
             ) + "px";
@@ -494,7 +494,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
         }
         if (this.#_vertical && this.#vBarScrollRange > 0) {
             // ---
-            this.#vBarThumb.style.insetBlockStart = this.#putIntoRange(
+            this.#vBarThumb.style.insetBlockStart = clamp(
                 this.#vBarScrollRange * this.#scrollable.scrollTop / this.#vScrollRange,
                 0, this.#vBarScrollRange
             ) + "px";
@@ -685,7 +685,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
                 const thumbRect = this.#contScrollHorizontal ?
                     new DOMRect(this.#hBarThumb.offsetLeft, this.#hBarThumb.offsetTop, this.#hBarThumb.offsetWidth, this.#hBarThumb.offsetHeight)
                     : new DOMRect(this.#vBarThumb.offsetLeft, this.#vBarThumb.offsetTop, this.#vBarThumb.offsetWidth, this.#vBarThumb.offsetHeight);
-                if (this.#rectContains(thumbRect, this.#contScrollStartPos)) {
+                if (rectContains(thumbRect, this.#contScrollStartPos)) {
                     this.#_dom_.classList.remove("scrolling");
                     return;
                 }
@@ -703,38 +703,8 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
         }, 50);
     }
 
-    /**
-     * Checks whether the coordinates of a point lie within a rectangle. 'Within' is also fulfilled
-     * if the point lies exactly on one edge or two edges of the rectangle.
-     * @param rect The rectangle.
-     * @param point The point.
-     * @returns `true`, if `point` is inside `rect`, otherwise `false`.
-     */
-    #rectContains(rect: DOMRect, point: DOMPoint): boolean {
-        return (point.x >= rect.left)
-            && (point.y >= rect.top)
-            && (point.x <= rect.right)
-            && (point.y <= rect.bottom);
-    }
-
-    /**
-     * Checks a value against the boundaries of `rangeEnd1` and `rangeEnd2`.
-     * @param n The value to check against the boundaries given by `rangeEnd1` and `rangeEnd2`.
-     * @param rangeEnd1 One end of the range to check against.
-     * @param rangeEnd2 The other end of the range to check against.
-     * @returns `n`, if `n` is equal to `rangeEnd1` or `rangeEnd2` or lies between `rangeEnd1` and
-     * `rangeEnd2` or the boundary which is nearest to `n` (`rangeEnd1` or `rangeEnd2`).
-     */
-    #putIntoRange(n: number, rangeEnd1: number, rangeEnd2: number): number {
-        return rangeEnd1 === rangeEnd2
-            ? rangeEnd1
-            : rangeEnd1 < rangeEnd2
-                ? Math.max(Math.min(n, rangeEnd2), rangeEnd1)
-                : Math.max(Math.min(n, rangeEnd1), rangeEnd2);
-    }
-
     /** @inheritdoc */
-    protected override clearOwner(): this {
+    protected override clearOwner(): void {
         this.#mutationObserver.disconnect();
         this.#resizeObserver.disconnect();
         this.#scrollable.removeEventListener("scroll", this.#onScrollListener, this.#passiveTrue);
@@ -757,7 +727,7 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
         this.#vBarOverlay.remove();
         this.#vBar.remove();
         this.#vBarThumb.remove();
-        return super.clearOwner();
+        super.clearOwner();
     }
 
     /**
@@ -880,12 +850,12 @@ export class ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementE
 }
 
 // Augment class definition with `IChildren` (see `static`).
-export interface ScrollContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
+export interface ScrollContainer<Child extends FlowContent = FlowContent> extends IChildrenMixin<Child> { } // eslint-disable-line jsdoc/require-jsdoc,@typescript-eslint/no-empty-object-type
 
 /**
  * Factory for `ScrollContainer` components.
  */
-export class ScrollContainerFactory<T> extends ComponentFactory<ScrollContainer> {
+export class ScrollContainerFactory<Child extends FlowContent = FlowContent, T = unknown> extends ComponentFactory<ScrollContainer<Child>> {
     /**
      * Create, set up and return ScrollContainer component.
      * @param horizontal `true`, if a horizontal scroll bar is to be displayed, otherwise `false`.
@@ -898,7 +868,7 @@ export class ScrollContainerFactory<T> extends ComponentFactory<ScrollContainer>
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns ScrollContainer component.
      */
-    public scrollContainer(horizontal: boolean = true, vertical: boolean = true, native: boolean = false, horizontalAdjustment?: ScrollbarAdjustment, verticalAdjustment?: ScrollbarAdjustment, data?: T): ScrollContainer {
-        return this.setupComponent(new ScrollContainer(horizontal, vertical, native, horizontalAdjustment, verticalAdjustment), data);
+    public scrollContainer(horizontal: boolean = true, vertical: boolean = true, native: boolean = false, horizontalAdjustment?: ScrollbarAdjustment, verticalAdjustment?: ScrollbarAdjustment, data?: T): ScrollContainer<Child> {
+        return this.setupComponent(new ScrollContainer<Child>(horizontal, vertical, native, horizontalAdjustment, verticalAdjustment), data);
     }
 }

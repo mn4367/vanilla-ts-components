@@ -677,7 +677,7 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
     }
 
     /** @inheritdoc */
-    protected override clearOwner(): this {
+    protected override clearOwner(): void {
         // All buttons can be mounted or not, so remove and dispose of them manually.
         this.ui.remove();
         for (const btn of this.btns) {
@@ -686,7 +686,6 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
         // Also remove and dispose a separator.
         this._options.Separator?.dispose();
         super.clearOwner();
-        return this;
     }
 
     /**

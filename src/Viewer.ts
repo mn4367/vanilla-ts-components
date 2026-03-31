@@ -873,11 +873,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param component The component to be borrowed.
      * @returns `component`.
      */
-    protected borrowComponent<T extends INodeComponent<Node>>(borrowed: boolean, component: T): T {
+    protected borrowComponent<T extends FlowContent>(borrowed: boolean, component: T): T {
         if (borrowed) {
             return component;
         }
-        switch (<INodeComponent<Node>>component) {
+        switch (<FlowContent>component) {
             case this.stepper:
                 this.stepperBorrowed = true;
                 break;
@@ -909,7 +909,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param component The component to be remounted.
      * @returns This instance.
      */
-    protected returnComponent(borrowed: boolean, component: INodeComponent<Node>): this {
+    protected returnComponent(borrowed: boolean, component: FlowContent): this {
         if (!borrowed) {
             return this;
         }

@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, IElementWithChildrenComponent, INodeComponent, mixin } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, FlowContent, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin } from "@vanilla-ts/core";
 import { Div, Span, Text } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 
@@ -47,7 +47,7 @@ export interface DisclosureContainerEventMap extends HTMLElementEventMap {
 /**
  * Container whose content can be disclosed/undisclosed.
  */
-export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = DisclosureContainerEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export class DisclosureContainer<Child extends FlowContent = FlowContent, EventMap extends DisclosureContainerEventMap = DisclosureContainerEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     protected _initialized = false;
     protected headerContainer: IElementWithChildrenComponent<HTMLDivElement>;
     protected disclosureButton: IconButton;
@@ -97,8 +97,8 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      *  Default: `false`.
      */
     constructor(
-        header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null,
-        content?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null,
+        header?: (FlowContent | string | undefined | null)[] | FlowContent | string | null,
+        content?: (Child | string | undefined | null)[] | Child | string | null,
         disclosedBtnOptions: IconButtonOptions = { Caption: ["-"] }, // eslint-disable-line jsdoc/require-jsdoc
         undisclosedBtnOptions: IconButtonOptions = { Caption: ["+"] }, // eslint-disable-line jsdoc/require-jsdoc
         disclosed: boolean = true,
@@ -120,7 +120,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
                     Array.isArray(content)
                         ? content
                         : [content]
-                ).map(e => typeof e === "string" ? new Text(e) : e),
+                ).map(e => typeof e === "string" ? <Child><unknown>new Text(e) : e),
             );
         if (this._animatable && this._disclosed) {
             this.contentContainer.style({ "width": null, "height": null }); // eslint-disable-line jsdoc/require-jsdoc
@@ -216,7 +216,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      * @param extractTo An array, that, if given, will receive the former header component(s).
      * @returns This instance.
      */
-    public header(header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null, extractTo?: INodeComponent<Node>[]): this {
+    public header(header?: (FlowContent | string | undefined | null)[] | FlowContent | string | null, extractTo?: INodeComponent<Node>[]): this {
         extractTo
             ? this.headerContent.extract(extractTo)
             : this.headerContent.clear();
@@ -436,7 +436,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
      * @returns This instance.
      */
     public clearContent(): this {
-        const extracted: INodeComponent<Node>[] = [];
+        const extracted: Child[] = [];
         this.extract(extracted);
         for (const component of extracted) {
             component.dispose();
@@ -477,7 +477,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
     }
 
     /** @inheritdoc */
-    protected override clearOwner(): this {
+    protected override clearOwner(): void {
         // Dispose of all components in the two disclosure button options.
         this.disclosureButton.rephrase();
         this.disclosedBtnOptions.Caption!.forEach(e => typeof e === "string" || e.dispose());
@@ -487,7 +487,6 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
         // the `DisclosureContainer` instance is undisclosed.
         this.ui.contains(this.contentContainer) || this.contentContainer.dispose();
         super.clearOwner();
-        return this;
     }
 
     /**
@@ -529,12 +528,12 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
 }
 
 // Augment class definition with `IChildren` (see `static`).
-export interface DisclosureContainer<EventMap extends DisclosureContainerEventMap = DisclosureContainerEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
+export interface DisclosureContainer<Child extends FlowContent = FlowContent> extends IChildrenMixin<Child> { } // eslint-disable-line jsdoc/require-jsdoc,@typescript-eslint/no-empty-object-type
 
 /**
  * Factory for `DisclosureContainer` components.
  */
-export class DisclosureContainerFactory<T> extends ComponentFactory<DisclosureContainer> {
+export class DisclosureContainerFactory<Child extends FlowContent = FlowContent, T = unknown> extends ComponentFactory<DisclosureContainer<Child>> {
     /**
      * Create, set up and return DisclosureContainer component.
      * @param header The header content (components or string). In the case of a single string, the
@@ -572,8 +571,8 @@ export class DisclosureContainerFactory<T> extends ComponentFactory<DisclosureCo
      * @returns DisclosureContainer component.
      */
     public disclosureContainer(
-        header?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null,
-        content?: (INodeComponent<Node> | string | undefined | null)[] | INodeComponent<Node> | string | null,
+        header?: (FlowContent | string | undefined | null)[] | FlowContent | string | null,
+        content?: (Child | string | undefined | null)[] | Child | string | null,
         disclosedBtnOptions: IconButtonOptions = { Caption: ["-"] }, // eslint-disable-line jsdoc/require-jsdoc
         undisclosedBtnOptions: IconButtonOptions = { Caption: ["+"] }, // eslint-disable-line jsdoc/require-jsdoc
         disclosed: boolean = true,
@@ -581,7 +580,7 @@ export class DisclosureContainerFactory<T> extends ComponentFactory<DisclosureCo
         appearance: DisclosureContainerAppearance = DisclosureContainerAppearance.TOP_START,
         animatable: boolean = false,
         data?: T
-    ): DisclosureContainer {
-        return this.setupComponent(new DisclosureContainer(header, content, disclosedBtnOptions, undisclosedBtnOptions, disclosed, weakUndisclosed, appearance, animatable), data);
+    ): DisclosureContainer<Child> {
+        return this.setupComponent(new DisclosureContainer<Child>(header, content, disclosedBtnOptions, undisclosedBtnOptions, disclosed, weakUndisclosed, appearance, animatable), data);
     }
 }

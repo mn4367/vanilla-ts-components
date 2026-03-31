@@ -1,4 +1,4 @@
-import { AChildren, ComponentFactory, IElementWithChildrenComponent, INodeComponent, mixin, Phrase, Phrases } from "@vanilla-ts/core";
+import { AChildren, ComponentFactory, FlowContent, IChildrenMixin, IElementWithChildrenComponent, mixin, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentGroup, LabelPosition } from "./LabeledComponents.js";
 
@@ -20,7 +20,7 @@ import { LabelAlignment, LabeledComponentGroup, LabelPosition } from "./LabeledC
  *   `someChild.Parent?.Parent?.Parent` must be called to reach the containing `LabeledContainer`
  *   instance!
  */
-export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentGroup<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export class LabeledContainer<Child extends FlowContent = FlowContent, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentGroup<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     /**
      * Create LabeledContainer component.
      * @param labelPhrase The phrasing content for the label.
@@ -49,17 +49,11 @@ export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElement
      * @returns This instance.
      */
     public clearContent(): this {
-        const extracted: INodeComponent<Node>[] = [];
+        const extracted: Child[] = [];
         this.extract(extracted);
         for (const component of extracted) {
             component.dispose();
         }
-        return this;
-    }
-
-    /** @inheritdoc */
-    protected override clearOwner(): this {
-        super.clearOwner();
         return this;
     }
 
@@ -70,12 +64,12 @@ export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElement
 }
 
 // Augment class definition with `IChildren` (see `static`).
-export interface LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentGroup<Div, EventMap>, AChildren<HTMLElement, EventMap> { } // eslint-disable-line jsdoc/require-jsdoc
+export interface LabeledContainer<Child extends FlowContent = FlowContent> extends IChildrenMixin<Child> { } // eslint-disable-line jsdoc/require-jsdoc,@typescript-eslint/no-empty-object-type
 
 /**
  * Factory for `LabeledContainer` components.
  */
-export class LabeledContainerFactory<T> extends ComponentFactory<LabeledContainer> {
+export class LabeledContainerFactory<Child extends FlowContent = FlowContent, T = unknown> extends ComponentFactory<LabeledContainer<Child>> {
     /**
      * Create, set up and return LabeledContainer component.
      * @param labelPhrase The phrasing content for the label.
@@ -84,7 +78,7 @@ export class LabeledContainerFactory<T> extends ComponentFactory<LabeledContaine
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledContainer component.
      */
-    public labeledContainer(labelPhrase: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledContainer {
-        return this.setupComponent(new LabeledContainer(labelPhrase, lblPosition, lblAlignment), data);
+    public labeledContainer(labelPhrase: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, data?: T): LabeledContainer<Child> {
+        return this.setupComponent(new LabeledContainer<Child>(labelPhrase, lblPosition, lblAlignment), data);
     }
 }
