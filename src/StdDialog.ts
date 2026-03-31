@@ -32,8 +32,8 @@ export type StdDlgTitle = IElementComponent<HTMLElement> | ((dlg: StdDialog) => 
  * of the content (parts). This can be done, for example, by installing a `once` event handler for
  * the `dlg-shown` event on `StdDialog.Dialog` since it is guaranteed that the dialog will have its
  * final form when this event is triggered.\
- * The function must return an array where each element must be either a
- * string, an instance of a `Text` component or an instance of `INodeComponent<HTMLElement>`.
+ * The function must return an array where each element must be either a string, an instance of a
+ * `Text` component or an instance of `INodeComponent<HTMLElement>`.
  */
 export type StdDlgContent = string | Text | INodeComponent<HTMLElement> | (string | INodeComponent<HTMLElement> | Text)[] | ((dlg: StdDialog) => (string | Text | INodeComponent<HTMLElement>)[]);
 

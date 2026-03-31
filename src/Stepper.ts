@@ -176,8 +176,8 @@ export interface StepperOptions {
      *    stepper.
      * 3. If the value is `undefined`, nothing happens. If the stepper already contains a separator
      *    component, it stays untouched.
-     * 4. If the stepper is disposed of and it contains a separator component, this separator is also
-     *    disposed of.
+     * 4. If the stepper is disposed of and it contains a separator component, this separator is
+     *    also disposed of.
      *
      * The following applies to cases 1 and 2: A previous separator component (if present) is
      * removed from the stepper and its CSS class `separator` is also removed. But this previous

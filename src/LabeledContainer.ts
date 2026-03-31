@@ -64,7 +64,7 @@ export class LabeledContainer<EventMap extends HTMLElementEventMap = HTMLElement
     }
 
     static {
-        /** Mixin the IChildren implementation (which targets the `this.component`). */
+        /** Mixin the IChildren implementation (which targets `this.component`). */
         mixin(false, this, AChildren);
     }
 }

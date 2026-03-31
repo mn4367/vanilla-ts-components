@@ -179,14 +179,18 @@ export class SplitterAreaResizeStartEvent extends ACustomComponentEvent<"splitte
 
 /** Custom 'splitter-area-resize' event for `Splitter`. */
 export class SplitterAreaResizeEvent extends ACustomComponentEvent<"splitter-area-resize", Splitter, {
-    /** The new size of the active area in pixels. */
+    /**
+     * The new size of the active area in pixels. This size is the actual size after applying the
+     * constraints for the minimum sizes given through the options.
+     */
     Size: number;
 }> {
     /**
      * Create SplitterAreaResizeEvent event. Event handlers can prevent changing the size by calling
      * `preventDefault()`.
      * @param sender The event emitter (always `Splitter`).
-     * @param size The desired new size of the active area in pixels.
+     * @param size The new size of the active area in pixels. This size is the actual size after
+     * applying the constraints for the minimum sizes given through the options.
      * @param customEventInitDict Optional event properties.
      */
     constructor(sender: Splitter, size: number, customEventInitDict: EventInit = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
@@ -213,7 +217,7 @@ export class SplitterCollapsedEvent extends ACustomComponentEvent<"splitter-coll
     State: SplitterCollapsedState;
 }> {
     /**
-     * Create SplitterAreaResizeEvent event. This event is only informative, it cannot be prevented
+     * Create SplitterCollapsedEvent event. This event is only informative, it cannot be prevented
      * by calling `preventDefault()`.
      * @param sender The event emitter (always `Splitter`).
      * @param state The splitter collapsed state which has been set.

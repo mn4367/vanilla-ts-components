@@ -523,7 +523,7 @@ export class DisclosureContainer<EventMap extends DisclosureContainerEventMap = 
     }
 
     static {
-        /** Mixin the IChildren implementation (which targets the `this.contentContainer`). */
+        /** Mixin the IChildren implementation (which targets `this.contentContainer`). */
         mixin(false, this, AChildren);
     }
 }
