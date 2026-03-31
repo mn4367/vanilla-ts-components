@@ -367,16 +367,32 @@ export class StdDialog {
                 ...(this.options.ClassNames as Array<string>),
             )
             .append(
-                typeof this.options.Title === "function" ? this.options.Title(this).addClass("dlg-title") : this.options.Title,
-                ... (
-                    typeof this.options.Content === "function"
-                        ? this.options.Content(this)
-                        : Array.isArray(this.options.Content)
-                            ? this.options.Content
-                            : [this.options.Content]
-                ).map(e => typeof e === "string" ? new Text(e) : e),
+                this.options.Title !== undefined
+                    ? new Div()
+                        .addClass("stddlg-title-bar")
+                        .append(
+                            ... (
+                                typeof this.options.Title === "function"
+                                    ? this.options.Title(this)
+                                    : Array.isArray(this.options.Title)
+                                        ? this.options.Title
+                                        : [this.options.Title]
+                            ).map(e => typeof e === "string" ? new Text(e) : e)
+                        )
+                    : undefined,
                 new Div()
-                    .addClass("dlg-btn-bar")
+                    .addClass("stddlg-content")
+                    .append(
+                        ... (
+                            typeof this.options.Content === "function"
+                                ? this.options.Content(this)
+                                : Array.isArray(this.options.Content)
+                                    ? this.options.Content
+                                    : [this.options.Content]
+                        ).map(e => typeof e === "string" ? new Text(e) : e)
+                    ),
+                new Div()
+                    .addClass("stddlg-btn-bar")
                     .append(
                         ...(
                             Array.isArray(this.options.Buttons)
