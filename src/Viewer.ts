@@ -423,13 +423,14 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
 
     /**
      * Create viewer component.
-     * @param options Options for the viewer.
+     * @param options Options for the viewer. Default: `{}`.
+     * @param initialIndex The initial index of the item to be displayed. Default: `0`.
      */
-    constructor(options?: ViewerOptions) {
+    constructor(options?: ViewerOptions, initialIndex = 0) {
         super();
         this
             .initialize()
-            .options(options ?? this._options);
+            .options(options ?? this._options, initialIndex);
     }
 
     /**
@@ -486,7 +487,6 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             LoadingError: getProp(options, this._options, "LoadingError", ""),
             /* eslint-enable */
         };
-        const wasEmpty = this.items.length === 0;
         if (options.Items) {
             this.replaceItemsWith(options.Items);
             opts.Items = options.Items.map(e => typeof e === "string" ? e : { ...e });
@@ -494,9 +494,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             opts.Items = [...(this._options.Items ?? [])];
         }
         this._options = opts;
-        this.item = wasEmpty
-            ? this.items[0] ?? this.dummyItem
-            : this.items[index ?? -1] ?? this.items.find(e => e === this.item) ?? this.items[0] ?? this.dummyItem;
+        this.item = this.items[index ?? -1] ?? this.items.find(e => e === this.item) ?? this.items[0] ?? this.dummyItem;
         options.StepperOptions && this.stepper.options(options.StepperOptions);
         this.itemContainer.native(opts.NativeScrollbars!);
         this.pinchZoomHandler.active(opts.PinchZoom!);
@@ -508,8 +506,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             .rebuildToolbar()
             .toolbarPosition(opts.ToolbarPosition!)
             .toolbarHidden(opts.ToolbarHidden!)
-            .syncUIForIndex(this.items.findIndex(e => e === this.item))
-            .displayItem(this.item);
+            .syncUIForIndex(this.items.findIndex(e => e === this.item));
         return this;
     }
 
@@ -564,7 +561,10 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                 ? this.ui.append(this.itemContainer)
                 : this.ui.append(this.itemContainer, this.toolBar);
         }
-        this.item.Loaded && this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
+        if (this.item.Loaded) {
+            [Zoom.FIT, Zoom.FITWIDTH, Zoom.FITHEIGHT].includes(this.item.Zoom) && this.zoom(this.item.Zoom);
+            this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
+        }
         this.zoomRange.vertical((this._options.ToolbarPosition === ToolbarPosition.START) || (this._options.ToolbarPosition === ToolbarPosition.END));
         return this;
     }
@@ -590,6 +590,10 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this._options.ToolbarHidden
             ? this.ui.addClass("toolbar-hidden")
             : this.ui.removeClass("toolbar-hidden");
+        if (this.item.Loaded) {
+            [Zoom.FIT, Zoom.FITWIDTH, Zoom.FITHEIGHT].includes(this.item.Zoom) && this.zoom(this.item.Zoom);
+            this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
+        }
         return this;
     }
 
@@ -1306,9 +1310,13 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         item.Component.addClass(item.Zoom);
         switch (item.Zoom) {
             case Zoom.FIT:
-            case Zoom.FITWIDTH:
-            case Zoom.FITHEIGHT:
                 item.Scale = -1;
+                break;
+            case Zoom.FITWIDTH:
+                item.Scale = -2;
+                break;
+            case Zoom.FITHEIGHT:
+                item.Scale = -3;
                 break;
             case Zoom.Z10:
                 item.Scale = 0.1;
@@ -1352,8 +1360,8 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             default:
                 break;
         }
-        if (item.Scale === -1) {
-            item.Component.scale(0);
+        if (item.Scale < 0) {
+            item.Component.scale(item.Scale);
             this.calcScaleForZoomFit(item);
         } else {
             item.Component.scale(item.Scale);
@@ -1366,7 +1374,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      */
     protected zoomIn(ev: KeyboardEvent | MouseEvent | PointerEvent): void {
         const rect = this.DOM.getBoundingClientRect();
-        this.clickPoint = ev instanceof MouseEvent && ev.target instanceof HTMLImageElement
+        this.clickPoint = ev instanceof MouseEvent && ev.target && this.item.Component?.DOM.contains(<Node>ev.target)
             ? new DOMPoint(ev.clientX - rect.x, ev.clientY - rect.y)
             : new DOMPoint(this.itemContainer.DOM.offsetWidth - rect.left, this.itemContainer.DOM.offsetHeight - rect.top);
         const scale = this.item.Scale;
@@ -1414,7 +1422,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         } else {
             return;
         }
-        (ev instanceof MouseEvent || ev instanceof PointerEvent) && ev.target instanceof HTMLImageElement
+        (ev instanceof MouseEvent || ev instanceof PointerEvent) && this.item.Component?.DOM.contains(<Node>ev.target)
             ? this.centerZoomToPointer(this.item, zoom, scale, newScale, ev)
             : this.centerOnZoomOrScale(this.item, zoom, scale);
         this.emitZoomEvent();
@@ -1426,7 +1434,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      */
     protected zoomOut(ev: KeyboardEvent | MouseEvent | PointerEvent): void {
         const rect = this.DOM.getBoundingClientRect();
-        this.clickPoint = ev instanceof MouseEvent && ev.target instanceof HTMLImageElement
+        this.clickPoint = ev instanceof MouseEvent && this.item.Component?.DOM.contains(<Node>ev.target)
             ? new DOMPoint(ev.clientX - rect.x, ev.clientY - rect.y)
             : new DOMPoint(this.itemContainer.DOM.offsetWidth - rect.left, this.itemContainer.DOM.offsetHeight - rect.top);
         const scale = this.item.Scale;
@@ -1474,7 +1482,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         } else {
             return;
         }
-        (ev instanceof MouseEvent || ev instanceof PointerEvent) && ev.target instanceof HTMLImageElement
+        (ev instanceof MouseEvent || ev instanceof PointerEvent) && this.item.Component?.DOM.contains(<Node>ev.target)
             ? this.centerZoomToPointer(this.item, zoom, scale, newScale, ev)
             : this.centerOnZoomOrScale(this.item, zoom, scale);
         this.emitZoomEvent();
@@ -1489,16 +1497,17 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param ev The triggering muse or pointer event.
      */
     protected centerZoomToPointer(item: IViewerItem, value: Zoom | number, prevscale: number, newScale: number, ev: MouseEvent | PointerEvent | { clientX: number, clientY: number; }): void { // eslint-disable-line jsdoc/require-jsdoc
-        const ctrlDOM = this.item.Component!.DOM;
-        const containerDOM = this.itemContainer.DOM;
-        const prevScrollRangeHalf = new DOMPoint((ctrlDOM.offsetWidth - containerDOM.offsetWidth) / 2, (ctrlDOM.offsetHeight - containerDOM.offsetHeight) / 2);
+        let ctrlRect = this.item.Component!.DOM.getBoundingClientRect();
+        const containerWidth = this.itemContainer.DOM.offsetWidth;
+        const containerHeight = this.itemContainer.DOM.offsetHeight;
+        const prevScrollRangeHalf = new DOMPoint((ctrlRect.width - containerWidth) / 2, (ctrlRect.height - containerHeight) / 2);
         const pointerOffset = new DOMPoint(0, 0);
         const rect = this.itemContainer.DOM.getBoundingClientRect();
-        const center = new DOMPoint(containerDOM.offsetWidth / 2, containerDOM.offsetHeight / 2);
-        if (ctrlDOM.naturalWidth * newScale - containerDOM.offsetWidth > 0) {
+        const center = new DOMPoint(containerWidth / 2, containerHeight / 2);
+        if (this.item.Component!.NaturalWidth * newScale - containerWidth > 0) {
             pointerOffset.x = ev.clientX - center.x - rect.x;
         }
-        if (ctrlDOM.naturalHeight * newScale - containerDOM.offsetHeight > 0) {
+        if (this.item.Component!.NaturalHeight * newScale - containerHeight > 0) {
             pointerOffset.y = ev.clientY - center.y - rect.y;
         }
         // this.#pointerDot.style("left", `${ev.clientX - rect.x}px`);
@@ -1508,10 +1517,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         typeof value === "number"
             ? this.scaleItem(item, value)
             : this.zoomItem(item, value);
+        ctrlRect = this.item.Component!.DOM.getBoundingClientRect();
         const scaleFactor = this.item.Scale / prevscale;
-        const newScrollPosX = ((ctrlDOM.offsetWidth - containerDOM.offsetWidth) / 2)
+        const newScrollPosX = ((ctrlRect.width - containerWidth) / 2)
             + ((prevScrollPos.x - Math.max(prevScrollRangeHalf.x, 0)) * scaleFactor);
-        const newScrollPosY = ((ctrlDOM.offsetHeight - containerDOM.offsetHeight) / 2)
+        const newScrollPosY = ((ctrlRect.height - containerHeight) / 2)
             + ((prevScrollPos.y - Math.max(prevScrollRangeHalf.y, 0)) * scaleFactor);
         this.scrollOffset(
             // `+0.5` gives more precision with repeated zoom actions(?).
@@ -1531,17 +1541,19 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         // this.#pointerDot.style("left", "50%");
         // this.#pointerDot.style("top", "50%");
         const rtlN = getComputedStyle(this.itemContainer.DOM).direction === "rtl" ? -1 : 1;
-        const ctrlDOM = this.item.Component!.DOM;
-        const containerDOM = this.itemContainer.DOM;
-        const prevScrollRangeHalf = new DOMPoint((ctrlDOM.offsetWidth - containerDOM.offsetWidth) / 2, (ctrlDOM.offsetHeight - containerDOM.offsetHeight) / 2);
+        let ctrlRect = this.item.Component!.DOM.getBoundingClientRect();
+        const containerWidth = this.itemContainer.DOM.offsetWidth;
+        const containerHeight = this.itemContainer.DOM.offsetHeight;
+        const prevScrollRangeHalf = new DOMPoint((ctrlRect.width - containerWidth) / 2, (ctrlRect.height - containerHeight) / 2);
         const prevScrollPos = new DOMPoint(rtlN * this.itemContainer.ScrollOffset.X, this.itemContainer.ScrollOffset.Y);
         typeof value === "number"
             ? this.scaleItem(item, value)
             : this.zoomItem(item, value);
+        ctrlRect = this.item.Component!.DOM.getBoundingClientRect();
         const scaleFactor = this.item.Scale / previousScale;
-        const newScrollPosX = ((ctrlDOM.offsetWidth - containerDOM.offsetWidth) / 2)
+        const newScrollPosX = ((ctrlRect.width - containerWidth) / 2)
             + ((prevScrollPos.x - Math.max(prevScrollRangeHalf.x, 0)) * scaleFactor);
-        const newScrollPosY = ((ctrlDOM.offsetHeight - containerDOM.offsetHeight) / 2)
+        const newScrollPosY = ((ctrlRect.height - containerHeight) / 2)
             + ((prevScrollPos.y - Math.max(prevScrollRangeHalf.y, 0)) * scaleFactor);
         this.scrollOffset(
             // `+0.5` gives more precision with repeated zoom actions(?).
@@ -1674,7 +1686,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         } else if (scale === PINCH_ZOOM_STOP) {
             this.itemContainer.Content.removeClass("pinch-zooming");
         } else {
-            if (ev.$.EventTarget instanceof HTMLImageElement) {
+            if (this.item.Component?.DOM.contains(<Node>ev.$.EventTarget)) {
                 const origin = { clientX: ev.$.Origin.x, clientY: ev.$.Origin.y }; // eslint-disable-line jsdoc/require-jsdoc
                 const newScale = this.pinchZoomStartScale * scale;
                 // if (newScale >= 0.01 && newScale <= 4) {
@@ -1966,11 +1978,12 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
 export class ViewerFactory<T> extends ComponentFactory<Viewer> {
     /**
      * Create, set up and return viewer component.
-     * @param options Options for the viewer.
+     * @param options Options for the viewer. Default: `{}`.
+     * @param initialIndex The initial index of the item to be displayed. Default: `0`.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns Viewer component.
      */
-    public viewer(options?: ViewerOptions, data?: T): Viewer {
-        return this.setupComponent(new Viewer(options), data);
+    public viewer(options?: ViewerOptions, initialIndex: number = 0, data?: T): Viewer {
+        return this.setupComponent(new Viewer(options, initialIndex), data);
     }
 }
