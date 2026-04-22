@@ -1,0 +1,5 @@
+/* App specific CSS variables. */
+:root {
+    /* `.navigation-bar` inline padding plus `.header-container` width (see NavigationBar.css). */
+    --app-splitter-collapsed-size: 2.5rem;
+}

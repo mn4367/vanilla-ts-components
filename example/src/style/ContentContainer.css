@@ -1,0 +1,5 @@
+.content-container {
+    width: 100%;
+    height: 100%;
+    padding: var(--base-size);
+}

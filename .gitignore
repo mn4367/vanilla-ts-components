@@ -2,6 +2,7 @@ attic/
 example/index.js
 example/index.js.map
 example/out
+example/style
 lib/
 node_modules/
 types/

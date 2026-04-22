@@ -22,7 +22,7 @@ const compress = process.env.COMPRESS
     : undefined;
 
 export default {
-    input: ["./example/out/example/index.js"],
+    input: ["./example/out/example/src/index.js"],
     output: {
         file: "./example/index.js",
         format: "es",

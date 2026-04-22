@@ -1,0 +1,10 @@
+.data-analysis {
+    p {
+        font-weight: bolder;
+    }
+}
+.analysis-result-dlg {
+    min-width: 22rem;
+    min-height: 8.3rem;
+    max-height: 30rem;
+}

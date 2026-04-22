@@ -1,0 +1,5 @@
+.invalid-nav-target {
+    p > code {
+        font-weight: bolder;
+    }
+}

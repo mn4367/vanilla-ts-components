@@ -1,0 +1,13 @@
+.log {
+    padding-block-start: var(--base-size);
+    height: 100%;
+    > .vts-labeled-text-area {
+        > .lc-label {
+            font-weight: bolder;
+        }
+        > .lc-component {
+            font-family: var(--system-monospace);
+            height: 100%;
+        }
+    }
+}

@@ -52,14 +52,16 @@
     "typescript": "6.0.3"
   },
   "scripts": {
-    "Watch": "npm-run-all -p watch:*",
+    "Watch": "npm-run-all -p watch:**",
     "Clean": "shx rm -rf ./types ./lib ./example/out ./example/index.js*",
     "watch:src": "tsc -w -p ./src/tsconfig.src.json",
-    "watch:example": "tsc-watch -p ./example/tsconfig.example.json --onSuccess \"npm run pack:example\"",
+    "watch:example": "tsc-watch -p ./example/src/tsconfig.example.json    --onSuccess \"npm-run-all -p pack:example pack:example:css\"",
+    "watch:example:css": "onchange './example/src/style/**' './themes/**' -v --await-write-finish 500 -- npm run pack:example:css",
     "compile:src": "tsc -p ./src/tsconfig.src.json",
-    "compile:example": "tsc -p ./example/tsconfig.example.json",
-    "pack:example": "rollup --silent -c ./build/rollup.config.example.mjs",
-    "pack:example:compress": "rollup --silent -c ./build/rollup.config.example.mjs --environment COMPRESS",
+    "compile:example": "tsc -p ./example/src/tsconfig.example.json",
+    "pack:example": "rollup --silent -c ./example/build/rollup.config.example.mjs",
+    "pack:example:css": "node ./example/build/concat-css-files.js ./example/style.css",
+    "pack:example:compress": "rollup --silent -c ./example/build/rollup.config.example.mjs --environment COMPRESS",
     "lint": "eslint -c ./eslint.config.mjs"
   }
 }
