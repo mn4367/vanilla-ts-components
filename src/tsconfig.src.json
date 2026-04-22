@@ -4,6 +4,7 @@
     "declaration": true,
     "outDir": "../lib",
     "declarationDir": "../types",
+    "rootDir": "./",
   },
   // "include": [
   //   "./**/*.ts",
