@@ -1,4 +1,4 @@
-import { AElementComponent, FlowContent, toKebapCase } from "@vanilla-ts/core";
+import { AElementComponent, FlowContent, toKebabCase } from "@vanilla-ts/core";
 import { Checkbox, Div, Input, Select, Span, Text, TextArea, TextInput } from "@vanilla-ts/dom";
 import { IElementComponent } from "../../vanilla-ts-core/types/Interfaces.js";
 import { Dialog, DialogCloseEvent, DialogOptions, DialogState, DLG_CANCELLED } from "./Dialog.js";
@@ -684,7 +684,7 @@ export async function queryInput(content: StdDlgContent | null | undefined, opti
         Focus: input,
         OnClose: options?.OnClose,
         Vertical: options?.Vertical ?? false,
-        ClassNames: ["query-input", "query-" + toKebapCase(input.ClassName), options?.ClassNames].flat(),
+        ClassNames: ["query-input", "query-" + toKebabCase(input.ClassName), options?.ClassNames].flat(),
         I18N: options?.I18N,
         DlgOptions: options?.DlgOptions ? { ...options.DlgOptions } : {}
         /* eslint-enable */
