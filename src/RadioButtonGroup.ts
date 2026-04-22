@@ -1,5 +1,5 @@
 import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
-import { Div, RadioButton } from "@vanilla-ts/dom";
+import { Div } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponents.js";
 import { LabeledRadioButton } from "./LabeledRadioButton.js";
 
@@ -18,19 +18,15 @@ export type LabeledRadioButtons = Array<{
     ID?: NullableString;
     /** The value of a radio button. */
     Value: string;
-    /** The label position of a radio button. */
-    LabelPosition?: LabelPosition;
-    /** The label alignmnent of a radio button. */
-    LabelAlignment?: LabelAlignment;
 }>;
 
-/** Custom 'checked' event for radio button group. */
+/** Custom 'checked' event for a radio button group. */
 export interface RadioButtonGroupEventMap extends HTMLElementEventMap {
     /** A radio button in a radio button group has been checked/uncheked. */
-    "checked": CheckedEvent<RadioButton, {
-        /** The radio button which is checked/unchecked. */
-        RadioButton: RadioButton;
-        /** `true`, if the radio button is checked, otherwise `false`. */
+    "checked": CheckedEvent<RadioButtonGroup, {
+        /** The labeled radio button which is checked/unchecked. */
+        LabeledRadioButton: LabeledRadioButton;
+        /** `true`, if the labeled radio button is checked, otherwise `false`. */
         Checked: boolean;
     }>;
 }
@@ -47,32 +43,50 @@ export enum RadioButtonGroupAlignment {
  * A component that holds a group of labeled radio buttons inside a `<div>` container.
  */
 export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioButtonGroupEventMap> extends AElementComponentWithInternalUI<Div, EventMap> {
-    protected _radioButtons: LabeledRadioButton[] = [];
+    protected _labeledRadioButtons: LabeledRadioButton[] = [];
     protected _name: string;
     protected _alignment: RadioButtonGroupAlignment;
+    protected _labelPosition: LabelPosition = LabelPosition.END;
+    protected _labelAlignment: LabelAlignment = LabelAlignment.START;
     protected _toggle: boolean;
 
     /**
      * Create RadioButtonGroup component.
      * @param radioButtons An array of radio button data used to create the buttons.
      * @param name The `name` property for all radio buttons.
-     * @param alignment The alignment of the labeled radio buttons.
+     * @param alignment The alignment of the labeled radio buttons.\
+     * Default: {@link RadioButtonGroupAlignment.VERTICAL}.
+     * @param labelPosition The position of the label of the radio buttons.\
+     * Default: {@link LabelPosition.END}.
+     * @param labelAlignment The alignment of the label of the radio buttons.\
+     * Default: {@link LabelAlignment.START}.
      */
-    constructor(radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL) {
+    constructor(
+        radioButtons: LabeledRadioButtons,
+        name: string,
+        alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL,
+        labelPosition: LabelPosition = LabelPosition.END,
+        labelAlignment: LabelAlignment = LabelAlignment.START
+    ) {
         super();
         this._name = name;
         super
             .initialize()
             .alignment(alignment)
+            .labelPosition(labelPosition)
+            .labelAlignment(labelAlignment)
             .radioButtons(radioButtons, name);
     }
 
     /**
      * Get an array of all contained labeled radio button components. Modifying this array has no
-     * effect.
+     * effect.\
+     * __Note:__ The internal radio button component (property `RadioButton`/`Component`) of each
+     * labeled radio button will never fire the event `checked`. Instead, listening for this event
+     * must be done on the radio button group instance itself.
      */
-    public get RadioButtons(): LabeledRadioButton[] {
-        return this._radioButtons.slice();
+    public get LabeledRadioButtons(): LabeledRadioButton[] {
+        return this._labeledRadioButtons.slice();
     }
 
     /**
@@ -89,44 +103,35 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
     public radioButtons(radioButtons: LabeledRadioButtons, name: string, keepValue?: boolean): this {
         const oldValue = this.Value;
         this.ui.remove();
-        for (const rb of this._radioButtons) {
+        for (const rb of this._labeledRadioButtons) {
             rb.dispose();
         }
         this._name = name;
-        this._radioButtons.length = 0;
-        this._radioButtons.push(
+        this._labeledRadioButtons.length = 0;
+        this._labeledRadioButtons.push(
             ...radioButtons.map(item => {
                 const lrb = new LabeledRadioButton(
                     item.Label,
                     item.ID,
                     item.Value,
                     this._name,
-                    item.LabelPosition,
-                    item.LabelAlignment,
+                    this._labelPosition,
+                    this._labelAlignment,
                     undefined
                 )
                     .parentDisabled(this.Disabled)
                     .addClass(LabeledRadioButton.DefaultCSSClassName);
-                lrb.RadioButton.on("input", (ev) => {
-                    // ev.preventDefault();
+                // Listen on `lrb` instead of `lrb.RadioButton` for `checked`. The internal radio
+                // button component does not fire this event (propagation is stopped there).
+                lrb.on("checked", (ev) => {
                     ev.stopImmediatePropagation();
-                    this.emit(new Event("input", ev));
-                });
-                lrb.RadioButton.on("change", (ev) => {
-                    // ev.preventDefault();
-                    ev.stopImmediatePropagation();
-                    this.emit(new Event("change", ev));
-                });
-                lrb.RadioButton.on("checked", (ev) => {
-                    // ev.preventDefault();
-                    ev.stopImmediatePropagation();
-                    this.emit(new CheckedEvent("checked", this, { RadioButton: lrb, Checked: ev.$.Checked })); // eslint-disable-line jsdoc/require-jsdoc
+                    this.emit(new CheckedEvent("checked", this, { LabeledRadioButton: lrb, Checked: ev.$.Checked })); // eslint-disable-line jsdoc/require-jsdoc
                 });
                 return lrb;
             })
         );
         keepValue && oldValue && this.value(oldValue);
-        this.ui.append(...this._radioButtons);
+        this.ui.append(...this._labeledRadioButtons);
         return this;
     }
 
@@ -149,7 +154,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * @returns This instance.
      */
     public name(v: NullableString): this {
-        for (const rb of this._radioButtons) {
+        for (const rb of this._labeledRadioButtons) {
             rb.RadioButton.name(v);
         }
         return this;
@@ -161,7 +166,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * it is found, its status is set to checked.
      */
     public get Value(): string {
-        for (const radioButton of this._radioButtons) {
+        for (const radioButton of this._labeledRadioButtons) {
             if (radioButton.Checked) {
                 return radioButton.Value;
             }
@@ -180,11 +185,11 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * @returns This instance.
      */
     public value(v: NullableString): this {
-        for (const radioButton of this._radioButtons) {
+        for (const radioButton of this._labeledRadioButtons) {
             radioButton.checked(false);
         }
         if (v !== null) {
-            for (const radioButton of this._radioButtons) {
+            for (const radioButton of this._labeledRadioButtons) {
                 if (radioButton.Value === v) {
                     radioButton.checked(true);
                     break;
@@ -213,7 +218,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
     public toggle(toggle: boolean): this {
         if (toggle !== this._toggle) {
             this._toggle = toggle;
-            for (const radioButton of this._radioButtons) {
+            for (const radioButton of this._labeledRadioButtons) {
                 radioButton.RadioButton.toggle(toggle);
             }
         }
@@ -246,6 +251,58 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
         return this;
     }
 
+    /**
+     * Gets/sets the label position of the contained labeled radio buttons.
+     */
+    public get LabelPosition(): LabelPosition {
+        return this._labelPosition;
+    }
+    /** @inheritdoc */
+    public set LabelPosition(v: LabelPosition) {
+        this.labelPosition(v);
+    }
+
+    /**
+     * Sets the label position of the contained labeled radio buttons.
+     * @param labelPosition The label position of the labeled radio buttons.
+     * @returns This instance.
+     */
+    public labelPosition(labelPosition: LabelPosition): this {
+        if (labelPosition !== this._labelPosition) {
+            this._labelPosition = labelPosition;
+            for (const radioButton of this._labeledRadioButtons) {
+                radioButton.labelPosition(labelPosition);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Gets/sets the label alignment of the contained labeled radio buttons.
+     */
+    public get LabelAlignment(): LabelAlignment {
+        return this._labelAlignment;
+    }
+    /** @inheritdoc */
+    public set LabelAlignment(v: LabelAlignment) {
+        this.labelAlignment(v);
+    }
+
+    /**
+     * Sets the label alignment of the contained labeled radio buttons.
+     * @param labelAlignment The label alignment of the labeled radio buttons.
+     * @returns This instance.
+     */
+    public labelAlignment(labelAlignment: LabelAlignment): this {
+        if (labelAlignment !== this._labelAlignment) {
+            this._labelAlignment = labelAlignment;
+            for (const radioButton of this._labeledRadioButtons) {
+                radioButton.labelAlignment(labelAlignment);
+            }
+        }
+        return this;
+    }
+
     /** @inheritdoc */
     protected override buildUI(): this {
         this.ui = new Div();
@@ -254,13 +311,13 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
 
     /** @inheritdoc */
     public override focus(options?: FocusOptions): this {
-        (this._radioButtons.find(e => e.Checked) || this._radioButtons[0])?.focus(options);
+        (this._labeledRadioButtons.find(e => e.Checked) || this._labeledRadioButtons[0])?.focus(options);
         return this;
     }
 
     /** @inheritdoc */
     public override blur(): this {
-        (this._radioButtons.find(e => e.Checked) || this._radioButtons[0])?.blur();
+        (this._labeledRadioButtons.find(e => e.Checked) || this._labeledRadioButtons[0])?.blur();
         return this;
     }
 }
@@ -273,11 +330,23 @@ export class RadioButtonGroupFactory<T> extends ComponentFactory<RadioButtonGrou
      * Create, set up and return RadioButtonGroup component.
      * @param radioButtons An array of radio button data used to create the buttons.
      * @param name The `name` property for all radio buttons.
-     * @param alignment The alignment of the labeled radio buttons.
+     * @param alignment The alignment of the labeled radio buttons.\
+     * Default: {@link RadioButtonGroupAlignment.VERTICAL}.
+     * @param labelPosition The position of the label of the radio buttons.\
+     * Default: {@link LabelPosition.END}.
+     * @param labelAlignment The alignment of the label of the radio buttons.\
+     * Default: {@link LabelAlignment.START}.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns RadioButtonGroup component.
      */
-    public radioButtonGroup(radioButtons: LabeledRadioButtons, name: string, alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL, data?: T): RadioButtonGroup {
-        return this.setupComponent(new RadioButtonGroup(radioButtons, name, alignment), data);
+    public radioButtonGroup(
+        radioButtons: LabeledRadioButtons,
+        name: string,
+        alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL,
+        labelPosition: LabelPosition = LabelPosition.END,
+        labelAlignment: LabelAlignment = LabelAlignment.START,
+        data?: T
+    ): RadioButtonGroup {
+        return this.setupComponent(new RadioButtonGroup(radioButtons, name, alignment, labelPosition, labelAlignment), data);
     }
 }

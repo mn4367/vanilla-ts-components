@@ -17,7 +17,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      */
     constructor(href: string, labelPhrase: Phrase | Phrases, anchorPhrase?: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
         super(
-            new A(href).phrase(...[anchorPhrase ?? []].flat()),
+            new A(href, ...[anchorPhrase ?? []].flat()),
             labelPhrase,
             lblPosition,
             lblAlignment

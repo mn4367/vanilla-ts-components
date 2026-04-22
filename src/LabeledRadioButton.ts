@@ -1,4 +1,4 @@
-import { CheckedEvent, cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { CheckedEvent, cid, ComponentFactory, DEFAULT_EVENT_INIT_DICT, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { RadioButton } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
@@ -54,6 +54,15 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
             lblAlignment,
             lblAction
         );
+        // Support toggling also on label clicks.
+        this.label.on("click", (ev: PointerEvent) => {
+            if (this.component.Toggle) {
+                ev.preventDefault();
+                this.component.checked(!this.component.Checked);
+                this.component.emit(new Event("input", DEFAULT_EVENT_INIT_DICT));
+                this.component.emit(new Event("change", DEFAULT_EVENT_INIT_DICT));
+            }
+        });
     }
 
     /**
