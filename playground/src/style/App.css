@@ -1,0 +1,6 @@
+p.hello-world {
+    margin: 0;
+    padding: var(--base-size);
+    border-radius: var(--base-size-half);
+    background: hsl(0, 0%, 95%);
+}

@@ -5,5 +5,9 @@ example/out
 example/style
 lib/
 node_modules/
+playground/index.js
+playground/index.js.map
+playground/out
+playground/style
 types/
 .VSCodeCounter

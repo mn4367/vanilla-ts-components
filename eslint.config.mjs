@@ -11,6 +11,7 @@ const config = defineConfig([
     "**/*.d.ts",
     "**/attic/*.ts",
     "**/example/**/*.ts",
+    "**/playground/**/*.ts",
     "**/rollup*.mjs",
     "eslint.config.mjs"
   ]),
