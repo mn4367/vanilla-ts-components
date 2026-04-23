@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
+import { ComponentFactory, Phrase, Phrases, TargetAttributeValues } from "@vanilla-ts/core";
 import { A } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentWithSpan, LabelPosition } from "./LabeledComponents.js";
 
@@ -50,6 +50,28 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      */
     public href(v: string): this {
         this.component.href(v);
+        return this;
+    }
+
+    /**
+     * Get/set the `target` attribute of the anchor component (re-exported for easier direct
+     * access).
+     */
+    public get Target(): TargetAttributeValues {
+        return this.component.Target;
+    }
+    /** @inheritdoc */
+    public set Target(v: TargetAttributeValues) {
+        this.component.Target = v;
+    }
+
+    /**
+     * Sets the `target` attribute of the anchor component (re-exported for easier direct access).
+     * @param v The value to be set.
+     * @returns This instance.
+     */
+    public target(v: TargetAttributeValues): this {
+        this.component.target(v);
         return this;
     }
 
