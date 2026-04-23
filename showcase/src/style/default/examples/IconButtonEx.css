@@ -1,0 +1,82 @@
+.ex-icon-button {
+    .icon-button-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        min-height: 8rem;
+        padding: var(--base-size);
+        .icon-button + .icon-button {
+            margin-inline-start: 1rem;
+        }
+        .icon-button {
+            &.vertical {
+                height: auto;
+                padding-block: var(--3px);
+                align-self: center;
+                &.single-icon {
+                    padding-inline: var(--3px);
+                }
+            }
+        }
+        .ib-img {
+            > .start,
+            > .end {
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center;
+                /* 'Hide' any text in these span elements. */
+                font-size: 0;
+                color: transparent;
+                &:not(.empty) {
+                    /* Make room for icons. */
+                    width: 1.2rem;
+                    /* height: 1.2rem; */
+                    aspect-ratio: 1;
+                }
+            }
+            &.disabled {
+                > .start,
+                > .end {
+                    filter: opacity(0.5);
+                }
+            }
+            > .ios_share {
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%231f1f1f%22%3E%3Cpath%20d%3D%22M240-80q-33%200-56.5-23.5T160-160v-400q0-33%2023.5-56.5T240-640h80q17%200%2028.5%2011.5T360-600q0%2017-11.5%2028.5T320-560h-80v400h480v-400h-80q-17%200-28.5-11.5T600-600q0-17%2011.5-28.5T640-640h80q33%200%2056.5%2023.5T800-560v400q0%2033-23.5%2056.5T720-80H240Zm240-240q-17%200-28.5-11.5T440-360v-407l-36%2036q-12%2012-28%2011.5T348-732q-11-12-11.5-28t11.5-28l104-104q6-6%2013-8.5t15-2.5q8%200%2015%202.5t13%208.5l104%20104q11%2011%2011%2027.5T612-732q-12%2012-28.5%2012T555-732l-35-35v407q0%2017-11.5%2028.5T480-320Z%22%2F%3E%3C%2Fsvg%3E%0A");
+            }
+            > .settings {
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%231f1f1f%22%3E%3Cpath%20d%3D%22M433-80q-27%200-46.5-18T363-142l-9-66q-13-5-24.5-12T307-235l-62%2026q-25%2011-50%202t-39-32l-47-82q-14-23-8-49t27-43l53-40q-1-7-1-13.5v-27q0-6.5%201-13.5l-53-40q-21-17-27-43t8-49l47-82q14-23%2039-32t50%202l62%2026q11-8%2023-15t24-12l9-66q4-26%2023.5-44t46.5-18h94q27%200%2046.5%2018t23.5%2044l9%2066q13%205%2024.5%2012t22.5%2015l62-26q25-11%2050-2t39%2032l47%2082q14%2023%208%2049t-27%2043l-53%2040q1%207%201%2013.5v27q0%206.5-2%2013.5l53%2040q21%2017%2027%2043t-8%2049l-48%2082q-14%2023-39%2032t-50-2l-60-26q-11%208-23%2015t-24%2012l-9%2066q-4%2026-23.5%2044T527-80h-94Zm7-80h79l14-106q31-8%2057.5-23.5T639-327l99%2041%2039-68-86-65q5-14%207-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99%2042q-22-23-48.5-38.5T533-694l-13-106h-79l-14%20106q-31%208-57.5%2023.5T321-633l-99-41-39%2068%2086%2064q-5%2015-7%2030t-2%2032q0%2016%202%2031t7%2030l-86%2065%2039%2068%2099-42q22%2023%2048.5%2038.5T427-266l13%20106Zm42-180q58%200%2099-41t41-99q0-58-41-99t-99-41q-59%200-99.5%2041T342-480q0%2058%2040.5%2099t99.5%2041Zm-2-140Z%22%2F%3E%3C%2Fsvg%3E%0A");
+            }
+            > .print {
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%231f1f1f%22%3E%3Cpath%20d%3D%22M320-120q-33%200-56.5-23.5T240-200v-80h-80q-33%200-56.5-23.5T80-360v-160q0-51%2035-85.5t85-34.5h560q51%200%2085.5%2034.5T880-520v160q0%2033-23.5%2056.5T800-280h-80v80q0%2033-23.5%2056.5T640-120H320ZM160-360h80q0-33%2023.5-56.5T320-440h320q33%200%2056.5%2023.5T720-360h80v-160q0-17-11.5-28.5T760-560H200q-17%200-28.5%2011.5T160-520v160Zm480-280v-120H320v120h-80v-120q0-33%2023.5-56.5T320-840h320q33%200%2056.5%2023.5T720-760v120h-80Zm80%20180q17%200%2028.5-11.5T760-500q0-17-11.5-28.5T720-540q-17%200-28.5%2011.5T680-500q0%2017%2011.5%2028.5T720-460Zm-80%20260v-160H320v160h320ZM160-560h640-640Z%22%2F%3E%3C%2Fsvg%3E%0A");
+            }
+            > .wifi {
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224px%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2224px%22%20fill%3D%22%231f1f1f%22%3E%3Cpath%20d%3D%22M480-120q-42%200-71-29t-29-71q0-42%2029-71t71-29q42%200%2071%2029t29%2071q0%2042-29%2071t-71%2029Zm0-440q75%200%20142.5%2024T745-470q20%2015%2020.5%2039.5T748-388q-17%2017-42%2017.5T661-384q-38-26-84-41t-97-15q-51%200-97%2015t-84%2041q-20%2014-45%2013t-42-18q-17-18-17-42.5t20-39.5q55-42%20122.5-65.5T480-560Zm0-240q125%200%20235.5%2041T914-643q20%2017%2021%2042t-17%2043q-17%2017-42%2017.5T831-556q-72-59-161.5-91.5T480-680q-100%200-189.5%2032.5T129-556q-20%2016-45%2015.5T42-558q-18-18-17-43t21-42q88-75%20198.5-116T480-800Z%22%2F%3E%3C%2Fsvg%3E%0A");
+            }
+            > .circle {
+                background-image: url("data:image/svg+xml;utf8,<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'><circle cx='50' cy='50' r='40' fill='red'/></svg>");
+            }
+            &.wifi-on > .circle {
+                background-image: url("data:image/svg+xml;utf8,<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'><circle cx='50' cy='50' r='40' fill='green'/></svg>");
+            }
+        }
+        .ib-font {
+            > .start,
+            > .end {
+                font-family: "MaterialIconsRounded";
+                font-size: 1.2rem;
+                line-height: 1;
+            }
+            > .circle {
+                color: red;
+                /* Support for a filled symbol. */
+                font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 20;
+            }
+            &.disabled > .circle {
+                filter: opacity(0.5);
+            }
+            &.wifi-on > .circle {
+                color: green;
+            }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+.app-footer {
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding: var(--base-size-half);
+    background-color: white;
+    border-block-start: var(--panel-border);
+    > p {
+        margin: 0;
+    }
+}

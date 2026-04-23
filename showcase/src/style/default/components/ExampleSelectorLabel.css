@@ -1,0 +1,15 @@
+.example-selector-label {
+    &.selected,
+    &:focus-visible {
+        background-color: var(--panel-background-color-dark);
+    }
+    /* &:first-child {
+        margin-block-start: var(--base-size-half);
+    } */
+    margin: 0;
+    padding: 0.45rem 0.6rem;
+    border-radius: var(--border-radius-normal);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

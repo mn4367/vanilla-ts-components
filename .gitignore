@@ -1,3 +1,4 @@
+.VSCodeCounter
 attic/
 example/index.js
 example/index.js.map
@@ -9,5 +10,8 @@ playground/index.js
 playground/index.js.map
 playground/out
 playground/style
+showcase/index.js
+showcase/index.js.map
+showcase/out
+showcase/style
 types/
-.VSCodeCounter

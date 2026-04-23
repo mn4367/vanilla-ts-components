@@ -1,0 +1,16 @@
+.example {
+    .example-area {
+        .canvas {
+            .labeled-container.software-updates-sample {
+                > .lc-component {
+                    > p {
+                        margin-block: var(--base-size-half);
+                    }
+                    > hr {
+                        margin-block: var(--base-size);
+                    }
+                }
+            }
+        }
+    }
+}

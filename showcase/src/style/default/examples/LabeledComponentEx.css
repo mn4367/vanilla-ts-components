@@ -1,0 +1,12 @@
+.example {
+    .example-area {
+        .canvas {
+            .wide-label {
+                .lc-label {
+                    width: 15rem;
+                    background: var(--black-5);
+                }
+            }
+        }
+    }
+}

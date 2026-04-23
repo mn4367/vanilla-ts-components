@@ -1,0 +1,13 @@
+.app-header {
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: var(--base-size);
+    border-block-end: var(--panel-border);
+    > h1 {
+        flex-grow: 1;
+        margin: 0;
+    }
+}

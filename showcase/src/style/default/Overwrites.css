@@ -1,0 +1,16 @@
+/* App overwrites */
+pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: inherit;
+    /* padding: 1em; */
+}
+code.hljs {
+    padding: inherit;
+    /* padding: 3px 5px; */
+}
+.hljs {
+    background: inherit;
+    /* background: #fff; */
+    color: #000;
+}

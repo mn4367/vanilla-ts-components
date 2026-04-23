@@ -1,0 +1,60 @@
+.example {
+    .example-area {
+        .canvas {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dc-container {
+            display: flex;
+            width: 30rem;
+            height: 19.5rem;
+            &:has(> .disclosure-container.top-start),
+            &:has(> .disclosure-container.top-end) {
+                flex-direction: column;
+            }
+            &:has(> .disclosure-container.end-top),
+            &:has(> .disclosure-container.end-bottom) {
+                flex-direction: row-reverse;
+            }
+            &:has(> .disclosure-container.bottom-start),
+            &:has(> .disclosure-container.bottom-end) {
+                flex-direction: column-reverse;
+            }
+            &:has(> .disclosure-container.start-top),
+            &:has(> .disclosure-container.start-bottom) {
+                flex-direction: row;
+            }
+            > .disclosure-container {
+                > .header-container > .disclose.icon-button.custom-design {
+                    width: 1.4rem;
+                    height: 1.4rem;
+                    border-radius: 50%;
+                    font-family: monospace;
+                    font-size: 1rem;
+                    font-weight: bolder;
+                    color: var(--black-0);
+                    background: var(--color-primary);
+                    clip-path: none;
+                    > .phrase {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        line-height: 0;
+                    }
+                    &:hover {
+                        filter: brightness(0.9);
+                    }
+                }
+                &.disabled > .header-container > .disclose.icon-button.custom-design {
+                    background: var(--color-primary-light);
+                }
+                &.horizontal > .header-container > .disclose.icon-button.custom-design > .phrase {
+                    transform: rotate(90deg);
+                }
+            }
+        }
+    }
+}

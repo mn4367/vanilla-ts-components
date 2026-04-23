@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'FontAwesomeRegular';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../res/fa-regular-400.woff2) format('woff2');
+}
+@font-face {
+    font-family: 'FontAwesomeSolid';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../res/fa-solid-900.woff2) format('woff2');
+}
+@font-face {
+    font-family: 'MaterialIconsRounded';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../res/MaterialIconsRounded.woff2) format('woff2');
+}

@@ -1,0 +1,60 @@
+.example-category {
+    /* padding: 0.65rem var(--base-size) var(--base-size-half) var(--base-size); */
+    padding: var(--base-size-half) var(--base-size) 0 var(--base-size);
+    &.undisclosed.top-end {
+        .disclose {
+            /* &::before {
+                display: inline-block;
+                width: 0.7rem;
+                aspect-ratio: 1;
+                border-inline-end: 2px solid gray;
+                content: "";
+                border-block-end: 2px solid gray;
+                transform: rotate(45deg);
+                translate: 0.15rem -0.1rem;
+            } */
+            clip-path: var(--cp-arrow-right);
+        }
+    }
+    > .header-container,
+    > .header-container * {
+        cursor: pointer;
+    }
+    /* Fixes a problem with `position: sticky;` and `top: 0;` in WebKit (see below). */
+    transform: translate(0);
+    > .header-container {
+        position: sticky;
+        top: 0;
+        padding-block-start: var(--base-size-half);
+        padding-block-end: var(--base-size-half);
+        z-index: 10;
+        background-color: var(--panel-background-color-light);
+        > .disclose {
+            opacity: 0;
+        }
+        &:hover,
+        &:focus-visible,
+        &:focus-within {
+            > .disclose {
+                opacity: 0.5;
+                transition: opacity 0.2s ease-in-out;
+            }
+        }
+        > .header-content {
+            width: 100%;
+            padding-inline: var(--base-size-quarter);
+            .header-text {
+                font-size: smaller;
+                font-weight: bolder;
+                text-transform: uppercase;
+                margin-inline-start: 0;
+                opacity: 0.4;
+            }
+        }
+    }
+    /* > .content-container {
+        > .example-selector-label:focus-visible {
+            background-color: var(--panel-background-color-dark);
+        }
+    } */
+}

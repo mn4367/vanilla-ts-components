@@ -1,0 +1,12 @@
+.labeled-number-input.lni-example {
+    > input[type="number"] {
+        &:valid {
+            color: var(--color-success);
+        }
+        /* This is already the default.
+        &:invalid {
+            color: var(--color-warn);
+        }
+        */
+    }
+}
