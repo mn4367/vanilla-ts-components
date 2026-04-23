@@ -1,0 +1,30 @@
+{
+    // Verwendet IntelliSense zum Ermitteln möglicher Attribute.
+    // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
+    // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Example",
+            "request": "launch",
+            "type": "editor-browser",
+            "url": "file://${workspaceFolder}/example/index.html",
+            "webRoot": "${workspaceFolder}/example"
+        },
+        {
+            "name": "Showcase",
+            "request": "launch",
+            "type": "editor-browser",
+            "url": "file://${workspaceFolder}/showcase/index.html",
+            "webRoot": "${workspaceFolder}/showcase"
+        },
+        {
+            "name": "Playground",
+            "request": "launch",
+            "type": "editor-browser",
+            "url": "file://${workspaceFolder}/playground/index.html",
+            "webRoot": "${workspaceFolder}/playground"
+        }
+
+    ]
+}
