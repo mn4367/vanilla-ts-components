@@ -1,0 +1,29 @@
+/*
+__Note:__ This CSS uses CSS variables defined in `Input.css` (`--input-*`) to achieve a consistent
+style for native DOM input elements. `Input.css` has to be included in order to make the styling
+here work correctly.
+*/
+input[type="number"] {
+    height: var(--input-height);
+    margin: 0;
+    padding-inline-start: var(--input-text-inline-padding);
+    padding-block: 0;
+    /* See comment for `--input-text-inline-padding` in `Input.css`. */
+    /* padding-block: var(--input-text-block-padding); */
+    border-radius: var(--input-border-radius);
+    border: var(--input-border);
+    border-bottom: var(--input-border-dark);
+    background: var(--input-background);
+    font-size: 1rem;
+    color: var(--font-color);
+    &:invalid {
+        color: var(--color-warn);
+    }
+    &.disabled,
+    &:disabled {
+        color: var(--font-disabled-color);
+        border: var(--input-disabled-border);
+        border-bottom: var(--input-disabled-border-dark);
+        background: var(--input-disabled-background);
+    }
+}

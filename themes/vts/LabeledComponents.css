@@ -1,19 +1,50 @@
 .labeled-component {
-    /* #region common */
+    --labeled-component-block-padding: var(--2px);
+    --labeled-component-vertical-gap: 0.25rem;
+    --labeled-component-horizontal-gap: 1rem;
+    /* #region Common */
     display: flex;
     position: relative;
-    padding-block: var(--2px);
+    padding-block: var(--labeled-component-block-padding);
     > .lc-label {
         flex-shrink: 0;
     }
-    /* > .lc-component {
-    } */
+    /* > .lc-component {} */
     &:first-child {
         padding-block-start: 0;
     }
     &:last-child {
         padding-block-end: 0;
     }
+    &.disabled,
+    &:disabled,
+    &[disabled] {
+        > .lc-label,
+        > .lc-component {
+            color: var(--font-disabled-color);
+        }
+    }
+    /* #endregion */
+    /* #region Label position top/bottom */
+    /* Note for some labeled components (like `LabeledCheckbox` and `LabeledRadioButton`):
+       The following styles are technically 'correct', but in practice this arrangement is not
+       really usable visually. */
+    &.p-top,
+    &.p-bottom {
+        flex-direction: column;
+        justify-content: center;
+        gap: var(--labeled-component-vertical-gap);
+    }
+    /* #endregion */
+    /* #region Label position start/end */
+    &.p-start,
+    &.p-end {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--labeled-component-horizontal-gap);
+    }
+    /* #endregion */
+    /* #region Label alignment */
     &.a-start > .lc-label {
         text-align: start;
     }
@@ -24,42 +55,16 @@
         text-align: end;
     }
     /* #endregion */
-    /* #region top/bottom */
-    /* Note for `LabeledCheckbox` and `LabeledRadioButton`:
-       The following styles are technically 'correct', but in practice this arrangement is not
-       really usable visually. */
-    &.p-top,
-    &.p-bottom {
-        flex-direction: column;
-        justify-content: center;
-    }
-    &.p-top > .lc-label {
-        padding-block-end: 0.5rem;
-    }
-    &.p-bottom > .lc-label {
-        padding-block-start: 0.5rem;
-    }
-    /* #endregion */
-    /* #region start/end */
-    &.p-start,
-    &.p-end {
-        flex-direction: row;
-        align-items: center;
-    }
-    &.p-start > .lc-label {
-        padding-inline-end: 0.5rem;
-    }
-    &.p-end > .lc-label {
-        padding-inline-start: 0.5rem;
-    }
-    /* #endregion */
 }
 .labeled-component-group {
-    /* #region common */
+    --labeled-component-group-border-radius: var(--border-radius-small);
+    --labeled-component-group-border: var(--1px) solid var(--border-color);
+    --labeled-component-group-label-padding: 0.5rem;
+    /* #region Common */
     display: block;
     position: relative;
-    border: var(--1px) solid var(--border-color);
-    border-radius: var(--border-radius-small);
+    border-radius: var(--labeled-component-group-border-radius);
+    border: var(--labeled-component-group-border);
     background-color: inherit;
     > .lc-label,
     > .lc-component {
@@ -67,16 +72,23 @@
     }
     > .lc-label {
         position: absolute;
-        padding-inline-start: 0.5rem;
-        padding-inline-end: 0.5rem;
+        padding-inline: var(--labeled-component-group-label-padding);
         line-height: 1;
     }
     > .lc-component {
         width: 100%;
         height: 100%;
     }
+    &.disabled,
+    &:disabled,
+    &[disabled] {
+        > .lc-label,
+        > .lc-component {
+            color: var(--font-disabled-color);
+        }
+    }
     /* #endregion */
-    /* #region top/bottom */
+    /* #region Label position top/bottom */
     &.p-top,
     &.p-bottom {
         padding-inline: 1rem;
@@ -124,7 +136,7 @@
         }
     }
     /* #endregion */
-    /* #region start/end */
+    /* #region Label position start/end */
     &.p-start,
     &.p-end {
         padding-block: 1rem;
@@ -138,7 +150,7 @@
     }
     &.p-start {
         margin-inline-start: 0.5rem;
-        padding-inline: 1.25rem 1rem;
+        padding-inline: 1.5rem 1rem;
         > .lc-label {
             inset-block-start: -0.5rem;
             transform: rotate(180deg);
@@ -152,7 +164,7 @@
     }
     &.p-end {
         margin-inline-end: 0.5rem;
-        padding-inline: 1rem 1.25rem;
+        padding-inline: 1rem 1.5rem;
         > .lc-label {
             inset-block-end: -0.5rem;
             /* Workaround for behavior in Gecko. */

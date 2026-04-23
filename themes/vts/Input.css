@@ -1,0 +1,18 @@
+/* Common styles for native DOM input elements. */
+:root {
+    --input-height: var(--22px);
+    --input-text-inline-padding: var(--9px);
+    /* This is a hack that fixes a misbehavior in Blink (vertically centered labeled text input). */
+    /* --input-text-block-padding: var(--2px) calc(var(--1px) + (var(--1px) / 2)); */
+    /* --input-text-block-padding: 0; */
+    --input-focused-outline-color: hsl(222 84.3% 77.5%);
+    --input-focused: 0 0 var(--1px) var(--3px) var(--input-focused-outline-color);
+    --input-focused-alt: 0 0 var(--2px) var(--2px) white, 0 0 var(--1px) var(--6px) var(--input-focused-outline-color);
+    --input-border-radius: var(--6px);
+    --input-border: var(--1px) solid var(--black-20);
+    --input-border-dark: var(--1px) solid var(--black-35);
+    --input-disabled-border: var(--1px) solid var(--black-20);
+    --input-disabled-border-dark: var(--1px) solid var(--black-25);
+    --input-background: var(--black-0);
+    --input-disabled-background: var(--black-2);
+}

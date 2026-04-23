@@ -1,0 +1,76 @@
+input[type="radio"] {
+    --radiobutton-size: var(--14px);
+    --radiobutton-border-radius: 50%;
+    --radiobutton-border: var(--1px) solid var(--black-25);
+    --radiobutton-background: var(--black-0);
+    --radiobutton-disabed-border: var(--1px) solid var(--black-20);
+    --radiobutton-disabled-background: var(--black-5);
+    --radiobutton-active-background: var(--black-5);
+    --radiobutton-outer-circle: 50%;
+    --radiobutton-inner-circle: 21.43%;
+    --radiobutton-disabled-outer-circle: 50%;
+    --radiobutton-disabled-inner-circle: 28.57%;
+    --radiobutton-checked-outer-circle: var(--color-primary);
+    --radiobutton-checked-active-outer-circle: var(--color-primary-darker);
+    --radiobutton-checked-inner-circle: var(--black-0);
+    --radiobutton-checked-disabled-inner-circle: var(--black-20);
+    appearance: none;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Still broken in Safari TP 237, therefore uses `width` and `height` explicitly. */
+    /* aspect-ratio: 1; */
+    width: var(--radiobutton-size);
+    height: var(--radiobutton-size);
+    margin: 0;
+    padding: 0;
+    border-radius: var(--radiobutton-border-radius);
+    border: var(--radiobutton-border);
+    background: var(--radiobutton-background);
+    &:invalid {
+        color: var(--color-warn);
+    }
+    &:active {
+        background: var(--radiobutton-active-background);
+    }
+    &.disabled,
+    &:disabled {
+        border: var(--radiobutton-disabed-border);
+        background: var(--radiobutton-disabled-background);
+    }
+    &:checked {
+        &::before,
+        &::after {
+            display: block;
+            position: absolute;
+            width: var(--radiobutton-size);
+            aspect-ratio: 1;
+            content: "";
+        }
+        /* Outer circle */
+        &::before {
+            clip-path: circle(var(--radiobutton-outer-circle));
+            background: var(--radiobutton-checked-outer-circle);
+        }
+        &:active::before {
+            background: var(--radiobutton-checked-active-outer-circle);
+        }
+        /* Inner circle */
+        &::after {
+            clip-path: circle(var(--radiobutton-inner-circle));
+            background: var(--radiobutton-checked-inner-circle);
+        }
+        &.disabled,
+        &:disabled {
+            &::before {
+                display: none;
+                /* clip-path: circle(var(--radiobutton-disabled-outer-circle)); */
+            }
+            &::after {
+                clip-path: circle(var(--radiobutton-disabled-inner-circle));
+                background: var(--radiobutton-checked-disabled-inner-circle);
+            }
+        }
+    }
+}

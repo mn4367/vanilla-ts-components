@@ -1,0 +1,26 @@
+/*
+__Note:__ This CSS uses CSS variables defined in `Input.css` (`--input-*`) to achieve a consistent
+style for native DOM input elements. `Input.css` has to be included in order to make the styling
+here work correctly.
+*/
+textarea {
+    --textarea-border-radius: var(--border-radius-normal);
+    --textarea-inline-padding: var(--9px);
+    --textarea-block-padding: var(--7px);
+    margin: 0;
+    padding-inline: var(--textarea-inline-padding);
+    padding-block: var(--textarea-block-padding);
+    border-radius: var(--textarea-border-radius);
+    border: var(--input-border);
+    border-bottom: var(--input-border-dark);
+    background: var(--input-background-color);
+    font-size: 1rem;
+    color: var(--font-color);
+    &.disabled,
+    &:disabled {
+        color: var(--font-disabled-color);
+        border: var(--input-disabled-border);
+        border-bottom: var(--input-disabled-border-dark);
+        background: var(--input-disabled-background);
+    }
+}

@@ -1,13 +1,19 @@
 :root {
+    /* //////////////////////////////////////// */
     /* #region Fonts */
     --system-ui: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --system-sans-serif: ui-sans-serif;
-    --system-serif: ui-serif;
-    --system-monospace: ui-monospace;
-    --font-color: hsl(0 0% 15.7%);
+    --system-sans-serif: ui-sans-serif, sans-serif;
+    --system-serif: ui-serif, serif;
+    --system-monospace: ui-monospace, monospace;
+    --font-color: hsl(0 0% 15%);
+    --font-disabled-color: hsl(0 0% 75%);
+    /* auto geometricPrecision optimizeLegibility optimizeSpeed */
+    /* --text-rendering: geometricPrecision; */
     /* #endregion */
+    /* //////////////////////////////////////// */
 
-    /* #region Sizes/animation timings */
+    /* //////////////////////////////////////// */
+    /* #region Sizes */
     /*
      * - All sizes for this theme are based on a base font size of 10pt.
      * - With this base font size 1 Pixel corresponds to 0.075rem.
@@ -18,6 +24,7 @@
     --base-font-size: 10pt;
     --base-size: 1rem;
     --base-size-half: 0.5rem;
+    --base-size-quarter: 0.25rem;
     --1px: 0.075rem;
     --2px: calc(2 * var(--1px));
     --3px: calc(3 * var(--1px));
@@ -43,83 +50,88 @@
     --23px: calc(23 * var(--1px));
     --24px: calc(24 * var(--1px));
     --25px: calc(25 * var(--1px));
-    --input-border-radius: var(--2px);
+    --26px: calc(26 * var(--1px));
+    --27px: calc(27 * var(--1px));
+    --28px: calc(28 * var(--1px));
+    --29px: calc(29 * var(--1px));
+    --30px: calc(30 * var(--1px));
     --border-radius-normal: var(--6px);
     --border-radius-small: var(--3px);
     --border-radius-large: var(--13px);
-    /* BusyOverlay */
-    --busy-overlay-size: 5rem;
-    /* ----------------------------------------------- */
-    /* Based on the design of the scrollbars on macOS. */
-    /* ----------------------------------------------- */
-    --scroll-bar-overlay-fade-in: opacity 0.1s ease-in;
-    --scroll-bar-overlay-fade-out: opacity 0.2s ease-in 0.7s;
-    --scroll-bar-size: 0.6rem;
-    --scroll-bar-border-radius: 0.2rem;
-    --scroll-bar-thumb-min-size: calc(3 * var(--scroll-bar-size));
-    --scroll-bar-thumb-gap: var(--1px);
-    --scroll-bar-thumb-border-radius: 0.3rem;
-    /* Splitter */
-    --splitter-size: var(--1px);
-    --splitter-bleed: var(--4px);
-    --splitter-collapse-duration: 0.16s;
-    --splitter-collapse-easing: ease;
-    /* Dialog */
-    --dlg-padding: var(--base-size);
-    --dlg-resizer-size: var(--6px);
     /* #endregion */
+    /* //////////////////////////////////////// */
 
-    /* #region Colors, borders */
+    /* //////////////////////////////////////// */
+    /* #region Colors */
+    /* Primary, secondary, warn colors */
+    --color-primary: hsl(216, 92%, 63%);
+    --color-primary-lighter: hsl(216, 92%, 68%);
+    --color-primary-light: hsl(216, 92%, 73%);
+    --color-primary-darker: hsl(216, 92%, 58%);
+    --color-primary-dark: hsl(216, 92%, 53%);
+    --color-success: hsl(120, 100%, 35%);
+    --color-success-lighter: hsl(120, 100%, 55%);
+    --color-success-light: hsl(120, 100%, 75%);
+    --color-success-darker: hsl(120, 100%, 25%);
+    --color-success-dark: hsl(120, 100%, 15%);
+    --color-warn: hsl(0, 100%, 72.5%);
+    --color-warn-lighter: hsl(0, 100%, 89.3%);
+    --color-warn-light: hsl(0, 100%, 92.5%);
+    --color-warn-darker: hsl(0, 100%, 59%);
+    --color-warn-dark: hsl(0, 100%, 35.7%);
+    /* White to black. */
+    --black-0: hsl(0, 0%, 100%);
+    --black-1: hsl(0, 0%, 99%);
+    --black-2: hsl(0, 0%, 98%);
+    --black-3: hsl(0, 0%, 97%);
+    --black-4: hsl(0, 0%, 96%);
+    --black-5: hsl(0, 0%, 95%);
+    --black-10: hsl(0, 0%, 90%);
+    --black-15: hsl(0, 0%, 85%);
+    --black-20: hsl(0, 0%, 80%);
+    --black-25: hsl(0, 0%, 75%);
+    --black-30: hsl(0, 0%, 70%);
+    --black-35: hsl(0, 0%, 65%);
+    --black-40: hsl(0, 0%, 60%);
+    --black-45: hsl(0, 0%, 55%);
+    --black-50: hsl(0, 0%, 50%);
+    --black-55: hsl(0, 0%, 45%);
+    --black-60: hsl(0, 0%, 40%);
+    --black-65: hsl(0, 0%, 35%);
+    --black-70: hsl(0, 0%, 30%);
+    --black-75: hsl(0, 0%, 25%);
+    --black-80: hsl(0, 0%, 20%);
+    --black-85: hsl(0, 0%, 15%);
+    --black-90: hsl(0, 0%, 10%);
+    --black-95: hsl(0, 0%, 5%);
+    --black-100: hsl(0, 0%, 0%);
+    /* Backgrounds, borders */
     --window-background-color: hsl(0 0% 100%);
-    --dialog-background-color: hsl(0 0% 91.4%);
-    --dialog-window-background-color: hsl(0 0% 96.5%);
-    --dialog-border-color: hsl(0 0% 78.4%);
-    --dialog-backdrop: hsla(0 0% 0% / 0.2);
     --panel-background-color-light: hsl(0 0% 94.9%);
     --panel-background-color: hsl(0 0% 91.4%);
     --panel-background-color-dark: hsl(0 0% 83%);
     --border-color: hsl(0 0% 89.8%);
-    --border-color-dark: hsl(0 0% 86.7%);
-    --input-background-color: hsl(0 0% 100%);
-    --input-border-color: hsl(0 0% 85.9%);
-    --input-border-color-dark: hsl(0 0% 71%);
-    --input-focused-outline-color: hsl(219 93.2% 76.9%);
-    /* PopupMenu */
-    --menu-background-color: hsl(0 0% 94.5%);
-    --menu-background-color-focused: hsl(214 100% 67.5%);
-    --menu-border-color: hsl(0 0% 78.4%);
-    --menu-separator-color: hsl(0 0% 84.7%);
-    --menu-font-color: hsl(0 0% 20.8%);
-    --menu-font-color-focused: hsl(0 0% 100%);
-    --menu-font-color-hint: hsla(0 0% 0% / 30%);
-    /* BusyOverlay */
-    --busy-overlay-color: hsl(214 100% 67.5%);
-    --busy-overlay-backdrop-color: hsla(0 0% 0% / 0.1);
-    /* ----------------------------------------------- */
-    /* Based on the design of the scrollbars on macOS. */
-    /* ----------------------------------------------- */
-    --scroll-bar-background-color: hsla(0 0% 100% / 0.75);
-    --scroll-bar-border-color: hsla(0 0% 43% / 0.2);
-    --scroll-bar-border: var(--1px) solid var(--scroll-bar-border-color);
-    --scroll-bar-thumb-color: hsla(0 0% 43% / 0.8);
-    /* Splitter */
-    --splitter-color: hsla(0 0% 78% / 1);
-    /* IconButton */
-    --icon-button-margin: var(--base-size-half);
+    --border-color-dark: var(--black-15);
+    --panel-border: 1px solid var(--border-color);
     /* #endregion */
+    /* //////////////////////////////////////// */
 
+    /* //////////////////////////////////////// */
+    /* #region Images, icons */
     /* #region Images */
     /* delete.svg */
     --img-delete: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGVsbGlwc2Ugc3R5bGU9ImZpbGw6IHJnYigyNTUsIDAsIDApOyIgY3g9IjI1NiIgY3k9IjI1NiIgcng9IjI1NiIgcnk9IjI1NiIvPgogIDxwYXRoIGQ9Ik0gMzY2LjYgMjMwLjgzIEMgMzgwLjUwNCAyMzAuODMgMzkxLjc4NCAyNDIuMDc5IDM5MS43ODQgMjU1Ljk5OSBDIDM5MS43ODQgMjY5LjkxOSAzODAuNTA0IDI4MS4xNjcgMzY2LjYgMjgxLjE2NyBMIDE0NC45MiAyODEuMTY3IEwgMTQ0LjkyIDIzMC44MyBNIDE0NS4zODQgMjgxLjE2NyBDIDEzMS40OTYgMjgxLjE2NyAxMjAuMjE2IDI2OS45MTkgMTIwLjIxNiAyNTUuOTk5IEMgMTIwLjIxNiAyNDIuMDc5IDEzMS40OTYgMjMwLjgzIDE0NS4zODQgMjMwLjgzIiBzdHlsZT0icGFpbnQtb3JkZXI6IGZpbGw7IGZpbGw6IHJnYigyNTUsIDI1NSwgMjU1KTsiIHRyYW5zZm9ybT0ibWF0cml4KDAuNzA3MTA4LCAtMC43MDcxMDYsIDAuNzA3MTA2LCAwLjcwNzEwOCwgLTEwNi4wMzc2MDksIDI1NS45OTkwNTYpIi8+CiAgPHBhdGggZD0iTSAzNjYuNiAyMzAuODMgQyAzODAuNTA0IDIzMC44MyAzOTEuNzg0IDI0Mi4wNzggMzkxLjc4NCAyNTUuOTk4IEMgMzkxLjc4NCAyNjkuOTE4IDM4MC41MDQgMjgxLjE2NiAzNjYuNiAyODEuMTY2IEwgMTQ0LjkyIDI4MS4xNjYgTCAxNDQuOTIgMjMwLjgzIE0gMTQ1LjM4NCAyODEuMTY2IEMgMTMxLjQ5NiAyODEuMTY2IDEyMC4yMTYgMjY5LjkxOCAxMjAuMjE2IDI1NS45OTggQyAxMjAuMjE2IDI0Mi4wNzggMTMxLjQ5NiAyMzAuODMgMTQ1LjM4NCAyMzAuODMiIHN0eWxlPSJwYWludC1vcmRlcjogZmlsbDsgZmlsbDogcmdiKDI1NSwgMjU1LCAyNTUpOyIgdHJhbnNmb3JtPSJtYXRyaXgoMC43MDcxMDcsIDAuNzA3MTA3LCAtMC43MDcxMDcsIDAuNzA3MTA3LCAyNTUuOTk4NTgxLCAtMTA2LjAzOTI2KSIvPgo8L3N2Zz4=");
-    /* restart.svg */
-    --img-restart: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZWxsaXBzZSBzdHlsZT0iZmlsbDogcmdiKDg0LCAxODAsIDI0Nik7IiBjeD0iMjU2IiBjeT0iMjU2IiByeD0iMjU2IiByeT0iMjU2Ii8+CiAgPHBhdGggZD0iTSA0MDkuNjE1IDg4LjA2IEMgNDIwLjAxOCA4OC4wNiA0MzAgOTYuMTM3IDQzMCAxMDguMzQgTCA0MzAgMjE3Ljc2MiBDIDQzMCAyMjUuNzA1IDQyMy41NjIgMjMyLjEzOSA0MTUuNjIzIDIzMi4xMzkgTCAzMDYuMzUgMjMyLjEzOSBDIDI5NC4xNCAyMzIuMTM5IDI4Ni4wNTYgMjIyLjE1IDI4Ni4wNTYgMjExLjc0IEMgMjg2LjA1NiAyMDYuNzY0IDI4Ny45MDEgMjAxLjY5IDI5Mi4wMjUgMTk3LjU2NSBMIDMyNS44NjUgMTYzLjcxMSBDIDMwNC43IDE0Ni4zNTYgMjc3Ljk3OCAxMzYuMjMxIDI0OS44OTEgMTM2LjIzMSBDIDE4My44MjUgMTM2LjIzMSAxMzAuMDQ0IDE4OS45OTggMTMwLjA0NCAyNTYuMDc5IEMgMTMwLjA0NCAzMjIuMTYgMTgzLjc5NSAzNzUuODk2IDI0OS44NjkgMzc1Ljg5NiBDIDMwNC43MjMgMzc1Ljg5NiAzMTYuOTQ3IDM0Ny4xNjQgMzM2LjE5MiAzNDcuMTY0IEMgMzUwLjA1MiAzNDcuMTY0IDM2MC4xNjkgMzU4LjQ0NCAzNjAuMTY5IDM3MS4xMzQgQyAzNjAuMTY5IDM5Ny40MTMgMjk4Ljk3OCA0MjMuOTQgMjQ5LjkyMSA0MjMuOTQgQyAxNTcuMzczIDQyMy45NCA4MiAzNDguNTY3IDgyIDI1Ni4wMTkgQyA4MiAxNjMuNDcxIDE1Ny4zOTYgODguMzA3IDI0OS45NDQgODguMzA3IEMgMjkwLjg5MyA4OC4zMDcgMzI5LjU5MiAxMDMuNiAzNTkuNzQxIDEyOS43NTIgTCAzOTUuNDQxIDk0LjAzIEMgMzk5LjU2NiA4OS45MDUgNDA0LjY2NSA4OC4wNiA0MDkuNjE1IDg4LjA2IFoiIHN0eWxlPSJmaWxsOiByZ2IoMjU1LCAyNTUsIDI1NSk7Ii8+Cjwvc3ZnPg==");
     /* menu.svg */
     --img-menu: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj4KICA8cGF0aCBkPSJNMCA5NkMwIDc4LjMgMTQuMyA2NCAzMiA2NGwzODQgMGMxNy43IDAgMzIgMTQuMyAzMiAzMnMtMTQuMyAzMi0zMiAzMkwzMiAxMjhDMTQuMyAxMjggMCAxMTMuNyAwIDk2ek0wIDI1NmMwLTE3LjcgMTQuMy0zMiAzMi0zMmwzODQgMGMxNy43IDAgMzIgMTQuMyAzMiAzMnMtMTQuMyAzMi0zMiAzMkwzMiAyODhjLTE3LjcgMC0zMi0xNC4zLTMyLTMyek00NDggNDE2YzAgMTcuNy0xNC4zIDMyLTMyIDMyTDMyIDQ0OGMtMTcuNyAwLTMyLTE0LjMtMzItMzJzMTQuMy0zMiAzMi0zMmwzODQgMGMxNy43IDAgMzIgMTQuMyAzMiAzMnoiIHN0eWxlPSJmaWxsOiByZ2IoMjU1LCAwLCAwKTsiLz4KPC9zdmc+");
-
+    /* restart.svg */
+    --img-restart: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZWxsaXBzZSBzdHlsZT0iZmlsbDogcmdiKDg0LCAxODAsIDI0Nik7IiBjeD0iMjU2IiBjeT0iMjU2IiByeD0iMjU2IiByeT0iMjU2Ii8+CiAgPHBhdGggZD0iTSA0MDkuNjE1IDg4LjA2IEMgNDIwLjAxOCA4OC4wNiA0MzAgOTYuMTM3IDQzMCAxMDguMzQgTCA0MzAgMjE3Ljc2MiBDIDQzMCAyMjUuNzA1IDQyMy41NjIgMjMyLjEzOSA0MTUuNjIzIDIzMi4xMzkgTCAzMDYuMzUgMjMyLjEzOSBDIDI5NC4xNCAyMzIuMTM5IDI4Ni4wNTYgMjIyLjE1IDI4Ni4wNTYgMjExLjc0IEMgMjg2LjA1NiAyMDYuNzY0IDI4Ny45MDEgMjAxLjY5IDI5Mi4wMjUgMTk3LjU2NSBMIDMyNS44NjUgMTYzLjcxMSBDIDMwNC43IDE0Ni4zNTYgMjc3Ljk3OCAxMzYuMjMxIDI0OS44OTEgMTM2LjIzMSBDIDE4My44MjUgMTM2LjIzMSAxMzAuMDQ0IDE4OS45OTggMTMwLjA0NCAyNTYuMDc5IEMgMTMwLjA0NCAzMjIuMTYgMTgzLjc5NSAzNzUuODk2IDI0OS44NjkgMzc1Ljg5NiBDIDMwNC43MjMgMzc1Ljg5NiAzMTYuOTQ3IDM0Ny4xNjQgMzM2LjE5MiAzNDcuMTY0IEMgMzUwLjA1MiAzNDcuMTY0IDM2MC4xNjkgMzU4LjQ0NCAzNjAuMTY5IDM3MS4xMzQgQyAzNjAuMTY5IDM5Ny40MTMgMjk4Ljk3OCA0MjMuOTQgMjQ5LjkyMSA0MjMuOTQgQyAxNTcuMzczIDQyMy45NCA4MiAzNDguNTY3IDgyIDI1Ni4wMTkgQyA4MiAxNjMuNDcxIDE1Ny4zOTYgODguMzA3IDI0OS45NDQgODguMzA3IEMgMjkwLjg5MyA4OC4zMDcgMzI5LjU5MiAxMDMuNiAzNTkuNzQxIDEyOS43NTIgTCAzOTUuNDQxIDk0LjAzIEMgMzk5LjU2NiA4OS45MDUgNDA0LjY2NSA4OC4wNiA0MDkuNjE1IDg4LjA2IFoiIHN0eWxlPSJmaWxsOiByZ2IoMjU1LCAyNTUsIDI1NSk7Ii8+Cjwvc3ZnPg==");
+    /* #endregion */
     /* #region Clip-paths */
     --cp-arrow-up: polygon(0% 93.333%, 50% 6.666%, 100% 93.333%);
     --cp-arrow-right: polygon(6.666% 0%, 93.333% 50%, 6.666% 100%);
     --cp-arrow-down: polygon(0% 6.666%, 100% 6.666%, 50% 93.333%);
     --cp-arrow-left: polygon(6.666% 50%, 93.333% 0%, 93.333% 100%);
     /* #endregion */
+    /* #endregion */
+    /* //////////////////////////////////////// */
 }

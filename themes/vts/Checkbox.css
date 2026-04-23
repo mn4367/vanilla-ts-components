@@ -1,0 +1,156 @@
+/* Regular */
+input[type="checkbox"]:not(.switch) {
+    --checkbox-size: var(--14px);
+    --checkbox-border-radius: 20%;
+    --checkbox-border: var(--1px) solid var(--black-25);
+    --checkbox-background: var(--black-0);
+    --checkbox-disabed-border: var(--1px) solid var(--black-20);
+    --checkbox-disabled-background: var(--black-5);
+    --checkbox-active-background: var(--black-5);
+    --checkbox-checked-background: linear-gradient(var(--color-primary), var(--color-primary-darker));
+    --checkbox-checked-active-background: linear-gradient(var(--color-primary-darker), var(--color-primary-dark));
+    --checkbox-checked-border: var(--1px) solid var(--color-primary-darker);
+    --checkbox-checked-checkmark-background: var(--black-0);
+    --checkbox-checked-disabled-background: var(--black-0);
+    --checkbox-checked-disabled-border: var(--1px) solid var(--black-20);
+    --checkbox-checked-disabled-checkmark-background: var(--black-20);
+    appearance: none;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Still broken in Safari TP 237, therefore uses `width` and `height` explicitly. */
+    /* aspect-ratio: 1; */
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+    margin: 0;
+    padding: 0;
+    border-radius: var(--checkbox-border-radius);
+    border: var(--checkbox-border);
+    background: var(--checkbox-background);
+    &:invalid {
+        color: var(--color-warn);
+    }
+    &:active {
+        background: var(--checkbox-active-background);
+    }
+    &.disabled,
+    &:disabled {
+        border: var(--checkbox-disabed-border);
+        background: var(--checkbox-disabled-background);
+    }
+    &:checked,
+    &:indeterminate {
+        border: none;
+        background: var(--checkbox-checked-background);
+        &:active {
+            background: var(--checkbox-checked-active-background);
+        }
+        &::before {
+            display: block;
+            position: absolute;
+            /* Still broken in Safari TP 237, therefore uses `width` and `height` explicitly. */
+            /* aspect-ratio: 1; */
+            width: var(--checkbox-size);
+            height: var(--checkbox-size);
+            background: var(--checkbox-checked-checkmark-background);
+            content: "";
+        }
+        &.disabled,
+        &:disabled {
+            border: var(--checkbox-checked-disabled-border);
+            background: var(--checkbox-checked-disabled-background);
+            &::before {
+                background: var(--checkbox-checked-disabled-checkmark-background);
+            }
+        }
+    }
+    /* Checkmark */
+    &:checked::before {
+        transform: rotate(35deg) scale(0.8) translate(-3%, -8%);
+        clip-path: polygon(55% 10%, 75% 10%, 75% 95%, 25% 95%, 25% 75%, 55% 75%);
+    }
+    &:indeterminate::before {
+        clip-path: inset(45% 20% 45% 20%);
+    }
+}
+/* Switch */
+input[type="checkbox"].switch {
+    --switch-size: var(--15px);
+    --switch-size-ratio: calc(26 / 15);
+    --switch-border-radius: calc(50% / var(--switch-size-ratio)) / 50%;
+    --switch-border: var(--1px) solid var(--black-20);
+    --switch-background: var(--black-15);
+    --switch-disabled-border: var(--1px) solid var(--black-20);
+    --switch-disabled-background: var(--black-20);
+    --switch-active-background: var(--black-20);
+    --switch-checked-border: var(--1px) solid var(--color-primary);
+    --switch-checked-background: linear-gradient(var(--color-primary-darker), var(--color-primary));
+    --switch-checked-active-border: var(--1px) solid var(--color-primary-darker);
+    --switch-checked-active-background: linear-gradient(var(--color-primary-dark), var(--color-primary-darker));
+    --switch-checked-disabled-border: var(--1px) solid var(--black-20);
+    --switch-checked-disabled-background: var(--black-20);
+    --switch-button-background: var(--black-0);
+    --switch-transition: inset-inline-start 0.2s ease-in-out;
+    appearance: none;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    /* Still broken in Safari TP 237, therefore uses `width` and `height` explicitly. */
+    /* aspect-ratio: var(--switch-size-ratio); */
+    width: calc(var(--switch-size) * var(--switch-size-ratio));
+    height: var(--switch-size);
+    margin: 0;
+    padding: 0;
+    border: var(--switch-border);
+    border-radius: var(--switch-border-radius);
+    background: var(--switch-background);
+    /* transition: background .2s ease-in-out; */
+    &:active {
+        background: var(--switch-active-background);
+    }
+    &.disabled,
+    &:disabled {
+        border: var(--switch-disabled-border);
+        background: var(--switch-disabled-background);
+    }
+    &::before {
+        display: inline-block;
+        position: relative;
+        inset-inline-start: 0;
+        transition: var(--switch-transition);
+        /* Still broken in Safari TP 237, therefore uses `width` and `height` explicitly. */
+        /* aspect-ratio: 1; */
+        width: calc(var(--switch-size) - var(--2px));
+        height: calc(var(--switch-size) - var(--2px));
+        background: var(--switch-button-background);
+        border-radius: 50%;
+        content: "";
+    }
+    &:checked {
+        border: var(--switch-checked-border);
+        background: var(--switch-checked-background);
+        &:active {
+            border: var(--switch-checked-active-border);
+            background: var(--switch-checked-active-background);
+        }
+        &::before {
+            inset-inline-start: calc((var(--switch-size) * var(--switch-size-ratio)) - var(--switch-size));
+        }
+        &.disabled,
+        &:disabled {
+            border: var(--switch-checked-disabled-border);
+            background: var(--switch-checked-disabled-background);
+        }
+    }
+    &:indeterminate {
+        &::before {
+            inset-inline-start: calc((var(--switch-size) * var(--switch-size-ratio) / 2) - (var(--switch-size) / 2));
+        }
+        &.disabled,
+        &:disabled {
+            border: var(--switch-checked-disabled-border);
+            background: var(--switch-checked-disabled-background);
+        }
+    }
+}

@@ -1,24 +1,33 @@
 .std-dialog {
     > .content {
-        width: 100%;
-        /* #region Example settings for a title bar. */
-        > .dlg-title {
-            position: relative;
-            left: calc(-1 * var(--base-size));
-            top: calc(-1 * var(--base-size));
+        display: flex;
+        flex-direction: column;
+        > .stddlg-title-bar {
+            flex-grow: 0;
+            flex-shrink: 0;
+            /* #region Example settings for the title bar. */
+            /* position: relative;
+            inset-inline-start: calc(-1 * var(--base-size));
+            inset-block-start: calc(-1 * var(--base-size));
             margin-block-end: calc(-1 * var(--base-size));
             width: calc(100% + 2 * var(--base-size));
             padding: var(--base-size-half) var(--base-size);
             background-color: lightgray;
             > p {
                 margin: 0;
-            }
+            } */
+            /* #endregion */
         }
-        /* #endregion */
-        > .dlg-btn-bar {
+        > .stddlg-content {
+            flex-grow: 1;
+        }
+        > .stddlg-btn-bar {
+            flex-grow: 0;
+            flex-shrink: 0;
             display: flex;
             justify-content: center;
             padding-block-start: var(--base-size);
+            padding-block-end: var(--base-size-quarter);
             > .icon-button {
                 flex-grow: 0;
             }
@@ -27,7 +36,7 @@
             }
         }
     }
-    &.horizontal > .content > .dlg-btn-bar {
+    &.horizontal > .content > .stddlg-btn-bar {
         flex-direction: row;
         > .icon-button:not(:last-child) {
             margin-inline-end: var(--base-size-half);
@@ -36,7 +45,7 @@
             min-width: calc(var(--base-size) + var(--base-size-half));
         }
     }
-    &.vertical > .content > .dlg-btn-bar {
+    &.vertical > .content > .stddlg-btn-bar {
         flex-direction: column;
         align-items: center;
         > .icon-button:not(:last-child) {

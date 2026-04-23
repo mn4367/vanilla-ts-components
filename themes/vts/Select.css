@@ -1,0 +1,46 @@
+/*
+__Note:__ This CSS uses CSS variables defined in `Input.css` (`--input-*`) to achieve a consistent
+style for native DOM input elements. `Input.css` has to be included in order to make the styling
+here work correctly.
+*/
+select {
+    --select-inline-padding: var(--9px) var(--22px);
+    --select-multiple-padding: var(--6px);
+    --select-button: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(0, 0%, 15.7%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+    height: var(--input-height);
+    margin: 0;
+    padding: 0;
+    border-radius: var(--input-border-radius);
+    border: var(--input-border);
+    border-bottom: var(--input-border-dark);
+    background: var(--input-background);
+    font-size: 1rem;
+    color: var(--font-color);
+    &.disabled,
+    &:disabled {
+        color: var(--font-disabled-color);
+        border: var(--input-disabled-border);
+        border-bottom: var(--input-disabled-border-dark);
+        background: var(--input-disabled-background);
+    }
+    &[multiple] {
+        height: auto;
+        padding: var(--select-multiple-padding);
+        overflow: auto;
+        scrollbar-width: thin;
+    }
+    &:not([multiple]) {
+        appearance: none;
+        background: var(--select-button), linear-gradient(to bottom, var(--input-background), var(--input-background));
+        background-repeat: no-repeat, no-repeat;
+        background-position: right var(--2px) top 50%, 0 0;
+        &:dir(rtl) {
+            background-position: left var(--2px) top 50%, 0 0;
+        }
+        background-size: var(--18px) auto,
+        100%;
+        padding-inline: var(--select-inline-padding);
+        /* See `Vars.css` */
+        /* padding-block: var(--text-input-block-padding); */
+    }
+}

@@ -1,18 +1,25 @@
 /**
- * __Important note:__ The implementation of `Splitter.ts` is partially bound to this CSS. It is
- * assumed that `margin`, `padding` and `border-width` of the elements `start` and `end` are always
- * `0`! Any design that relies on margins, paddings or border styles for the _content_ of the
- * splitter must therefore only be done by designing the parts _contained_ in `start`/`end`. The
- * names of the animations for collapsing/uncollapsing the splitter parts (see below) are mandatory
- * since the splitter listens for the end of them and then sets/removes class names. If
- * collapsing/uncollapsing has to be done without animations, simply set
- * `--splitter-collapse-duration` to `0`.
+ * __Important note:__ The implementation of the splitter component is partially bound to this CSS.
+ * - It is assumed that `margin`, `padding` and `border-width` of the elements `start` and `end` are
+ *   always `0`! Any design that relies on margins, paddings or border styles for the _content_ of
+ *   the splitter must therefore only be done by designing the parts _contained_ in `start`/`end`.
+ * - The names of the animations for collapsing/uncollapsing the splitter parts (see below) are
+ *   mandatory since the splitter listens for the end of them and then sets/removes class names. If
+ *   collapsing/uncollapsing has to be done without animations, simply set
+ *   `--splitter-collapse-duration` to `0`.
+ * - The variables `--splitter-collapsed-start-size` and `--splitter-collapsed-end-size` are used in
+ *   the code of the splitter component, therefore these variables must not be removed or renamed.
  */
 .splitter,
 .vts-splitter {
-    --bleed-border: var(--splitter-bleed) solid transparent;
-    --bleed-size-neg: calc(-1 * var(--splitter-bleed));
-    --collapse-animation: var(--splitter-collapse-duration) var(--splitter-collapse-easing) forwards;
+    --splitter-handle: var(--black-20);
+    --splitter-handle-size: var(--1px);
+    --splitter-handle-bleed: var(--4px);
+    --splitter-handle-bleed-size-neg: calc(-1 * var(--splitter-handle-bleed));
+    --splitter-handle-bleed-border: var(--splitter-handle-bleed) solid transparent;
+    --splitter-collapse-duration: 0.16s;
+    --splitter-collapse-easing: ease;
+    --splitter-collapse-animation: var(--splitter-collapse-duration) var(--splitter-collapse-easing) forwards;
     display: flex;
     flex-wrap: nowrap;
     /* Marker class for splitters whose `ActiveAreaSize` is absolute (not a percentage value). */
@@ -39,19 +46,25 @@
         z-index: 1;
         touch-action: none;
         > div {
-            background-color: var(--splitter-color);
+            background: var(--splitter-handle);
         }
+    }
+    &.start-collapsed0 > .start {
+        display: none;
+    }
+    &.end-collapsed0 > .end {
+        display: none;
     }
     &.horizontal {
         flex-direction: row;
         > .handle {
-            margin-inline-start: var(--bleed-size-neg);
-            margin-inline-end: var(--bleed-size-neg);
-            border-inline-start: var(--bleed-border);
-            border-inline-end: var(--bleed-border);
+            margin-inline-start: var(--splitter-handle-bleed-size-neg);
+            margin-inline-end: var(--splitter-handle-bleed-size-neg);
+            border-inline-start: var(--splitter-handle-bleed-border);
+            border-inline-end: var(--splitter-handle-bleed-border);
             cursor: col-resize;
             > div {
-                width: var(--splitter-size);
+                width: var(--splitter-handle-size);
                 height: 100%;
                 cursor: col-resize;
             }
@@ -61,25 +74,26 @@
         &.start-collapsing > .start,
         &.start-uncollapsing > .start {
             min-width: 0 !important;
+            overflow-x: hidden;
         }
         &.start-collapsing.active-area-start {
             > .start {
-                animation: var(--collapse-animation) hsplitter-to-0;
+                animation: var(--splitter-collapse-animation) hsplitter-to-0;
             }
         }
         &.start-collapsing.active-area-end {
             > .end {
-                animation: var(--collapse-animation) hsplitter-to-100;
+                animation: var(--splitter-collapse-animation) hsplitter-to-100;
             }
         }
         &.start-uncollapsing.active-area-start {
             > .start {
-                animation: var(--collapse-animation) hsplitter-from-0-to-previous;
+                animation: var(--splitter-collapse-animation) hsplitter-from-0-to-previous;
             }
         }
         &.start-uncollapsing.active-area-end {
             > .end {
-                animation: var(--collapse-animation) hsplitter-from-100-to-previous;
+                animation: var(--splitter-collapse-animation) hsplitter-from-100-to-previous;
             }
         }
         /* #endregion */
@@ -88,26 +102,27 @@
         &.end-uncollapsing {
             > .end {
                 min-width: 0 !important;
+                overflow-x: hidden;
             }
         }
         &.end-collapsing.active-area-start {
             > .start {
-                animation: var(--collapse-animation) hsplitter-to-100;
+                animation: var(--splitter-collapse-animation) hsplitter-to-100;
             }
         }
         &.end-collapsing.active-area-end {
             > .end {
-                animation: var(--collapse-animation) hsplitter-to-0;
+                animation: var(--splitter-collapse-animation) hsplitter-to-0;
             }
         }
         &.end-uncollapsing.active-area-start {
             > .start {
-                animation: var(--collapse-animation) hsplitter-from-100-to-previous;
+                animation: var(--splitter-collapse-animation) hsplitter-from-100-to-previous;
             }
         }
         &.end-uncollapsing.active-area-end {
             > .end {
-                animation: var(--collapse-animation) hsplitter-from-0-to-previous;
+                animation: var(--splitter-collapse-animation) hsplitter-from-0-to-previous;
             }
         }
         /* #endregion */
@@ -116,18 +131,20 @@
          */
         &.start-collapsed {
             > .start {
-                display: none;
+                min-width: var(--splitter-collapsed-start-size) !important;
+                width: var(--splitter-collapsed-start-size) !important;
             }
             > .end {
-                width: 100% !important;
+                width: calc(100% - var(--splitter-collapsed-start-size)) !important;
             }
         }
         &.end-collapsed {
             > .start {
-                width: 100% !important;
+                width: calc(100% - var(--splitter-collapsed-end-size)) !important;
             }
             > .end {
-                display: none;
+                min-width: var(--splitter-collapsed-end-size) !important;
+                width: var(--splitter-collapsed-end-size) !important;
             }
         }
         /* #endregion */
@@ -135,14 +152,14 @@
     &.vertical {
         flex-direction: column;
         > .handle {
-            margin-block-start: var(--bleed-size-neg);
-            margin-block-end: var(--bleed-size-neg);
-            border-block-start: var(--bleed-border);
-            border-block-end: var(--bleed-border);
+            margin-block-start: var(--splitter-handle-bleed-size-neg);
+            margin-block-end: var(--splitter-handle-bleed-size-neg);
+            border-block-start: var(--splitter-handle-bleed-border);
+            border-block-end: var(--splitter-handle-bleed-border);
             cursor: row-resize;
             > div {
                 width: 100%;
-                height: var(--splitter-size);
+                height: var(--splitter-handle-size);
                 cursor: row-resize;
             }
         }
@@ -151,25 +168,26 @@
         &.start-collapsing > .start,
         &.start-uncollapsing > .start {
             min-height: 0 !important;
+            overflow-y: hidden;
         }
         &.start-collapsing.active-area-start {
             > .start {
-                animation: var(--collapse-animation) vsplitter-to-0;
+                animation: var(--splitter-collapse-animation) vsplitter-to-0;
             }
         }
         &.start-collapsing.active-area-end {
             > .end {
-                animation: var(--collapse-animation) vsplitter-to-100;
+                animation: var(--splitter-collapse-animation) vsplitter-to-100;
             }
         }
         &.start-uncollapsing.active-area-start {
             > .start {
-                animation: var(--collapse-animation) vsplitter-from-0-to-previous;
+                animation: var(--splitter-collapse-animation) vsplitter-from-0-to-previous;
             }
         }
         &.start-uncollapsing.active-area-end {
             > .end {
-                animation: var(--collapse-animation) vsplitter-from-100-to-previous;
+                animation: var(--splitter-collapse-animation) vsplitter-from-100-to-previous;
             }
         }
         /* #endregion */
@@ -178,26 +196,27 @@
         &.end-uncollapsing {
             > .end {
                 min-height: 0 !important;
+                overflow-y: hidden;
             }
         }
         &.end-collapsing.active-area-start {
             > .start {
-                animation: var(--collapse-animation) vsplitter-to-100;
+                animation: var(--splitter-collapse-animation) vsplitter-to-100;
             }
         }
         &.end-collapsing.active-area-end {
             > .end {
-                animation: var(--collapse-animation) vsplitter-to-0;
+                animation: var(--splitter-collapse-animation) vsplitter-to-0;
             }
         }
         &.end-uncollapsing.active-area-start {
             > .start {
-                animation: var(--collapse-animation) vsplitter-from-100-to-previous;
+                animation: var(--splitter-collapse-animation) vsplitter-from-100-to-previous;
             }
         }
         &.end-uncollapsing.active-area-end {
             > .end {
-                animation: var(--collapse-animation) vsplitter-from-0-to-previous;
+                animation: var(--splitter-collapse-animation) vsplitter-from-0-to-previous;
             }
         }
         /* #endregion */
@@ -206,18 +225,22 @@
          */
         &.start-collapsed {
             > .start {
-                display: none;
+                /* display: none; */
+                min-height: var(--splitter-collapsed-start-size) !important;
+                height: var(--splitter-collapsed-start-size) !important;
             }
             > .end {
-                height: 100% !important;
+                height: calc(100% - var(--splitter-collapsed-start-size)) !important;
             }
         }
         &.end-collapsed {
             > .start {
-                height: 100% !important;
+                height: calc(100% - var(--splitter-collapsed-end-size)) !important;
             }
             > .end {
-                display: none;
+                /* display: none; */
+                min-height: var(--splitter-collapsed-end-size) !important;
+                height: var(--splitter-collapsed-end-size) !important;
             }
         }
         /* #endregion */
@@ -251,41 +274,41 @@
 }
 @keyframes hsplitter-to-0 {
     to {
-        width: 0;
+        width: var(--splitter-collapsed-start-size);
     }
 }
 @keyframes hsplitter-to-100 {
     to {
-        width: 100%;
+        width: calc(100% - var(--splitter-collapsed-end-size));
     }
 }
 @keyframes hsplitter-from-0-to-previous {
     from {
-        width: 0;
+        width: var(--splitter-collapsed-start-size);
     }
 }
 @keyframes hsplitter-from-100-to-previous {
     from {
-        width: 100%;
+        width: calc(100% - var(--splitter-collapsed-end-size));
     }
 }
 @keyframes vsplitter-to-0 {
     to {
-        height: 0;
+        height: var(--splitter-collapsed-start-size);
     }
 }
 @keyframes vsplitter-to-100 {
     to {
-        height: 100%;
+        height: calc(100% - var(--splitter-collapsed-end-size));
     }
 }
 @keyframes vsplitter-from-0-to-previous {
     from {
-        height: 0;
+        height: var(--splitter-collapsed-start-size);
     }
 }
 @keyframes vsplitter-from-100-to-previous {
     from {
-        height: 100%;
+        height: calc(100% - var(--splitter-collapsed-end-size));
     }
 }

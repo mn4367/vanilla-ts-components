@@ -3,22 +3,44 @@ html:has(dialog[open].modal) {
 }
 .dialog,
 .vts-dialog {
+    --dlg-backdrop: hsla(0 0% 0% / 0.2);
+    --dlg-border-radius: var(--border-radius-large);
+    --dlg-border: var(--1px) solid var(--black-20);
+    --dlg-background: var(--black-0);
+    --dlg-content-background: var(--black-0);
+    --dlg-window-background: var(--black-2);
+    --dlg-window-content-background: var(--black-2);
+    --dlg-padding: var(--base-size);
+    --dlg-content-padding: 0;
+    --dlg-focused: var(--1px) var(--5px) var(--20px) calc(-1 * var(--2px)) hsla(0 0% 0% / 0.25);
+    --dlg-resizer-size: var(--6px);
+    /*
+     * Setting `display: flex;` instead of `block` seems unnecessary but it is a simple way to force
+     * `.content` to fill the entire dialog and also to auto adjust its height to the height of its
+     * content. This fixes a problem in WebKit where setting `height: 100%;` for `.content` (which
+     * would be the 'natural' way) doesn't work properly (why?). This could be fixed by setting
+     * `display: table;` for `.content` but this makes it unnecessarily difficult to layout the
+     * content box.
+     */
+    display: flex;
+    flex-direction: column;
     inset-block-start: 0;
     inset-block-end: 0;
     width: fit-content;
     height: fit-content;
     /*
      * !! `min-width`/`min-height` should always be adapted to the size of the respective dialog.
-     * They also __must__ be given as a numeric CSS values, otherwise resizing the dialog doesn't
+     * They also __must__ be given as a _numeric_ CSS values, otherwise resizing the dialog doesn't
      * work properly!.
      */
     min-width: 5rem;
     min-height: 5rem;
     overflow: hidden;
     margin: 0;
-    padding: 0;
-    border: var(--1px) solid var(--dialog-border-color);
-    border-radius: var(--border-radius-large);
+    padding: var(--dlg-padding);
+    border-radius: var(--dlg-border-radius);
+    border: var(--dlg-border);
+    background: var(--dlg-background);
     outline: none;
     &::backdrop {
         position: fixed;
@@ -26,30 +48,25 @@ html:has(dialog[open].modal) {
         background: transparent;
     }
     &.modal-dialog-first::backdrop {
-        background: var(--dialog-backdrop);
-    }
-    background-color: var(--dialog-background-color);
-    &.dialog-window {
-        background-color: var(--dialog-window-background-color);
+        background: var(--dlg-backdrop);
     }
     &:focus,
     &:focus-within {
-        box-shadow: var(--1px) var(--5px) var(--20px) calc(-1 * var(--2px)) hsla(0 0% 0% / 0.25);
+        box-shadow: var(--dlg-focused);
+    }
+    /* Alternative dialog windows and content. */
+    &.dialog-window {
+        background: var(--dlg-window-background);
+        > .content {
+            background: var(--dlg-window-content-background);
+        }
     }
     > .content {
-        background-color: white;
+        background: var(--dlg-content-background);
         position: relative;
-        width: 100%;
-        height: 100%;
-        /*
-         *`height: 100%;` alone doesn't work in WebKit (why?). Setting `display: table;` currently
-         * seems to be the only 'hack' to get the desired result if `content` has a setting like
-         *`height`, `min-height` or similar.
-         */
-        display: table;
-        overflow: hidden;
-        padding: var(--dlg-padding);
-        border-radius: var(--border-radius-large);
+        flex-grow: 1;
+        /* overflow: hidden; */
+        padding: var(--dlg-content-padding);
         /* Moving. */
         /* Inner content container. */
         &.move-handle,
@@ -59,7 +76,7 @@ html:has(dialog[open].modal) {
             cursor: move;
         }
     }
-    /* Resizers. */
+    /* #region Resizers. */
     > [class*="rs-"] {
         position: absolute;
         margin: 0;
@@ -129,6 +146,7 @@ html:has(dialog[open].modal) {
     > .rs-nw {
         cursor: nwse-resize;
     }
+    /* #endregion */
     /* Other classes. */
     /*
     Set depending on the state of `HCentered`/`VCentered`.
@@ -147,7 +165,7 @@ html:has(dialog[open].modal) {
     /* &.move-start {} */
     /** Set while moving the dialog; removed when the pointer goes up. */
     /* &.moving {} */
-    /** Set after the dialog has been moved at least once. */
+    /** Set permanently after the dialog has been moved at least once. */
     /* &.moved {} */
     /** Present on resizable dialogs. */
     /* &.resizable {} */
@@ -155,7 +173,7 @@ html:has(dialog[open].modal) {
     /* &.resize-start {} */
     /** Set while resizing the dialog; removed when the pointer goes up. */
     /* &.resizing {} */
-    /** Set after the dialog has been resized at least once. */
+    /** Set permanently after the dialog has been resized at least once. */
     /* &.resized {} */
     /* Never change/remove this class nor its rules! */
     &.--calc-size {

@@ -1,5 +1,12 @@
 .popup-menu,
 .vts-popup-menu {
+    --menu-background-color: hsl(0 0% 94.5%);
+    --menu-background-color-focused: var(--color-primary-lighter);
+    --menu-border-color: hsl(0 0% 78.4%);
+    --menu-separator-color: hsl(0 0% 84.7%);
+    --menu-font-color: hsl(0 0% 20.8%);
+    --menu-font-color-focused: hsl(0 0% 100%);
+    --menu-font-color-hint: hsla(0 0% 0% / 30%);
     position: absolute;
     margin: 0;
     padding: var(--5px);

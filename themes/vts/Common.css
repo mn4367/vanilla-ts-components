@@ -3,12 +3,15 @@ html {
     font-size: var(--base-font-size);
     color: var(--font-color);
     box-sizing: border-box;
-    /* -webkit-font-smoothing: antialiased; */
 }
 dialog {
     color: var(--font-color);
+    line-height: 1.15;
 }
-
+/* body {
+    -webkit-font-smoothing: antialiased;
+} */
+/* #region Global commons. */
 *,
 *::before,
 *::after {
@@ -18,73 +21,157 @@ dialog {
     -webkit-user-select: none;
     user-select: none;
     cursor: default;
+    /* text-rendering: var(--text-rendering); */
+    outline: none;
 }
-.disabled,
-[disabled] {
-    pointer-events: none !important;
+input,
+textarea {
+    -webkit-user-select: text;
+    user-select: text;
+    cursor: text;
 }
 .text-selectable {
     -webkit-user-select: text;
     user-select: text;
     cursor: text;
 }
-button {
-    color: var(--font-color);
-    &:active {
-        transform: scale(0.95);
-        transition: 100ms ease-in-out;
-    }
+/* p {
+    text-wrap: balance;
+} */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-wrap: balance;
 }
 input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+a,
+input,
 select,
-textarea {
-    cursor: auto;
-    background-color: var(--input-background-color);
-    color: var(--font-color);
-    &:focus,
+textarea,
+button.regular {
     &:focus-visible {
-        outline: var(--4px) solid var(--input-focused-outline-color);
+        box-shadow: var(--input-focused);
         @media (prefers-reduced-motion: no-preference) {
-            animation: outline-bounce .2s;
+            transition: .1s;
         }
+        z-index: 10;
     }
 }
-input[type="checkbox"],
-input[type="date"],
-input[type="datetime-local"],
-input[type="month"],
-input[type="number"],
-input[type="radio"],
-input[type="range"],
-input[type="search"],
-input[type="text"],
-input[type="time"],
-input[type="week"],
-select,
-textarea {
-    border: var(--1px) solid var(--input-border-color);
-    border-bottom: var(--1px) solid var(--input-border-color-dark);
-    border-radius: var(--2px);
+/* #endregion */
+
+/* #region Disabled */
+.disabled,
+.disabled *,
+:disabled,
+:disabled *,
+[disabled],
+[disabled] * {
+    pointer-events: none !important;
 }
-@keyframes outline-bounce {
-    0% {
-        outline-color: hsl(from var(--input-focused-outline-color) h s 65%);
-        outline-width: var(--6px);
-        outline-offset: var(--3px);
-    }
-    50% {
-        outline-color: hsl(from var(--input-focused-outline-color) h s 70%);
-        outline-color: hsl(219 93.2% 70%);
-        outline-width: var(--5px);
-        outline-offset: var(--1px);
-    }
-    100% {
-        outline-width: var(--4px);
-        outline-offset: 0;
-    }
+b.disabled,
+b[disabled],
+em.disabled,
+em[disabled],
+code.disabled,
+code[disabled],
+div.disabled,
+div[disabled],
+footer.disabled,
+footer[disabled],
+header.disabled,
+header[disabled],
+h1.disabled,
+h1[disabled],
+h2.disabled,
+h2[disabled],
+h3.disabled,
+h3[disabled],
+h4.disabled,
+h4[disabled],
+h5.disabled,
+h5[disabled],
+h6.disabled,
+h6[disabled],
+i.disabled,
+i[disabled],
+label.disabled,
+label[disabled],
+li.disabled,
+li[disabled],
+main.disabled,
+main[disabled],
+p.disabled,
+p[disabled],
+pre.disabled,
+pre[disabled],
+ul.disabled,
+ul[disabled],
+ol.disabled,
+ol[disabled],
+span.disabled,
+span[disabled] {
+    color: var(--font-disabled-color);
 }
+img.disabled,
+img[disabled] {
+    filter: contrast(0.6) opacity(0.8);
+}
+/* #endregion */
+
+/* #region Semantic sizes. */
+.sz-tiny {
+    zoom: 50%;
+}
+.sz-small {
+    /* zoom: 67%; */
+    zoom: 70%;
+}
+.sz-smaller {
+    /* zoom: 83%; */
+    zoom: 85%;
+}
+.sz-normal {
+    zoom: unset;
+}
+.sz-larger {
+    /* zoom: 125%; */
+    zoom: 128%;
+}
+.sz-medium {
+    zoom: 150%;
+}
+.sz-large {
+    /* zoom: 175%; */
+    zoom: 173%;
+}
+.sz-huge {
+    zoom: 200%;
+}
+.sz-110 {
+    zoom: 111%;
+}
+.sz-120 {
+    zoom: 120%;
+}
+.sz-130 {
+    zoom: 129%;
+}
+.sz-140 {
+    zoom: 140%;
+}
+/* #endregion. */
+
 hr {
+    width: 100%;
     border: none;
     height: var(--1px);
-    background-color: var(--border-color);
+    background: var(--border-color);
 }

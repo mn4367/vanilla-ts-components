@@ -1,0 +1,72 @@
+@layer vts {
+    button.regular,
+    ::file-selector-button {
+        --btn-regular-height: var(--22px);
+        --btn-regular-default-height: var(--22px);
+        --btn-margin: var(--3px);
+        --btn-padding-inline: var(--12px);
+        --btn-font-size: 1rem;
+        --btn-font-color: var(--font-color);
+        --btn-border-radius: var(--6px);
+        --btn-border: var(--1px) solid var(--black-20);
+        --btn-border-bottom: var(--1px) solid var(--black-35);
+        --btn-background: var(--black-0);
+        --btn-active-background: var(--black-5);
+        --btn-default-border: var(--1px) solid transparent;
+        --btn-default-focused-border: var(--1px) solid var(--color-primary-dark);
+        --btn-default-background: linear-gradient(var(--color-primary), var(--color-primary-darker));
+        --btn-default-active-background: linear-gradient(var(--color-primary-darker), var(--color-primary-dark));
+        --btn-default-disabled-background: linear-gradient(var(--color-primary-light), var(--color-primary-lighter));
+        --btn-default-color: var(--black-0);
+        --btn-disabled-border: var(--1px) solid var(--black-5);
+        --btn-disabled-border-bottom: var(--1px) solid var(--black-15);
+        --btn-disabled-background: var(--black-0);
+        --btn-disabled-font-color: var(--font-disabled-color);
+        --btn-warn-font-color: var(--color-warn);
+        --btn-warn-disabled-font-color: var(--color-warn-light);
+        appearance: none;
+        position: relative;
+        /* margin: var(--btn-margin); */
+        padding-inline: var(--btn-padding-inline);
+        height: var(--btn-regular-height);
+        font-size: var(--btn-font-size);
+        color: var(--btn-font-color);
+        border-radius: var(--btn-border-radius);
+        border: var(--btn-border);
+        border-bottom: var(--btn-border-bottom);
+        background: var(--btn-background);
+        &.disabled,
+        &:disabled {
+            border: var(--btn-disabled-border);
+            border-bottom: var(--btn-disabled-border-bottom);
+            background: var(--btn-disabled-background);
+            color: var(--btn-disabled-font-color);
+        }
+        &:active {
+            background: var(--btn-active-background)
+        }
+        &.default {
+            height: var(--btn-regular-default-height);
+            border: var(--btn-default-border);
+            background: var(--btn-default-background);
+            color: var(--btn-default-color);
+            &:active {
+                background: var(--btn-default-active-background);
+            }
+            &:focus-visible {
+                border: var(--btn-default-focused-border);
+            }
+            &.disabled,
+            &:disabled {
+                background: var(--btn-default-disabled-background);
+            }
+        }
+        &.warn {
+            color: var(--btn-warn-font-color);
+            &.disabled,
+            &:disabled {
+                color: var(--btn-warn-disabled-font-color);
+            }
+        }
+    }
+}

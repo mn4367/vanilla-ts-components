@@ -1,6 +1,6 @@
 .labeled-number-input,
 .vts-labeled-number-input {
     > .lc-component {
-        width: 6rem;
+        width: 4.5rem;
     }
 }

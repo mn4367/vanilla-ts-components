@@ -1,0 +1,20 @@
+a {
+    --link-color: var(--color-primary-dark);
+    --link-hover-color: var(--color-primary);
+    --link-disabled-color: var(--black-25);
+    --link-border-radius: var(--3px);
+    color: var(--link-color);
+    border-radius: var(--link-border-radius);
+    text-decoration: none;
+    &:hover {
+        color: var(--link-hover-color);
+        text-decoration: revert;
+        cursor: pointer;
+        * {
+            cursor: pointer;
+        }
+    }
+    &.disabled {
+        color: var(--font-disabled-color);
+    }
+}

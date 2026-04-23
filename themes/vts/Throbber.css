@@ -1,6 +1,8 @@
 .throbber,
 .vts-throbber {
-    /* `width` must be set explicitly. */
+    --throbber-color: var(--black-15);
+    --throbber-animation: throbber-rotate360 1.25s linear infinite running;
+    /* `width` must be set explicitly on individual throbbers. */
     /* width: <value>; */
     aspect-ratio: 1;
     margin: 0;
@@ -8,15 +10,16 @@
     flex-grow: 0;
     border-radius: 50%;
     border-style: solid;
-    border-color: var(--border-color-dark);
-    /* `border-width` must be set explicitly. A visually appealing value is `calc(<width> / 10)`. */
+    border-color: var(--throbber-color);
+    /* `border-width` must be set explicitly on individual throbbers. A visually appealing value is
+       `calc(<width> / 10)`. */
     /* border-width: <value>; */
     border-bottom-color: transparent;
     /* border-left-color: transparent; */
     visibility: hidden;
     &.active {
         visibility: visible;
-        animation: throbber-rotate360 1.25s linear infinite running;
+        animation: var(--throbber-animation);
     }
 }
 @keyframes throbber-rotate360 {

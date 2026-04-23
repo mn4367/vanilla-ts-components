@@ -1,8 +1,9 @@
 .radio-button-group,
 .vts-radio-button-group {
+    --radio-button-group-block-padding: var(--2px);
     display: flex;
     position: relative;
-    padding-block: var(--2px);
+    padding-block: var(--radio-button-group-block-padding);
     &.vertical {
         flex-direction: column;
         > .labeled-radio-button {

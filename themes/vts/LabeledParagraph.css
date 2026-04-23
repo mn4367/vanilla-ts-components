@@ -1,5 +1,9 @@
 .labeled-paragraph,
 .vts-labeled-paragraph {
+    &.p-start,
+    &.p-end {
+        align-items: baseline;
+    }
     > .lc-component {
         margin: 0;
     }

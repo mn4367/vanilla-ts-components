@@ -1,0 +1,7 @@
+.labeled-anchor,
+.vts-labeled-anchor {
+    &.p-start,
+    &.p-end {
+        align-items: baseline;
+    }
+}
