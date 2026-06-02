@@ -30,13 +30,13 @@ export enum LabelAlignment {
  */
 export abstract class LabeledComponent<L extends (Label | Span), C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<IElementWithChildrenComponent<HTMLElementWithChildren>, EventMap> {
     #initialized = false;
-    protected label: L;
+    protected _label: L;
     // This member exists only to temporarily store the value given to the contructor to be
     // available in `initialize()`. It will be set to `undefined` again after `initialize()`.
     #labelPhrase?: Phrase | Phrases;
     protected lblPosition: LabelPosition;
     protected lblAlignment: LabelAlignment;
-    protected component: C;
+    protected _component: C;
 
     /* The class name which should be set on the label/span of the labeled component. */
     static readonly LCLabelClassname: string = "lc-label";
@@ -64,8 +64,8 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
             .labelPosition(this.lblPosition)
             .labelAlignment(this.lblAlignment);
         Array.isArray(this.#labelPhrase)
-            ? this.label.phrase(...this.#labelPhrase)
-            : this.label.phrase(this.#labelPhrase!);
+            ? this._label.phrase(...this.#labelPhrase)
+            : this._label.phrase(this.#labelPhrase!);
         this.#labelPhrase = undefined;
         this.#initialized = true;
         return this;
@@ -75,14 +75,38 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
      * Get component that is enclosed.
      */
     public get Component(): C {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal component via a callback function. Useful for seamless chaining when
+     * creating instances of this component.
+     * @param cb A callback function that receives the current component instance and this instance
+     * as parameters.
+     * @returns This instance.
+     */
+    public component(cb: (component: C, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
      * Get label component.
      */
     public get Label(): L {
-        return this.label;
+        return this._label;
+    }
+
+    /**
+     * Access the internal label component via a callback function. Useful for seamless chaining
+     * when creating instances of this component.
+     * @param cb A callback function that receives the current label component instance and this
+     * instance as parameters.
+     * @returns This instance.
+     */
+    public label(cb: (label: L, owner?: this) => void): this {
+        cb(this._label, this);
+        return this;
     }
 
     /**
@@ -90,7 +114,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
      * for the property `this.Label.Phrase`.__
      */
     public set LabelPhrase(phrase: Phrase | Phrases) {
-        this.label.Phrase = phrase;
+        this._label.Phrase = phrase;
     }
 
     /**
@@ -101,7 +125,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
      * @returns This instance.
      */
     public labelPhrase(...phrase: Phrases): this {
-        this.label.phrase(...phrase);
+        this._label.phrase(...phrase);
         return this;
     }
 
@@ -110,7 +134,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
      * alias for the property `this.Label.Rephrase`.__
      */
     public set LabelRephrase(phrase: Phrase | Phrases) {
-        this.label.Rephrase = phrase;
+        this._label.Rephrase = phrase;
     }
 
     /**
@@ -121,7 +145,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
      * @returns This instance.
      */
     public labelRephrase(...phrase: Phrases): this {
-        this.label.rephrase(...phrase);
+        this._label.rephrase(...phrase);
         return this;
     }
 
@@ -149,19 +173,19 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
         this.removeClass("p-top", "p-end", "p-bottom", "p-start");
         switch (v) {
             case LabelPosition.TOP:
-                this.ui.Children[0] !== this.label && this.ui.insert(0, this.label);
+                this.ui.Children[0] !== this._label && this.ui.insert(0, this._label);
                 this.addClass("p-top");
                 break;
             case LabelPosition.END:
-                this.ui.Children[1] !== this.label && this.ui.append(this.label);
+                this.ui.Children[1] !== this._label && this.ui.append(this._label);
                 this.addClass("p-end");
                 break;
             case LabelPosition.BOTTOM:
-                this.ui.Children[1] !== this.label && this.ui.append(this.label);
+                this.ui.Children[1] !== this._label && this.ui.append(this._label);
                 this.addClass("p-bottom");
                 break;
             case LabelPosition.START:
-                this.ui.Children[0] !== this.label && this.ui.insert(0, this.label);
+                this.ui.Children[0] !== this._label && this.ui.insert(0, this._label);
                 this.addClass("p-start");
                 break;
         }
@@ -206,13 +230,13 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
 
     /** @inheritdoc */
     public override focus(options?: FocusOptions): this {
-        this.component.focus(options);
+        this._component.focus(options);
         return this;
     }
 
     /** @inheritdoc */
     public override blur(): this {
-        this.component.blur();
+        this._component.blur();
         return this;
     }
 }
@@ -231,17 +255,17 @@ export abstract class LabeledComponentWithSpan<C extends IElementComponent<HTMLE
      */
     constructor(component: C, labelPhrase: Phrase | Phrases, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment) {
         super(labelPhrase, lblPosition, lblAlignment);
-        this.component = component.addClass(LabeledComponent.LCComponentClassname);
+        this._component = component.addClass(LabeledComponent.LCComponentClassname);
         this.initialize();
     }
 
     /** @inheritdoc */
     protected override buildUI(): this {
-        this.label = new Span().addClass(LabeledComponent.LCLabelClassname);
+        this._label = new Span().addClass(LabeledComponent.LCLabelClassname);
         this.ui = (
             (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-                ? new Div().append(this.label, this.component)
-                : new Div().append(this.component, this.label)
+                ? new Div().append(this._label, this._component)
+                : new Div().append(this._component, this._label)
         ).addClass(LabeledComponent.DefaultCSSClassName);
         return this;
     }
@@ -269,13 +293,13 @@ export abstract class LabeledComponentWithLabel<C extends IElementComponent<HTML
      */
     constructor(component: C, labelPhrase: Phrase | Phrases, id?: NullableString, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
         super(labelPhrase, lblPosition, lblAlignment);
-        this.component = component.addClass(LabeledComponent.LCComponentClassname);
+        this._component = component.addClass(LabeledComponent.LCComponentClassname);
         this.initialize(undefined, labelPhrase, id, lblAction);
     }
 
     /** @inheritdoc */
     protected override buildUI(labelPhrase: Phrase | Phrases, id?: NullableString, lblAction?: boolean): this {
-        this.label = new Label(
+        this._label = new Label(
             id && (lblAction === undefined || lblAction === true)
                 ? id
                 : undefined
@@ -284,8 +308,8 @@ export abstract class LabeledComponentWithLabel<C extends IElementComponent<HTML
             .addClass(LabeledComponent.LCLabelClassname);
         this.ui = (
             (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-                ? new Div().append(this.label, this.component)
-                : new Div().append(this.component, this.label)
+                ? new Div().append(this._label, this._component)
+                : new Div().append(this._component, this._label)
         ).addClass(LabeledComponent.DefaultCSSClassName);
         return this;
     }
@@ -323,7 +347,7 @@ export abstract class LabeledInputComponent<I extends Input, EventMap extends HT
      * string removes the attribute. Equivalent to get/set `<instance>.Component.Name`.
      */
     public get Name(): string {
-        return this.component.Name;
+        return this._component.Name;
     }
     /** @inheritdoc */
     public set Name(v: NullableString) {
@@ -338,7 +362,7 @@ export abstract class LabeledInputComponent<I extends Input, EventMap extends HT
      * @returns This instance.
      */
     public name(v: NullableString): this {
-        this.component.name(v);
+        this._component.name(v);
         return this;
     }
 
@@ -358,11 +382,11 @@ export abstract class LabeledInputComponent<I extends Input, EventMap extends HT
      *   isn't avaliable for this type, so using `Value` should do nothing.
      */
     public get Value(): string {
-        return this.component.Value;
+        return this._component.Value;
     }
     /** @inheritdoc */
     public set Value(v: string) {
-        this.component.Value = v;
+        this._component.Value = v;
     }
 
     /**
@@ -374,7 +398,7 @@ export abstract class LabeledInputComponent<I extends Input, EventMap extends HT
      * @returns This instance.
      */
     public value(v: string): this {
-        this.component.value(v);
+        this._component.value(v);
         return this;
     }
 }
@@ -405,10 +429,10 @@ export abstract class LabeledComponentGroup<C extends IElementComponent<HTMLElem
      * @returns This instance.
      */
     protected setContent(component: C): this {
-        this.component = component.addClass(LabeledComponent.LCComponentClassname);
+        this._component = component.addClass(LabeledComponent.LCComponentClassname);
         (this.lblPosition === LabelPosition.START) || (this.lblPosition === LabelPosition.TOP)
-            ? this.ui.append(this.component)
-            : this.ui.insert(0, this.component);
+            ? this.ui.append(this._component)
+            : this.ui.insert(0, this._component);
         return this;
     }
 
@@ -416,7 +440,7 @@ export abstract class LabeledComponentGroup<C extends IElementComponent<HTMLElem
     protected override buildUI(): this {
         this.ui = new Div()
             .addClass(LabeledComponentGroup.DefaultCSSClassName)
-            .append(this.label = new Span().addClass(LabeledComponent.LCLabelClassname));
+            .append(this._label = new Span().addClass(LabeledComponent.LCLabelClassname));
         return this;
     }
 }

@@ -40,7 +40,7 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
         // !! Mandatory.
         this.setContent(new RadioButtonGroup(radioButtons, name, alignment).addClass(RadioButtonGroup.DefaultCSSClassName));
         // Reshape this event to the correct sender (this).
-        this.component.on("checked", (ev) => {
+        this._component.on("checked", (ev) => {
             ev.stopImmediatePropagation();
             this.emit(new CheckedEvent("checked", this, { LabeledRadioButton: ev.$.LabeledRadioButton, Checked: ev.$.Checked })); // eslint-disable-line jsdoc/require-jsdoc
         });
@@ -52,7 +52,19 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
      * descriptive name.
      */
     public get RadioButtonGroup(): RadioButtonGroup {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `RadioButtonGroup` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `RadioButtonGroup` component instance
+     * and this instance as parameters.
+     * @returns This instance.
+     */
+    public radioButtonGroup(cb: (radioButtonGroup: RadioButtonGroup, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
@@ -63,7 +75,7 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
      * must be done on the labeled radio button group instance itself.
      */
     public get LabeledRadioButtons(): LabeledRadioButton[] {
-        return this.component.LabeledRadioButtons;
+        return this._component.LabeledRadioButtons;
     }
 
     /**
@@ -72,7 +84,7 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
      * Equivalent to get/set `<instance>.RadioButtonGroup.Name`.
      */
     public get Name(): string {
-        return this.component.Name;
+        return this._component.Name;
     }
     /** @inheritdoc */
     public set Name(v: NullableString) {
@@ -86,7 +98,7 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
      * @returns This instance.
      */
     public name(v: NullableString): this {
-        this.component.name(v);
+        this._component.name(v);
         return this;
     }
 
@@ -97,11 +109,11 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
      * here for convenience.
      */
     public get Value(): string {
-        return this.component.Value;
+        return this._component.Value;
     }
     /** @inheritdoc */
     public set Value(v: NullableString) {
-        this.component.value(v);
+        this._component.value(v);
     }
 
     /**
@@ -112,7 +124,7 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
      * @returns This instance.
      */
     public value(v: NullableString): this {
-        this.component.value(v);
+        this._component.value(v);
         return this;
     }
 
@@ -121,11 +133,11 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
      * `RadioButtonGroup`, re-exported here for convenience.
      */
     public get Toggle(): boolean {
-        return this.component.Toggle;
+        return this._component.Toggle;
     }
     /** @inheritdoc */
     public set Toggle(v: boolean) {
-        this.component.toggle(v);
+        this._component.toggle(v);
     }
 
     /**
@@ -135,19 +147,19 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
      * @returns This instance.
      */
     public toggle(toggle: boolean): this {
-        this.component.toggle(toggle);
+        this._component.toggle(toggle);
         return this;
     }
 
     /** @inheritdoc */
     public override focus(options?: FocusOptions): this {
-        this.component.focus(options);
+        this._component.focus(options);
         return this;
     }
 
     /** @inheritdoc */
     public override blur(): this {
-        this.component.blur();
+        this._component.blur();
         return this;
     }
 }

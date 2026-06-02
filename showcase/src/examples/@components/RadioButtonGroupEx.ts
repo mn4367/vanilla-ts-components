@@ -64,7 +64,8 @@ export class RadioButtonGroupEx extends BaseExample {
                     .value("beta")
             ]),
             this.markdown("### Alignment, label position, label alignment and radio button state"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     this.#lsAlignment = $.labeledSelect("Alignment", [
                         { Text: "VERTICAL", Value: "vertical" },

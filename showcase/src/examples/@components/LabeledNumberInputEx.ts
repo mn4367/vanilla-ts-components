@@ -26,11 +26,11 @@ const input = new LabeledNumberInput(
     "44",           // maximum value
     "2"             // step interval
 )
-    .addClass("labeled-number-input");
-input.NumberInput.DOM.setCustomValidity("not_42");
-input.on("input", () => {
-    input.NumberInput.DOM.setCustomValidity(input.Value === "42" ? "" : "not_42");
-});
+    .addClass("labeled-number-input")
+    .numberInput(c => c.DOM.setCustomValidity("not_42"))
+    .on("input", () => {
+        input.NumberInput.DOM.setCustomValidity(input.Value === "42" ? "" : "not_42");
+    });
 \`\`\`
 `;
 
@@ -74,18 +74,19 @@ export class LabeledNumberInputEx extends BaseExample {
             "44",           // maximum value
             "2"             // step interval
         )
-            .addClass("lni-example");
-        this.#lInput.NumberInput.DOM.setCustomValidity("not_42");
-        this.#lInput.on("input", () => {
-            this.#lInput.NumberInput.DOM.setCustomValidity(
-                this.#lInput.Value === "42" ? "" : "not_42"
-            );
-        });
+            .addClass("lni-example")
+            .numberInput(c => c.DOM.setCustomValidity("not_42"))
+            .on("input", () => {
+                this.#lInput.NumberInput.DOM.setCustomValidity(
+                    this.#lInput.Value === "42" ? "" : "not_42"
+                );
+            });
         this.append(
             this.markdown(intro),
             this.example([this.#lInput]),
             this.markdown("### Label position and label alignment"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     ...labeledComponentLabelFlags([this.#lInput], true, "start", "start"),
                 ),

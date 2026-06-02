@@ -61,18 +61,30 @@ export class LabeledCheckbox<EventMap extends LabeledCheckboxEventMap = LabeledC
      * descriptive name.
      */
     public get Checkbox(): Checkbox {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `Checkbox` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `Checkbox` component instance and
+     * this instance as parameters.
+     * @returns This instance.
+     */
+    public checkbox(cb: (checkbox: Checkbox, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
      * Get/set the checked state of the checkbox (re-exported for easier direct access).
      */
     public get Checked(): boolean {
-        return this.component.Checked;
+        return this._component.Checked;
     }
     /** @inheritdoc */
     public set Checked(v: boolean) {
-        this.component.Checked = v;
+        this._component.Checked = v;
     }
 
     /**
@@ -82,7 +94,7 @@ export class LabeledCheckbox<EventMap extends LabeledCheckboxEventMap = LabeledC
      * @returns This instance.
      */
     public checked(checked: boolean): this {
-        this.component.Checked = checked;
+        this._component.Checked = checked;
         return this;
     }
 
@@ -90,11 +102,11 @@ export class LabeledCheckbox<EventMap extends LabeledCheckboxEventMap = LabeledC
      * Get/set the indeterminate state of the checkbox (re-exported for easier direct access).
      */
     public get Indeterminate(): boolean {
-        return this.component.Indeterminate;
+        return this._component.Indeterminate;
     }
     /** @inheritdoc */
     public set Indeterminate(v: boolean) {
-        this.component.Indeterminate = v;
+        this._component.Indeterminate = v;
     }
 
     /**
@@ -105,7 +117,7 @@ export class LabeledCheckbox<EventMap extends LabeledCheckboxEventMap = LabeledC
      * @returns This instance.
      */
     public indeterminate(indeterminate: boolean): this {
-        this.component.indeterminate(indeterminate);
+        this._component.indeterminate(indeterminate);
         return this;
     }
 }

@@ -43,7 +43,8 @@ export class LabeledParagraphEx extends BaseExample {
             this.markdown(intro),
             this.example([this.#lParagraph]),
             this.markdown("### Label position and label alignment"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     ...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start"),
                 ),

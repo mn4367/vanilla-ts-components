@@ -49,7 +49,8 @@ export class LabeledRadioButtonEx extends BaseExample {
                     .on("checked", () => this.#rbgCb.value(this.#lrb.Checked ? "checked" : "unchecked"))
             ]),
             this.markdown("### Label position, label alignment and radio button state"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     this.#rbgCb = $.radioButtonGroup([
                         { Label: "Checked", Value: "checked" },

@@ -72,7 +72,8 @@ export class LabeledRadioButtonGroupEx extends BaseExample {
                     .value("other")
             ]),
             this.markdown("### Alignment, label positions, label alignments and radio button states"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     this.markdown("\u2014 Outer labeled container \u2014"),
                     ...labeledComponentLabelFlags([this.#lrbg], false, "top", "start"),

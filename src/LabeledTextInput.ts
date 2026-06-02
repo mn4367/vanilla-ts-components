@@ -46,7 +46,19 @@ export class LabeledTextInput<EventMap extends HTMLElementEventMap = HTMLElement
      * descriptive name.
      */
     public get TextInput(): TextInput {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `TextInput` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `TextInput` component instance and
+     * this instance as parameters.
+     * @returns This instance.
+     */
+    public textInput(cb: (textInput: TextInput, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 }
 

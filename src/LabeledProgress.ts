@@ -43,7 +43,19 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * descriptive name.
      */
     public get Progress(): Progress {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `Progress` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `Progress` component instance and
+     * this instance as parameters.
+     * @returns This instance.
+     */
+    public progress(cb: (progress: Progress, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
@@ -51,7 +63,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * alias for the property `this.Progress.Phrase`.__
      */
     public set Phrase(phrase: Phrase | Phrases) {
-        this.component.Phrase = phrase;
+        this._component.Phrase = phrase;
     }
 
     /**
@@ -62,7 +74,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * @returns This instance.
      */
     public phrase(...phrase: Phrases): this {
-        this.component.phrase(...phrase);
+        this._component.phrase(...phrase);
         return this;
     }
 
@@ -71,7 +83,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * an alias for the property `this.Progress.Rephrase`.__
      */
     public set Rephrase(phrase: Phrase | Phrases) {
-        this.component.Rephrase = phrase;
+        this._component.Rephrase = phrase;
     }
 
     /**
@@ -82,7 +94,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * @returns This instance.
      */
     public rephrase(...phrase: Phrases): this {
-        this.component.rephrase(...phrase);
+        this._component.rephrase(...phrase);
         return this;
     }
 
@@ -91,11 +103,11 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * access).
      */
     public get Indeterminate(): boolean {
-        return this.component.Indeterminate;
+        return this._component.Indeterminate;
     }
     /** @inheritdoc */
     public set Indeterminate(v: boolean) {
-        this.component.Indeterminate = v;
+        this._component.Indeterminate = v;
     }
 
     /**
@@ -107,7 +119,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * @returns This instance.
      */
     public indeterminate(indeterminate: boolean): this {
-        this.component.indeterminate(indeterminate);
+        this._component.indeterminate(indeterminate);
         return this;
     }
 
@@ -117,11 +129,11 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * `1` if it is lower than or equal to `0`).
      */
     public get Max(): number {
-        return this.component.Max;
+        return this._component.Max;
     }
     /** @inheritdoc */
     public set Max(v: number) {
-        this.component.max(v);
+        this._component.max(v);
     }
 
     /**
@@ -133,7 +145,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * @returns This instance.
      */
     public max(v: number) {
-        this.component.max(v);
+        this._component.max(v);
         return this;
     }
 
@@ -146,11 +158,11 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * attribute is removed.
      */
     public get Value(): number {
-        return this.component.Value;
+        return this._component.Value;
     }
     /** @inheritdoc */
     public set Value(v: number | undefined) {
-        this.component.value(v);
+        this._component.value(v);
     }
 
     /**
@@ -162,7 +174,7 @@ export class LabeledProgress<EventMap extends LabeledProgressEventMap = LabeledP
      * @returns This instance.
      */
     public value(v?: number) {
-        this.component.value(v);
+        this._component.value(v);
         return this;
     }
 }

@@ -78,7 +78,7 @@ export interface IStepper {
     /**
      * Go forward one 'page' in the steppable object.
      * @returns `true` if no event handler has cancelled the `step` event and if the index/position
-     * in the steppable object is set to `Index - PageSize` or `Count - 1` after stepping, otherwise
+     * in the steppable object is set to `Index + PageSize` or `Count - 1` after stepping, otherwise
      * `false`. `false` is also returned if the property `PageSize` in the steppable object is `-1`
      * (the object doesn't support paging) or if `Count` of the steppable object is `0`.\
      * __Notes:__
@@ -100,9 +100,7 @@ export interface IStepper {
     Last(): boolean;
 }
 
-/**
- * Appearance of a stepper.
- */
+/** Appearance of a stepper. */
 export enum StepperAppearance {
     /**
      * Horizontal arrangement of the stepper buttons.
@@ -243,7 +241,8 @@ export class StepEvent extends ACustomComponentEvent<"step", Stepper, {
 }> {
     /**
      * Create StepEvent event.
-     * @param sender The event emitter (always `Stepper`).
+     * @param sender The event emitter (always `Stepper`). Event handlers can prevent changing the
+     * index/position by calling `preventDefault()`.
      * @param index The new index to which the current index/position in the steppable object is to
      * be moved.
      * @param customEventInitDict Optional event properties.
@@ -259,7 +258,7 @@ export class SteppedEvent extends ACustomComponentEvent<"stepped", Stepper, {
     Index: number;
 }> {
     /**
-     * Create SteppedEvent event.
+     * Create SteppedEvent event. This event is purely informative and can't be cancelled.
      * @param sender The event emitter (always `Stepper`).
      * @param index The new index of the steppable object.
      * @param customEventInitDict Optional event properties.
@@ -283,14 +282,10 @@ export interface StepperEventMap extends HTMLElementEventMap {
     "stepped": SteppedEvent;
 }
 
-/**
- * All stepper buttons.
- */
+/** All stepper buttons. */
 export type StepperButtons = [IconButton, IconButton, IconButton, IconButton, IconButton, IconButton];
 
-/**
- * Stepper component with configurable buttons for stepping through an instance of `ISteppable`.
- */
+/** Stepper component with configurable buttons for stepping through an instance of `ISteppable`. */
 export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends AElementComponentWithInternalUI<Div, EventMap> implements IStepper {
     protected steppable: ISteppable;
     protected _options: StepperOptions = {};

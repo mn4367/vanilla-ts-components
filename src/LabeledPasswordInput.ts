@@ -46,7 +46,19 @@ export class LabeledPasswordInput<EventMap extends HTMLElementEventMap = HTMLEle
      * descriptive name.
      */
     public get PasswordInput(): PasswordInput {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `PasswordInput` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `PasswordInput` component instance
+     * and this instance as parameters.
+     * @returns This instance.
+     */
+    public passwordInput(cb: (passwordInput: PasswordInput, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 }
 

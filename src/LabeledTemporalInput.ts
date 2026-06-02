@@ -47,18 +47,30 @@ export class LabeledTemporalInput<EventMap extends HTMLElementEventMap = HTMLEle
      * descriptive name.
      */
     public get TemporalInput(): TemporalInput {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `TemporalInput` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `TemporalInput` component instance
+     * and this instance as parameters.
+     * @returns This instance.
+     */
+    public temporalInput(cb: (temporalInput: TemporalInput, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
      * Get/set the setp attribute value of the component (re-exported for easier direct access).
      */
     public get Step(): string {
-        return this.component.Step;
+        return this._component.Step;
     }
     /** @inheritdoc */
     public set Step(v: string) {
-        this.component.Step = v;
+        this._component.Step = v;
     }
 
     /**
@@ -67,7 +79,7 @@ export class LabeledTemporalInput<EventMap extends HTMLElementEventMap = HTMLEle
      * @returns This instance.
      */
     public step(step: string): this {
-        this.component.step(step);
+        this._component.step(step);
         return this;
     }
 
@@ -79,7 +91,7 @@ export class LabeledTemporalInput<EventMap extends HTMLElementEventMap = HTMLEle
      * @returns This instance.
      */
     public stepUp(n?: number): this {
-        this.component.stepUp(n);
+        this._component.stepUp(n);
         return this;
     }
 
@@ -91,7 +103,7 @@ export class LabeledTemporalInput<EventMap extends HTMLElementEventMap = HTMLEle
      * @returns This instance.
      */
     public stepDown(n?: number): this {
-        this.component.stepDown(n);
+        this._component.stepDown(n);
         return this;
     }
 }

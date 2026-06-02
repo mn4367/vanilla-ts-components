@@ -50,7 +50,7 @@ export interface DisclosureContainerEventMap extends HTMLElementEventMap {
 export class DisclosureContainer<Child extends FlowContent = FlowContent, EventMap extends DisclosureContainerEventMap = DisclosureContainerEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     protected _initialized = false;
     protected headerContainer: IElementWithChildrenComponent<HTMLDivElement>;
-    protected disclosureButton: IconButton;
+    protected _disclosureButton: IconButton;
     protected headerContent: IElementWithChildrenComponent<HTMLDivElement>;
     protected contentContainer: IElementWithChildrenComponent<HTMLDivElement>;
     protected _weakUndisclosed: boolean;
@@ -133,7 +133,19 @@ export class DisclosureContainer<Child extends FlowContent = FlowContent, EventM
      * @see {@link IconButton}
      */
     public get DisclosureButton(): IconButton {
-        return this.disclosureButton;
+        return this._disclosureButton;
+    }
+
+    /**
+     * Access the internal `IconButton` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `IconButton` component instance and
+     * this instance as parameters.
+     * @returns This instance.
+     */
+    public disclosureButton(cb: (disclosureButton: IconButton, owner?: this) => void): this {
+        cb(this._disclosureButton, this);
+        return this;
     }
 
     /**
@@ -159,7 +171,7 @@ export class DisclosureContainer<Child extends FlowContent = FlowContent, EventM
      */
     public disclosedButtonOptions(v: IconButtonOptions): this {
         IconButton.mergeOptionsFromTo(v, this.disclosedBtnOptions);
-        this._disclosed && this.disclosureButton.options(this.disclosedBtnOptions);
+        this._disclosed && this._disclosureButton.options(this.disclosedBtnOptions);
         return this;
     }
 
@@ -186,7 +198,7 @@ export class DisclosureContainer<Child extends FlowContent = FlowContent, EventM
      */
     public undisclosedButtonOptions(v: IconButtonOptions): this {
         IconButton.mergeOptionsFromTo(v, this.undisclosedBtnOptions);
-        !this._disclosed && this.disclosureButton.options(this.undisclosedBtnOptions);
+        !this._disclosed && this._disclosureButton.options(this.undisclosedBtnOptions);
         return this;
     }
 
@@ -259,13 +271,13 @@ export class DisclosureContainer<Child extends FlowContent = FlowContent, EventM
                 this
                     .removeClass("undisclosed")
                     .addClass("disclosed");
-                this.disclosureButton.options(this.disclosedBtnOptions);
+                this._disclosureButton.options(this.disclosedBtnOptions);
                 this._weakUndisclosed || this.ui.append(this.contentContainer);
             } else {
                 this
                     .removeClass("disclosed")
                     .addClass("undisclosed");
-                this.disclosureButton.options(this.undisclosedBtnOptions);
+                this._disclosureButton.options(this.undisclosedBtnOptions);
                 this._weakUndisclosed || this.ui.remove(this.contentContainer);
             }
         }
@@ -479,7 +491,7 @@ export class DisclosureContainer<Child extends FlowContent = FlowContent, EventM
     /** @inheritdoc */
     protected override clearOwner(): void {
         // Dispose of all components in the two disclosure button options.
-        this.disclosureButton.rephrase();
+        this._disclosureButton.rephrase();
         this.disclosedBtnOptions.Caption!.forEach(e => typeof e === "string" || e.dispose());
         this.undisclosedBtnOptions.Caption!.forEach(e => typeof e === "string" || e.dispose());
         // The content container is always cleared due to the `AChildren` mixin, but it is not
@@ -499,7 +511,7 @@ export class DisclosureContainer<Child extends FlowContent = FlowContent, EventM
                 this.headerContainer = new Div()
                     .addClass("header-container")
                     .append(
-                        this.disclosureButton = new IconButton()
+                        this._disclosureButton = new IconButton()
                             .addClass("disclose", IconButton.DefaultCSSClassName)
                             .on("click", () => this.disclosed(!this.Disclosed)),
                         this.headerContent = new Div()

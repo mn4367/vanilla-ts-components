@@ -37,7 +37,19 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * name.
      */
     public get Paragraph(): P {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `P` component via a callback function. Useful for seamless chaining when
+     * creating instances of this component.
+     * @param cb A callback function that receives the current `P` component instance and this
+     * instance as parameters.
+     * @returns This instance.
+     */
+    public paragraph(cb: (paragraph: P, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
@@ -45,7 +57,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * for the property `this.Paragraph.Phrase`.__
      */
     public set Phrase(phrase: Phrase | Phrases) {
-        this.component.Phrase = phrase;
+        this._component.Phrase = phrase;
     }
 
     /**
@@ -56,7 +68,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * @returns This instance.
      */
     public phrase(...phrase: Phrases): this {
-        this.component.phrase(...phrase);
+        this._component.phrase(...phrase);
         return this;
     }
 
@@ -65,7 +77,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * alias for the property `this.Paragraph.Rephrase`.__
      */
     public set Rephrase(phrase: Phrase | Phrases) {
-        this.component.Rephrase = phrase;
+        this._component.Rephrase = phrase;
     }
 
     /**
@@ -76,7 +88,7 @@ export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElement
      * @returns This instance.
      */
     public rephrase(...phrase: Phrases): this {
-        this.component.rephrase(...phrase);
+        this._component.rephrase(...phrase);
         return this;
     }
 }

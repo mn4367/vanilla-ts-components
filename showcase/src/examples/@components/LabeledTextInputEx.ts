@@ -18,8 +18,8 @@ const example = `
 import { LabeledTextInput } from "@vanilla-ts/components";
 
 const input = new LabeledTextInput("Username")
-    .addClass("labeled-text-input");
-input.TextInput.placeholder("Enter your name here");
+    .addClass("labeled-text-input")
+    .textInput(c => c.placeholder("Enter your name here"));
 \`\`\`
 `;
 
@@ -33,13 +33,15 @@ export class LabeledTextInputEx extends BaseExample {
 
     /** @inheritdoc */
     protected override buildExample(): void {
-        this.#lInput = $.labeledTextInput("Username");
-        this.#lInput.TextInput.placeholder("Enter your name here");
+        this.#lInput = $
+            .labeledTextInput("Username")
+            .textInput(c => c.placeholder("Enter your name here"));
         this.append(
             this.markdown(intro),
             this.example([this.#lInput]),
             this.markdown("### Label position and label alignment"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     ...labeledComponentLabelFlags([this.#lInput], true, "start", "start")
                 ),

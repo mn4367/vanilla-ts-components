@@ -47,18 +47,30 @@ export class LabeledSelect<EventMap extends HTMLElementEventMap = HTMLElementEve
      * descriptive name.
      */
     public get Select(): Select {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `Select` component via a callback function. Useful for seamless chaining
+     * when creating instances of this component.
+     * @param cb A callback function that receives the current `Select` component instance and this
+     * instance as parameters.
+     * @returns This instance.
+     */
+    public select(cb: (select: Select, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
      * __The property `Value` here is an alias for the property `this.Select.Value`.__
      */
     public get Value(): string {
-        return this.component.Value;
+        return this._component.Value;
     }
     /** @inheritdoc */
     public set Value(v: string) {
-        this.component.Value = v;
+        this._component.Value = v;
     }
 
     /**
@@ -68,7 +80,7 @@ export class LabeledSelect<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @returns This instance.
      */
     public value(v: string): this {
-        this.component.value(v);
+        this._component.value(v);
         return this;
     }
 }

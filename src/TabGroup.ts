@@ -678,7 +678,7 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends HTMLE
     protected showCloseTabBtn: boolean;
     // Inner content container to make layout, content access/switching and tab switching easier.
     protected contentContainer: IElementWithChildrenComponent<HTMLDivElement>;
-    protected tabGroup?: TabGroup;
+    protected _tabGroup?: TabGroup;
     protected active = false;
     protected tabEventFnc = this.tabEvent.bind(this);
 
@@ -710,10 +710,22 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends HTMLE
     }
 
     /**
-     * Get the TabGroup to which this tab belongs.
+     * Get the `TabGroup` component to which this tab belongs.
      */
     public get TabGroup(): TabGroup | undefined {
-        return this.tabGroup;
+        return this._tabGroup;
+    }
+
+    /**
+     * Access the internal `TabGroup` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `TabGroup` component instance and
+     * this instance as parameters.
+     * @returns This instance.
+     */
+    public tabGroup(cb: (tabGroup: TabGroup | undefined, owner?: this) => void): this {
+        cb(this._tabGroup, this);
+        return this;
     }
 
     /**
@@ -834,19 +846,19 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends HTMLE
     /** @inheritdoc */
     public override onDidMount(parent: IElementWithChildrenComponent<HTMLElementWithChildren, INodeComponent<Node>, EventMap>): void {
         super.onDidMount(parent);
-        this.tabGroup = parent.Parent?.Parent instanceof TabGroup
+        this._tabGroup = parent.Parent?.Parent instanceof TabGroup
             ? parent.Parent.Parent
             : undefined;
         // From now on handle 'tab' events.
-        this.tabGroup?.on("tab", this.tabEventFnc);
+        this._tabGroup?.on("tab", this.tabEventFnc);
     }
 
     /** @inheritdoc */
     public override onDidUnmount(): void {
         super.onDidUnmount();
         // Stop handling 'tab' events.
-        this.tabGroup?.off("tab", this.tabEventFnc);
-        this.tabGroup = undefined;
+        this._tabGroup?.off("tab", this.tabEventFnc);
+        this._tabGroup = undefined;
         this.active = false;
     }
 
@@ -895,12 +907,12 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends HTMLE
             )
             .on("pointerup", (ev) => {
                 if (ev.target !== this.closeTabBtn.DOM) {
-                    this.tabGroup?.requestActivateTab(this);
+                    this._tabGroup?.requestActivateTab(this);
                 }
             });
         this.closeTabBtn = new IconButton()
             .addClass("close", IconButton.DefaultCSSClassName)
-            .on("click", () => this.tabGroup?.requestCloseTab(this));
+            .on("click", () => this._tabGroup?.requestCloseTab(this));
         this.contentContainer = new TabContentContainer(this).addClass("content-container");
         // Set target DOM for the `IChildren` mixin!!
         this.setChildrenDOMTarget(this.contentContainer.DOM);

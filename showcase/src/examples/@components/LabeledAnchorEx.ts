@@ -60,7 +60,8 @@ export class LabeledAnchorEx extends BaseExample {
             this.markdown(intro),
             this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]),
             this.markdown("### Label position and label alignment"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     ...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start"),
                 ),

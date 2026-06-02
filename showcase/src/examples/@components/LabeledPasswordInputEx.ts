@@ -18,8 +18,8 @@ const example = `
 import { LabeledPasswordInput } from "@vanilla-ts/components";
 
 const input = new LabeledPasswordInput("Password")
-    .addClass("labeled-password-input");
-input.PasswordInput.placeholder("Enter password");
+    .addClass("labeled-password-input")
+    .passwordInput(c => c.placeholder("Enter password"));
 \`\`\`
 `;
 
@@ -33,13 +33,15 @@ export class LabeledPasswordInputEx extends BaseExample {
 
     /** @inheritdoc */
     protected override buildExample(): void {
-        this.#lInput = $.labeledPasswordInput("Password");
-        this.#lInput.PasswordInput.placeholder("Enter password");
+        this.#lInput = $
+            .labeledPasswordInput("Password")
+            .passwordInput(c => c.placeholder("Enter password"));
         this.append(
             this.markdown(intro),
             this.example([this.#lInput]),
             this.markdown("### Label position and label alignment"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     ...labeledComponentLabelFlags([this.#lInput], true, "start", "start"),
                 ),

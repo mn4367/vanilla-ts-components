@@ -94,13 +94,14 @@ export class LabeledCheckboxEx extends BaseExample {
     protected override buildExample(): void {
         this.append(
             this.markdown(introLabeledCheckbox),
-            this.example(
-                [this.#lcb = $.labeledCheckbox("Use classic design")
+            this.example([
+                this.#lcb = $.labeledCheckbox("Use classic design")
                     .checked(true)
-                    .on("checked", () => this.#rbgCb.value(this.#lcb.Checked ? "checked" : "unchecked"))]
-            ),
+                    .on("checked", () => this.#rbgCb.value(this.#lcb.Checked ? "checked" : "unchecked"))
+            ]),
             this.markdown("### Label position, label alignment and checkbox states"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     ...labeledComponentLabelFlags([this.#lcb], true, "end", "start"),
                     this.#rbgCb = $.radioButtonGroup([
@@ -134,7 +135,8 @@ export class LabeledCheckboxEx extends BaseExample {
                     .on("checked", () => this.#rbgSwitch.value(this.#lswitch.Checked ? "checked" : "unchecked"))
             ]),
             this.markdown("### Label position, label alignment and switch states"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     ...labeledComponentLabelFlags([this.#lswitch], true, "end", "start"),
                     this.#rbgSwitch = $.radioButtonGroup([

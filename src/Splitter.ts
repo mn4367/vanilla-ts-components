@@ -348,9 +348,9 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
     protected _options: { -readonly [P in keyof SplitterOptions]: SplitterOptions[P]; } = {};
     protected recordedChanges: (SplitterOptions | "mirror" | "setEven")[] = [];
     protected applyingRecordedChanges = 0;
-    protected start: Div;
-    protected handle: Div;
-    protected end: Div;
+    protected _start: Div;
+    protected _handle: Div;
+    protected _end: Div;
     protected activeArea: Div;
     protected activeAreaFixed: boolean;
     protected sizeProp: CSSPropertyNames = "width";
@@ -464,7 +464,20 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      * should never by styled, it must only be used to add/remove children!
      */
     public get Start(): IElementWithChildrenComponent<HTMLElement> {
-        return this.start;
+        return this._start;
+    }
+
+    /**
+     * Access the internal `Start` container component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `Start` container component instance
+     * and this instance as parameters.
+     * @see {@link Splitter.Start}
+     * @returns This instance.
+     */
+    public start(cb: (start: IElementWithChildrenComponent<HTMLElement>, owner?: this) => void): this {
+        cb(this._start, this);
+        return this;
     }
 
     /**
@@ -473,7 +486,20 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      * should never by styled, it must only be used to add/remove children!
      */
     public get End(): IElementWithChildrenComponent<HTMLElement> {
-        return this.end;
+        return this._end;
+    }
+
+    /**
+     * Access the internal `End` container component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `End` container component instance and
+     * this instance as parameters.
+     * @see {@link Splitter.End}
+     * @returns This instance.
+     */
+    public end(cb: (end: IElementWithChildrenComponent<HTMLElement>, owner?: this) => void): this {
+        cb(this._end, this);
+        return this;
     }
 
     /**
@@ -482,7 +508,20 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      * and never on `offsetWidth`/`offsetHeight`!
      */
     public get Handle(): IElementWithChildrenComponent<HTMLElement> {
-        return this.handle;
+        return this._handle;
+    }
+
+    /**
+     * Access the internal handle component via a callback function. Useful for seamless chaining
+     * when creating instances of this component.
+     * @param cb A callback function that receives the current handle component instance and this
+     * instance as parameters.
+     * @see {@link Splitter.Handle}
+     * @returns This instance.
+     */
+    public handle(cb: (handle: IElementWithChildrenComponent<HTMLElement>, owner?: this) => void): this {
+        cb(this._handle, this);
+        return this;
     }
 
     /**
@@ -512,7 +551,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
         this.activeArea.style(
             this.sizeProp,
             this.activeAreaFixed
-                ? (this._dom[this.clientSizeProp] - this.handle.DOM[this.clientSizeProp]) / 2 + "px"
+                ? (this._dom[this.clientSizeProp] - this._handle.DOM[this.clientSizeProp]) / 2 + "px"
                 : "50%"
         );
         this.updateGeometry();
@@ -554,12 +593,12 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             return;
         }
         this.geometry.Horizontal = this._options.Horizontal!;
-        this.geometry.Start = getClientRect(this.start.DOM);
+        this.geometry.Start = getClientRect(this._start.DOM);
         this.geometry.StartMinSize = this.startMinSize;
-        this.geometry.StartPercentage = this.start.DOM[this.clientSizeProp] / this._dom[this.clientSizeProp] * 100;
-        this.geometry.End = getClientRect(this.end.DOM);
+        this.geometry.StartPercentage = this._start.DOM[this.clientSizeProp] / this._dom[this.clientSizeProp] * 100;
+        this.geometry.End = getClientRect(this._end.DOM);
         this.geometry.EndMinSize = this.endMinSize;
-        this.geometry.EndPercentage = (this._dom[this.clientSizeProp] - this.handle.DOM[this.clientSizeProp] - this.start.DOM[this.clientSizeProp]) / this._dom[this.clientSizeProp] * 100;
+        this.geometry.EndPercentage = (this._dom[this.clientSizeProp] - this._handle.DOM[this.clientSizeProp] - this._start.DOM[this.clientSizeProp]) / this._dom[this.clientSizeProp] * 100;
     }
 
     /**
@@ -591,13 +630,13 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             return;
         }
         const activeAreaPercentage = this.activeArea.Style.width.endsWith("%");
-        const handleSize = this.handle.DOM[this.clientSizeProp];
+        const handleSize = this._handle.DOM[this.clientSizeProp];
         const oppositeMinSize = this._options.ActiveArea === SplitterActiveArea.START
             ? this.endMinSize
             : this.startMinSize;
         let minsize: number;
-        if (this._options.ActiveArea === SplitterActiveArea.START && this.start.Style.minWidth.endsWith("%") && activeAreaPercentage
-            || this._options.ActiveArea === SplitterActiveArea.END && this.end.Style.minWidth.endsWith("%") && activeAreaPercentage) {
+        if (this._options.ActiveArea === SplitterActiveArea.START && this._start.Style.minWidth.endsWith("%") && activeAreaPercentage
+            || this._options.ActiveArea === SplitterActiveArea.END && this._end.Style.minWidth.endsWith("%") && activeAreaPercentage) {
             const percentage = parseFloat(this.activeArea.Style.width.slice(0, -1));
             minsize = 100 / (100 - percentage) * oppositeMinSize + handleSize;
         } else {
@@ -630,15 +669,15 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      */
     protected setMinSizes(): void {
         if (!this.isVisible()) {
-            this.start.style(this.minSizeProp, this._options.StartMinSize);
-            this.end.style(this.minSizeProp, this._options.EndMinSize);
+            this._start.style(this.minSizeProp, this._options.StartMinSize);
+            this._end.style(this.minSizeProp, this._options.EndMinSize);
             return;
         }
         const prevStartMinSize = this.startMinSize;
         const prevEndMinSize = this.endMinSize;
         this.getAreaMinSizes();
-        this.start.style(this.minSizeProp, this._options.StartMinSize);
-        this.end.style(this.minSizeProp, this._options.EndMinSize);
+        this._start.style(this.minSizeProp, this._options.StartMinSize);
+        this._end.style(this.minSizeProp, this._options.EndMinSize);
         this.setSplitterMinSize();
         // Update the style of the active area if one of the minimum sizes has become larger. Only
         // necessary if resizing is based on absolute values.
@@ -658,12 +697,12 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
         this.realigning = true;
         const isActiveAreaStart = this._options.ActiveArea === SplitterActiveArea.START;
         this.activeArea = isActiveAreaStart
-            ? this.start
-            : this.end;
+            ? this._start
+            : this._end;
         this
             .removeClass("active-area-start", "active-area-end")
             .addClass(isActiveAreaStart ? "active-area-start" : "active-area-end");
-        [this.start, this.end].forEach((e) => {
+        [this._start, this._end].forEach((e) => {
             e.style({
                 /* eslint-disable jsdoc/require-jsdoc */
                 width: null,
@@ -684,12 +723,12 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             this.minSizeProp = "minHeight";
             this.clientSizeProp = "clientHeight";
         }
-        this.start.style(this.minSizeProp, this._options.StartMinSize);
-        this.end.style(this.minSizeProp, this._options.EndMinSize);
+        this._start.style(this.minSizeProp, this._options.StartMinSize);
+        this._end.style(this.minSizeProp, this._options.EndMinSize);
         // Set sizes based on the previous relative sizes.
         isActiveAreaStart
-            ? this.start.style(this.sizeProp, this.geometry.StartPercentage + "%")
-            : this.end.style(this.sizeProp, this.geometry.EndPercentage + "%");
+            ? this._start.style(this.sizeProp, this.geometry.StartPercentage + "%")
+            : this._end.style(this.sizeProp, this.geometry.EndPercentage + "%");
         // Recalculate and set minimum sizes.
         if (this.isVisible()) {
             this.getAreaMinSizes();
@@ -697,8 +736,8 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             // Switch size style to absolute, if necessary.
             if (this.activeAreaFixed) {
                 isActiveAreaStart
-                    ? this.start.style(this.sizeProp, this.start.DOM[this.clientSizeProp] + "px")
-                    : this.end.style(this.sizeProp, this.end.DOM[this.clientSizeProp] + "px");
+                    ? this._start.style(this.sizeProp, this._start.DOM[this.clientSizeProp] + "px")
+                    : this._end.style(this.sizeProp, this._end.DOM[this.clientSizeProp] + "px");
             }
             this.updateGeometry();
         }
@@ -751,7 +790,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             );
             this._initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed!));
         } else if (this._options.Collapsed === SplitterCollapsedState.NONE) {
-            this.ui.insert(this.end, this.handle);
+            this.ui.insert(this._end, this._handle);
             // Only use animations if the splitter is visible and isn't applying recorded changes.
             if (this.isVisible() && this.applyingRecordedChanges === 0) {
                 if (isStartCollapsed) {
@@ -763,7 +802,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
                 this._initialized && this.emit(new SplitterCollapsedEvent(this, this._options.Collapsed));
             }
         } else {
-            this.ui.remove(this.handle);
+            this.ui.remove(this._handle);
             // Only use animations if the splitter is visible and isn't applying recorded changes.
             if (this.isVisible() && this.applyingRecordedChanges === 0) {
                 this.addClass(
@@ -823,7 +862,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             } else {
                 this.updateGeometry();
                 if (this._options.Collapsed !== SplitterCollapsedState.NONE) {
-                    this.ui.remove(this.handle);
+                    this.ui.remove(this._handle);
                     this._options.Collapsed === SplitterCollapsedState.START
                         ? this.addClass("start-collapsed")
                         : this.addClass("end-collapsed");
@@ -851,8 +890,8 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
         }
         ev.preventDefault();
         ev.stopImmediatePropagation();
-        this.handle.DOM.setPointerCapture(ev.pointerId);
-        this.handle.on("pointermove", this.fncOnPointerMove, this.listenerOptions);
+        this._handle.DOM.setPointerCapture(ev.pointerId);
+        this._handle.on("pointermove", this.fncOnPointerMove, this.listenerOptions);
         this.onStartResize(ev);
     }
 
@@ -877,8 +916,8 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
         if (!this.resizing) {
             return;
         }
-        this.handle.DOM.releasePointerCapture(ev.pointerId);
-        this.handle.off("pointermove", this.fncOnPointerMove, this.listenerOptions);
+        this._handle.DOM.releasePointerCapture(ev.pointerId);
+        this._handle.off("pointermove", this.fncOnPointerMove, this.listenerOptions);
         this.onResizeEnd();
     }
 
@@ -916,7 +955,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
         const dist = this._options.Horizontal
             ? f1 * (ev.clientX - this.resizeStart.X)
             : f1 * (ev.clientY - this.resizeStart.Y);
-        const newSize = Math.max(minSize, Math.min((this.resizeAreaSize + f2 * dist), this._dom[this.clientSizeProp] - this.handle.DOM[this.clientSizeProp] - oppositeMinSize));
+        const newSize = Math.max(minSize, Math.min((this.resizeAreaSize + f2 * dist), this._dom[this.clientSizeProp] - this._handle.DOM[this.clientSizeProp] - oppositeMinSize));
         if (this.dispatch(new SplitterAreaResizeEvent(this, newSize, this.resizeAreaSize + (this.isRTL ? -dist : dist)))) {
             this.activeArea.style(
                 this.sizeProp,
@@ -947,7 +986,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
      */
     protected onAnimationEnd(ev: AnimationEvent): void {
         if (
-            (ev.target !== this.start.DOM && ev.target !== this.end.DOM)
+            (ev.target !== this._start.DOM && ev.target !== this._end.DOM)
             || !["hsplitter-to-0", "hsplitter-to-100", "hsplitter-from-0-to-previous", "hsplitter-from-100-to-previous",
                 "vsplitter-to-0", "vsplitter-to-100", "vsplitter-from-0-to-previous", "vsplitter-from-100-to-previous"]
                 .includes(ev.animationName)
@@ -997,10 +1036,10 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
             .addClass("horizontal", "active-area-start", this.tmpCSSClass)
             .addClass("horizontal", "active-area-start")
             .append(
-                this.start = new Div()
+                this._start = new Div()
                     .addClass("start")
                     .append(...startContent),
-                this.handle = new Div()
+                this._handle = new Div()
                     .addClass("handle")
                     .append(new Div())
                     .on("dblclick", this.fncSetEven)
@@ -1009,11 +1048,11 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
                 // .on("touchstart", this.fncOnTouchStart, this.listenerOptions)
                 // .on("touchend", this.fncOnTouchEnd, this.listenerOptions)
                 // .on("touchcancel", this.fncOnTouchEnd, this.listenerOptions),
-                this.end = new Div()
+                this._end = new Div()
                     .addClass("end")
                     .append(...endContent)
             );
-        this.activeArea = this.start;
+        this.activeArea = this._start;
         this.resizeObserver = new ResizeObserver((entries => {
             if (this.isVisible()) {
                 for (const entry of entries) {

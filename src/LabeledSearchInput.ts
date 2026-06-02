@@ -46,7 +46,19 @@ export class LabeledSearchInput<EventMap extends HTMLElementEventMap = HTMLEleme
      * descriptive name.
      */
     public get SearchInput(): SearchInput {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `SearchInput` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `SearchInput` component instance and
+     * this instance as parameters.
+     * @returns This instance.
+     */
+    public searchInput(cb: (searchInput: SearchInput, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 }
 

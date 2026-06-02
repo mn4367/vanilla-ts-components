@@ -58,12 +58,12 @@ const dc = new DisclosureContainer(
 \`\`\`
 // Enable/disable custom design
 if (someCondition) {
-    dc.DisclosureButton.addClass("custom-design");
-    dc.disclosedButtonOptions({ Title: "Collapse" })
+    dc.disclosureButton(c => c.addClass("custom-design"))
+        .disclosedButtonOptions({ Title: "Collapse" })
         .undisclosedButtonOptions({ Title: "Expand" });
 } else {
-    dc.DisclosureButton.removeClass("custom-design");
-    dc.disclosedButtonOptions({ Title: null })
+    dc.disclosureButton(c => c.removeClass("custom-design"))
+        .disclosedButtonOptions({ Title: null })
         .undisclosedButtonOptions({ Title: null });
 }
 \`\`\`
@@ -225,12 +225,14 @@ export class DisclosureContainerEx extends BaseExample {
         const btns = $.labeledCheckbox("Set custom disclose button appearance")
             .on("checked", (ev) => {
                 if (ev.$.Checked) {
-                    this.#dc.DisclosureButton.addClass("custom-design");
-                    this.#dc.disclosedButtonOptions({ Title: "Collapse" })
+                    this.#dc
+                        .disclosureButton(c => c.addClass("custom-design"))
+                        .disclosedButtonOptions({ Title: "Collapse" })
                         .undisclosedButtonOptions({ Title: "Expand" });
                 } else {
-                    this.#dc.DisclosureButton.removeClass("custom-design");
-                    this.#dc.disclosedButtonOptions({ Title: null })
+                    this.#dc
+                        .disclosureButton(c => c.removeClass("custom-design"))
+                        .disclosedButtonOptions({ Title: null })
                         .undisclosedButtonOptions({ Title: null });
                 }
             });

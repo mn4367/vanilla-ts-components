@@ -48,18 +48,31 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
      * descriptive name.
      */
     public get TextArea(): TextArea {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `TextArea` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `TextArea` component instance and
+     * this
+     * instance as parameters.
+     * @returns This instance.
+     */
+    public textArea(cb: (textArea: TextArea, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
      * __The property `Value` here is an alias for the property `this.TextArea.Value`.__
      */
     public get Value(): string {
-        return this.component.DOM.value;
+        return this._component.DOM.value;
     }
     /** @inheritdoc */
     public set Value(v: string) {
-        this.component.DOM.value = v;
+        this._component.DOM.value = v;
     }
 
     /**
@@ -69,7 +82,7 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
      * @returns This instance.
      */
     public value(v: string): this {
-        this.component.DOM.value = v;
+        this._component.DOM.value = v;
         return this;
     }
 
@@ -80,7 +93,7 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
      * @inheritdoc
      */
     public override get Text(): NullableString {
-        return this.component.DOM.textContent;
+        return this._component.DOM.textContent;
     }
     /**
      * \
@@ -89,7 +102,7 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
      * @inheritdoc
      */
     public override set Text(v: NullableString) {
-        this.component.DOM.textContent = v;
+        this._component.DOM.textContent = v;
     }
 
     /**
@@ -100,7 +113,7 @@ export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementE
      * @inheritdoc
      */
     public override text(text: NullableString): this {
-        this.component.DOM.textContent = text;
+        this._component.DOM.textContent = text;
         return this;
     }
 }

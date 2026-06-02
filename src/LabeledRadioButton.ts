@@ -55,12 +55,12 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
             lblAction
         );
         // Support toggling also on label clicks.
-        this.label.on("click", (ev: PointerEvent) => {
-            if (this.component.Toggle) {
+        this._label.on("click", (ev: PointerEvent) => {
+            if (this._component.Toggle) {
                 ev.preventDefault();
-                this.component.checked(!this.component.Checked);
-                this.component.emit(new Event("input", DEFAULT_EVENT_INIT_DICT));
-                this.component.emit(new Event("change", DEFAULT_EVENT_INIT_DICT));
+                this._component.checked(!this._component.Checked);
+                this._component.emit(new Event("input", DEFAULT_EVENT_INIT_DICT));
+                this._component.emit(new Event("change", DEFAULT_EVENT_INIT_DICT));
             }
         });
     }
@@ -70,18 +70,30 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
      * name.
      */
     public get RadioButton(): RadioButton {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `RadioButton` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `RadioButton` component instance and
+     * this instance as parameters.
+     * @returns This instance.
+     */
+    public radioButton(cb: (radioButton: RadioButton, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
      * Get/set the checked state of the radio button (re-exported for easier direct access).
      */
     public get Checked(): boolean {
-        return this.component.Checked;
+        return this._component.Checked;
     }
     /** @inheritdoc */
     public set Checked(v: boolean) {
-        this.component.Checked = v;
+        this._component.Checked = v;
     }
 
     /**
@@ -91,7 +103,7 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
      * @returns This instance.
      */
     public checked(checked: boolean): this {
-        this.component.Checked = checked;
+        this._component.Checked = checked;
         return this;
     }
 
@@ -99,11 +111,11 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
      * Allow toggling the radio button state (re-exported for easier direct access).
      */
     public get Toggle(): boolean {
-        return this.component.Toggle;
+        return this._component.Toggle;
     }
     /** @inheritdoc */
     public set Toggle(v: boolean) {
-        this.component.Toggle = v;
+        this._component.Toggle = v;
     }
 
     /**
@@ -112,7 +124,7 @@ export class LabeledRadioButton<EventMap extends LabeledRadioButtonEventMap = La
      * @returns This instance.
      */
     public toggle(toggle: boolean): this {
-        this.component.Toggle = toggle;
+        this._component.Toggle = toggle;
         return this;
     }
 }

@@ -18,8 +18,8 @@ const example = `
 import { LabeledSearchInput } from "@vanilla-ts/components";
 
 const input = new LabeledSearchInput("Search")
-    .addClass("labeled-search-input");
-input.SearchInput.placeholder("Enter search term...");
+    .addClass("labeled-search-input")
+    .searchInput(c => c.placeholder("Enter search term..."));
 \`\`\`
 `;
 
@@ -33,13 +33,15 @@ export class LabeledSearchInputEx extends BaseExample {
 
     /** @inheritdoc */
     protected override buildExample(): void {
-        this.#lInput = $.labeledSearchInput("Search");
-        this.#lInput.SearchInput.placeholder("Enter search term...");
+        this.#lInput = $
+            .labeledSearchInput("Search")
+            .searchInput(c => c.placeholder("Enter search term..."));
         this.append(
             this.markdown(intro),
             this.example([this.#lInput]),
             this.markdown("### Label position and label alignment"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     ...labeledComponentLabelFlags([this.#lInput], true, "start", "start")
                 ),

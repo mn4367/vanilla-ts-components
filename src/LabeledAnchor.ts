@@ -29,18 +29,30 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * name.
      */
     public get Anchor(): A {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `A` component via a callback function. Useful for seamless chaining when
+     * creating instances of this component.
+     * @param cb A callback function that receives the current `A` component instance and this
+     * instance as parameters.
+     * @returns This instance.
+     */
+    public anchor(cb: (anchor: A, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**
      * Get/set the `href` attribute of the anchor component (re-exported for easier direct access).
      */
     public get Href(): string {
-        return this.component.Href;
+        return this._component.Href;
     }
     /** @inheritdoc */
     public set Href(v: string) {
-        this.component.Href = v;
+        this._component.Href = v;
     }
 
     /**
@@ -49,7 +61,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @returns This instance.
      */
     public href(v: string): this {
-        this.component.href(v);
+        this._component.href(v);
         return this;
     }
 
@@ -58,11 +70,11 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * access).
      */
     public get Target(): TargetAttributeValues {
-        return this.component.Target;
+        return this._component.Target;
     }
     /** @inheritdoc */
     public set Target(v: TargetAttributeValues) {
-        this.component.Target = v;
+        this._component.Target = v;
     }
 
     /**
@@ -71,7 +83,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @returns This instance.
      */
     public target(v: TargetAttributeValues): this {
-        this.component.target(v);
+        this._component.target(v);
         return this;
     }
 
@@ -80,7 +92,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * the property `this.Anchor.Phrase`.__
      */
     public set Phrase(phrase: Phrase | Phrases) {
-        this.component.Phrase = phrase;
+        this._component.Phrase = phrase;
     }
 
     /**
@@ -91,7 +103,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @returns This instance.
      */
     public phrase(...phrase: Phrases): this {
-        this.component.phrase(...phrase);
+        this._component.phrase(...phrase);
         return this;
     }
 
@@ -100,7 +112,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * for the property `this.Anchor.Rephrase`.__
      */
     public set Rephrase(phrase: Phrase | Phrases) {
-        this.component.Rephrase = phrase;
+        this._component.Rephrase = phrase;
     }
 
     /**
@@ -111,7 +123,7 @@ export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEve
      * @returns This instance.
      */
     public rephrase(...phrase: Phrases): this {
-        this.component.rephrase(...phrase);
+        this._component.rephrase(...phrase);
         return this;
     }
 }

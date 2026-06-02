@@ -18,8 +18,8 @@ const example = `
 import { LabeledEmailInput } from "@vanilla-ts/components";
 
 const input = new LabeledEmailInput("Business contact")
-    .addClass("labeled-email-input");
-input.EmailInput.placeholder("sophie@example.com");
+    .addClass("labeled-email-input")
+    .emailInput(c => c.placeholder("sophie@example.com"));
 \`\`\`
 `;
 
@@ -33,13 +33,15 @@ export class LabeledEmailInputEx extends BaseExample {
 
     /** @inheritdoc */
     protected override buildExample(): void {
-        this.#lInput = $.labeledEmailInput("Business contact");
-        this.#lInput.EmailInput.placeholder("sophie@example.com");
+        this.#lInput = $
+            .labeledEmailInput("Business contact")
+            .emailInput(c => c.placeholder("sophie@example.com"));
         this.append(
             this.markdown(intro),
             this.example([this.#lInput]),
             this.markdown("### Label position and label alignment"),
-            new Div().addClass("example-properties")
+            new Div()
+                .addClass("example-properties")
                 .append(
                     ...labeledComponentLabelFlags([this.#lInput], true, "start", "start"),
                 ),

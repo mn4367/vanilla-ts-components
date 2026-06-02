@@ -51,7 +51,19 @@ export class LabeledRangeInput<EventMap extends HTMLElementEventMap = HTMLElemen
      * descriptive name.
      */
     public get RangeInput(): RangeInput {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `RangeInput` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `RangeInput` component instance and
+     * this instance as parameters.
+     * @returns This instance.
+     */
+    public rangeInput(cb: (rangeInput: RangeInput, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 }
 

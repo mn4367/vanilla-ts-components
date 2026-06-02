@@ -33,7 +33,7 @@ export class LabeledContainer<Child extends FlowContent = FlowContent, EventMap 
             // !! Mandatory.
             .setContent(new Div())
             // Set target DOM for the `IChildren` mixin!!
-            .setChildrenDOMTarget(this.component.DOM);
+            .setChildrenDOMTarget(this._component.DOM);
     }
 
     /**
@@ -41,7 +41,19 @@ export class LabeledContainer<Child extends FlowContent = FlowContent, EventMap 
      * descriptive name.
      */
     public get Container(): IElementWithChildrenComponent<HTMLElement> {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal container component via a callback function. Useful for seamless chaining
+     * when creating instances of this component.
+     * @param cb A callback function that receives the current container component instance and this
+     * instance as parameters.
+     * @returns This instance.
+     */
+    public container(cb: (container: IElementWithChildrenComponent<HTMLElement>, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 
     /**

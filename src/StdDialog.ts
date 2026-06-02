@@ -254,6 +254,19 @@ export class StdDialog {
     }
 
     /**
+     * Access the internal `Dialog` component via a callback function. Useful for seamless chaining
+     * when creating instances of this component.
+     * @param cb A callback function that receives the current `Dialog` component instance and this
+     * instance as parameters.
+     * @see {@link StdDialog.Dialog}
+     * @returns This instance.
+     */
+    public dialog(cb: (dialog: Dialog, owner?: this) => void): this {
+        cb(this.dlg, this);
+        return this;
+    }
+
+    /**
      * Get the current return value of the dialog. This is the symbol that corresponds to the button
      * that has been clicked/pressed or the symbol {@link STD_DLG_CANCELLED}, if the dialog has been
      * cancelled by other means, e.g. by pressing the `Escape` key, if the underlying `Dialog`

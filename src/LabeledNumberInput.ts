@@ -49,7 +49,19 @@ export class LabeledNumberInput<EventMap extends HTMLElementEventMap = HTMLEleme
      * descriptive name.
      */
     public get NumberInput(): NumberInput {
-        return this.component;
+        return this._component;
+    }
+
+    /**
+     * Access the internal `NumberInput` component via a callback function. Useful for seamless
+     * chaining when creating instances of this component.
+     * @param cb A callback function that receives the current `NumberInput` component instance and
+     * this instance as parameters.
+     * @returns This instance.
+     */
+    public numberInput(cb: (numberInput: NumberInput, owner?: this) => void): this {
+        cb(this._component, this);
+        return this;
     }
 }
 
