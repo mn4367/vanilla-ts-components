@@ -1,4 +1,4 @@
-import { cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { cid, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { ISelectValues, Select } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentWithLabel, LabelPosition } from "./LabeledComponents.js";
 
@@ -6,7 +6,7 @@ import { LabelAlignment, LabeledComponentWithLabel, LabelPosition } from "./Labe
 /**
  * Labeled select component.
  */
-export class LabeledSelect<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentWithLabel<Select, EventMap> {
+export class LabeledSelect<EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledComponentWithLabel<Select, EventMap> {
     /**
      * Create LabeledSelect component.
      * @param labelPhrase The phrasing content for the label.

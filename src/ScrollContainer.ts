@@ -1,4 +1,4 @@
-import { AChildren, AElementComponentWithInternalUI, clamp, ComponentFactory, FlowContent, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin, rectContains } from "@vanilla-ts/core";
+import { AChildren, AElementComponentWithInternalUI, clamp, ComponentFactory, DefaultEventMap, FlowContent, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin, rectContains } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 
 
@@ -43,7 +43,7 @@ export type ScrollbarAdjustment = { Offset: number | INodeComponent<HTMLElement>
  *   `AElementComponentWithInternalUI`, `someChild.Parent?.Parent?.Parent` must be called to reach
  *   the containing `ScrollContainer` instance!
  */
-export class ScrollContainer<Child extends FlowContent = FlowContent, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export class ScrollContainer<Child extends FlowContent = FlowContent, EventMap extends DefaultEventMap = DefaultEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     #_dom_: HTMLDivElement;
     #contentContainer: Div;
     #scrollable: HTMLDivElement;

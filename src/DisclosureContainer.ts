@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, FlowContent, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DefaultEventMap, FlowContent, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin } from "@vanilla-ts/core";
 import { Div, Span, Text } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 
@@ -36,7 +36,7 @@ export class DiscloseEvent extends ACustomComponentEvent<"disclose", DisclosureC
 }
 
 /** Additional event(s) for `DisclosureContainer`. */
-export interface DisclosureContainerEventMap extends HTMLElementEventMap {
+export interface DisclosureContainerEventMap extends DefaultEventMap {
     /**
      * A disclosure container is disclosed/undisclosed. Event handlers can prevent changing the
      * `Disclosed` state by calling `preventDefault()`.

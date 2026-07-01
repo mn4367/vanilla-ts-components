@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, FlowContent, getProp, IChildrenMixin, IElementComponent, mixin, tabKeyFocusCycle } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, FlowContent, getProp, IChildrenMixin, IElementComponent, mixin, tabKeyFocusCycle } from "@vanilla-ts/core";
 import { Div, Dialog as DOMDialog } from "@vanilla-ts/dom";
 
 
@@ -396,7 +396,7 @@ export class DialogResizedEvent extends ACustomComponentEvent<"dlg-resized", Dia
 }
 
 /** Additional event(s) for `Dialog`. */
-export interface DialogEventMap extends HTMLElementEventMap {
+export interface DialogEventMap extends DefaultEventMap {
     /**
      * A dialog is to be shown. Event handlers can prevent showing the dialog by calling
      * `preventDefault()`.

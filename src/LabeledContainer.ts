@@ -1,4 +1,4 @@
-import { AChildren, ComponentFactory, FlowContent, IChildrenMixin, IElementWithChildrenComponent, mixin, Phrase, Phrases } from "@vanilla-ts/core";
+import { AChildren, ComponentFactory, DefaultEventMap, FlowContent, IChildrenMixin, IElementWithChildrenComponent, mixin, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentGroup, LabelPosition } from "./LabeledComponents.js";
 
@@ -20,7 +20,7 @@ import { LabelAlignment, LabeledComponentGroup, LabelPosition } from "./LabeledC
  *   `someChild.Parent?.Parent?.Parent` must be called to reach the containing `LabeledContainer`
  *   instance!
  */
-export class LabeledContainer<Child extends FlowContent = FlowContent, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentGroup<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export class LabeledContainer<Child extends FlowContent = FlowContent, EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledComponentGroup<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     /**
      * Create LabeledContainer component.
      * @param labelPhrase The phrasing content for the label.

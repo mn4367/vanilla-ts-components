@@ -1,4 +1,4 @@
-import { cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { cid, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { NumberInput } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
@@ -6,7 +6,7 @@ import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledC
 /**
  * Labeled number input component.
  */
-export class LabeledNumberInput<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledInputComponent<NumberInput, EventMap> {
+export class LabeledNumberInput<EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledInputComponent<NumberInput, EventMap> {
     /**
      * Create LabeledNumberInput component.
      * @param labelPhrase The phrasing content for the label.

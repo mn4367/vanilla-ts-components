@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, IElementComponent, tabKeyFocusCycle } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DefaultEventMap, IElementComponent, tabKeyFocusCycle } from "@vanilla-ts/core";
 import { Dialog, Div, Span } from "@vanilla-ts/dom";
 
 
@@ -27,7 +27,7 @@ export class BusyOverlayIdleEvent extends ACustomComponentEvent<"idle", BusyOver
 }
 
 /** Additional event(s) for `BusyOverlay`. */
-export interface BusyOverlayEventMap extends HTMLElementEventMap {
+export interface BusyOverlayEventMap extends DefaultEventMap {
     /**
      * A busy overlay is to be shown. Event handlers can prevent showing the overlay by calling
      * `preventDefault()`.

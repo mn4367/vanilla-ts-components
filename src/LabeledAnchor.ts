@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase, Phrases, TargetAttributeValues } from "@vanilla-ts/core";
+import { ComponentFactory, DefaultEventMap, Phrase, Phrases, TargetAttributeValues } from "@vanilla-ts/core";
 import { A } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentWithSpan, LabelPosition } from "./LabeledComponents.js";
 
@@ -6,7 +6,7 @@ import { LabelAlignment, LabeledComponentWithSpan, LabelPosition } from "./Label
 /**
  * Labeled anchor component.
  */
-export class LabeledAnchor<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentWithSpan<A, EventMap> {
+export class LabeledAnchor<EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledComponentWithSpan<A, EventMap> {
     /**
      * Create LabeledAnchor component.
      * @param href The `href` attribute for the `<a>` element.

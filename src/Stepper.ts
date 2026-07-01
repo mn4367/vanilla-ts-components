@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, IElementComponent } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, IElementComponent } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 
@@ -269,7 +269,7 @@ export class SteppedEvent extends ACustomComponentEvent<"stepped", Stepper, {
 }
 
 /** Additional event(s) for objects implementing `IStepper`. */
-export interface StepperEventMap extends HTMLElementEventMap {
+export interface StepperEventMap extends DefaultEventMap {
     /**
      * The stepper wants to go to a new index/position in the steppable object. Event handlers can
      * prevent changing the index/position by calling `preventDefault()`.

@@ -1,4 +1,4 @@
-import { cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { cid, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { RangeInput } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
@@ -6,7 +6,7 @@ import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledC
 /**
  * Labeled range input component.
  */
-export class LabeledRangeInput<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledInputComponent<RangeInput, EventMap> {
+export class LabeledRangeInput<EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledInputComponent<RangeInput, EventMap> {
     /**
      * Create LabeledRangeInput component.
      * @param labelPhrase The phrasing content for the label.

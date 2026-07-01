@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, CSSPropertyNames, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, FlowContents, getClientRect, getDebouncedFnc, IElementWithChildrenComponent } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, CSSPropertyNames, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, FlowContents, getClientRect, getDebouncedFnc, IElementWithChildrenComponent } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 
 
@@ -281,7 +281,7 @@ export class SplitterOptionsEvent extends ACustomComponentEvent<"splitter-option
 }
 
 /** Additional events for `Splitter`. */
-export interface SplitterEventMap extends HTMLElementEventMap {
+export interface SplitterEventMap extends DefaultEventMap {
     /**
      * The splitter wants to start a resize operation on the active area (the `pointerdown` event on
      * the handle is triggered). Event handlers can prevent starting the resize operation by calling

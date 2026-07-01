@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, ComponentFactory } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, ComponentFactory, DefaultEventMap } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 
 
@@ -8,7 +8,7 @@ import { Div } from "@vanilla-ts/dom";
  * that the state is visualized with a simple CSS-based animation on the Div component. A very
  * simple example for such an animation can be found in the file `themes/vts/Throbber.css`.
  */
-export class Throbber<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap> {
+export class Throbber<EventMap extends DefaultEventMap = DefaultEventMap> extends AElementComponentWithInternalUI<Div, EventMap> {
     protected _active: boolean;
 
     /**

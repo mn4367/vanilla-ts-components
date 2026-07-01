@@ -1,4 +1,4 @@
-import { cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { cid, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { TextArea } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentWithLabel, LabelPosition } from "./LabeledComponents.js";
 
@@ -6,7 +6,7 @@ import { LabelAlignment, LabeledComponentWithLabel, LabelPosition } from "./Labe
 /**
  * Labeled textarea component.
  */
-export class LabeledTextArea<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentWithLabel<TextArea, EventMap> {
+export class LabeledTextArea<EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledComponentWithLabel<TextArea, EventMap> {
     /**
      * Create LabeledTextArea component.
      * @param labelPhrase The phrasing content for the label.

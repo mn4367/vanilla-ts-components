@@ -1,10 +1,10 @@
-import { CheckedEvent, cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { CheckedEvent, cid, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { Checkbox } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
 
 /** Additional event(s) for `LabeledCheckbox`. */
-export interface LabeledCheckboxEventMap extends HTMLElementEventMap {
+export interface LabeledCheckboxEventMap extends DefaultEventMap {
     /** A checkbox is checked/unchecked. */
     "checked": CheckedEvent<Checkbox>;
 }

@@ -1,4 +1,4 @@
-import { cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { cid, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { EmailInput } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
@@ -6,7 +6,7 @@ import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledC
 /**
  * Labeled email input component.
  */
-export class LabeledEmailInput<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledInputComponent<EmailInput, EventMap> {
+export class LabeledEmailInput<EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledInputComponent<EmailInput, EventMap> {
     /**
      * Create LabeledEmailInput component.
      * @param labelPhrase The phrasing content for the label.

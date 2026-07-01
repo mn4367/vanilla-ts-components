@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, ANodeComponent, AnyType, DEFAULT_EVENT_INIT_DICT, INodeComponent } from "@vanilla-ts/core";
+import { ACustomComponentEvent, ANodeComponent, AnyType, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, INodeComponent } from "@vanilla-ts/core";
 
 
 /** Custom 'pinch-zoom' event for pinch zoom handlers. */
@@ -51,7 +51,7 @@ export class PinchZoomEvent extends ACustomComponentEvent<"pinch-zoom", PinchZoo
 }
 
 /** Additional event(s) for `PinchZoomGestureHandler`. */
-export interface PinchZoomGestureHandlerEventMap extends HTMLElementEventMap {
+export interface PinchZoomGestureHandlerEventMap extends DefaultEventMap {
     /** A pinch zoom gesture is executed or has been started/stopped. */
     "pinch-zoom": PinchZoomEvent;
 }

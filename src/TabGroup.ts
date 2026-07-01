@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_EVENT_INIT_DICT, FlowContent, HTMLElementWithChildren, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin, NullableString, Phrases } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, FlowContent, HTMLElementWithChildren, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin, NullableString, Phrases } from "@vanilla-ts/core";
 import { Div, Span, Text } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 import { ScrollContainer } from "./ScrollContainer.js";
@@ -92,7 +92,7 @@ export class TabCloseEvent extends ACustomComponentEvent<"tab-close", TabGroup, 
 }
 
 /** Additional event(s) for `TabGroup`. */
-export interface TabGroupEventMap extends HTMLElementEventMap {
+export interface TabGroupEventMap extends DefaultEventMap {
     /** A `tab` event occured (on activation/deactivation). */
     "tab": TabEvent;
     /** A `tab` event occured (on activation/deactivation). */
@@ -672,7 +672,7 @@ class TabContentContainer extends Div {
  * separate non-mounted tab content container which both will be used, mounted and handled by
  * `TabGroup`.
  */
-export class Tab<Child extends FlowContent = FlowContent, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
+export class Tab<Child extends FlowContent = FlowContent, EventMap extends DefaultEventMap = DefaultEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     protected headerContent: IElementWithChildrenComponent<HTMLDivElement>;
     protected closeTabBtn: IconButton;
     protected showCloseTabBtn: boolean;

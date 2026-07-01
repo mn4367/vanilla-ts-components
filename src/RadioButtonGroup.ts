@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponents.js";
 import { LabeledRadioButton } from "./LabeledRadioButton.js";
@@ -21,7 +21,7 @@ export type LabeledRadioButtons = Array<{
 }>;
 
 /** Custom 'checked' event for a radio button group. */
-export interface RadioButtonGroupEventMap extends HTMLElementEventMap {
+export interface RadioButtonGroupEventMap extends DefaultEventMap {
     /** A radio button in a radio button group has been checked/uncheked. */
     "checked": CheckedEvent<RadioButtonGroup, {
         /** The labeled radio button which is checked/unchecked. */

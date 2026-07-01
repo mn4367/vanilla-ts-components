@@ -1,10 +1,10 @@
-import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
+import { ComponentFactory, DefaultEventMap, Phrase, Phrases } from "@vanilla-ts/core";
 import { Progress, ProgressValueEvent } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentWithSpan, LabelPosition } from "./LabeledComponents.js";
 
 
 /** Additional event(s) for `LabeledProgressEventMap`. */
-export interface LabeledProgressEventMap extends HTMLElementEventMap {
+export interface LabeledProgressEventMap extends DefaultEventMap {
     /**
      * The value of the progress component has changed. This event is purely informative and can't
      * be cancelled.

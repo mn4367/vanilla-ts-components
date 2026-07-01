@@ -1,4 +1,4 @@
-import { ComponentFactory, Phrase, Phrases } from "@vanilla-ts/core";
+import { ComponentFactory, DefaultEventMap, Phrase, Phrases } from "@vanilla-ts/core";
 import { P } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentWithSpan, LabelPosition } from "./LabeledComponents.js";
 
@@ -15,7 +15,7 @@ import { LabelAlignment, LabeledComponentWithSpan, LabelPosition } from "./Label
  * text by, for example, appending `Span`, `Em` and other components to it. The same applies for the
  * label, which is a `Span` component.
  */
-export class LabeledParagraph<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentWithSpan<P, EventMap> {
+export class LabeledParagraph<EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledComponentWithSpan<P, EventMap> {
     /**
      * Create LabeledParagraph component.
      * @param labelPhrase The phrasing content for the label.

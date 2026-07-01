@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, IElementComponent, INodeComponent, Phrase, Phrases } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, IElementComponent, INodeComponent, Phrase, Phrases } from "@vanilla-ts/core";
 import { Hr, LiUl, Menu, Span, Text } from "@vanilla-ts/dom";
 
 
@@ -11,7 +11,7 @@ type MenuItemData = bigint | boolean | number | object | string | symbol;
 /**
  * Menu item component, an entry in a popup menu.
  */
-export class MenuItem<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<LiUl, EventMap> {
+export class MenuItem<EventMap extends DefaultEventMap = DefaultEventMap> extends AElementComponentWithInternalUI<LiUl, EventMap> {
     protected _checked: boolean = false;
     protected _hint: Span;
     protected _content: Span;
@@ -341,7 +341,7 @@ export class MenuItemFactory<T> extends ComponentFactory<MenuItem> {
  * effect when the mouse pointer/mouse moves into it, and that the entry is ignored/skipped when
  * navigating with the keyboard through the list of (other) menu items in the popup menu.
  */
-export class MenuHeading<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<LiUl, EventMap> {
+export class MenuHeading<EventMap extends DefaultEventMap = DefaultEventMap> extends AElementComponentWithInternalUI<LiUl, EventMap> {
     /**
      * Create menu heading component.
      * @param content The content of the menu heading.
@@ -411,7 +411,7 @@ export class MenuHeadingFactory<T> extends ComponentFactory<MenuHeading> {
 /**
  * Menu separator component.
  */
-export class MenuSeparator<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<LiUl, EventMap> {
+export class MenuSeparator<EventMap extends DefaultEventMap = DefaultEventMap> extends AElementComponentWithInternalUI<LiUl, EventMap> {
     /**
      * Create menu separator component.
      */
@@ -486,7 +486,7 @@ export class PopupMenuItemSelectEvent extends ACustomComponentEvent<"select", Po
 }
 
 /** Additional event(s) for `PopupMenu`. */
-export interface PopupMenuEventMap extends HTMLElementEventMap {
+export interface PopupMenuEventMap extends DefaultEventMap {
     /**
      * A popup menu is to be shown. Event handlers can prevent showing the popup menu by calling
      * `preventDefault()`.

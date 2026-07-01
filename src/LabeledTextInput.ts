@@ -1,4 +1,4 @@
-import { cid, ComponentFactory, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { cid, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { TextInput } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
@@ -6,7 +6,7 @@ import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledC
 /**
  * Labeled text input component.
  */
-export class LabeledTextInput<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledInputComponent<TextInput, EventMap> {
+export class LabeledTextInput<EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledInputComponent<TextInput, EventMap> {
     /**
      * Create LabeledTextInput component.
      * @param labelPhrase The phrasing content for the label.

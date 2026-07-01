@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, HTMLElementWithChildren, IElementComponent, IElementWithChildrenComponent, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, DefaultEventMap, HTMLElementWithChildren, IElementComponent, IElementWithChildrenComponent, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div, Input, Label, Span } from "@vanilla-ts/dom";
 import { LabeledContainer } from "./LabeledContainer.js";
 import { LabeledRadioButtonGroup } from "./LabeledRadioButtonGroup.js";
@@ -28,7 +28,7 @@ export enum LabelAlignment {
  * element. The label element itself is a compoment (`Label` or `Span`) so it can be used to display
  * styled text with, for example, `Span`, `Em` and other components appended to it.
  */
-export abstract class LabeledComponent<L extends (Label | Span), C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<IElementWithChildrenComponent<HTMLElementWithChildren>, EventMap> {
+export abstract class LabeledComponent<L extends (Label | Span), C extends IElementComponent<HTMLElement>, EventMap extends DefaultEventMap = DefaultEventMap> extends AElementComponentWithInternalUI<IElementWithChildrenComponent<HTMLElementWithChildren>, EventMap> {
     #initialized = false;
     protected _label: L;
     // This member exists only to temporarily store the value given to the contructor to be
@@ -245,7 +245,7 @@ export abstract class LabeledComponent<L extends (Label | Span), C extends IElem
  * Abstract `LabeledComponentWithSpan` class. This class allows to implement components that use a
  * `Span` component for its label.
  */
-export abstract class LabeledComponentWithSpan<C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, C, EventMap> {
+export abstract class LabeledComponentWithSpan<C extends IElementComponent<HTMLElement>, EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledComponent<Span, C, EventMap> {
     /**
      * Create LabeledComponentWithSpan component.
      * @param component The inner component of the labeled component.
@@ -275,7 +275,7 @@ export abstract class LabeledComponentWithSpan<C extends IElementComponent<HTMLE
  * Abstract `LabeledComponentWithLabel` class. This class allows to implement components that use a
  * `Label` component for its label.
  */
-export abstract class LabeledComponentWithLabel<C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Label, C, EventMap> {
+export abstract class LabeledComponentWithLabel<C extends IElementComponent<HTMLElement>, EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledComponent<Label, C, EventMap> {
     /**
      * Create LabeledComponentWithLabel component.
      * @param component The inner component of the labeled component.
@@ -319,7 +319,7 @@ export abstract class LabeledComponentWithLabel<C extends IElementComponent<HTML
  * Abstract class for building labeled _input_ components, e.g. text inputs, checkboxes etc. that
  * have a descriptive label/caption.
  */
-export abstract class LabeledInputComponent<I extends Input, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponentWithLabel<I, EventMap> {
+export abstract class LabeledInputComponent<I extends Input, EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledComponentWithLabel<I, EventMap> {
     /**
      * Create LabeledInputComponent component.
      * @param input The input component.
@@ -408,7 +408,7 @@ export abstract class LabeledInputComponent<I extends Input, EventMap extends HT
  * other components in a container which itself is decorated with a label. Examples can be found in
  * {@link LabeledContainer} and {@link LabeledRadioButtonGroup}.
  */
-export abstract class LabeledComponentGroup<C extends IElementComponent<HTMLElement>, EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends LabeledComponent<Span, C, EventMap> {
+export abstract class LabeledComponentGroup<C extends IElementComponent<HTMLElement>, EventMap extends DefaultEventMap = DefaultEventMap> extends LabeledComponent<Span, C, EventMap> {
     /**
      * Create LabeledComponentGroup component.
      * @param labelPhrase The phrasing content for the label.

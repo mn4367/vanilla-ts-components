@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, ComponentFactory, IElementWithChildrenComponent, mixinDOMProperties, NameAttr, NullableString, Phrase, Phrases, ValueAttr } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, ComponentFactory, DefaultEventMap, IElementWithChildrenComponent, mixinDOMProperties, NameAttr, NullableString, Phrase, Phrases, ValueAttr } from "@vanilla-ts/core";
 import { Button, Span } from "@vanilla-ts/dom";
 
 
@@ -71,7 +71,7 @@ export type IconButtonOptions = {
  * - The styling in `themes/vts/IconButton.css` is very generic and only handles the basic layout.
  * @see {@link IconButtonOptions}
  */
-export class IconButton<EventMap extends HTMLElementEventMap = HTMLElementEventMap> extends AElementComponentWithInternalUI<Button, EventMap> {
+export class IconButton<EventMap extends DefaultEventMap = DefaultEventMap> extends AElementComponentWithInternalUI<Button, EventMap> {
     protected _options: IconButtonOptions = {};
     protected btnPhrase: Span;
     protected spanStart: Span;
