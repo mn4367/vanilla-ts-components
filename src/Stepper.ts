@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, IElementComponent } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, IElementComponent, PointerHoldOptions } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 
@@ -163,8 +163,13 @@ export interface StepperOptions {
      * invilible (`visibility: hidden`) but they could also be styled differently.
      */
     HideButtons?: boolean;
-    /** Timings for a held down pointer/mouse button. */
-    // Continuous?: OnHeldDownOptions;
+    /**
+     * Settings for the behavior of the buttons if a pointer/mouse button is held down.\
+     * Default `{ Delay: 500, Interval: 100, OnClick: false }`.
+     * @see {@link PointerHoldOptions} for details. __Note:__ The `OnClick` property is not used,
+     * since the stepper buttons are already clickable.
+     */
+    Continuous?: PointerHoldOptions;
     /**
      * A separator component is inserted between the button groups which step backwards and
      * forwards. Such a component could be used, for example, to display the current index of the
@@ -191,8 +196,13 @@ export interface StepperOptions {
     FirstBtnOptions?: IconButtonOptions;
     /** Show button 'Page back'? Default: `true`. */
     PageBackward?: boolean;
-    /** Support for holding the pointer down on 'Page backward'? */
-    // PageBackwardContinuous?: boolean;
+    /**
+     * If `true`, holding down the pointer on the 'Page backward' button will continuously trigger
+     * the action.\
+     * Default: `false`.
+     * @see {@link StepperOptions.Continuous}
+     */
+    PageBackwardContinuous?: boolean;
     /**
      * Options for the button 'Page Backward'.\
      * Default: same as {@link StepperOptions.FirstBtnOptions}
@@ -200,8 +210,13 @@ export interface StepperOptions {
     PageBackwardBtnOptions?: IconButtonOptions;
     /** Show button 'Backward'? Default: `true`. */
     Backward?: boolean;
-    /** Support for holding the pointer down on 'Backward'? */
-    // BackwardContinuous?: boolean;
+    /**
+     * If `true`, holding down the pointer on the 'Backward' button will continuously trigger the
+     * action.\
+     * Default: `false`.
+     * @see {@link StepperOptions.Continuous}
+     */
+    BackwardContinuous?: boolean;
     /**
      * Options for the button 'Backward'.\
      * Default: same as {@link StepperOptions.FirstBtnOptions}
@@ -209,8 +224,13 @@ export interface StepperOptions {
     BackwardBtnOptions?: IconButtonOptions;
     /** Show button 'Forward'? Default: `true`. */
     Forward?: boolean;
-    /** Support for holding the pointer down on 'Forward'? */
-    // ForwardContinuous?: boolean;
+    /**
+     * If `true`, holding down the pointer on the 'Forward' button will continuously trigger the
+     * action.\
+     * Default: `false`.
+     * @see {@link StepperOptions.Continuous}
+     */
+    ForwardContinuous?: boolean;
     /**
      * Options for the button 'Forward'.\
      * Default: same as {@link StepperOptions.FirstBtnOptions}
@@ -218,8 +238,13 @@ export interface StepperOptions {
     ForwardBtnOptions?: IconButtonOptions;
     /** Show button 'Page forward'? Default: `true`. */
     PageForward?: boolean;
-    /** Support for holding the pointer down on 'Page forward'? */
-    // PageForwardContinuous?: boolean;
+    /**
+     * If `true`, holding down the pointer on the 'Page forward' button will continuously trigger the
+     * action.\
+     * Default: `false`.
+     * @see {@link StepperOptions.Continuous}
+     */
+    PageForwardContinuous?: boolean;
     /**
      * Options for the button 'Page Forward'.\
      * Default: same as {@link StepperOptions.FirstBtnOptions}
@@ -325,6 +350,7 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
         return {
             /* eslint-disable jsdoc/require-jsdoc */
             ...this._options,
+            Continuous: { Delay: this._options.Continuous?.Delay, Interval: this._options.Continuous?.Interval, OnClick: false },
             FirstBtnOptions: this.btnFirst.Options,
             PageBackwardBtnOptions: this.btnPageBackward.Options,
             BackwardBtnOptions: this.btnBackward.Options,
@@ -355,45 +381,41 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
                 separator = options.Separator;
             }
         }
+        this.uninstallButtonEventListeners();
         this._options = {
             /* eslint-disable jsdoc/require-jsdoc */
             Appearance: options.Appearance ?? this._options.Appearance ?? StepperAppearance.HORIZONTAL,
             HideButtons: options.HideButtons ?? this._options.HideButtons ?? false,
+            Continuous: options.Continuous ?? this._options.Continuous ?? { Delay: 500, Interval: 100 },
             Separator: separator,
             First: options.First ?? this._options.First ?? true,
             FirstBtnOptions: IconButton.mergeOptionsFromTo(options.FirstBtnOptions, this._options.FirstBtnOptions),
             PageBackward: options.PageBackward ?? this._options.PageBackward ?? true,
-            // PageBackwardContinuous: options.PageBackwardContinuous ?? this._options.PageBackwardContinuous ?? false,
+            PageBackwardContinuous: options.PageBackwardContinuous ?? this._options.PageBackwardContinuous ?? false,
             PageBackwardBtnOptions: IconButton.mergeOptionsFromTo(options.PageBackwardBtnOptions, this._options.PageBackwardBtnOptions),
             Backward: options.Backward ?? this._options.Backward ?? true,
-            // BackwardContinuous: options.BackwardContinuous ?? this._options.BackwardContinuous ?? true,
+            BackwardContinuous: options.BackwardContinuous ?? this._options.BackwardContinuous ?? false,
             BackwardBtnOptions: IconButton.mergeOptionsFromTo(options.BackwardBtnOptions, this._options.BackwardBtnOptions),
             Forward: options.Forward ?? this._options.Forward ?? true,
-            // ForwardContinuous: options.ForwardContinuous ?? this._options.ForwardContinuous ?? true,
+            ForwardContinuous: options.ForwardContinuous ?? this._options.ForwardContinuous ?? false,
             ForwardBtnOptions: IconButton.mergeOptionsFromTo(options.ForwardBtnOptions, this._options.ForwardBtnOptions),
             PageForward: options.PageForward ?? this._options.PageForward ?? true,
-            // PageForwardContinuous: options.PageForwardContinuous ?? this._options.PageForwardContinuous ?? false,
+            PageForwardContinuous: options.PageForwardContinuous ?? this._options.PageForwardContinuous ?? false,
             PageForwardBtnOptions: IconButton.mergeOptionsFromTo(options.PageForwardBtnOptions, this._options.PageForwardBtnOptions),
             Last: options.Last ?? this._options.Last ?? true,
             LastBtnOptions: IconButton.mergeOptionsFromTo(options.LastBtnOptions, this._options.LastBtnOptions),
             /* eslint-enable */
         };
+        this._options.Continuous!.OnClick = true;
         const backwardButtons: IconButton[] = [];
         const forwardButtons: IconButton[] = [];
         this._options.First && backwardButtons.push(this.btnFirst);
         this._options.PageBackward && backwardButtons.push(this.btnPageBackward);
-        // this.btnBackward.OnHeldDown = this.options.BackwardContinuous ? this.fncPageBackward : undefined;
-        // this.btnBackward.OnHeldDownOptions = this.options.Continuous;
         this._options.Backward && backwardButtons.push(this.btnBackward);
-        // this.btnPrevious.OnHeldDown = this.options.PreviousContinuous ? this.fncBackward : undefined;
-        // this.btnPrevious.OnHeldDownOptions = this.options.Continuous;
         this._options.Forward && forwardButtons.push(this.btnForward);
-        // this.btnNext.OnHeldDown = this.options.NextContinuous ? this.fncForward : undefined;
-        // this.btnNext.OnHeldDownOptions = this.options.Continuous;
         this._options.PageForward && forwardButtons.push(this.btnPageForward);
-        // this.btnForward.OnHeldDown = this.options.ForwardContinuous ? this.fncPageForward : undefined;
-        // this.btnForward.OnHeldDownOptions = this.options.Continuous;
         this._options.Last && forwardButtons.push(this.btnLast);
+        this.installButtonEventListeners();
         this.ui.remove();
         this
             .appearance(this._options.Appearance!)
@@ -594,26 +616,17 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
      */
     protected createButtons(): this {
         this.btns = [
-            this.btnFirst = new IconButton(),
+            this.btnFirst = new IconButton().on("click", this.fncFirst),
             this.btnPageBackward = new IconButton(),
             this.btnBackward = new IconButton(),
             this.btnForward = new IconButton(),
             this.btnPageForward = new IconButton(),
-            this.btnLast = new IconButton()
+            this.btnLast = new IconButton().on("click", this.fncLast)
         ];
-        const props: Array<[string, () => boolean]> = [
-            ["first", this.fncFirst],
-            ["page-backward", this.fncPageBackward],
-            ["backward", this.fncBackward],
-            ["forward", this.fncForward],
-            ["page-forward", this.fncPageForward],
-            ["last", this.fncLast]
-        ];
-        for (let i = 0; i < this.btns.length; i++) {
-            this.btns[i]
-                .addClass("stepper-button", props[i][0], IconButton.DefaultCSSClassName)
-                .on("click", props[i][1]);
-        }
+        [
+            "first", "page-backward", "backward",
+            "forward", "page-forward", "last"
+        ].forEach((prop, i) => this.btns[i].addClass("stepper-button", prop, IconButton.DefaultCSSClassName));
         return this;
     }
 
@@ -669,6 +682,36 @@ export class Stepper<EventMap extends StepperEventMap = StepperEventMap> extends
             .disabled(isAtEnd)
             .addClass(cssHideAtEnd)
             .title(isAtEnd ? "" : this._options.LastBtnOptions!.Title || null);
+    }
+
+    /** Remove all current button event listeners. */
+    protected uninstallButtonEventListeners(): void {
+        // The following `off` calls will silently fail if the event handlers are not registered or
+        // if the viewer is being initialized for the very first time; however, this is harmless.
+        this.btnPageBackward.off("click", this.fncPageBackward);
+        this.btnPageBackward.off("pointerhold", this.fncPageBackward, this._options.Continuous);
+        this.btnBackward.off("click", this.fncBackward);
+        this.btnBackward.off("pointerhold", this.fncBackward, this._options.Continuous);
+        this.btnForward.off("click", this.fncForward);
+        this.btnForward.off("pointerhold", this.fncForward, this._options.Continuous);
+        this.btnPageForward.off("click", this.fncPageForward);
+        this.btnPageForward.off("pointerhold", this.fncPageForward, this._options.Continuous);
+    }
+
+    /** Install button event listeners depending on the `*Continuous` options. */
+    protected installButtonEventListeners(): void {
+        this._options.PageBackwardContinuous
+            ? this.btnPageBackward.on("pointerhold", this.fncPageBackward, this._options.Continuous)
+            : this.btnPageBackward.on("click", this.fncPageBackward);
+        this._options.BackwardContinuous
+            ? this.btnBackward.on("pointerhold", this.fncBackward, this._options.Continuous)
+            : this.btnBackward.on("click", this.fncBackward);
+        this._options.ForwardContinuous
+            ? this.btnForward.on("pointerhold", this.fncForward, this._options.Continuous)
+            : this.btnForward.on("click", this.fncForward);
+        this._options.PageForwardContinuous
+            ? this.btnPageForward.on("pointerhold", this.fncPageForward, this._options.Continuous)
+            : this.btnPageForward.on("click", this.fncPageForward);
     }
 
     /** @inheritdoc */
