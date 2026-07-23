@@ -27,15 +27,30 @@
   "bugs": {
     "url": "https://github.com/mn4367/vanilla-ts-components/issues"
   },
-  "private": "false",
   "license": "MIT",
-  "main": "./lib/index.js",
-  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js",
+      "types": "./types/index.d.ts"
+    },
+    "./viewer-item-canvas": {
+      "import": "./lib/viewer-items/ViewerItemCanvas.js",
+      "types": "./types/viewer-items/ViewerItemCanvas.d.ts"
+    },
+    "./viewer-item-components": {
+      "import": "./lib/viewer-items/ViewerItemComponents.js",
+      "types": "./types/viewer-items/ViewerItemComponents.d.ts"
+    },
+    "./viewer-item-image": {
+      "import": "./lib/viewer-items/ViewerItemImage.js",
+      "types": "./types/viewer-items/ViewerItemImage.d.ts"
+    }
+  },
+  "sideEffects": false,
   "dependencies": {
     "@vanilla-ts/core": "file:../vanilla-ts-core",
     "@vanilla-ts/dom": "file:../vanilla-ts-dom"
   },
-  "sideEffects": false,
   "devDependencies": {
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-terser": "1.0.0",

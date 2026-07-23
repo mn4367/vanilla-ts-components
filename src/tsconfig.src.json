@@ -11,5 +11,8 @@
   // ]
   "files": [
     "./index.ts",
+    "./viewer-items/ViewerItemImage.ts",
+    "./viewer-items/ViewerItemCanvas.ts",
+    "./viewer-items/ViewerItemComponents.ts",
   ]
 }

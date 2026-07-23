@@ -325,8 +325,11 @@
         .viewer-item-component.z300,
         .viewer-item-component.z350,
         .viewer-item-component.z400,
-        .viewer-item-component.zother {} */
-        img.viewer-item-component {
+        .viewer-item-component.zother,
+        .viewer-item-component.fit-width,
+        .viewer-item-component.fit-height,
+        .viewer-item-component.fit {} */
+        /* img.viewer-item-component {
             &.fit {
                 width: 100%;
                 height: 100%;
@@ -340,16 +343,16 @@
                 height: 100%;
                 object-fit: contain;
             }
-        }
-        .throbber {
-            position: absolute;
-            width: 5rem;
-            height: 5rem;
-            inset-inline-start: calc(50% - 2.5rem);
-            inset-block-start: calc(50% - 2.5rem);
-            border-width: calc(5rem / 8);
-            animation-delay: 0.25s;
-        }
+        } */
+    }
+    > .throbber {
+        position: absolute;
+        width: 5rem;
+        height: 5rem;
+        inset-inline-start: calc(50% - 2.5rem);
+        inset-block-start: calc(50% - 2.5rem);
+        border-width: calc(5rem / 8);
+        /* animation-delay: 0.25s; */
     }
     /*
      * For debugging purposes: if the `debug` class ist set on the viewer, it draws a centered

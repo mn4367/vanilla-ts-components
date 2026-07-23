@@ -1,5 +1,5 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, AnyType, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, getProp, INodeComponent } from "@vanilla-ts/core";
-import { Div, Img, RangeInput, Span } from "@vanilla-ts/dom";
+import { ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, AnyType, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, ElementComponentVoid, FlowContent, getProp } from "@vanilla-ts/core";
+import { Div, RangeInput, Span } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 import { PINCH_ZOOM_START, PINCH_ZOOM_STOP, PinchZoomEvent, PinchZoomGestureHandler } from "./PinchZoomGestureHandler.js";
 import { ScrollContainer } from "./ScrollContainer.js";
@@ -8,15 +8,194 @@ import { Throbber } from "./Throbber.js";
 
 
 /**
+ * Custom 'viewer-item-ready' event for viewer items. This event is emitted by viewer items when
+ * they have finished loading/building their content. The `Success` property of the event details
+ * indicates whether loading/building the content was successfully or not. Viewer items must only
+ * emit this event if they are loading/building their content in an asynchronous manner.
+ */
+export class ViewerItemReadyEvent extends ACustomComponentEvent<"viewer-item-ready", IViewerItemComponent, {
+    /** Indicates whether the item was loaded/built successfully or not. */
+    Success: boolean;
+}> {
+    /**
+     * Create ViewerItemReadyEvent event. The event is purely informative and can't be cancelled.
+     * @param sender The event emitter (always an instance of `IViewerItemComponent`).
+     * @param success Indicates whether the item was loaded/built successfully or not.
+     */
+    constructor(sender: IViewerItemComponent, success: boolean) {
+        super("viewer-item-ready", sender, { Success: success }, DEFAULT_EVENT_INIT_DICT); // eslint-disable-line jsdoc/require-jsdoc
+    }
+}
+
+/** Additional event(s) for `IViewerItemComponent`. */
+export interface ViewerItemEventMap extends DefaultEventMap {
+    /**
+     * A viewer item has finished loading/building its content. The `Success` property of the event
+     * details indicates whether the content was loaded/built successfully or not. The event is
+     * purely informative and can't be cancelled.
+     */
+    "viewer-item-ready": ViewerItemReadyEvent;
+}
+
+/**
+ * Interface that must be implemented by components that are used as items in the viewer. Basically
+ * there are two types of viewer items:
+ *
+ * - Items that load/build their content asynchronously, for example an image that is loaded from a
+ *   URL. These items _must_ emit a `ViewerItemReadyEvent` when they have finished loading/building
+ *   their content. The `Ready` property of the item must return `false` until the item has finished
+ *   loading/building its content and it must return `true` afterwards. Even if an error occurs
+ *   while loading/building the content, the `Ready` property must return `true` after the
+ *   loading/building process has finished.
+ * - Items that load/build their content synchronously, for example a component that displays some
+ *   static text. These items can simply return `true` from the start for the `Ready` property and
+ *   must not emit a `ViewerItemReadyEvent` at all.
+ *
+ * The `HasError` property of the item must return `true` if an error occurred while
+ * loading/building the content, otherwise it must return `false`.
+ */
+export interface IViewerItemComponent extends AElementComponent<HTMLElement, ViewerItemEventMap> {
+    /** This property is `true` when the item has finished loading/building (successful or not). */
+    readonly Ready: boolean;
+    /** This property is `true` only if an error occurred while loading/building the item. */
+    readonly HasError: boolean;
+    /**
+     * The 'natural' width of the component. For images this is the number of pixels in the
+     * horizontal dimension. For other components it is the width of the component when rendered
+     * without any scaling. Usually this width is equivalent to the value of `offsetWidth` of the
+     * component.
+     */
+    readonly NaturalWidth: number;
+    /**
+     * The 'natural' height of the component. For images this is the number of pixels in the
+     * vertical dimension. For other components it is the height of the component when rendered
+     * without any scaling. Usually this height is equivalent to the value of `offsetHeight` of the
+     * component.
+     */
+    readonly NaturalHeight: number;
+    /**
+     * Scales the component by the specified factor. Scaling always preserves the aspect ratio of
+     * the component. For example, a `scale` value of `2` would double the size of the component
+     * (horizontally and vertically) while a `scale` value of `0.5` would reduce the size of the
+     * component to the half. A `scale` value of `1` would keep the component at its original size,
+     * determined by {@link IViewerItemComponent.NaturalWidth}
+     * and {@link IViewerItemComponent.NaturalHeight}. If `scale` is set to `0`, the size of the
+     * component is undefined, so `0` should never be used for scaling the component.
+     *
+     * If `scale` is negative, the component is scaled to fit into the viewer according to the
+     * following rules:
+     *
+     * - `scale` is `-1` ({@link Zoom.FIT}): The component is scaled to fit the viewer horizontally
+     *   and vertically so that the complete component is visible.
+     * - `scale` is `-2` ({@link Zoom.FITWIDTH}): The component is scaled to fit the width of the
+     *   viewer.
+     * - `scale` is `-3` ({@link Zoom.FITHEIGHT}): The component is scaled to fit the height of the
+     *   viewer.
+     * - `scale` is another negative value: The size of the component is undefined.
+     *
+     * For `scale = -2` and `scale = -3`, parts of the component may not be visible depending on the
+     * aspect ratio of the component and the viewer.
+     * @param scale The scale factor to apply to the component.
+     */
+    scale(scale: number): this;
+    /**
+     * Called when the component is added to a viewer. The implementation of this function is
+     * optional.
+     * @param viewer The viewer that the item component is added to. If the item component is
+     * removed from the viewer (by calling `destroyItems()` or `extractItems()` or through new
+     * options), this function is called again with `viewer` set to `undefined`.
+     */
+    viewer?(viewer?: Viewer): void;
+    /**
+     * Called when the size of the viewer changes. If necessary, items can adjust their layout or
+     * dimensions if the containing viewer changes its size, especially if the zoom level is set to
+     * one of the `fit` options. The implementation of this function is optional.
+     */
+    viewerResized?(): void;
+}
+
+/** Internal dummy viewer item used at various places in the viewer. */
+class DummyViewerItem extends ElementComponentVoid<HTMLImageElement> implements IViewerItemComponent {
+    /* eslint-disable jsdoc/require-jsdoc */
+    constructor() {
+        super("img");
+        /** A transparent GIF image with one pixel. */
+        this.DOM.src = "data:image/gif;base64,R0lGODlhAQABAIABAP///////yH5BAUKAAEALAAAAAABAAEAAAICTAEAOw==";
+        this.DOM.alt = "Placeholder item for empty viewer";
+    }
+    public get NaturalWidth(): number { return 1; }
+    public get NaturalHeight(): number { return 1; }
+    public scale(_scale: number): this { return this; }
+    public get Ready(): boolean { return true; }
+    public get HasError(): boolean { return false; }
+    /* eslint-enable */
+}
+
+/** Position of the toolbar. */
+export enum ToolbarPosition {
+    TOP = "top",
+    END = "end",
+    BOTTOM = "bottom",
+    START = "start"
+}
+
+/** Possible elements in the Toolbar. */
+export enum ToolbarElement {
+    /** Stepper component. */
+    STEPPER = "S",
+    /** 'Zoom in/out' buttons. */
+    ZOOM_IN_OUT = "Z",
+    /** 'Zoom fit/fit width/fit height' buttons. */
+    ZOOM_FIT = "F",
+    /** Current item index component. */
+    ITEM_INDEX = "I",
+    /** Current zoom level component. */
+    ZOOM_LEVEL = "L",
+    /** Current zoom range component. */
+    ZOOM_RANGE = "R",
+}
+
+/** Predefined zoom levels for items in the viewer. */
+export enum Zoom {
+    FIT = "fit",
+    FITWIDTH = "fit-width",
+    FITHEIGHT = "fit-height",
+    Z10 = "z10",
+    Z25 = "z25",
+    Z50 = "z50",
+    Z75 = "z75",
+    Z100 = "z100",
+    Z125 = "z125",
+    Z150 = "z150",
+    Z175 = "z175",
+    Z200 = "z200",
+    Z250 = "z250",
+    Z300 = "z300",
+    Z350 = "z350",
+    Z400 = "z400",
+    /** Readonly, indicates that none of the predefined zoom levels is set. */
+    ZOTHER = "zother"
+}
+
+/**
  * Options for instances of `Viewer`. The options are used to initialize the viewer _and_ they can
  * be used to completely re-configure an existing instance of a viewer. All options properties are
  * optional, missing properties are replaced by their defaults (when using `new Viewer(options)`) or
  * by the values already existing in the viewers options (when reconfiguring a viewer instance).
  * @example
  * ```typescript
- * // Get a viewer instance and display image 'Img05.svg' initally.
+ * import { AnyType } from "@vanilla-ts/core";
+ * import { Viewer, ToolbarPosition, Zoom, ToolbarElement } from "@vanilla-ts/components";
+ * import { ViewerItemImage } from "@vanilla-ts/components/viewer-item-image";
+ *
+ * // Get a viewer instance and display image 'Img05.svg' initially.
  * const viewer = new Viewer({
- *   Items: ["Img01.png", "Img02.png", "Img03.jpg", "Img05.svg"]
+ *   Items: [
+ *     new ViewerItemImage("Img01.png"),
+ *     new ViewerItemImage("Img02.png"),
+ *     new ViewerItemImage("Img03.jpg"),
+ *     new ViewerItemImage("Img05.svg")
+ *   ]
  * }, 3)
  *
  * // Always show the toolbar, enable handling of pinch zoom gestures and use native scroll bars.
@@ -29,15 +208,15 @@ import { Throbber } from "./Throbber.js";
  * // Display image 'Img03.jpg' (equivalent to `viewer.Index = 2` or `viewer.index(2)`).
  * viewer.options({}, 2)
  *
- * // Remove all existing items from the viewer, add the image 'Img06.gif', show the toolbar only
- * // when hovering over it at the end of the viewer (right in 'ltr' direction, left in 'rtl'
- * // direction), disable the handling of pinch zoom gestures and display 'Img06.gif' at `200%`
- * // magnification).
+ * // Remove and destroy all existing items from the viewer, add the image 'Img06.gif', show the
+ * // toolbar only when hovering over it at the end of the viewer (right in 'ltr' direction, left in
+ * // 'rtl' direction), disable the handling of pinch zoom gestures and display 'Img06.gif' at
+ * // `200%` magnification).
  * viewer.options({
- *   Items: ["Img06.gif"],
+ *   Items: [new ViewerItemImage("Img06.gif")],
  *   ToolbarPosition: ToolbarPosition.END,
  *   ToolbarHidden: true,
- *   Zoom: Z200,
+ *   Zoom: Zoom.Z200,
  *   PinchZoom: false
  * });
  *
@@ -46,21 +225,26 @@ import { Throbber } from "./Throbber.js";
  * // interface, for example with separate buttons that call `viewer.First()`, `viewer.Forward()`
  * // etc. themselves.
  * viewer.options({
- *   Items: ["Img01.png", "Img02.png", "Img03.jpg", "Img05.svg"]
+ *   Items: [
+ *     new ViewerItemImage("Img01.png"),
+ *     new ViewerItemImage("Img02.png"),
+ *     new ViewerItemImage("Img03.jpg"),
+ *     new ViewerItemImage("Img05.svg")
+ *   ],
  *   OmitToolbar: true,
  *   PinchZoom: true
  * });
  *
- * // Set new images on the viewer. The zoom level of the image with the URL `Img02.png` is set to
- * // `Zoom.FITWIDTH` so that it fits the width of the viewer, the scaling of the image with the URL
- * // `Img03.jpg` is set to an initialvalue of `1.5` and is scrolled so that its lower right corner
- * // is visible.
+ * // Set new items on the viewer (destroys existing items). The zoom level of the image with the
+ * // URL `Img02.png` is set to `Zoom.FITWIDTH` so that it fits the width of the viewer, the scaling
+ * // of the image with the URL `Img03.jpg` is set to an initialvalue of `1.5` and is scrolled so
+ * // that its lower right corner is visible.
  * viewer.options({
  *   Items: [
- *     "Img01.png",
- *     { URL: "Img02.png", Zoom: Zoom.FITWIDTH },
- *     { URL: "Img03.jpg", Scale: 1.5, ScrollPos: new DOMPoint(100000, 100000) },
- *     "Img05.svg"
+ *     new ViewerItemImage("Img01.png"),
+ *     { Item: new ViewerItemImage("Img02.png"), Zoom: Zoom.FITWIDTH },
+ *     { Item: new ViewerItemImage("Img03.jpg"), Scale: 1.5, ScrollPos: new DOMPoint(100000, 100000) },
+ *     new ViewerItemImage("Img05.svg")
  *   ]
  * });
  *
@@ -82,9 +266,53 @@ import { Throbber } from "./Throbber.js";
  *   viewer.borrowStepper(),
  *   viewer.borrowZoomRange()
  * );
+ *
+ * // Add an item of type `ViewerItemCanvas` to the viewer.
+ * import { ViewerItemCanvas, ViewerItemCanvasDrawFunction } from "@vanilla-ts/components/viewer-item-canvas";
+ *
+ * const drawFnc: ViewerItemCanvasDrawFunction = (
+ *   canvas: HTMLCanvasElement,
+ *   scale: number,
+ *   canvasScale: number = 1
+ * ) => {
+ *   const ctx = canvas.getContext("2d", { alpha: false })!;
+ *   ctx.fillStyle = "white";
+ *   ctx.fillRect(0, 0, canvas.width, canvas.height);
+ *   ctx.fillStyle = "black";
+ *   ctx.font = `${16 * scale * canvasScale}px sans-serif`;
+ *   ctx.fillText("Canvas text", 50 * scale * canvasScale, 100 * scale * canvasScale);
+ * };
+ * const canvasItem = new ViewerItemCanvas(drawFnc, 2)
+ *   .ready(true, 400, 600); // The canvas item is ready and has a size of 400x600 pixels.
+ * viewer.options({
+ *   Items: [...viewer.Items, canvasItem]
+ * });
  * ```
  */
 export interface ViewerOptions {
+    /**
+     * An array of items to be displayed in the viewer. If an array element is of type
+     * `IViewerItemComponent` the default settings for `Zoom`, `Scale` and `ScrollPos` are applied
+     * to the item, otherwise the given properties for `Zoom`, `Scale` and `ScrollPos` in the object
+     * are applied. If `Items` is an empty array, no toolbar is shown.\
+     * Default: `[]`.
+     */
+    Items?: (IViewerItemComponent | {
+        /** An item component which displays the content of the item. */
+        Item: IViewerItemComponent;
+        /**
+         * The initial zoom level of the item. If `Zoom` is set and not `Zoom.ZOTHER` it always
+         * takes precedence over `Scale` (`Scale` is set to `0` in this case).
+         */
+        Zoom?: Zoom;
+        /**
+         * The initial magnification level of the item. This value is only used if `Zoom` is not set
+         * or is set to `Zoom.ZOTHER`, otherwise it is ignored.
+         */
+        Scale?: number;
+        /** The initial scroll position of the item in its container. */
+        ScrollPos?: DOMPoint;
+    })[];
     /**
      * An array of elements that are to be displayed in the toolbar. The array defines which
      * elements appear in the toolbar and in which order.\
@@ -140,28 +368,6 @@ export interface ViewerOptions {
      */
     Zoom?: Zoom;
     /**
-     * An array of items to be displayed in the viewer. If an array element is of type `string`
-     * the element must denote a valid URL. Otherwise, the element must be an object
-     * that has at least the propertiy `URL`. If `Items` is an empty array, no toolbar is shown.\
-     * Default: `[]`.
-     */
-    Items?: (string | {
-        /** The URL of the item. */
-        URL: string;
-        /**
-         * The initial zoom level of the item. If `Zoom` is set and not `Zoom.ZOTHER` it always
-         * takes precedence over `Scale` (`Scale` is set to `0` in this case).
-         */
-        Zoom?: Zoom;
-        /**
-         * The initial magnification level of the item. This value is only used if `Zoom` is not set
-         * or is set to `Zoom.ZOTHER`, otherwise it is ignored.
-         */
-        Scale?: number;
-        /** The initial scroll position of the item in its container. */
-        ScrollPos?: DOMPoint;
-    })[];
-    /**
      * Support pinch zoom gestures.\
      * Default: `false`.
      * @see {@link PinchZoomGestureHandler}
@@ -204,83 +410,39 @@ export interface ViewerOptions {
     ZoomFitHeightBtnOptions?: IconButtonOptions;
     /** Title/tooltip for the zoom range input. Default: empty string. */
     ZoomRange?: string;
-    /**
-     * Title/tooltip and `alt` attribute for items which couldn't be loaded. Any occurence of the
-     * string `%s` in `LoadingError` is replaced with the URL of the item, e.g the value
-     * `Item '%s' couldn't be loaded!` would resolve to `Item 'img07.png' couldn't be loaded!` for
-     * an item with the URL `img07.png`.
-     */
-    LoadingError?: string;
 }
 
-/** Possible elements in the Toolbar. */
-export enum ToolbarElement {
-    /** Stepper component. */
-    STEPPER = "S",
-    /** 'Zoom in/out' buttons. */
-    ZOOM_IN_OUT = "Z",
-    /** 'Zoom fit/fit width/fit height' buttons. */
-    ZOOM_FIT = "F",
-    /** Current item index component. */
-    ITEM_INDEX = "I",
-    /** Current zoom level component. */
-    ZOOM_LEVEL = "L",
-    /** Current zoom range component. */
-    ZOOM_RANGE = "R",
-}
-
-/** Position of the toolbar. */
-export enum ToolbarPosition {
-    TOP = "top",
-    END = "end",
-    BOTTOM = "bottom",
-    START = "start"
-}
-
-/** Predefined zoom levels for items in the viewer. */
-export enum Zoom {
-    FIT = "fit",
-    FITWIDTH = "fit-width",
-    FITHEIGHT = "fit-height",
-    Z10 = "z10",
-    Z25 = "z25",
-    Z50 = "z50",
-    Z75 = "z75",
-    Z100 = "z100",
-    Z125 = "z125",
-    Z150 = "z150",
-    Z175 = "z175",
-    Z200 = "z200",
-    Z250 = "z250",
-    Z300 = "z300",
-    Z350 = "z350",
-    Z400 = "z400",
-    /** Readonly, indicates that none of the predefined zoom levels is set. */
-    ZOTHER = "zother"
-}
-
-/** Current properties of an item (internally used). */
-interface IViewerItem {
-    /** The URL of the item. */
-    URL: string;
-    /** An `Img` component. */
-    Component?: Img;
-    /** A `Throbber` component. */
-    Throbber?: Throbber;
+/** Current properties of a viewer item (only internally used). */
+interface InternalViewerItem {
+    /** An instance of a viewer item component. */
+    Component: IViewerItemComponent;
     /** The current zoom level of the item. */
     Zoom: Zoom;
     /** The current magnification level of the item. */
     Scale: number;
     /** The scroll position of the item in its container. */
     ScrollPos: DOMPoint;
-    /** `true`, if the item has been loaded, otherwise `false`. */
-    Loaded: boolean;
-    /** `true`, if an error occured on loading the item, otherwise `false`. */
-    LoadError: boolean;
+    /** Whether the item has been displayed at least once. */
+    DisplayedOnce: boolean;
 }
 
-/** Public properties of an item. */
-export interface ViewerItem extends Readonly<Omit<IViewerItem, "Component" | "Throbber">> { } // eslint-disable-line @typescript-eslint/no-empty-object-type
+/** Public properties of a viewer item. */
+export interface ViewerItem {
+    /** An item component which displays the content of the item. */
+    Item: IViewerItemComponent;
+    /**
+     * The initial zoom level of the item. If `Zoom` is set and not `Zoom.ZOTHER` it always
+     * takes precedence over `Scale` (`Scale` is set to `0` in this case).
+     */
+    Zoom?: Zoom;
+    /**
+     * The initial magnification level of the item. This value is only used if `Zoom` is not set
+     * or is set to `Zoom.ZOTHER`, otherwise it is ignored.
+     */
+    Scale?: number;
+    /** The initial scroll position of the item in its container. */
+    ScrollPos?: DOMPoint;
+}
 
 /** Custom 'viewer-step' event for viewers. */
 export class ViewerStepEvent extends ACustomComponentEvent<"viewer-step", Viewer, {
@@ -288,7 +450,8 @@ export class ViewerStepEvent extends ACustomComponentEvent<"viewer-step", Viewer
     Index: number;
 }> {
     /**
-     * Create ViewerStepEvent event.
+     * Create ViewerStepEvent event. Event handlers can prevent changing the index/position by
+     * calling `preventDefault()`.
      * @param sender The event emitter (always `Viewer`).
      * @param index The new index to which the current index in the viewer is to be moved.
      * @param customEventInitDict Optional event properties.
@@ -304,7 +467,7 @@ export class ViewerSteppedEvent extends ACustomComponentEvent<"viewer-stepped", 
     Index: number;
 }> {
     /**
-     * Create ViewerSteppedEvent event.
+     * Create ViewerSteppedEvent event. This event is purely informative and can't be cancelled.
      * @param sender The event emitter (always `Viewer`).
      * @param index The new index of the viewer.
      * @param customEventInitDict Optional event properties.
@@ -359,7 +522,7 @@ export class ViewerZoomEvent extends ACustomComponentEvent<"viewer-zoom", Viewer
 }
 
 /** Additional event(s) for `Viewer`. */
-export interface ViewerEventMap extends HTMLElementEventMap {
+export interface ViewerEventMap extends DefaultEventMap {
     /**
      * The viewer wants to display an item at a new index. Event handlers can prevent changing the
      * index by calling `preventDefault()`.
@@ -381,18 +544,17 @@ export interface ViewerEventMap extends HTMLElementEventMap {
     "viewer-zoom": ViewerZoomEvent;
 }
 
-/** A transparent GIF image with one pixel. */
-const IMAGE_ONE_PIXEL_TRANSPARENT = "data:image/gif;base64,R0lGODlhAQABAIABAP///////yH5BAUKAAEALAAAAAABAAEAAAICTAEAOw==";
-
 /**
  * Component for displaying items. Currently items must be of type image (everything that the `img`
  * tag can display, e.g. JPEG, PNG, ...), future versions may also support other media types.
  */
 export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AElementComponentWithInternalUI<Div, EventMap> implements ISteppable, IStepper {
     protected _options: ViewerOptions = {};
-    protected item: IViewerItem;
-    protected dummyItem: IViewerItem = this.getDummyItem();
-    protected items: IViewerItem[] = [];
+    protected item: InternalViewerItem;
+    protected dummyItem: InternalViewerItem = this.getDummyItem();
+    protected throbber? = new Throbber().addClass("throbber", "vts-throbber");
+    protected items: InternalViewerItem[] = [];
+    protected fncOnItemReady = this.onItemReady.bind(this);
     protected toolBar: Div;
     protected stepper: Stepper;
     protected stepperBorrowed: boolean = false;
@@ -441,7 +603,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         return {
             /* eslint-disable jsdoc/require-jsdoc */
             ...this._options,
-            Items: [...this._options.Items!],
+            Items: this._options.Items!.map(e => typeof e === "object" && "Item" in e ? { ...e } : e),
             StepperOptions: this.stepper.Options,
             ZoomInBtnOptions: this.btnZoomIn.Options,
             ZoomOutBtnOptions: this.btnZoomOut.Options,
@@ -484,12 +646,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             ZoomFitWidthBtnOptions: IconButton.mergeOptionsFromTo(options.ZoomFitWidthBtnOptions, this._options.ZoomFitWidthBtnOptions),
             ZoomFitHeightBtnOptions: IconButton.mergeOptionsFromTo(options.ZoomFitHeightBtnOptions, this._options.ZoomFitHeightBtnOptions),
             ZoomRange: getProp(options, this._options, "ZoomRange", ""),
-            LoadingError: getProp(options, this._options, "LoadingError", ""),
             /* eslint-enable */
         };
         if (options.Items) {
             this.replaceItemsWith(options.Items);
-            opts.Items = options.Items.map(e => typeof e === "string" ? e : { ...e });
+            opts.Items = options.Items.map(e => typeof e === "object" && "Item" in e ? { ...e } : e);
         } else {
             opts.Items = [...(this._options.Items ?? [])];
         }
@@ -511,19 +672,49 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     }
 
     /**
-     * Get all items that this viewer currently contains (_as a copy_).
+     * Get all viewer items that this viewer currently contains (_as a copy_).
      */
     public get Items(): ViewerItem[] {
         return this.items.map(e => ({
             /* eslint-disable jsdoc/require-jsdoc */
-            URL: e.URL,
+            Item: e.Component,
             Zoom: e.Zoom,
             Scale: e.Scale,
             ScrollPos: DOMPoint.fromPoint(e.ScrollPos),
-            Loaded: e.Loaded,
-            LoadError: e.LoadError
             /* eslint-enable */
         }));
+    }
+
+    /**
+     * Removes _and destroys_ all current viewer items.
+     * @returns This instance.
+     */
+    public destroyItems(): this {
+        for (const item of this.items) {
+            item.Component.Parent?.remove(item.Component);
+            item.Component.dispose();
+        }
+        this.items.length = 0;
+        this.syncUIForIndex(-1);
+        return this;
+    }
+
+    /**
+     * Removes _all_ viewer items and returns them.
+     * @returns The removed item components.
+     */
+    public extractItems(): IViewerItemComponent[] {
+        const result = this.items.map(item => {
+            item.Component.viewer?.(undefined);
+            item.Component.Parent?.remove(item.Component);
+            return item.Component
+                .removeClass("viewer-item-component")
+                .off("viewer-item-ready", this.fncOnItemReady)
+                .hidden(false);
+        });
+        this.items.length = 0;
+        this.syncUIForIndex(-1);
+        return result;
     }
 
     /**
@@ -553,15 +744,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         );
         this.ui.remove(this.toolBar);
         if (this._options.ToolbarPosition === ToolbarPosition.TOP || this._options.ToolbarPosition === ToolbarPosition.START) {
-            this._options.OmitToolbar
-                ? this.ui.append(this.itemContainer)
-                : this.ui.append(this.toolBar, this.itemContainer);
+            this._options.OmitToolbar || this.ui.insert(0, this.toolBar);
         } else {
-            this._options.OmitToolbar
-                ? this.ui.append(this.itemContainer)
-                : this.ui.append(this.itemContainer, this.toolBar);
+            this._options.OmitToolbar || this.ui.append(this.toolBar);
         }
-        if (this.item.Loaded) {
+        if (this.item.Component.Ready) {
             [Zoom.FIT, Zoom.FITWIDTH, Zoom.FITHEIGHT].includes(this.item.Zoom) && this.zoom(this.item.Zoom);
             this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
         }
@@ -590,7 +777,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this._options.ToolbarHidden
             ? this.ui.addClass("toolbar-hidden")
             : this.ui.removeClass("toolbar-hidden");
-        if (this.item.Loaded) {
+        if (this.item.Component.Ready) {
             [Zoom.FIT, Zoom.FITWIDTH, Zoom.FITHEIGHT].includes(this.item.Zoom) && this.zoom(this.item.Zoom);
             this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
         }
@@ -618,18 +805,138 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         if (zoom === Zoom.ZOTHER) {
             return this;
         }
-        if (!this.item.LoadError) {
+        if (!this.item.Component.HasError) {
             this.centerOnZoomOrScale(this.item, zoom, this.item.Scale);
         }
         if (all) {
             for (const item of this.items) {
-                if (item !== this.item && !item.LoadError) {
+                if (item !== this.item && !item.Component.HasError) {
                     this.zoomItem(item, zoom);
                 }
             }
         }
         this.emitZoomEvent();
         return this;
+    }
+
+    /**
+     * Zoom in on the current item.
+     * @param ev The triggering event.
+     */
+    public zoomIn(ev: PointerEvent | MouseEvent | KeyboardEvent): void {
+        const scale = this.item.Scale;
+        let newScale: number | undefined = undefined;
+        let zoom: Zoom | undefined = undefined;
+        if (scale < 0.1) {
+            zoom = Zoom.Z10;
+            newScale = 0.1;
+        } else if ((scale === 0.1) || (scale < 0.25)) {
+            zoom = Zoom.Z25;
+            newScale = 0.25;
+        } else if ((scale === 0.25) || (scale < 0.5)) {
+            zoom = Zoom.Z50;
+            newScale = 0.5;
+        } else if ((scale === 0.5) || (scale < 0.75)) {
+            zoom = Zoom.Z75;
+            newScale = 0.75;
+        } else if ((scale === 0.75) || (scale < 1)) {
+            zoom = Zoom.Z100;
+            newScale = 1;
+        } else if ((scale === 1) || (scale < 1.25)) {
+            zoom = Zoom.Z125;
+            newScale = 1.25;
+        } else if ((scale === 1.25) || (scale < 1.5)) {
+            zoom = Zoom.Z150;
+            newScale = 1.5;
+        } else if ((scale === 1.5) || (scale < 1.75)) {
+            zoom = Zoom.Z175;
+            newScale = 1.75;
+        } else if ((scale === 1.75) || (scale < 2)) {
+            zoom = Zoom.Z200;
+            newScale = 2;
+        } else if ((scale === 2) || (scale < 2.5)) {
+            zoom = Zoom.Z250;
+            newScale = 2.5;
+        } else if ((scale === 2.5) || (scale < 3)) {
+            zoom = Zoom.Z300;
+            newScale = 3;
+        } else if ((scale === 3) || (scale < 3.5)) {
+            zoom = Zoom.Z350;
+            newScale = 3.5;
+        } else if ((scale === 3.5) || (scale < 4)) {
+            zoom = Zoom.Z400;
+            newScale = 4;
+        } else {
+            return;
+        }
+        const rect = this.DOM.getBoundingClientRect();
+        this.clickPoint = ev instanceof MouseEvent && ev.target && this.item.Component.DOM.contains(<Node>ev.target)
+            ? new DOMPoint(ev.clientX - rect.x, ev.clientY - rect.y)
+            : new DOMPoint(this.itemContainer.DOM.offsetWidth - rect.left, this.itemContainer.DOM.offsetHeight - rect.top);
+        (ev instanceof MouseEvent || ev instanceof PointerEvent) && this.item.Component.DOM.contains(<Node>ev.target)
+            ? this.centerZoomToPointer(this.item, zoom, scale, newScale, ev)
+            : this.centerOnZoomOrScale(this.item, zoom, scale);
+        this.emitZoomEvent();
+    }
+
+    /**
+     * Zoom out on the current item.
+     * @param ev The triggering event.
+     */
+    public zoomOut(ev: PointerEvent | MouseEvent | KeyboardEvent): void {
+        const scale = this.item.Scale;
+        let newScale: number | undefined = undefined;
+        let zoom: Zoom | undefined = undefined;
+        if (scale > 4) {
+            zoom = Zoom.Z400;
+            newScale = 4;
+        } else if ((scale === 4) || (scale > 3.5)) {
+            zoom = Zoom.Z350;
+            newScale = 3.5;
+        } else if ((scale === 3.5) || (scale > 3)) {
+            zoom = Zoom.Z300;
+            newScale = 3;
+        } else if ((scale === 3) || (scale > 2.5)) {
+            zoom = Zoom.Z250;
+            newScale = 2.5;
+        } else if ((scale === 2.5) || (scale > 2)) {
+            zoom = Zoom.Z200;
+            newScale = 2;
+        } else if ((scale === 2) || (scale > 1.75)) {
+            zoom = Zoom.Z175;
+            newScale = 1.75;
+        } else if ((scale === 1.75) || (scale > 1.5)) {
+            zoom = Zoom.Z150;
+            newScale = 1.5;
+        } else if ((scale === 1.5) || (scale > 1.25)) {
+            zoom = Zoom.Z125;
+            newScale = 1.25;
+        } else if ((scale === 1.25) || (scale > 1)) {
+            zoom = Zoom.Z100;
+            newScale = 1;
+        } else if ((scale === 1) || (scale > 0.75)) {
+            zoom = Zoom.Z75;
+            newScale = 0.75;
+        } else if ((scale === 0.75) || (scale > 0.5)) {
+            zoom = Zoom.Z50;
+            newScale = 0.5;
+        } else if ((scale === 0.5) || (scale > 0.25)) {
+            zoom = Zoom.Z25;
+            newScale = 0.25;
+        } else if ((scale === 0.25) || (scale > 0.1)) {
+            zoom = Zoom.Z10;
+            newScale = 0.1;
+        } else {
+            return;
+        }
+        const rect = this.DOM.getBoundingClientRect();
+        this.clickPoint = ev instanceof MouseEvent && this.item.Component.DOM.contains(<Node>ev.target)
+            ? new DOMPoint(ev.clientX - rect.x, ev.clientY - rect.y)
+            : new DOMPoint(this.itemContainer.DOM.offsetWidth - rect.left, this.itemContainer.DOM.offsetHeight - rect.top);
+        (ev instanceof MouseEvent || ev instanceof PointerEvent) && this.item.Component.DOM.contains(<Node>ev.target)
+            ? this.centerZoomToPointer(this.item, zoom, scale, newScale, ev)
+            : this.centerOnZoomOrScale(this.item, zoom, scale);
+        this.emitZoomEvent();
     }
 
     /**
@@ -653,12 +960,12 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      */
     public scale(scale: number, all: boolean = false): this {
         scale = Math.min(Math.max(0.01, scale), 4);
-        if (!this.item.LoadError) {
+        if (!this.item.Component.HasError) {
             this.centerOnZoomOrScale(this.item, scale, this.item.Scale);
         }
         if (all) {
             for (const item of this.items) {
-                if (item !== this.item && !item.LoadError) {
+                if (item !== this.item && !item.Component.HasError) {
                     this.scaleItem(item, scale);
                 }
             }
@@ -983,6 +1290,10 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             return 3;
         } else if (l <= 20) {
             return 5;
+        } else if (l <= 100) {
+            return 10;
+        } else if (l <= 500) {
+            return 50;
         }
         return Math.trunc(l / 5);
     }
@@ -1056,6 +1367,17 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     /////////////////////////
 
     /**
+     * Get the size of the area in which the current item is displayed (i.e. the size of the item
+     * container). This can help viewer items to calculate the appropriate zoom/scale level for one
+     * of the viewer's `fit` zoom options.
+     * @returns An object containing the client width and client height of the inner item container.
+     */
+    public get ClientRect(): { Width: number; Height: number; } { // eslint-disable-line jsdoc/require-jsdoc
+        const rect = this.itemContainer.DOM.getBoundingClientRect();
+        return { Width: rect.width, Height: rect.height }; // eslint-disable-line jsdoc/require-jsdoc
+    }
+
+    /**
      * Adds or removes the toolbar and the item container from this component.
      * @param empty If `true`, the toolbar and the item container are removed from this component,
      * otherwise both are added.
@@ -1076,7 +1398,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                     ? this.ui.append(this.itemContainer)
                     : this.ui.append(this.itemContainer, this.toolBar);
             }
-            this.item.Loaded && this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
+            this.item.Component.Ready && this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
         }
     }
 
@@ -1114,66 +1436,100 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     }
 
     /**
-     * Display an item
+     * Displays an item.
      * @param item The item to be displayed.
      */
-    protected displayItem(item: IViewerItem): void {
+    protected displayItem(item: InternalViewerItem): void {
         this.lastDisplayState.Zoom = item.Zoom;
         this.lastDisplayState.Scale = item.Scale;
         this.lastDisplayState.ScrollPos.x = item.ScrollPos.x;
         this.lastDisplayState.ScrollPos.y = item.ScrollPos.y;
-        this.setZoomControlsVisibility(!item.LoadError);
-        if (!item.Loaded && !item.Component) {
-            item.Component = new Img(
-                item.URL,
-                undefined, /** width */
-                undefined, /** height */
-                item.URL,  /** alt */
-                true,      /** lazyload */
-            )
-                .on("load", this.onLoad.bind(this))
-                .on("error", this.onLoadError.bind(this));
-            item.Component.Hidden = true;
-            item.Component.on("click", (ev: MouseEvent) => {
-                ev.shiftKey ? this.zoomOut(ev) : this.zoomIn(ev);
-            });
-            item.Throbber = new Throbber().addClass("throbber", "vts-throbber");
+        this.setZoomControlsVisibility(
+            !item.Component.Ready
+                ? false
+                : !item.Component.HasError
+        );
+        // An item is always mounted, even if it has loading/building errors. This allows the item
+        // to display an error message or similar inside the item component itself.
+        this.itemContainer
+            .remove()
+            .append(item.Component);
+        if (!item.Component.Ready) {
+            this.ui.contains(this.throbber!) || this.ui.append(this.throbber);
+            return;
         }
-        this.itemContainer.remove();
-        this.itemContainer.append(item.Component);
-        if (item.Throbber) {
-            this.itemContainer.append(item.Throbber);
+        if (!item.DisplayedOnce) {
+            // Adjust the scale/zoom once if there was no error loading/building the item.
+            if (!item.Component.HasError) {
+                if (item.Zoom === Zoom.ZOTHER) {
+                    this.scaleItem(item, item.Scale);
+                } else {
+                    this.zoomItem(item, item.Zoom);
+                }
+            }
+            item.DisplayedOnce = true;
         }
-        if (item.Loaded && !item.LoadError) {
+        // Update the toolbar and scroll position if there was no error loading/building the item.
+        if (!item.Component.HasError) {
             [Zoom.FIT, Zoom.FITWIDTH, Zoom.FITHEIGHT].includes(item.Zoom) && this.calcScaleForZoomFit(item);
             this.updateZoomControls(this.item);
             this.scrollOffset(this.item.ScrollPos.x, this.item.ScrollPos.y);
         }
+        this.ui.remove(this.throbber);
+    }
+
+    /**
+     * Emitted by an `IViewerItemComponent` if the component has finished loading/building itself
+     * (successful or not).
+     * @param ev The viewer item ready event.
+     */
+    protected onItemReady(ev: ViewerItemReadyEvent): void {
+        const item = this.items.find(e => e.Component === ev.$.Sender);
+        if (!item) {
+            return;
+        }
+        if (item === this.item) {
+            item.DisplayedOnce = true;
+            if (ev.$.Success) {
+                if (item.Zoom === Zoom.ZOTHER) {
+                    this.scaleItem(item, item.Scale);
+                } else {
+                    this.zoomItem(item, item.Zoom);
+                }
+                this.updateZoomControls(item);
+                this.scrollOffset(item.ScrollPos.x, item.ScrollPos.y);
+                this.lastDisplayState.Zoom = item.Zoom;
+                this.lastDisplayState.Scale = item.Scale;
+                this.lastDisplayState.ScrollPos.x = item.ScrollPos.x;
+                this.lastDisplayState.ScrollPos.y = item.ScrollPos.y;
+            } else {
+                this.removeZoomClasses(item);
+            }
+            this.setZoomControlsVisibility(ev.$.Success);
+            this.ui.remove(this.throbber);
+        }
+        item.Component
+            .off("viewer-item-ready", this.fncOnItemReady)
+            .hidden(false);
     }
 
     /**
      * Updates the list of items based on new items. An attempt is made to retain as many existing
-     * media files and their DOM objects as possible.
-     * @param items An array with new items to be used.
+     * item instances as possible.
+     * @param items An array with (new) items to be used.
      * @returns This instance.
      */
-    protected replaceItemsWith(items: (string | { URL: string; Zoom?: Zoom; Scale?: number; ScrollPos?: DOMPoint; })[]): this { // eslint-disable-line jsdoc/require-jsdoc
+    protected replaceItemsWith(items: (IViewerItemComponent | { Item: IViewerItemComponent; Zoom?: Zoom; Scale?: number; ScrollPos?: DOMPoint; })[]): this { // eslint-disable-line jsdoc/require-jsdoc
         if (items.length === 0) {
-            for (const item of this.items) {
-                item.Component?.Parent?.remove(item.Component);
-                item.Component?.dispose();
-                item.Throbber?.Parent?.remove(item.Throbber);
-                item.Throbber?.dispose();
-            }
-            this.items.length = 0;
+            this.destroyItems();
             return this;
         }
-        const newItems: IViewerItem[] = [];
+        const newItems: InternalViewerItem[] = [];
         for (const item of items) {
-            const idx = this.items.findIndex(e => e.URL === (typeof item === "string" ? item : item.URL));
+            const idx = this.items.findIndex(e => e.Component === (typeof item === "object" && "Item" in item ? item.Item : item));
             // Update an existing item with settings from the given item. For the handling of `Zoom`
             // and `Scale` see the documentation of `ViewerItem` and `getItem()`.
-            if ((idx !== -1) && (typeof item !== "string")) {
+            if ((idx !== -1) && (typeof item === "object" && "Item" in item)) {
                 const existing = this.items[idx];
                 if (item.Zoom && item.Zoom !== Zoom.ZOTHER) {
                     this.zoomItem(existing, item.Zoom);
@@ -1186,14 +1542,12 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             newItems.push(
                 idx !== -1
                     ? this.items.splice(idx, 1)[0]
-                    : this.getItem(item)
+                    : this.createViewerItem(item)
             );
         }
         for (const item of this.items) {
-            item.Component?.Parent?.remove(item.Component);
-            item.Component?.dispose();
-            item.Throbber?.Parent?.remove(item.Throbber);
-            item.Throbber?.dispose();
+            item.Component.Parent?.remove(item.Component);
+            item.Component.dispose();
         }
         this.items.length = 0;
         this.items.push(...newItems);
@@ -1201,85 +1555,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     }
 
     /**
-     * Determines the item from the internal item list that belongs to 'target'.
-     * @param target The HTML element that is searched for in `this.items` (property `Ctrl`).
-     * @returns The found item or 'undefined'.
-     */
-    protected getItemByEventTarget(target: HTMLElement): IViewerItem | undefined {
-        return this.items.find(e => e.Component?.DOM === target);
-    }
-
-    /**
-     * Called by the image component if the image is completely loaded.
-     * @param ev the loading event.
-     */
-    protected onLoad(ev: Event | OnErrorEventHandler): void {
-        if (ev instanceof Event) {
-            const item = this.getItemByEventTarget(ev.target as HTMLElement);
-            if (item) {
-                item.Loaded = true;
-                if (item === this.item) {
-                    if (item.Zoom === Zoom.ZOTHER) {
-                        this.scaleItem(item, item.Scale);
-                    } else {
-                        this.zoomItem(item, item.Zoom);
-                    }
-                    this.updateZoomControls(item);
-                    this.scrollOffset(item.ScrollPos.x, item.ScrollPos.y);
-                    this.lastDisplayState.Zoom = item.Zoom;
-                    this.lastDisplayState.Scale = item.Scale;
-                    this.lastDisplayState.ScrollPos.x = item.ScrollPos.x;
-                    this.lastDisplayState.ScrollPos.y = item.ScrollPos.y;
-                }
-                item.Component!.Hidden = false;
-                item.Throbber?.Parent?.remove(item.Throbber);
-                item.Throbber?.dispose();
-                item.Throbber = undefined;
-            }
-        }
-    }
-
-    // /**
-    //  * Called by the image component if an error occured on loading the image.
-    //  * @param ev The error event.
-    //  * @param source Error sourec code(?).
-    //  * @param lineno Source code line(?).
-    //  * @param colno Source code row(?).
-    //  * @param error The loading error.
-    //  */
-    // protected async onError(ev: Event | string, source?: string, lineNo?: number, colNo?: number, error?: Error): Promise<void> { // eslint-disable-line @typescript-eslint/require-await
-    /**
-     * Called by the image component if an error occured on loading the image.
-     * @param ev The error event.
-     */
-    protected async onLoadError(ev: Event | string) { // eslint-disable-line @typescript-eslint/require-await
-        if (ev instanceof Event) {
-            const item = this.getItemByEventTarget(ev.target as HTMLImageElement);
-            if (item) {
-                item.Loaded = true;
-                item.LoadError = true;
-                if (item === this.item) {
-                    this.setZoomControlsVisibility(!item.LoadError);
-                }
-                const loadingError = this._options.LoadingError!.replaceAll("%s", item.URL);
-                item.Component!
-                    .alt(loadingError)
-                    .title(loadingError);
-                this.removeZoomClasses(item);
-                item.Component!.Hidden = false;
-                item.Throbber?.Parent?.remove(item.Throbber);
-                item.Throbber?.dispose();
-                item.Throbber = undefined;
-            }
-        }
-    }
-
-    /**
      * Remove all zoom marker classes from an item.
      * @param item The item from which the zoom marker classes are to be removed.
      */
-    protected removeZoomClasses(item: IViewerItem): void {
-        item?.Component?.removeClass(
+    protected removeZoomClasses(item: InternalViewerItem): void {
+        item?.Component.removeClass(
             Zoom.FIT, Zoom.FITWIDTH, Zoom.FITHEIGHT, Zoom.Z10, Zoom.Z25, Zoom.Z50, Zoom.Z75,
             Zoom.Z100, Zoom.Z125, Zoom.Z150, Zoom.Z175, Zoom.Z200, Zoom.Z250, Zoom.Z300,
             Zoom.Z350, Zoom.Z400, Zoom.ZOTHER
@@ -1301,7 +1581,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param item The item on which the zoom level is to be set.
      * @param zoom A predefined zoom level.
      */
-    protected zoomItem(item: IViewerItem, zoom: Zoom): void {
+    protected zoomItem(item: InternalViewerItem, zoom: Zoom): void {
         item.Zoom = zoom;
         if (!item.Component) {
             return;
@@ -1360,132 +1640,8 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             default:
                 break;
         }
-        if (item.Scale < 0) {
-            item.Component.scale(item.Scale);
-            this.calcScaleForZoomFit(item);
-        } else {
-            item.Component.scale(item.Scale);
-        }
-    }
-
-    /**
-     * Zoom in on the item.
-     * @param ev The triggering event.
-     */
-    protected zoomIn(ev: KeyboardEvent | MouseEvent | PointerEvent): void {
-        const rect = this.DOM.getBoundingClientRect();
-        this.clickPoint = ev instanceof MouseEvent && ev.target && this.item.Component?.DOM.contains(<Node>ev.target)
-            ? new DOMPoint(ev.clientX - rect.x, ev.clientY - rect.y)
-            : new DOMPoint(this.itemContainer.DOM.offsetWidth - rect.left, this.itemContainer.DOM.offsetHeight - rect.top);
-        const scale = this.item.Scale;
-        let newScale: number | undefined = undefined;
-        let zoom: Zoom | undefined = undefined;
-        if (scale < 0.1) {
-            zoom = Zoom.Z10;
-            newScale = 0.1;
-        } else if ((scale === 0.1) || (scale < 0.25)) {
-            zoom = Zoom.Z25;
-            newScale = 0.25;
-        } else if ((scale === 0.25) || (scale < 0.5)) {
-            zoom = Zoom.Z50;
-            newScale = 0.5;
-        } else if ((scale === 0.5) || (scale < 0.75)) {
-            zoom = Zoom.Z75;
-            newScale = 0.75;
-        } else if ((scale === 0.75) || (scale < 1)) {
-            zoom = Zoom.Z100;
-            newScale = 1;
-        } else if ((scale === 1) || (scale < 1.25)) {
-            zoom = Zoom.Z125;
-            newScale = 1.25;
-        } else if ((scale === 1.25) || (scale < 1.5)) {
-            zoom = Zoom.Z150;
-            newScale = 1.5;
-        } else if ((scale === 1.5) || (scale < 1.75)) {
-            zoom = Zoom.Z175;
-            newScale = 1.75;
-        } else if ((scale === 1.75) || (scale < 2)) {
-            zoom = Zoom.Z200;
-            newScale = 2;
-        } else if ((scale === 2) || (scale < 2.5)) {
-            zoom = Zoom.Z250;
-            newScale = 2.5;
-        } else if ((scale === 2.5) || (scale < 3)) {
-            zoom = Zoom.Z300;
-            newScale = 3;
-        } else if ((scale === 3) || (scale < 3.5)) {
-            zoom = Zoom.Z350;
-            newScale = 3.5;
-        } else if ((scale === 3.5) || (scale < 4)) {
-            zoom = Zoom.Z400;
-            newScale = 4;
-        } else {
-            return;
-        }
-        (ev instanceof MouseEvent || ev instanceof PointerEvent) && this.item.Component?.DOM.contains(<Node>ev.target)
-            ? this.centerZoomToPointer(this.item, zoom, scale, newScale, ev)
-            : this.centerOnZoomOrScale(this.item, zoom, scale);
-        this.emitZoomEvent();
-    }
-
-    /**
-     * Zoom out on the item.
-     * @param ev The triggering event.
-     */
-    protected zoomOut(ev: KeyboardEvent | MouseEvent | PointerEvent): void {
-        const rect = this.DOM.getBoundingClientRect();
-        this.clickPoint = ev instanceof MouseEvent && this.item.Component?.DOM.contains(<Node>ev.target)
-            ? new DOMPoint(ev.clientX - rect.x, ev.clientY - rect.y)
-            : new DOMPoint(this.itemContainer.DOM.offsetWidth - rect.left, this.itemContainer.DOM.offsetHeight - rect.top);
-        const scale = this.item.Scale;
-        let newScale: number | undefined = undefined;
-        let zoom: Zoom | undefined = undefined;
-        if (scale > 4) {
-            zoom = Zoom.Z400;
-            newScale = 4;
-        } else if ((scale === 4) || (scale > 3.5)) {
-            zoom = Zoom.Z350;
-            newScale = 3.5;
-        } else if ((scale === 3.5) || (scale > 3)) {
-            zoom = Zoom.Z300;
-            newScale = 3;
-        } else if ((scale === 3) || (scale > 2.5)) {
-            zoom = Zoom.Z250;
-            newScale = 2.5;
-        } else if ((scale === 2.5) || (scale > 2)) {
-            zoom = Zoom.Z200;
-            newScale = 2;
-        } else if ((scale === 2) || (scale > 1.75)) {
-            zoom = Zoom.Z175;
-            newScale = 1.75;
-        } else if ((scale === 1.75) || (scale > 1.5)) {
-            zoom = Zoom.Z150;
-            newScale = 1.5;
-        } else if ((scale === 1.5) || (scale > 1.25)) {
-            zoom = Zoom.Z125;
-            newScale = 1.25;
-        } else if ((scale === 1.25) || (scale > 1)) {
-            zoom = Zoom.Z100;
-            newScale = 1;
-        } else if ((scale === 1) || (scale > 0.75)) {
-            zoom = Zoom.Z75;
-            newScale = 0.75;
-        } else if ((scale === 0.75) || (scale > 0.5)) {
-            zoom = Zoom.Z50;
-            newScale = 0.5;
-        } else if ((scale === 0.5) || (scale > 0.25)) {
-            zoom = Zoom.Z25;
-            newScale = 0.25;
-        } else if ((scale === 0.25) || (scale > 0.1)) {
-            zoom = Zoom.Z10;
-            newScale = 0.1;
-        } else {
-            return;
-        }
-        (ev instanceof MouseEvent || ev instanceof PointerEvent) && this.item.Component?.DOM.contains(<Node>ev.target)
-            ? this.centerZoomToPointer(this.item, zoom, scale, newScale, ev)
-            : this.centerOnZoomOrScale(this.item, zoom, scale);
-        this.emitZoomEvent();
+        item.Component.scale(item.Scale);
+        (item.Scale < 0) && this.calcScaleForZoomFit(item);
     }
 
     /**
@@ -1496,37 +1652,39 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param newScale The new scale amount of the item.
      * @param ev The triggering muse or pointer event.
      */
-    protected centerZoomToPointer(item: IViewerItem, value: Zoom | number, prevscale: number, newScale: number, ev: MouseEvent | PointerEvent | { clientX: number, clientY: number; }): void { // eslint-disable-line jsdoc/require-jsdoc
-        let ctrlRect = this.item.Component!.DOM.getBoundingClientRect();
+    protected centerZoomToPointer(item: InternalViewerItem, value: Zoom | number, prevscale: number, newScale: number, ev: MouseEvent | PointerEvent | { clientX: number, clientY: number; }): void { // eslint-disable-line jsdoc/require-jsdoc
+        let ctrlRect = this.item.Component.DOM.getBoundingClientRect();
         const containerWidth = this.itemContainer.DOM.offsetWidth;
         const containerHeight = this.itemContainer.DOM.offsetHeight;
         const prevScrollRangeHalf = new DOMPoint((ctrlRect.width - containerWidth) / 2, (ctrlRect.height - containerHeight) / 2);
         const pointerOffset = new DOMPoint(0, 0);
         const rect = this.itemContainer.DOM.getBoundingClientRect();
         const center = new DOMPoint(containerWidth / 2, containerHeight / 2);
-        if (this.item.Component!.NaturalWidth * newScale - containerWidth > 0) {
+        if (this.item.Component.NaturalWidth * newScale - containerWidth > 0) {
             pointerOffset.x = ev.clientX - center.x - rect.x;
         }
-        if (this.item.Component!.NaturalHeight * newScale - containerHeight > 0) {
+        if (this.item.Component.NaturalHeight * newScale - containerHeight > 0) {
             pointerOffset.y = ev.clientY - center.y - rect.y;
         }
-        // this.#pointerDot.style("left", `${ev.clientX - rect.x}px`);
-        // this.#pointerDot.style("top", `${ev.clientY - rect.y}px`);
+        // this.#pointerDot.style("left", `${ev.clientX - rect.x + this.itemContainer.DOM.offsetLeft}px`);
+        // this.#pointerDot.style("top", `${ev.clientY - rect.y + this.itemContainer.DOM.offsetTop}px`);
         const rtlN = getComputedStyle(this.itemContainer.DOM).direction === "rtl" ? -1 : 1;
         const prevScrollPos = new DOMPoint(rtlN * this.itemContainer.ScrollOffset.X, this.itemContainer.ScrollOffset.Y);
         typeof value === "number"
             ? this.scaleItem(item, value)
             : this.zoomItem(item, value);
-        ctrlRect = this.item.Component!.DOM.getBoundingClientRect();
+        ctrlRect = this.item.Component.DOM.getBoundingClientRect();
         const scaleFactor = this.item.Scale / prevscale;
         const newScrollPosX = ((ctrlRect.width - containerWidth) / 2)
             + ((prevScrollPos.x - Math.max(prevScrollRangeHalf.x, 0)) * scaleFactor);
         const newScrollPosY = ((ctrlRect.height - containerHeight) / 2)
             + ((prevScrollPos.y - Math.max(prevScrollRangeHalf.y, 0)) * scaleFactor);
         this.scrollOffset(
+            rtlN * (newScrollPosX) + (pointerOffset.x * scaleFactor) - pointerOffset.x,
+            newScrollPosY + (pointerOffset.y * scaleFactor) - pointerOffset.y
             // `+0.5` gives more precision with repeated zoom actions(?).
-            rtlN * (newScrollPosX) + (pointerOffset.x * scaleFactor) - pointerOffset.x + 0.5,
-            newScrollPosY + (pointerOffset.y * scaleFactor) - pointerOffset.y + 0.5
+            // rtlN * (newScrollPosX) + (pointerOffset.x * scaleFactor) - pointerOffset.x + 0.5,
+            // newScrollPosY + (pointerOffset.y * scaleFactor) - pointerOffset.y + 0.5
         );
         this.updateZoomControls(item);
     }
@@ -1537,11 +1695,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param value The zoom level or magnification level of the item.
      * @param previousScale The previous scale amount of the item.
      */
-    protected centerOnZoomOrScale(item: IViewerItem, value: Zoom | number, previousScale: number): void {
+    protected centerOnZoomOrScale(item: InternalViewerItem, value: Zoom | number, previousScale: number): void {
         // this.#pointerDot.style("left", "50%");
         // this.#pointerDot.style("top", "50%");
         const rtlN = getComputedStyle(this.itemContainer.DOM).direction === "rtl" ? -1 : 1;
-        let ctrlRect = this.item.Component!.DOM.getBoundingClientRect();
+        let ctrlRect = this.item.Component.DOM.getBoundingClientRect();
         const containerWidth = this.itemContainer.DOM.offsetWidth;
         const containerHeight = this.itemContainer.DOM.offsetHeight;
         const prevScrollRangeHalf = new DOMPoint((ctrlRect.width - containerWidth) / 2, (ctrlRect.height - containerHeight) / 2);
@@ -1549,16 +1707,18 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         typeof value === "number"
             ? this.scaleItem(item, value)
             : this.zoomItem(item, value);
-        ctrlRect = this.item.Component!.DOM.getBoundingClientRect();
+        ctrlRect = this.item.Component.DOM.getBoundingClientRect();
         const scaleFactor = this.item.Scale / previousScale;
         const newScrollPosX = ((ctrlRect.width - containerWidth) / 2)
             + ((prevScrollPos.x - Math.max(prevScrollRangeHalf.x, 0)) * scaleFactor);
         const newScrollPosY = ((ctrlRect.height - containerHeight) / 2)
             + ((prevScrollPos.y - Math.max(prevScrollRangeHalf.y, 0)) * scaleFactor);
         this.scrollOffset(
+            rtlN * newScrollPosX,
+            newScrollPosY
             // `+0.5` gives more precision with repeated zoom actions(?).
-            rtlN * (newScrollPosX + 0.5),
-            newScrollPosY + 0.5
+            // rtlN * (newScrollPosX + 0.5),
+            // newScrollPosY + 0.5
         );
         this.updateZoomControls(item);
     }
@@ -1569,16 +1729,16 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param item The item for which the scaling factor is to be calculated. __Note__: This may
      * only work reliably if the item is displayed.
      */
-    protected calcScaleForZoomFit(item: IViewerItem): void {
-        const rect = item.Component!.DOM.getBoundingClientRect();
+    protected calcScaleForZoomFit(item: InternalViewerItem): void {
+        const rect = this.itemContainer.DOM.getBoundingClientRect();
         if (item.Zoom === Zoom.FIT) {
-            item.Scale = rect.width / rect.height >= (item.Component!.NaturalWidth / item.Component!.NaturalHeight)
-                ? rect.height / item.Component!.NaturalHeight
-                : rect.width / item.Component!.NaturalWidth;
+            item.Scale = rect.width / rect.height >= (item.Component.NaturalWidth / item.Component.NaturalHeight)
+                ? rect.height / item.Component.NaturalHeight
+                : rect.width / item.Component.NaturalWidth;
         } else if (item.Zoom === Zoom.FITWIDTH) {
-            item.Scale = rect.width / item.Component!.NaturalWidth;
+            item.Scale = rect.width / item.Component.NaturalWidth;
         } else if (item.Zoom === Zoom.FITHEIGHT) {
-            item.Scale = rect.height / item.Component!.NaturalHeight;
+            item.Scale = rect.height / item.Component.NaturalHeight;
         }
     }
 
@@ -1587,7 +1747,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param item The item for which the controls are to be updated. __Note__: Only useful if the
      * item is displayed.
      */
-    protected updateZoomControls(item: IViewerItem): void {
+    protected updateZoomControls(item: InternalViewerItem): void {
         this.zoomLevel.phrase(`${(item.Scale * 100).toLocaleString(this._options.Locale || navigator.language, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`); // eslint-disable-line jsdoc/require-jsdoc
         if (item.Scale <= 1) {
             this.zoomRange.Value = (item.Scale / 2).toString();
@@ -1618,7 +1778,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param scale The magnification level. `scale` will be autocorrected to be in the range
      * `0.01` < 'scale' <= `4`.
      */
-    protected scaleItem(item: IViewerItem, scale: number): void {
+    protected scaleItem(item: InternalViewerItem, scale: number): void {
         scale = Math.min(Math.max(0.01, scale), 4);
         // if (scale === item.Scale) {
         //     return;
@@ -1686,7 +1846,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         } else if (scale === PINCH_ZOOM_STOP) {
             this.itemContainer.Content.removeClass("pinch-zooming");
         } else {
-            if (this.item.Component?.DOM.contains(<Node>ev.$.EventTarget)) {
+            if (this.item.Component.DOM.contains(<Node>ev.$.EventTarget)) {
                 const origin = { clientX: ev.$.Origin.x, clientY: ev.$.Origin.y }; // eslint-disable-line jsdoc/require-jsdoc
                 const newScale = this.pinchZoomStartScale * scale;
                 // if (newScale >= 0.01 && newScale <= 4) {
@@ -1703,7 +1863,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * @param _ev The pointer event.
      */
     protected onItemContainerScroll(_ev: Event): AnyType {
-        if (this.item.Loaded) {
+        if (this.item.Component.Ready) {
             this.item.ScrollPos.x = this.itemContainer.ScrollOffset.X;
             this.item.ScrollPos.y = this.itemContainer.ScrollOffset.Y;
             this.emitScrollEvent();
@@ -1715,7 +1875,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * since the last call of `displayItem()`.
      */
     protected emitZoomEvent(): void {
-        if (this.item.Loaded && !this.item.LoadError && this.lastDisplayStateChanged()) {
+        if (!this.item.Component.Ready && !this.item.Component.HasError && this.lastDisplayStateChanged()) {
             this.emit(new ViewerZoomEvent(this, this.Index, this.item.Zoom, this.item.Scale));
             // Force `lastDisplayStateChanged()` to return `true` until the next call of
             // `displayItem()` by setting `Scale` to an invalid value.
@@ -1728,7 +1888,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * last call of `displayItem()`.
      */
     protected emitScrollEvent(): void {
-        if (this.item.Loaded && !this.item.LoadError && this.lastDisplayStateChanged()) {
+        if (!this.item.Component.Ready && !this.item.Component.HasError && this.lastDisplayStateChanged()) {
             this.emit(new ViewerScrollEvent(this, this.Index, this.item.ScrollPos.x, this.item.ScrollPos.y));
             // Force `lastDisplayStateChanged()` to return `true` until the next call of
             // `displayItem()` by setting `Scale` to an invalid value.
@@ -1737,16 +1897,16 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     }
 
     /**
-     * Create a new complete `IViewerItem` based on a URL or a (partially) predefined item.
-     * @param from Either the URL of the item or a (partially) predefined item.
+     * Create a new complete `IViewerItem` based on an `IViewerItemComponent` instance or a
+     * (partially) predefined item.
+     * @param from Either an `IViewerItemComponent` instance or a (partially) predefined item.
      * @param from.URL The URL of the item
      * @param from.Zoom The zoom level of the item.
      * @param from.Scale The scale level of the item.
      * @param from.ScrollPos The scroll position of the item.
      * @returns A new complete `IViewerItem` based on `from`.
      */
-    protected getItem(from: string | { URL: string; Zoom?: Zoom; Scale?: number; ScrollPos?: DOMPoint; }): IViewerItem { // eslint-disable-line jsdoc/require-jsdoc
-        let url: string;
+    protected createViewerItem(from: IViewerItemComponent | { Item: IViewerItemComponent; Zoom?: Zoom; Scale?: number; ScrollPos?: DOMPoint; }): InternalViewerItem { // eslint-disable-line jsdoc/require-jsdoc
         let zoom: Zoom;
         let scale: number;
         let scrollPos: DOMPoint;
@@ -1754,13 +1914,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         // set to `0`. Otherwise an existing `Scale` value always sets `Zoom` to `ZOTHER`. If
         // neither `Zoom` nor `Scale` is set, the default zoom level from the viewer options is
         // used or, if that is not set, `Zoom.FIT`.
-        if (typeof from === "string") {
-            url = from;
-            zoom = this._options.Zoom || Zoom.FIT;
-            scale = 0;
-            scrollPos = new DOMPoint(0, 0);
-        } else {
-            url = from.URL;
+        if (typeof from === "object" && "Item" in from) {
             if (from.Zoom && from.Zoom !== Zoom.ZOTHER) {
                 zoom = from.Zoom;
                 scale = 0;
@@ -1772,19 +1926,29 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
                 scale = 0;
             }
             scrollPos = from.ScrollPos ? DOMPoint.fromPoint(from.ScrollPos) : new DOMPoint(0, 0);
+        } else {
+            zoom = this._options.Zoom || Zoom.FIT;
+            scale = 0;
+            scrollPos = new DOMPoint(0, 0);
         }
-        return {
+        const result = {
             /* eslint-disable jsdoc/require-jsdoc */
-            URL: url,
             Zoom: zoom,
             Scale: scale,
             ScrollPos: scrollPos,
-            Component: undefined,
-            Throbber: undefined,
-            Loaded: false,
-            LoadError: false
+            Component: (typeof from === "object" && "Item" in from ? from.Item : from),
+            DisplayedOnce: false,
             /* eslint-enable */
         };
+        result.Component
+            .addClass("viewer-item-component")
+            .viewer?.(this);
+        if (!result.Component.Ready) {
+            result.Component
+                .hidden(true)
+                .on("viewer-item-ready", this.fncOnItemReady);
+        }
+        return result;
     }
 
     /**
@@ -1792,12 +1956,8 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * treatment for this case in various situations.
      * @returns An item with a one pixel transparent GIF image.
      */
-    protected getDummyItem(): IViewerItem {
-        const result = this.getItem({ URL: IMAGE_ONE_PIXEL_TRANSPARENT, Zoom: Zoom.Z100 }); // eslint-disable-line jsdoc/require-jsdoc
-        result.Loaded = true;
-        result.Component = new Img(IMAGE_ONE_PIXEL_TRANSPARENT, 1, 1, "Placeholder item for empty viewer", false);
-        result.Component.Hidden = true;
-        return result;
+    protected getDummyItem(): InternalViewerItem {
+        return this.createViewerItem({ Item: new DummyViewerItem(), Zoom: Zoom.Z100 }); // eslint-disable-line jsdoc/require-jsdoc
     }
 
     /**
@@ -1814,14 +1974,6 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this.btnZoomFitHeight.options({ Title: options.ZoomFitHeightBtnOptions!.Title! });
         /* eslint-enable */
         this.zoomRange.title(options.ZoomRange!);
-        for (const item of this.items) {
-            if (item.LoadError && item.Component) {
-                const loadingError = options.LoadingError!.replaceAll("%s", item.URL);
-                item.Component
-                    .alt(loadingError)
-                    .title(loadingError);
-            }
-        }
         return this;
     }
 
@@ -1916,10 +2068,15 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this.itemContainer.Content.on("scroll", this.fncOnItemContainerScroll, { passive: true }); // eslint-disable-line jsdoc/require-jsdoc
         this.itemResizeObserver = new ResizeObserver((entries => {
             for (const entry of entries) {
-                if (this.item.Loaded && this.item.Component && (entry.target === this.itemContainer.DOM)) {
+                if (this.item.Component.Ready && (entry.target === this.itemContainer.DOM)) {
+                    this.item.Component.viewerResized?.();
                     this.calcScaleForZoomFit(this.item);
                     this.updateZoomControls(this.item);
+                    break;
                 }
+            }
+            for (const item of this.items) {
+                (item !== this.item) && item.Component.Ready && item.Component.viewerResized?.();
             }
         }));
         this.itemResizeObserver.observe(this.itemContainer.DOM);
@@ -1928,6 +2085,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
     /** @inheritdoc */
     protected buildUI(): this {
         this.ui = new Div();
+        // .addClass("debug");
         // .append(this.#pointerDot = new Div().addClass("pointer-dot"));
         this.buildToolbarElements();
         this.buildItemContainer();
@@ -1941,9 +2099,9 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
         this.itemResizeObserver.unobserve(this.itemContainer.DOM);
         // Dispose of this handler manually (it isn't mounted).
         this.pinchZoomHandler.dispose();
-        // Both the toolbar and the item container can be mounted or not, so make sure they are
-        // disposed of!
-        this.ui.remove(this.toolBar);
+        // The toolbar, the item container and the throbber can be mounted or not, so make sure they
+        // are disposed of!
+        this.ui.remove(this.toolBar, this.itemContainer, this.throbber);
         // These components can be mounted elsewhere so that they have to be disposed of manually.
         for (const component of [this.stepper, this.zoomInOut, this.zoomFit, this.itemIndex, this.zoomLevel, this.zoomRange]) {
             component.Parent?.remove(component);
@@ -1952,22 +2110,21 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             component.Disposed || component.dispose();
         }
         this.toolBar.dispose();
-        this.ui.remove(this.itemContainer);
-        // Manually dispose of the current image and throbber component before disposing of the
+        // Manually dispose of the throbber and the current image component before disposing of the
         // item container.
-        this.item?.Component?.Parent?.remove(this.item.Component);
-        this.item?.Throbber?.Parent?.remove(this.item.Throbber);
+        this.throbber?.dispose();
+        this.throbber = undefined;
+        this.item?.Component.Parent?.remove(this.item.Component);
         this.itemContainer.dispose();
         for (const item of this.items) {
-            item.Component?.dispose();
+            item.Component.dispose();
+            // @ts-expect-error ---
             item.Component = undefined;
-            item.Throbber?.dispose();
-            item.Throbber = undefined;
         }
-        this.dummyItem.Component?.dispose();
+        this.items.length = 0;
+        this.dummyItem.Component.dispose();
+        // @ts-expect-error ---
         this.dummyItem.Component = undefined;
-        this.dummyItem.Throbber?.dispose();
-        this.dummyItem.Throbber = undefined;
         super.dispose();
     }
 }
