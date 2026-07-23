@@ -27,7 +27,7 @@ const input = new LabeledNumberInput(
     "2"             // step interval
 )
     .addClass("labeled-number-input")
-    .numberInput(c => c.DOM.setCustomValidity("not_42"))
+    .numberInput(c => c.DOM.setCustomValidity("not_42")) // \`c\` is the inner \`NumberInput\`
     .on("input", () => {
         input.NumberInput.DOM.setCustomValidity(input.Value === "42" ? "" : "not_42");
     });
