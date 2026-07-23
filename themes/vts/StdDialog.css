@@ -56,6 +56,7 @@
         }
     }
     /* Predefined standard dialogs */
+    &.confirm,
     &.msg-dlg,
     &.yes-no {
         max-width: 30rem;
