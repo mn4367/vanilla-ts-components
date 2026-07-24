@@ -3,7 +3,7 @@
   "description": "TypeScript Web UI Library -- Components",
   "companyname": "mn4367",
   "copyright": "©2025 mn4367",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "type": "module",
   "identifier": "mn4367.vanilla-ts.components",
   "keywords": [
@@ -28,11 +28,36 @@
     "url": "https://github.com/mn4367/vanilla-ts-components/issues"
   },
   "license": "MIT",
-  "main": "./lib/index.js",
-  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js",
+      "types": "./types/index.d.ts"
+    },
+    "./pdf-load": {
+      "import": "./lib/viewer-items/PDFLoad.js",
+      "types": "./types/viewer-items/PDFLoad.d.ts"
+    },
+    "./pdf-canvas-items": {
+      "import": "./lib/viewer-items/PDFCanvasItems.js",
+      "types": "./types/viewer-items/PDFCanvasItems.d.ts"
+    },
+    "./viewer-item-canvas": {
+      "import": "./lib/viewer-items/ViewerItemCanvas.js",
+      "types": "./types/viewer-items/ViewerItemCanvas.d.ts"
+    },
+    "./viewer-item-components": {
+      "import": "./lib/viewer-items/ViewerItemComponents.js",
+      "types": "./types/viewer-items/ViewerItemComponents.d.ts"
+    },
+    "./viewer-item-image": {
+      "import": "./lib/viewer-items/ViewerItemImage.js",
+      "types": "./types/viewer-items/ViewerItemImage.d.ts"
+    }
+  },
   "dependencies": {
     "@vanilla-ts/core": "0.0.1",
-    "@vanilla-ts/dom": "0.0.1"
+    "@vanilla-ts/dom": "0.0.1",
+    "pdfjs-dist": "6.1.200"
   },
   "sideEffects": false,
   "devDependencies": {
@@ -50,15 +75,17 @@
     "typescript": "5.9.2"
   },
   "scripts": {
-    "Watch": "npm-run-all -p watch:*",
+    "Watch": "npm-run-all -p watch:**",
     "Clean": "shx rm -rf ./types ./lib ./example/out ./example/index.js*",
     "Publish": "npm-run-all -s Clean compile:src && npm publish",
-    "watch:src": "tsc -w -p ./src/tsconfig.src.json",
-    "watch:example": "tsc-watch -p ./example/tsconfig.example.json --onSuccess \"npm run pack:example\"",
-    "compile:src": "tsc -p ./src/tsconfig.src.json",
-    "compile:example": "tsc -p ./example/tsconfig.example.json",
+    "watch:src": "tsc-watch -p ./src/tsconfig.src.json --onSuccess \"npm run pack:pdf-js:src\"",
+    "watch:example": "tsc-watch -p ./example/tsconfig.example.json --onSuccess \"npm-run-all pack:pdf-js:example pack:example\"",
+    "compile:src": "tsc -p ./src/tsconfig.src.json && npm run pack:pdf-js:src",
+    "compile:example": "tsc -p ./example/tsconfig.example.json && npm run pack:pdf-js:example",
     "pack:example": "rollup --silent -c ./build/rollup.config.example.mjs",
     "pack:example:compress": "rollup --silent -c ./build/rollup.config.example.mjs --environment COMPRESS",
+    "pack:pdf-js:src": "node ./build/pack.pdf-js.js ./lib/viewer-items",
+    "pack:pdf-js:example": "node ./build/pack.pdf-js.js ./example/out/src/viewer-items",
     "lint": "eslint -c ./eslintrc.json --parser-options=project:./tsconfig.json --ext .ts ."
   },
   "files": [

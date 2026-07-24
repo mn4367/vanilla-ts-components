@@ -31,6 +31,7 @@
         align-items: center;
         justify-items: center;
         background-color: white;
+        /* border: var(--input-border); */
         border: var(--1px) solid var(--border-color);
         opacity: 0.5;
         transition: opacity 100ms ease-in;
@@ -302,45 +303,57 @@
         > .content.pinch-zooming {
             touch-action: none;
         } */
-        img {
+        .viewer-item-component {
             display: block;
             margin: auto;
             outline: none;
             box-shadow: none;
         }
         /* Marker classes for natural and scaled sizes, use if required. */
-        /* img.z10,
-        img.z25,
-        img.z50,
-        img.z75,
-        img.z100,
-        img.z150,
-        img.z200,
-        img.z300,
-        img.z400,
-        img.zother {} */
-        img.fit {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        img.fit-width {
-            width: 100%;
-            object-fit: contain;
-        }
-        img.fit-height {
-            height: 100%;
-            object-fit: contain;
-        }
-        .throbber {
-            position: absolute;
-            width: 5rem;
-            height: 5rem;
-            inset-inline-start: calc(50% - 2.5rem);
-            inset-block-start: calc(50% - 2.5rem);
-            border-width: calc(5rem / 8);
-            animation-delay: 0.25s;
-        }
+        /* .viewer-item-component.fit,
+        .viewer-item-component.fit-width,
+        .viewer-item-component.fit-height,
+        .viewer-item-component.z10,
+        .viewer-item-component.z25,
+        .viewer-item-component.z50,
+        .viewer-item-component.z75,
+        .viewer-item-component.z100,
+        .viewer-item-component.z125,
+        .viewer-item-component.z150,
+        .viewer-item-component.z175,
+        .viewer-item-component.z200,
+        .viewer-item-component.z250,
+        .viewer-item-component.z300,
+        .viewer-item-component.z350,
+        .viewer-item-component.z400,
+        .viewer-item-component.zother,
+        .viewer-item-component.fit-width,
+        .viewer-item-component.fit-height,
+        .viewer-item-component.fit {} */
+        /* img.viewer-item-component {
+            &.fit {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+            &.fit-width {
+                width: 100%;
+                object-fit: contain;
+            }
+            &.fit-height {
+                height: 100%;
+                object-fit: contain;
+            }
+        } */
+    }
+    > .throbber {
+        position: absolute;
+        width: 5rem;
+        height: 5rem;
+        inset-inline-start: calc(50% - 2.5rem);
+        inset-block-start: calc(50% - 2.5rem);
+        border-width: calc(5rem / 8);
+        /* animation-delay: 0.25s; */
     }
     /*
      * For debugging purposes: if the `debug` class ist set on the viewer, it draws a centered

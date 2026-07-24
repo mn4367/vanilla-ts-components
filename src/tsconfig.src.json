@@ -4,11 +4,17 @@
     "declaration": true,
     "outDir": "../lib",
     "declarationDir": "../types",
+    "rootDir": "./",
   },
   // "include": [
   //   "./**/*.ts",
   // ]
   "files": [
     "./index.ts",
+    "./viewer-items/PDFCanvasItems.ts",
+    "./viewer-items/PDFLoad.ts",
+    "./viewer-items/ViewerItemImage.ts",
+    "./viewer-items/ViewerItemCanvas.ts",
+    "./viewer-items/ViewerItemComponents.ts",
   ]
 }
