@@ -2,8 +2,8 @@
   "name": "@vanilla-ts/components",
   "description": "TypeScript Web UI Library -- Components",
   "companyname": "mn4367",
-  "version": "0.0.1",
   "copyright": "©2026 mn4367",
+  "version": "0.3.0",
   "type": "module",
   "identifier": "mn4367.vanilla-ts.components",
   "keywords": [
@@ -78,6 +78,12 @@
   "scripts": {
     "Watch": "npm-run-all -p watch:**",
     "Clean": "shx rm -rf ./types ./lib ./example/out ./example/index.js* ./showcase/out ./showcase/index.js* ./playground/out ./playground/index.js*",
+    "Build": "npm-run-all -p build:src build:example build:showcase build:playground",
+    "Publish": "npm-run-all -s Clean compile:src && npm publish",
+    "build:src": "npm-run-all -s compile:src pack:pdf-js:src",
+    "build:example": "npm-run-all -s compile:example -p pack:example pack:example:css pack:pdf-js:example",
+    "build:showcase": "npm-run-all -s compile:showcase -p pack:showcase pack:showcase:css pack:pdf-js:showcase",
+    "build:playground": "npm-run-all -s compile:playground -p pack:playground pack:playground:css pack:pdf-js:playground",
     "watch:src": "tsc-watch -p ./src/tsconfig.src.json --onSuccess \"npm run pack:pdf-js:src\"",
     "watch:example": "tsc-watch -p ./example/src/tsconfig.example.json --onSuccess \"npm-run-all -p pack:example pack:example:css pack:pdf-js:example\"",
     "watch:example:css": "onchange './example/src/style/**' './themes/**' -v --await-write-finish 500 -- npm run pack:example:css",
@@ -103,5 +109,11 @@
     "pack:pdf-js:showcase": "node ./build/pack.pdf-js.js ./showcase/out/src/viewer-items",
     "pack:pdf-js:playground": "node ./build/pack.pdf-js.js ./playground/out/src/viewer-items",
     "lint": "eslint -c ./eslint.config.mjs"
-  }
+  },
+  "files": [
+    "lib",
+    "src",
+    "themes",
+    "types"
+  ]
 }
