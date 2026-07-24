@@ -287,6 +287,34 @@ export enum Zoom {
  * viewer.options({
  *   Items: [...viewer.Items, canvasItem]
  * });
+ *
+ * // Add the first 10 pages of a PDF document to the viewer.
+ * import { getPDFCanvasViewerItems } from "@vanilla-ts/components/pdf-canvas-items";
+ * import { loadPDF, PDFPageErrorHandler } from "@vanilla-ts/components/pdf-load";
+ *
+ * // Primitive page rendering error handler.
+ * const pdfRenderPageErrorHandler: PDFPageErrorHandler = (reason: AnyType, pageNumber: number) => {
+ *   console.log(`Error rendering PDF page ${pageNumber}:`, reason);
+ * };
+ *
+ * // Primitive error handler for getting pages from the document.
+ * const pdfGetPageErrorHandler: PDFPageErrorHandler = (reason: AnyType, pageNumber: number) => {
+ *   console.log(`Error getting PDF page ${pageNumber}:`, reason);
+ * };
+ *
+ * const pdfDoc = await loadPDF("TraceMonkey.pdf").promise;
+ * const pages = getPDFCanvasViewerItems(
+ *   pdfDoc,
+ *   2,
+ *   window.devicePixelRatio || 1,
+ *   "-10",
+ *   {},
+ *   pdfRenderPageErrorHandler,
+ *   pdfGetPageErrorHandler
+ * );
+ * viewer.options({
+ *   Items: [...viewer.Items, ...pages]
+ * });
  * ```
  */
 export interface ViewerOptions {

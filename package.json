@@ -33,6 +33,14 @@
       "default": "./lib/index.js",
       "types": "./types/index.d.ts"
     },
+    "./pdf-load": {
+      "import": "./lib/viewer-items/PDFLoad.js",
+      "types": "./types/viewer-items/PDFLoad.d.ts"
+    },
+    "./pdf-canvas-items": {
+      "import": "./lib/viewer-items/PDFCanvasItems.js",
+      "types": "./types/viewer-items/PDFCanvasItems.d.ts"
+    },
     "./viewer-item-canvas": {
       "import": "./lib/viewer-items/ViewerItemCanvas.js",
       "types": "./types/viewer-items/ViewerItemCanvas.d.ts"
@@ -49,7 +57,8 @@
   "sideEffects": false,
   "dependencies": {
     "@vanilla-ts/core": "file:../vanilla-ts-core",
-    "@vanilla-ts/dom": "file:../vanilla-ts-dom"
+    "@vanilla-ts/dom": "file:../vanilla-ts-dom",
+    "pdfjs-dist": "6.1.200"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "16.0.3",
@@ -69,12 +78,12 @@
   "scripts": {
     "Watch": "npm-run-all -p watch:**",
     "Clean": "shx rm -rf ./types ./lib ./example/out ./example/index.js* ./showcase/out ./showcase/index.js* ./playground/out ./playground/index.js*",
-    "watch:src": "tsc -w -p ./src/tsconfig.src.json",
-    "watch:example": "tsc-watch -p ./example/src/tsconfig.example.json    --onSuccess \"npm-run-all -p pack:example pack:example:css\"",
+    "watch:src": "tsc-watch -p ./src/tsconfig.src.json --onSuccess \"npm run pack:pdf-js:src\"",
+    "watch:example": "tsc-watch -p ./example/src/tsconfig.example.json --onSuccess \"npm-run-all -p pack:example pack:example:css pack:pdf-js:example\"",
     "watch:example:css": "onchange './example/src/style/**' './themes/**' -v --await-write-finish 500 -- npm run pack:example:css",
-    "watch:showcase": "tsc-watch -p ./showcase/src/tsconfig.showcase.json --onSuccess \"npm-run-all -p pack:showcase pack:showcase:css\"",
+    "watch:showcase": "tsc-watch -p ./showcase/src/tsconfig.showcase.json --onSuccess \"npm-run-all -p pack:showcase pack:showcase:css pack:pdf-js:showcase\"",
     "watch:showcase:css": "onchange './showcase/src/style/**' './themes/**' -v --await-write-finish 500 -- npm run pack:showcase:css",
-    "watch:playground": "tsc-watch -p ./playground/src/tsconfig.playground.json --onSuccess \"npm-run-all -p pack:playground pack:playground:css\"",
+    "watch:playground": "tsc-watch -p ./playground/src/tsconfig.playground.json --onSuccess \"npm-run-all -p pack:playground pack:playground:css pack:pdf-js:playground\"",
     "watch:playground:css": "onchange './playground/src/style/**' './themes/**' -v --await-write-finish 500 -- npm run pack:playground:css",
     "compile:src": "tsc -p ./src/tsconfig.src.json",
     "compile:example": "tsc -p ./example/src/tsconfig.example.json",
@@ -89,6 +98,10 @@
     "pack:playground": "rollup --silent -c ./playground/build/rollup.config.playground.mjs",
     "pack:playground:css": "node ./playground/build/concat-css-files.js ./playground/style/style.css",
     "pack:playground:compress": "rollup --silent -c ./playground/build/rollup.config.playground.mjs --environment COMPRESS",
+    "pack:pdf-js:src": "node ./build/pack.pdf-js.js ./lib/viewer-items",
+    "pack:pdf-js:example": "node ./build/pack.pdf-js.js ./example/out/src/viewer-items",
+    "pack:pdf-js:showcase": "node ./build/pack.pdf-js.js ./showcase/out/src/viewer-items",
+    "pack:pdf-js:playground": "node ./build/pack.pdf-js.js ./playground/out/src/viewer-items",
     "lint": "eslint -c ./eslint.config.mjs"
   }
 }
