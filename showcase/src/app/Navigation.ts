@@ -1,10 +1,10 @@
 // Import to be used with application variant 1 (see `App.ts`).
+import { IElementComponent } from "@vanilla-ts/core";
 import { APP } from "../App.js";
 
 // Import to be used with application variant 2 (see `App.ts`).
 // import { $ } from "../App.js";
 
-import { IElementComponent } from "../../../../vanilla-ts-core/types/Interfaces.js";
 import { BusyOverlayEx } from "../examples/@components/BusyOverlayEx.js";
 import { DisclosureContainerEx } from "../examples/@components/DisclosureContainerEx.js";
 import { IconButtonEx } from "../examples/@components/IconButtonEx.js";

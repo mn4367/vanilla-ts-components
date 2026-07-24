@@ -1,6 +1,5 @@
-import { AElementComponent, FlowContent, toKebabCase } from "@vanilla-ts/core";
+import { AElementComponent, FlowContent, IElementComponent, toKebabCase } from "@vanilla-ts/core";
 import { Checkbox, Div, Input, Select, Span, Text, TextArea, TextInput } from "@vanilla-ts/dom";
-import { IElementComponent } from "../../vanilla-ts-core/types/Interfaces.js";
 import { Dialog, DialogCloseEvent, DialogOptions, DialogState, DLG_CANCELLED } from "./Dialog.js";
 import { StdDlgI18N_EN } from "./I18N/StdDialogI18N_EN.js";
 import { IconButton } from "./IconButton.js";
