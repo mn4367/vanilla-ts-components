@@ -121,6 +121,8 @@ export type PDFPageErrorHandler = (reason: AnyType, pageNumber: number) => void;
 
 /**
  * Builds and returns `ViewerItemCanvas` items for the pages for a given PDF document.
+ * @param idPrefix A prefix for the item IDs of the created `ViewerItemCanvas` items. The item ID of
+ * the first page is then `${idPrefix}/1`, the second page is `${idPrefix}/2` and so on.
  * @param pdfDocument The PDF document from which the items are to be created.
  * @param basePageScale The base scaling for pages. An `A4` page will be rendered at a size of ~
  * `595` × `841` pixels if `basePageScale` is `1` and the current magnification is `100%`. With a
@@ -175,6 +177,7 @@ export type PDFPageErrorHandler = (reason: AnyType, pageNumber: number) => void;
  * ```
  */
 export function getPDFCanvasViewerItems(
+    idPrefix: string,
     pdfDocument: PDFDocumentProxy,
     basePageScale: number = 1,
     canvasScale: number = 1,
@@ -222,7 +225,7 @@ export function getPDFCanvasViewerItems(
                 });
         };
 
-        const viewerItem = new ViewerItemCanvas(drawPage, canvasScale);
+        const viewerItem = new ViewerItemCanvas(`${idPrefix}/${pageNum}`, drawPage, canvasScale);
         // Prevents scrambled text when the surrounding context is in "rtl" direction.
         viewerItem.Canvas.DOM.dir = "ltr";
         result.push(viewerItem);

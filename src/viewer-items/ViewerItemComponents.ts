@@ -9,6 +9,7 @@ import { IViewerItemComponent, Viewer } from "../Viewer.js";
  * `ViewerItemReadyEvent` is emitted.
  */
 export class ViewerItemComponents extends AElementComponentWithInternalUI<Div> implements IViewerItemComponent {
+    #itemID: string;
     #naturalWidth = 1;
     #naturalHeight = 1;
     #scale = 1;
@@ -17,13 +18,18 @@ export class ViewerItemComponents extends AElementComponentWithInternalUI<Div> i
 
     /**
      * Creates a viewer item component that is built from other components.
+     * @param itemID An ID that identifies the item.
      * @param components The components that form the content of this viewer item. They are added to
      * the internal `Div` component of this viewer item.
      */
-    constructor(...components: IElementComponent<HTMLElement>[]) {
+    constructor(itemID: string, ...components: IElementComponent<HTMLElement>[]) {
         super();
+        this.#itemID = itemID;
         this.initialize(undefined, ...components);
     }
+
+    /** @inheritdoc */
+    public get ItemID(): string { return this.#itemID; }
 
     /** @inheritdoc */
     public get Ready(): boolean { return true; }
@@ -106,12 +112,13 @@ export class ViewerItemComponents extends AElementComponentWithInternalUI<Div> i
 export class ViewerItemFromComponentsFactory<T> extends ComponentFactory<ViewerItemComponents> {
     /**
      * Create, set up and return ViewerItemFromComponents component.
+     * @param itemID An ID that identifies the item.
      * @param components The components that form the content of this viewer item. They are added to
      * the internal `Div` component of this viewer item.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns ViewerItemFromComponents component.
      */
-    public viewerItemFromComponents(components: IElementComponent<HTMLElement>[], data: T): ViewerItemComponents {
-        return this.setupComponent(new ViewerItemComponents(...components), data);
+    public viewerItemFromComponents(itemID: string, components: IElementComponent<HTMLElement>[], data: T): ViewerItemComponents {
+        return this.setupComponent(new ViewerItemComponents(itemID, ...components), data);
     }
 }

@@ -23,6 +23,7 @@ export type ViewerItemCanvasDrawFunction = (canvas: HTMLCanvasElement, scale: nu
  * viewers that are not connected to the DOM!
  */
 export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> implements IViewerItemComponent {
+    #itemID: string;
     #canvas: Canvas;
     #error: P;
     #errorMsg: string = "";
@@ -43,6 +44,7 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
 
     /**
      * Create a viewer item component that contains a canvas element.
+     * @param itemID An ID that identifies the item.
      * @param drawFnc The function that is called to draw the content of the canvas (see
      * {@link ViewerItemCanvasDrawFunction}).\
      * __Note:__ It's strongly recommended to use a debounced function here if the drawing operation
@@ -54,12 +56,16 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
      * Values lower than `1` may be used to improve performance and reduce memory usage, but the
      * content may appear blurry. Values lower than `0` will be auto-corrected to `1`.
      */
-    constructor(drawFnc: ViewerItemCanvasDrawFunction, canvasScale: number = 1) {
+    constructor(itemID: string, drawFnc: ViewerItemCanvasDrawFunction, canvasScale: number = 1) {
         super();
+        this.#itemID = itemID;
         this.#drawFnc = drawFnc;
         this.#canvasScale = canvasScale < 0 ? 1 : canvasScale;
         this.initialize();
     }
+
+    /** @inheritdoc */
+    public get ItemID(): string { return this.#itemID; }
 
     /** @inheritdoc */
     public get Ready(): boolean { return this.#ready; }
@@ -356,6 +362,7 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
 export class ViewerItemCanvasFactory<T> extends ComponentFactory<ViewerItemCanvas> {
     /**
      * Create, set up and return ViewerItemCanvas component.
+     * @param itemID An ID that identifies the item.
      * @param drawFnc The function that is called to draw the content of the canvas. The parameters
      * `width` and `height` are the current dimensions of the canvas, `scale` is equal to the
      * current real scale factor (see {@link ViewerItemCanvas.RealScale}). The function is called
@@ -364,7 +371,7 @@ export class ViewerItemCanvasFactory<T> extends ComponentFactory<ViewerItemCanva
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns ViewerItemCanvas component.
      */
-    public viewerItemCanvas(drawFnc: ViewerItemCanvasDrawFunction, data?: T): ViewerItemCanvas {
-        return this.setupComponent(new ViewerItemCanvas(drawFnc), data);
+    public viewerItemCanvas(itemID: string, drawFnc: ViewerItemCanvasDrawFunction, data?: T): ViewerItemCanvas {
+        return this.setupComponent(new ViewerItemCanvas(itemID, drawFnc), data);
     }
 }

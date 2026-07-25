@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, AnyType, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, ElementComponentVoid, getProp, INodeComponent } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, AnyType, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, ElementComponentVoid, generateUUID, getProp, INodeComponent } from "@vanilla-ts/core";
 import { Div, RangeInput, Span } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 import { PINCH_ZOOM_START, PINCH_ZOOM_STOP, PinchZoomEvent, PinchZoomGestureHandler } from "./PinchZoomGestureHandler.js";
@@ -55,6 +55,12 @@ export interface ViewerItemEventMap extends HTMLElementEventMap {
  * loading/building the content, otherwise it must return `false`.
  */
 export interface IViewerItemComponent extends AElementComponent<HTMLElement, ViewerItemEventMap> {
+    /**
+     * An ID that identifies the item. No checks are performed to ensure uniqueness or suitability
+     * for a specific purpose. The ID can be used, for example, to identify an item in the `Items`
+     * array of a `Viewer` instance in order to save/restore its state.
+     */
+    readonly ItemID: string;
     /** This property is `true` when the item has finished loading/building (successful or not). */
     readonly Ready: boolean;
     /** This property is `true` only if an error occurred while loading/building the item. */
@@ -123,6 +129,7 @@ class DummyViewerItem extends ElementComponentVoid<HTMLImageElement> implements 
         this.DOM.src = "data:image/gif;base64,R0lGODlhAQABAIABAP///////yH5BAUKAAEALAAAAAABAAEAAAICTAEAOw==";
         this.DOM.alt = "Placeholder item for empty viewer";
     }
+    public get ItemID(): string { return generateUUID(); }
     public get NaturalWidth(): number { return 1; }
     public get NaturalHeight(): number { return 1; }
     public scale(_scale: number): this { return this; }

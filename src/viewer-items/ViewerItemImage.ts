@@ -9,6 +9,7 @@ import { IViewerItemComponent, Viewer, ViewerItemReadyEvent } from "../Viewer.js
  * shown in the `alt` attribute and as the tooltip of the image.
  */
 export class ViewerItemImage extends ElementComponentVoid<HTMLImageElement> implements IViewerItemComponent {
+    #itemID: string;
     #ready: boolean = false;
     #hasError: boolean = false;
     #naturalWidth: number = 0;
@@ -21,12 +22,14 @@ export class ViewerItemImage extends ElementComponentVoid<HTMLImageElement> impl
 
     /**
      * Create a viewer item component that displays an image.
+     * @param itemID An ID that identifies the item. If `itemID` is an empty string, it will be set
+     * to the value of the `url` parameter.
      * @param url The URL of the image to be displayed.
-     * @param alt The value for the `alt` attribute of the image. If this parameter is not provided,
-     * the `alt` attribute is set to the URL of the image (parameter `url`).
+     * @param alt The value for the `alt` attribute of the image. If this parameter is not provided
+     * or an empty string, the `alt` attribute is set to the value of the `url` parameter.
      * @param loadingError See {@link ViewerItemImage.loadingError}.
      */
-    constructor(url: string, alt: string = "", loadingError: string = "%s") {
+    constructor(itemID: string, url: string, alt: string = "", loadingError: string = "%s") {
         super("img");
         this.DOM.decoding = "async";
         this.DOM.loading = "lazy";
@@ -37,11 +40,13 @@ export class ViewerItemImage extends ElementComponentVoid<HTMLImageElement> impl
             .on("load", this.#fncOnLoad)
             .on("error", this.#fncOnLoad);
         this.DOM.src = url;
+        this.#itemID = itemID ? itemID : url;
     }
 
-    /**
-     * The URL of the image.
-     */
+    /** @inheritdoc */
+    public get ItemID(): string { return this.#itemID; }
+
+    /** The URL of the image. */
     public get URL(): string { return this.DOM.src; }
 
     /** @inheritdoc */
@@ -165,14 +170,16 @@ export class ViewerItemImage extends ElementComponentVoid<HTMLImageElement> impl
 export class ViewerItemImageFactory<T> extends ComponentFactory<ViewerItemImage> {
     /**
      * Create, set up and return ViewerItemImage component.
+     * @param itemID An ID that identifies the item. If `itemID` is an empty string, it will be set
+     * to the value of the `url` parameter.
      * @param url The URL of the image to be displayed.
-     * @param alt The value for the `alt` attribute of the image. If this parameter is not provided,
-     * the `alt` attribute is set to the URL of the image (parameter `url`).
+     * @param alt The value for the `alt` attribute of the image. If this parameter is not provided
+     * or an empty string, the `alt` attribute is set to the value of the `url` parameter.
      * @param loadingError See {@link ViewerItemImage.loadingError}.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns ViewerItemImage component.
      */
-    public viewerItemImage(url: string, alt: string = "", loadingError: string = "%s", data?: T): ViewerItemImage {
-        return this.setupComponent(new ViewerItemImage(url, alt, loadingError), data);
+    public viewerItemImage(itemID: string, url: string, alt: string = "", loadingError: string = "%s", data?: T): ViewerItemImage {
+        return this.setupComponent(new ViewerItemImage(itemID, url, alt, loadingError), data);
     }
 }
