@@ -1910,7 +1910,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * since the last call of `displayItem()`.
      */
     protected emitZoomEvent(): void {
-        if (!this.item.Component.Ready && !this.item.Component.HasError && this.lastDisplayStateChanged()) {
+        if (this.item.Component.Ready && !this.item.Component.HasError && this.lastDisplayStateChanged()) {
             this.emit(new ViewerZoomEvent(this, this.Index, this.item.Zoom, this.item.Scale));
             // Force `lastDisplayStateChanged()` to return `true` until the next call of
             // `displayItem()` by setting `Scale` to an invalid value.
@@ -1923,7 +1923,7 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
      * last call of `displayItem()`.
      */
     protected emitScrollEvent(): void {
-        if (!this.item.Component.Ready && !this.item.Component.HasError && this.lastDisplayStateChanged()) {
+        if (this.item.Component.Ready && !this.item.Component.HasError && this.lastDisplayStateChanged()) {
             this.emit(new ViewerScrollEvent(this, this.Index, this.item.ScrollPos.x, this.item.ScrollPos.y));
             // Force `lastDisplayStateChanged()` to return `true` until the next call of
             // `displayItem()` by setting `Scale` to an invalid value.
