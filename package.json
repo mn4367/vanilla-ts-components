@@ -37,6 +37,10 @@
       "import": "./lib/viewer-items/PDFLoad.js",
       "types": "./types/viewer-items/PDFLoad.d.ts"
     },
+    "./pdf-load-legacy": {
+      "import": "./lib/viewer-items/PDFLoad_legacy.js",
+      "types": "./types/viewer-items/PDFLoad_legacy.d.ts"
+    },
     "./pdf-canvas-items": {
       "import": "./lib/viewer-items/PDFCanvasItems.js",
       "types": "./types/viewer-items/PDFCanvasItems.d.ts"
