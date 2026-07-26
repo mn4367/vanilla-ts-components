@@ -1,5 +1,11 @@
 import { AnyType, getIntegersFromRanges } from "@vanilla-ts/core";
-import { PageViewport, PDFDocumentProxy, PDFPageProxy } from "pdfjs-dist";
+/**
+ * Using the modern build of `PDF.js` still fails on most mobile browsers as of July 2026. The code
+ * used in the PDF worker there requires very recent functions of `Map`. Since the imports here are
+ * only used for type checking, it's OK to use the modern build imported here for both the modern
+ * and legacy build used in `PDFLoad.ts` and `PDFLoad_legacy.ts`.
+ */
+import type { PageViewport, PDFDocumentProxy, PDFPageProxy } from "pdfjs-dist";
 import { ViewerItemCanvas, ViewerItemCanvasDrawFunction } from "./ViewerItemCanvas.js";
 
 

@@ -13,6 +13,7 @@
     "./index.ts",
     "./viewer-items/PDFCanvasItems.ts",
     "./viewer-items/PDFLoad.ts",
+    "./viewer-items/PDFLoad_legacy.ts",
     "./viewer-items/ViewerItemImage.ts",
     "./viewer-items/ViewerItemCanvas.ts",
     "./viewer-items/ViewerItemComponents.ts",
