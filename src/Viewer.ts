@@ -301,12 +301,12 @@ export enum Zoom {
  *
  * // Primitive page rendering error handler.
  * const pdfRenderPageErrorHandler: PDFPageErrorHandler = (reason: AnyType, pageNumber: number) => {
- *   console.log(`Error rendering PDF page ${pageNumber}:`, reason);
+ *   console.error(`Error rendering PDF page ${pageNumber}:`, reason);
  * };
  *
  * // Primitive error handler for getting pages from the document.
  * const pdfGetPageErrorHandler: PDFPageErrorHandler = (reason: AnyType, pageNumber: number) => {
- *   console.log(`Error getting PDF page ${pageNumber}:`, reason);
+ *   console.error(`Error getting PDF page ${pageNumber}:`, reason);
  * };
  *
  * const pdfDoc = await loadPDF("TraceMonkey.pdf").promise;
@@ -315,7 +315,8 @@ export enum Zoom {
  *   2,
  *   window.devicePixelRatio || 1,
  *   "-10",
- *   {},
+ *   undefined, // Use default debounce delay (`100`)
+ *   {},        // No additional rendering options
  *   pdfRenderPageErrorHandler,
  *   pdfGetPageErrorHandler
  * );
