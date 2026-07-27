@@ -48,6 +48,11 @@ export type PDFPageErrorHandler = (reason: AnyType, pageNumber: number) => void;
  * Values lower than `0` will be auto-corrected to `1`.
  * @param pageRanges Optional page ranges to load from the document. For the documentation of the
  * syntax see {@link getIntegersFromRanges()}. If not specified, all pages are loaded.
+ * @param debounceDelay Optional debounce delay in milliseconds for the rendering of a page. This
+ * value is automatically clamped to the range `0` to `500`. If set to `0`, no debouncing is
+ * applied. If the value is greater than `0`, the rendering of pages will be debounced by the given
+ * delay. This avoids flickering and excessive CPU usage when the viewer is resized or zoomed in
+ * quick succession. Default: `100`.
  * @param renderOptions Additional rendering options for pages (from `PDF.js`).
  * @param onGetPageError An error handler function which is called, when rendering a page fails.
  * @param onRenderPageError An error handler function which is called, when getting a page from the
@@ -65,10 +70,11 @@ export type PDFPageErrorHandler = (reason: AnyType, pageNumber: number) => void;
  *
  * const viewerItems = getPDFCanvasViewerItems(
  *   pdfDoc,
- *   1,      // Use 'normal' scaling for the PDF pages
- *   2,      // Use higher scaling for the canvas element for better quality
- *   "-10",  // First ten pages only
- *   {},     // No additional rendering options
+ *   1,         // Use 'normal' scaling for the PDF pages
+ *   2,         // Use higher scaling for the canvas element for better quality
+ *   "-10",     // First ten pages only
+ *   undefined, // Use default debounce delay (`100`)
+ *   {},        // No additional rendering options
  *   // Only simple error logging
  *   (reason: AnyType, pageNumber: number) => {
  *     console.log(`Error rendering PDF page ${pageNumber}:`, reason);
@@ -89,6 +95,7 @@ export function getPDFCanvasViewerItems(
     basePageScale: number = 1,
     canvasScale: number = 1,
     pageRanges: string = "",
+    debounceDelay: number = 100,
     renderOptions?: PDFPageRenderOptions,
     onGetPageError?: PDFPageErrorHandler,
     onRenderPageError?: PDFPageErrorHandler
@@ -112,11 +119,14 @@ export function getPDFCanvasViewerItems(
                 return;
             }
             isRendering = true;
+            const viewport = page.getViewport({ scale: scale * basePageScale * canvasScale }); // eslint-disable-line jsdoc/require-jsdoc
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
             const renderTask = page.render({
                 /* eslint-disable jsdoc/require-jsdoc */
                 ...renderOptions,
-                canvas: canvas,
-                viewport: page.getViewport({ scale: scale * basePageScale * canvasScale }),
+                canvas,
+                viewport
                 /* eslint-enable */
             }).promise;
             renderTask
@@ -132,7 +142,7 @@ export function getPDFCanvasViewerItems(
                 });
         };
 
-        const viewerItem = new ViewerItemCanvas(`${idPrefix}/${pageNum}`, drawPage, canvasScale);
+        const viewerItem = new ViewerItemCanvas(`${idPrefix}/${pageNum}`, drawPage, canvasScale, debounceDelay);
         // Prevents scrambled text when the surrounding context is in "rtl" direction.
         viewerItem.Canvas.DOM.dir = "ltr";
         result.push(viewerItem);

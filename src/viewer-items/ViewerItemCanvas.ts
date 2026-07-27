@@ -1,16 +1,19 @@
-import { AElementComponentWithInternalUI, ComponentFactory, HTMLElementWithChildren, IElementWithChildrenComponent } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, clamp, ComponentFactory, getDebouncedFnc, HTMLElementWithChildren, IElementWithChildrenComponent } from "@vanilla-ts/core";
 import { Canvas, Div, P } from "@vanilla-ts/dom";
 import { IViewerItemComponent, Viewer, ViewerItemReadyEvent } from "../Viewer.js";
 
 /**
  * The type of the drawing function used by `ViewerItemCanvas`. The function is called whenever the
  * canvas needs to be redrawn, e.g when the canvas is loaded, zoomed, or when the viewer is resized.
+ * __Important note:__ The drawing function __must__ set the `width` and `height` DOM properties of
+ * the canvas element to the 'natural' width and height of the content each multiplied by the
+ * current scale factor and the canvas scale factor!
  * @param canvas The canvas element to draw on.
  * @param scale The current real scale factor (see {@link ViewerItemCanvas.RealScale}).
- * @param canvasScale The scale factor applied to the canvas element (see
+ * @param canvasScale The scale factor applied to the canvas element itself (see
  * {@link ViewerItemCanvas.CanvasScale}).
- * @param width The current width of the canvas.
- * @param height The current height of the canvas.
+ * @param width The 'natural' width of the canvas, i.e., the width before any scaling is applied.
+ * @param height The 'natural' height of the canvas, i.e., the height before any scaling is applied.
  */
 export type ViewerItemCanvasDrawFunction = (canvas: HTMLCanvasElement, scale: number, canvasScale?: number, width?: number, height?: number) => void;
 
@@ -27,6 +30,8 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
     #error: P;
     #errorMsg: string = "";
     #drawFnc: ViewerItemCanvasDrawFunction;
+    #debouncedDrawFnc: (force?: boolean) => this | Promise<this>;
+    #initialMount = false;
     #ready: boolean = false;
     #readyCalled: boolean = false;
     #hasError: boolean = false;
@@ -35,8 +40,8 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
     #scale: number;
     #realScale: number;
     #canvasScale: number;
-    #mountedWidth: number;
-    #mountedHeight: number;
+    #mountedCanvasWidth: number;
+    #mountedCanvasHeight: number;
     #canvasCleared = false;
     #viewer?: Viewer;
     #fncOnClick = this.#onClick.bind(this);
@@ -45,21 +50,30 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
      * Create a viewer item component that contains a canvas element.
      * @param itemID An ID that identifies the item.
      * @param drawFnc The function that is called to draw the content of the canvas (see
-     * {@link ViewerItemCanvasDrawFunction}).\
-     * __Note:__ It's strongly recommended to use a debounced function here if the drawing operation
-     * is expensive to avoid performance issues when the viewer is resized or zoomed rapidly!
+     * {@link ViewerItemCanvasDrawFunction}).
      * @param canvasScale The scale factor that is applied to the canvas element. This is a
      * multiplier for the width and height of the canvas element at a scale factor of 1 (i.e.,
      * without zooming). The default value is `1`; higher values may improve the rendering quality,
      * especially for PDF pages or drawings containing text for which the recommended value is `2`.
      * Values lower than `1` may be used to improve performance and reduce memory usage, but the
-     * content may appear blurry. Values lower than `0` will be auto-corrected to `1`.
+     * content may appear blurry. Values lower than or equal to `0` will be auto-corrected to `1`.
+     * @param debounceDelay Optional debounce delay in milliseconds for the drawing function. This
+     * value is automatically clamped to the range `0` to `500`. If set to `0`, no debouncing is
+     * applied. If the value is greater than `0`, the drawing function will be debounced by the
+     * given delay. This avoids flickering and excessive CPU usage when the viewer is resized or
+     * zoomed in quick succession. Default: `100`.\
+     * __Note:__ no debouncing is applied if the viewer steps from one item to another item or if
+     * the item is displayed for the first time!
      */
-    constructor(itemID: string, drawFnc: ViewerItemCanvasDrawFunction, canvasScale: number = 1) {
+    constructor(itemID: string, drawFnc: ViewerItemCanvasDrawFunction, canvasScale: number = 1, debounceDelay: number = 100) {
         super();
         this.#itemID = itemID;
         this.#drawFnc = drawFnc;
-        this.#canvasScale = canvasScale < 0 ? 1 : canvasScale;
+        const delay = clamp(debounceDelay, 0, 500);
+        delay === 0
+            ? this.#debouncedDrawFnc = this.redraw.bind(this)
+            : this.#debouncedDrawFnc = getDebouncedFnc(this.redraw.bind(this), delay)[0];
+        this.#canvasScale = canvasScale <= 0 ? 1 : canvasScale;
         this.initialize();
     }
 
@@ -95,8 +109,8 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
         this.#naturalHeight = Math.max(naturalHeight, 1);
         this.#canvas.DOM.width = this.#naturalWidth * this.#canvasScale;
         this.#canvas.DOM.height = this.#naturalHeight * this.#canvasScale;
-        this.#mountedWidth = this.#canvas.DOM.width;
-        this.#mountedHeight = this.#canvas.DOM.height;
+        this.#mountedCanvasWidth = this.#canvas.DOM.width;
+        this.#mountedCanvasHeight = this.#canvas.DOM.height;
         this.#hasError = !success;
         errorMsg !== undefined && this.errorMsg(errorMsg);
         // Redrawing isn't necessary since after loading, this viewer item will be scaled
@@ -136,10 +150,8 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
             return this;
         }
         if (scale > 0) {
-            this.#canvas.DOM.width = this.#naturalWidth * scale * this.#canvasScale;
-            this.#canvas.DOM.height = this.#naturalHeight * scale * this.#canvasScale;
-            this.#mountedWidth = this.#canvas.DOM.width;
-            this.#mountedHeight = this.#canvas.DOM.height;
+            this.#mountedCanvasWidth = this.#naturalWidth * scale * this.#canvasScale;
+            this.#mountedCanvasHeight = this.#naturalHeight * scale * this.#canvasScale;
             const width = (this.#naturalWidth * scale) + "px";
             const height = (this.#naturalHeight * scale) + "px";
             this.style({ overflow: undefined, width: width, height: height }); // eslint-disable-line jsdoc/require-jsdoc
@@ -149,7 +161,12 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
             this.#scaleToFit(scale);
         }
         this.#scale = scale;
-        this.redraw();
+        if (this.#initialMount) {
+            this.#initialMount = false;
+            this.redraw();
+        } else {
+            void this.#debouncedDrawFnc();
+        }
         // }
         return this;
     }
@@ -210,7 +227,7 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
      */
     public redraw(force: boolean = false): this {
         if (this.#canvas.DOM.isConnected || force) {
-            this.#drawFnc(this.#canvas.DOM, this.#realScale, this.#canvasScale, this.#canvas.DOM.width, this.#canvas.DOM.height);
+            this.#drawFnc(this.#canvas.DOM, this.#realScale, this.#canvasScale, this.#naturalWidth, this.#naturalHeight);
             this.#canvasCleared = false;
         }
         return this;
@@ -283,11 +300,9 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
                 }
                 break;
             }
-        };
-        this.#canvas.DOM.width = width * this.#canvasScale;
-        this.#canvas.DOM.height = height * this.#canvasScale;
-        this.#mountedWidth = this.#canvas.DOM.width;
-        this.#mountedHeight = this.#canvas.DOM.height;
+        }
+        this.#mountedCanvasWidth = width * this.#canvasScale;
+        this.#mountedCanvasHeight = height * this.#canvasScale;
         this.#realScale = width / this.#naturalWidth;
         // `overflow: hidden` resolves an issue where (vertical) scrollbars continue to appear even
         // though they should not. The cause of this issue is currently unknown.
@@ -315,9 +330,11 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
     override onBeforeMount(parent: IElementWithChildrenComponent<HTMLElementWithChildren>): void {
         super.onBeforeMount(parent);
         if (this.#canvasCleared) {
-            this.#canvas.DOM.width = this.#mountedWidth;
-            this.#canvas.DOM.height = this.#mountedHeight;
+            this.#canvas.DOM.width = this.#mountedCanvasWidth;
+            this.#canvas.DOM.height = this.#mountedCanvasHeight;
             this.redraw(true);
+        } else {
+            this.#initialMount = true;
         }
     }
 
@@ -350,15 +367,25 @@ export class ViewerItemCanvasFactory<T> extends ComponentFactory<ViewerItemCanva
     /**
      * Create, set up and return ViewerItemCanvas component.
      * @param itemID An ID that identifies the item.
-     * @param drawFnc The function that is called to draw the content of the canvas. The parameters
-     * `width` and `height` are the current dimensions of the canvas, `scale` is equal to the
-     * current real scale factor (see {@link ViewerItemCanvas.RealScale}). The function is called
-     * whenever the canvas needs to be redrawn, e.g when the canvas is loaded, zoomed, or when the
-     * viewer is resized.
+     * @param drawFnc The function that is called to draw the content of the canvas (see
+     * {@link ViewerItemCanvasDrawFunction}).
+     * @param canvasScale The scale factor that is applied to the canvas element. This is a
+     * multiplier for the width and height of the canvas element at a scale factor of 1 (i.e.,
+     * without zooming). The default value is `1`; higher values may improve the rendering quality,
+     * especially for PDF pages or drawings containing text for which the recommended value is `2`.
+     * Values lower than `1` may be used to improve performance and reduce memory usage, but the
+     * content may appear blurry. Values lower than or equal to `0` will be auto-corrected to `1`.
+     * @param debounceDelay Optional debounce delay in milliseconds for the drawing function. This
+     * value is automatically clamped to the range `0` to `500`. If set to `0`, no debouncing is
+     * applied. If the value is greater than `0`, the drawing function will be debounced by the
+     * given delay. This avoids flickering and excessive CPU usage when the viewer is resized or
+     * zoomed in quick succession. Default: `100`.\
+     * __Note:__ no debouncing is applied if the viewer steps from one item to another item or if
+     * the item is displayed for the first time!
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns ViewerItemCanvas component.
      */
-    public viewerItemCanvas(itemID: string, drawFnc: ViewerItemCanvasDrawFunction, data?: T): ViewerItemCanvas {
-        return this.setupComponent(new ViewerItemCanvas(itemID, drawFnc), data);
+    public viewerItemCanvas(itemID: string, drawFnc: ViewerItemCanvasDrawFunction, canvasScale: number = 1, debounceDelay = 100, data?: T): ViewerItemCanvas {
+        return this.setupComponent(new ViewerItemCanvas(itemID, drawFnc, canvasScale, debounceDelay), data);
     }
 }
