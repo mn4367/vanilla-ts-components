@@ -89,6 +89,9 @@ class AppClass {
         this.#busyOverlay.idle();
         return this;
     }
+
+    /// Additional application-wide methods and properties to be added here.
+    // ...
 }
 
 export const App = new AppClass();
