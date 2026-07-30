@@ -304,9 +304,9 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
         this.#mountedCanvasWidth = width * this.#canvasScale;
         this.#mountedCanvasHeight = height * this.#canvasScale;
         this.#realScale = width / this.#naturalWidth;
-        // `overflow: hidden` resolves an issue where (vertical) scrollbars continue to appear even
+        // `overflowY: hidden` resolves an issue where (vertical) scrollbars continue to appear even
         // though they should not. The cause of this issue is currently unknown.
-        this.style({ overflow: "hidden", width: `${width}px`, height: `${height}px` }); // eslint-disable-line jsdoc/require-jsdoc
+        this.style({ overflowY: "hidden", width: `${width}px`, height: `${height}px` }); // eslint-disable-line jsdoc/require-jsdoc
         this.#canvas.style({ width: `${width}px`, height: `${height}px` }); // eslint-disable-line jsdoc/require-jsdoc
     }
 
