@@ -166,10 +166,10 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
     public scale(scale: number): this {
         // if (scale !== this.#scale) {
         if ((scale === 0) || (this.#naturalWidth === 0) || (this.#naturalHeight === 0)) {
-            this.style("overflow", null)
+            this.style("overflowY", null)
                 .style("width", null)
                 .style("height", null);
-            this.#canvas.style("overflow", null)
+            this.#canvas.style("overflowY", null)
                 .style("width", null)
                 .style("height", null);
             this.#scale = 0;
@@ -181,10 +181,10 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
             this.#mountedCanvasHeight = this.#naturalHeight * scale * this.#canvasScale;
             const width = (this.#naturalWidth * scale) + "px";
             const height = (this.#naturalHeight * scale) + "px";
-            this.style("overflow", null)
+            this.style("overflowY", null)
                 .style("width", width)
                 .style("height", height);
-            this.#canvas.style("overflow", null)
+            this.#canvas.style("overflowY", null)
                 .style("width", width)
                 .style("height", height);
             this.#realScale = scale;
@@ -335,9 +335,9 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
         this.#mountedCanvasWidth = width * this.#canvasScale;
         this.#mountedCanvasHeight = height * this.#canvasScale;
         this.#realScale = width / this.#naturalWidth;
-        // `overflow: hidden` resolves an issue where (vertical) scrollbars continue to appear even
+        // `overflowY: hidden` resolves an issue where (vertical) scrollbars continue to appear even
         // though they should not. The cause of this issue is currently unknown.
-        this.style("overflow", "hidden")
+        this.style("overflowY", "hidden")
             .style("width", `${width}px`)
             .style("height", `${height}px`);
         this.#canvas.style("width", `${width}px`)
