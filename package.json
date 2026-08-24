@@ -103,7 +103,7 @@
     "compile:showcase": "tsc -p ./showcase/src/tsconfig.showcase.json && npm run pack:pdf-js:showcase",
     "compile:playground": "tsc -p ./playground/src/tsconfig.playground.json && npm run pack:pdf-js:playground",
     "pack:example": "rollup --silent -c ./example/build/rollup.config.example.mjs",
-    "pack:example:css": "node ./example/build/concat-css-files.js ./example/style.css",
+    "pack:example:css": "node ./example/build/concat-css-files.js ./example/style/style.css",
     "pack:example:compress": "rollup --silent -c ./example/build/rollup.config.example.mjs --environment COMPRESS",
     "pack:showcase": "rollup --silent -c ./showcase/build/rollup.config.showcase.mjs",
     "pack:showcase:css": "node ./showcase/build/concat-css-files.js ./showcase/style/style.css",

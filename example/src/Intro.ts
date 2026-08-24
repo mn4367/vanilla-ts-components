@@ -11,8 +11,8 @@ export class Intro extends Div {
                 new P(
                     new Strong("Hello  world!"),
                     new Br(), new Br(),
-                    "This application is an example usage of some ",
-                    new Code("Vanilla.ts DOM"),
+                    "This application is a primitive yet comprehensive example for using some of the ",
+                    new Code("Vanilla.ts"),
                     " components.",
                     new Br(), new Br(),
                     new DateTime(),
