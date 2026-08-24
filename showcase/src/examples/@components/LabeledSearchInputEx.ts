@@ -16,10 +16,13 @@ const example = `
 
 \`\`\`
 import { LabeledSearchInput } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 
-const input = new LabeledSearchInput("Search")
+const example = new LabeledSearchInput("Search")
     .addClass("labeled-search-input")
     .searchInput(c => c.placeholder("Enter search term..."));
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

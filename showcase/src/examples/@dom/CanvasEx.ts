@@ -13,15 +13,16 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Canvas } from "@vanilla-ts/dom";
 
-const canvas = new Canvas("Three overlapping colored circles")
+const example = new Canvas("Three overlapping colored circles")
     .width(200)
     .height(200)
     .style("border", "1px solid black");
 
 // Get a drawing context from the underlying native canvas element (\`DOM\`).
-const ctx = canvas.DOM.getContext("2d")!;
+const ctx = example.DOM.getContext("2d")!;
 
 const drawCircle = (x: number, y: number, radius: number, color: string) => {
     ctx.fillStyle = color;
@@ -33,6 +34,8 @@ const drawCircle = (x: number, y: number, radius: number, color: string) => {
 drawCircle(50, 50, 40, "red");
 drawCircle(100, 100, 40, "green");
 drawCircle(150, 150, 40, "blue");
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

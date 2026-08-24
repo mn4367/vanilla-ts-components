@@ -17,6 +17,7 @@ const example = `
 
 \`\`\`
 import { LabeledSelect, LabelPosition } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 import { Em, ISelectValues, P } from "@vanilla-ts/dom";
 
 const selectValues: ISelectValues[] = [
@@ -27,13 +28,15 @@ const selectValues: ISelectValues[] = [
     { Text: "Eggplant", Value: "eggplant" }
 ];
 
-const select = new LabeledSelect("Fruits", selectValues)
+const example = new LabeledSelect("Fruits", selectValues)
     .value("cherry")
     .labelPosition(LabelPosition.TOP)
-    .on("change", () => log.phrase("Selected fruit (value): ", new Em(select.Value)));
+    .on("change", () => log.phrase("Selected fruit (value): ", new Em(example.Value)));
 
 const log = new P("Select a fruit from the dropdown above.")
     .style("marginBlockStart", "1rem");
+
+new VTS_App(document.body).append(example, log);
 \`\`\`
 `;
 

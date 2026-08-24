@@ -13,9 +13,10 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Div, H1, H2, H3, H4, H5, H6 } from "@vanilla-ts/dom";
 
-const div = new Div().append(
+const example = new Div().append(
     new H1("H1 Heading"),
     new H2("H2 Heading"),
     new H3("H3 Heading"),
@@ -23,6 +24,8 @@ const div = new Div().append(
     new H5("H5 Heading"),
     new H6("H6 Heading")
 );
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

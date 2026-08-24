@@ -17,8 +17,9 @@ const example = `
 
 \`\`\`
 import { RadioButtonGroup } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 
-const rbg = new RadioButtonGroup(
+const example = new RadioButtonGroup(
     [
         { Label: "Regular updates", Value: "regular" },
         { Label: "Beta versions", Value: "beta" },
@@ -29,6 +30,8 @@ const rbg = new RadioButtonGroup(
     .addClass("radio-button-group")
     .value("beta");
     //.toggle(true);
+
+new VTS_App(document.body).append(example);
 \`\`\`
 
 Grouping is done by attaching the same

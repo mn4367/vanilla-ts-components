@@ -14,15 +14,18 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { P, Text } from "@vanilla-ts/dom";
 
 let c = 0;
 
-const t = new Text("" + c);
+const t = new Text(c.toString());
 
-const p = new P("Counter called ", t, " times.");
+const example = new P("Counter called ", t, " times.");
 
-setInterval(() => t.text("" + ++c), 1000);
+setInterval(() => t.text((++c).toString()), 1000);
+
+new VTS_App(document.body).append(example);
 \`\`\`
 
 If you inspect the paragraph inside the example above with the browsers development tools, you will
@@ -44,7 +47,7 @@ export class TextEx extends BaseExample {
         this.append(
             this.markdown(intro),
             this.example([
-                new P("Counter called ", this.#t = new Text("" + this.#c), " times."),
+                new P("Counter called ", this.#t = new Text(this.#c.toString()), " times."),
             ]),
             this.markdown("### Example usage"),
             new Div().addClass("example-properties")
@@ -52,7 +55,7 @@ export class TextEx extends BaseExample {
                     $.labeledCheckbox("Counter active", "lcb-text-ex")
                         .on("checked", ((ev) => {
                             ev.$.Checked
-                                ? this.#interval = setInterval(() => this.#t.text("" + ++this.#c), 1000)
+                                ? this.#interval = setInterval(() => this.#t.text((++this.#c).toString()), 1000)
                                 : clearInterval(this.#interval);
                         })
                         ),

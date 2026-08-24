@@ -17,15 +17,16 @@ const example = `
 ### Code example
 
 \`\`\`
+import { LabeledCheckbox, LabeledContainer, RadioButtonGroup } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 import { Hr, P } from "@vanilla-ts/dom";
-import { LabeledContainer, RadioButtonGroup } from "@vanilla-ts/components";
 
 let rbg1: RadioButtonGroup;
 let lcb1: LabeledCheckbox;
 let lcb2: LabeledCheckbox;
 let lcb3: LabeledCheckbox;
 
-const container = new LabeledContainer(
+const example = new LabeledContainer(
     "Software update settings",
     undefined,
     LabelAlignment.CENTER
@@ -52,6 +53,8 @@ const container = new LabeledContainer(
             .checked(true)
             .disabled(true),
     );
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

@@ -16,10 +16,13 @@ const example = `
 
 \`\`\`
 import { LabeledPasswordInput } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 
-const input = new LabeledPasswordInput("Password")
+const example = new LabeledPasswordInput("Password")
     .addClass("labeled-password-input")
     .passwordInput(c => c.placeholder("Enter password"));
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

@@ -14,6 +14,7 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Em, ISelectValues, P, Select } from "@vanilla-ts/dom";
 
 const selectValues: ISelectValues[] = [
@@ -24,12 +25,14 @@ const selectValues: ISelectValues[] = [
     { Text: "Eggplant", Value: "eggplant" }
 ];
 
-const select = new Select(selectValues)
+const example = new Select(selectValues)
     .value("cherry")
-    .on("change", () => log.phrase("Selected fruit (value): ", new Em(select.Value)));
+    .on("change", () => log.phrase("Selected fruit (value): ", new Em(example.Value)));
 
 const log = new P("Select a fruit from the dropdown above.")
     .style("marginBlockStart", "1rem");
+
+new VTS_App(document.body).append(example, log);
 \`\`\`
 `;
 

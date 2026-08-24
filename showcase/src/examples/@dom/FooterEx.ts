@@ -14,7 +14,8 @@ const example = `
 ### Code example
 
 \`\`\`
-import { Div, Footer, Header, Main } from "@vanilla-ts/dom";
+import { VTS_App } from "@vanilla-ts/core";
+import { Footer, Header, Main } from "@vanilla-ts/dom";
 
 const style = {
     padding: "0.5rem",
@@ -26,11 +27,7 @@ const h = new Header("Header content").style(style);
 const m = new Main("Main content").style("padding", "1rem 0.5rem");
 const f = new Footer("Footer content").style(style);
 
-new Div().id("app").append(
-    h,
-    m,
-    f;
-)
+new VTS_App(document.body).append(h, m, f);
 \`\`\`
 `;
 
@@ -53,11 +50,7 @@ export class FooterEx extends BaseExample {
         this.append(
             this.markdown(intro),
             this.example([
-                new Div().id(cid()).append(
-                    h,
-                    m,
-                    f
-                )
+                new Div(h, m, f).id(cid())
             ], [f]),
             this.markdown(example),
         );

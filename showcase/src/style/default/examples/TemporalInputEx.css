@@ -1,0 +1,13 @@
+.example {
+    .example-area {
+        .canvas {
+            gap: 0.5rem;
+            > div {
+                > .temporal-input-type {
+                    display: inline-block;
+                    width: 18rem;
+                }
+            }
+        }
+    }
+}

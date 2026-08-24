@@ -16,8 +16,9 @@ const example = `
 
 \`\`\`
 import { LabeledNumberInput } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 
-const input = new LabeledNumberInput(
+const example = new LabeledNumberInput(
     "The answer to all questions?",
     undefined,      // id (auto-generated if not provided)
     "22",           // value (initial value)
@@ -29,8 +30,10 @@ const input = new LabeledNumberInput(
     .addClass("labeled-number-input")
     .numberInput(c => c.DOM.setCustomValidity("not_42")) // \`c\` is the inner \`NumberInput\`
     .on("input", () => {
-        input.NumberInput.DOM.setCustomValidity(input.Value === "42" ? "" : "not_42");
+        example.NumberInput.DOM.setCustomValidity(example.Value === "42" ? "" : "not_42");
     });
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

@@ -14,13 +14,16 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { NumberInput } from "@vanilla-ts/dom";
 
-const input = new NumberInput()
+const example = new NumberInput()
     .value("22")
     .min("2")
     .max("42")
     .step("2");
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

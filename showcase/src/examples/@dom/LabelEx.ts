@@ -14,6 +14,7 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Div, Label, TextInput } from "@vanilla-ts/dom";
 
 const style: CSSStyleDeclarations = {
@@ -21,13 +22,15 @@ const style: CSSStyleDeclarations = {
     flexDirection: "column",
     gap: "0.25rem"
 };
-const labeledTextInput = new Div()
+const example = new Div()
     .style(style)
     .append(
         new Label("ti", "Username"),
         new TextInput("ti", undefined, "text-input")
             .placeholder("Enter username here")
     );
+
+new VTS_App(document.body).append(example);
 \`\`\`
 
 *Note:* \`@vanilla-ts/components\` already provides many specialized labeled components like

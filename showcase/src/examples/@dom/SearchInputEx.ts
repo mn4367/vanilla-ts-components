@@ -14,9 +14,12 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { SearchInput } from "@vanilla-ts/dom";
 
-const input = new SearchInput().placeholder("Enter search term...");
+const example = new SearchInput().placeholder("Enter search term...");
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

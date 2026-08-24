@@ -24,8 +24,9 @@ const example = `
 ### Basic usage
 
 \`\`\`
-import { Button } from "@vanilla-ts/dom";
 import { BusyOverlay } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+import { Button } from "@vanilla-ts/dom";
 
 let timeout: ReturnType<typeof globalThis.setTimeout> | undefined;
 
@@ -42,17 +43,19 @@ const showOverlay = async (allowEscape: boolean, duration: number = 3000, delay?
     }, duration);
 };
 
-new Button("Show for 3 seconds")
+const btn1 = new Button("Show for 3 seconds")
     .addClass("regular")
     .on("click", async () => await showOverlay(false));
 
-new Button("Show for max. 3 seconds (cancelable with 'Esc')")
+const btn2 = new Button("Show for max. 3 seconds (cancelable with 'Esc')")
     .addClass("regular")
     .on("click", async () => await showOverlay(true));
 
-new Button("Show for 3 seconds after a delay of 500 ms")
+const btn3 = new Button("Show for 3 seconds after a delay of 500 ms")
     .addClass("regular")
     .on("click", async () => await showOverlay(false, 3500, 500));
+
+new VTS_App(document.body).append(btn1, btn2, btn3);
 \`\`\`
 `;
 

@@ -42,7 +42,7 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        line-height: 0;
+                        /* line-height: 0; */
                     }
                     &:hover {
                         filter: brightness(0.9);

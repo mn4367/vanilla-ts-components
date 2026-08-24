@@ -13,9 +13,10 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { A, Address, Br, Div, P } from "@vanilla-ts/dom";
 
-const div = new Div()
+const example = new Div()
     .append(
         new P("Contact the author of this page:"),
         new Address().append(
@@ -24,6 +25,8 @@ const div = new Div()
             new A("tel:+14155550132", "+1 (415) 555‑0132")
         )
     );
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

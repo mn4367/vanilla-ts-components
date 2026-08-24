@@ -14,10 +14,12 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { RangeInput } from "@vanilla-ts/dom";
 
-new RangeInput();
+const example = new RangeInput();
 
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

@@ -16,11 +16,14 @@ const exampleCheckbox = `
 ### Code example (checkbox)
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Checkbox } from "@vanilla-ts/dom";
 
 const cb1 = new Checkbox().checked(true);
 const cb2 = new Checkbox().checked(false);
 const cb3 = new Checkbox().indeterminate(true);
+
+new VTS_App(document.body).append(cb1, cb2, cb3);
 \`\`\`
 
 For easier handling, the checkbox component emits its own event \`CheckedEvent\`; see the
@@ -38,11 +41,14 @@ const exampleSwitch = `
 ### Code example (switch)
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Checkbox } from "@vanilla-ts/dom";
 
 const cb1 = new Checkbox().checked(true).addClass("switch");
 const cb2 = new Checkbox().checked(false).addClass("switch");
 const cb3 = new Checkbox().indeterminate(true).addClass("switch");
+
+new VTS_App(document.body).append(cb1, cb2, cb3);
 \`\`\`
 `;
 
@@ -52,6 +58,7 @@ const exampleComponentFactory = `
 Using a component factory makes it easier to create checkbox and switch components.
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { CheckboxFactory } from "@vanilla-ts/dom";
 
 const cbf = new CheckboxFactory();
@@ -60,6 +67,8 @@ const cbf = new CheckboxFactory();
 const cb = cbf.checkbox();
 // Switch (automatically adds the \`switch\` class)
 const sw = cbf.switch();
+
+new VTS_App(document.body).append(cb, sw);
 \`\`\`
 
 For an advanced usage of component factories see §@core/Component factories§.

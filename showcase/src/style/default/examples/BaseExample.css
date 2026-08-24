@@ -8,26 +8,26 @@
             margin-inline: auto;
             max-width: 60rem;
             min-width: 30rem;
-            h2 {
-                margin-block-start: 0;
-            }
-            h3 {
-                margin-block: var(--base-size) var(--base-size-half);
-            }
-            p {
-                margin: 0;
-                line-height: 1.4;
-            }
-            li {
-                line-height: 1.4;
-            }
-            p + p {
-                margin-block-start: var(--base-size-half);
-            }
-            hr {
-                margin-block: 2rem;
-            }
             > .md {
+                h2 {
+                    margin-block-start: 0;
+                }
+                h3 {
+                    margin-block: var(--base-size) var(--base-size-half);
+                }
+                p {
+                    margin: 0;
+                    line-height: 1.4;
+                }
+                li {
+                    line-height: 1.4;
+                }
+                p + p {
+                    margin-block-start: var(--base-size-half);
+                }
+                hr {
+                    margin-block: 2rem;
+                }
                 pre {
                     line-height: 1.5;
                     padding: var(--base-size-half);

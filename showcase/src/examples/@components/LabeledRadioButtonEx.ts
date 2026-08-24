@@ -19,12 +19,15 @@ const example = `
 
 \`\`\`
 import { LabeledRadioButton } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 
-const lrb = new LabeledRadioButton("Beta versions")
+const example = new LabeledRadioButton("Beta versions")
     .addClass("labeled-radio-button")
     .checked(true);
     //.checked(false);
     //.toggle(true);
+
+new VTS_App(document.body).append(example);
 \`\`\`
 
 For easier handling, the labeled radio button component emits its own event \`CheckedEvent\`; see

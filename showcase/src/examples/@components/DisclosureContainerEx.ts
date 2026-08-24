@@ -3,7 +3,6 @@ import { DiscloseEvent, DisclosureContainer, DisclosureContainerAppearance } fro
 import { $ } from "../../App.js";
 import { BaseExample } from "../BaseExample.js";
 
-
 const intro = `
 A container component whose content can be disclosed/undisclosed.
 
@@ -36,9 +35,10 @@ const example = `
 
 \`\`\`
 import { DisclosureContainer } from "@vanilla-ts/components";
-import { Code, P } from "@vanilla-ts/dom";
+import { VTS_App } from "@vanilla-ts/core";
+import { Code, Div, P } from "@vanilla-ts/dom";
 
-const dc = new DisclosureContainer(
+const example = new DisclosureContainer(
     ["Some ", new Code("Lorem ipsum"), " text."],
     new Div().style({ "padding": "0.5rem" }).append(
         new P("Lorem ipsum ut wisi enim ad minim veniam, quis ..."),
@@ -53,16 +53,18 @@ const dc = new DisclosureContainer(
         "borderRadius": "6px",
         "backgroundColor": "hsl(0, 0%, 98%)",
     });
+
+new VTS_App(document.body).append(example);
 \`\`\`
 
 \`\`\`
 // Enable/disable custom design
 if (someCondition) {
-    dc.disclosureButton(c => c.addClass("custom-design"))
+    example.disclosureButton(c => c.addClass("custom-design"))
         .disclosedButtonOptions({ Title: "Collapse" })
         .undisclosedButtonOptions({ Title: "Expand" });
 } else {
-    dc.disclosureButton(c => c.removeClass("custom-design"))
+    example.disclosureButton(c => c.removeClass("custom-design"))
         .disclosedButtonOptions({ Title: null })
         .undisclosedButtonOptions({ Title: null });
 }

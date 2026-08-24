@@ -14,13 +14,16 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { A } from "@vanilla-ts/dom";
 
-const a = new A(
+const example = new A(
     "https://github.com/mn4367/vanilla-ts-components",
     "Go to vanilla-ts-components at GitHub."
 )
     .target("_blank");
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

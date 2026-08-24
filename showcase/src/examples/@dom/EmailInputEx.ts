@@ -14,9 +14,12 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { EmailInput } from "@vanilla-ts/dom";
 
-const input = new EmailInput().placeholder("sophie@example.com");
+const example = new EmailInput().placeholder("sophie@example.com");
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

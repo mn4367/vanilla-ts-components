@@ -16,12 +16,15 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { RadioButton } from "@vanilla-ts/dom";
 
-const rb = new RadioButton();
-// The follwing code line would allow toggling the checked state. Toggling can be
+const example = new RadioButton();
+
+new VTS_App(document.body).append(example);
+// The following code line would allow toggling the checked state. Toggling can be
 // done by clicking or by pressing the space or enter key on a focused radio button.
-// rb.toggle(true);
+// example.toggle(true);
 \`\`\`
 
 For easier handling, the radio button component emits its own event \`CheckedEvent\`; see the

@@ -16,10 +16,13 @@ const example = `
 
 \`\`\`
 import { LabeledEmailInput } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 
-const input = new LabeledEmailInput("Business contact")
+const example = new LabeledEmailInput("Business contact")
     .addClass("labeled-email-input")
     .emailInput(c => c.placeholder("sophie@example.com"));
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

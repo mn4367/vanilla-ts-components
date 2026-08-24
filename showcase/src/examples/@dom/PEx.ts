@@ -14,6 +14,7 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { B, Em, I, P, Strong } from "@vanilla-ts/dom";
 
 // Create some phrasing content for the paragraph
@@ -22,7 +23,9 @@ const e = new Em(" dolor");
 const s = new Strong(" sit");
 const i = new I(" amet");
 
-const p = new P("Lorem ", b, e, s, i, ".");
+const example = new P("Lorem ", b, e, s, i, ".");
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

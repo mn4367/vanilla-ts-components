@@ -18,12 +18,15 @@ const exampleLabeledCheckbox = `
 
 \`\`\`
 import { LabeledCheckbox } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 
-const lcb = new LabeledCheckbox("Use classic design")
+const example = new LabeledCheckbox("Use classic design")
     .addClass("labeled-checkbox")
     .checked(true);
     //.checked(false);
     //.indeterminate(true);
+
+new VTS_App(document.body).append(example);
 \`\`\`
 
 For easier handling, the labeled checkbox component emits its own event \`CheckedEvent\`; see the

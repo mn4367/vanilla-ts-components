@@ -13,10 +13,12 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { OptGroup } from "@vanilla-ts/dom";
 
-new OptGroup();
+const example = new OptGroup();
 
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

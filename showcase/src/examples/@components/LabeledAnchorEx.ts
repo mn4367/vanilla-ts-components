@@ -16,6 +16,7 @@ const example = `
 
 \`\`\`
 import { LabeledAnchor } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 
 const anchor1 = new LabeledAnchor(
     "https://github.com/mn4367/vanilla-ts-dom",
@@ -32,6 +33,8 @@ const anchor2 = new LabeledAnchor(
 )
     .addClass("labeled-anchor")
     .target("_blank");
+
+new VTS_App(document.body).append(anchor1, anchor2);
 \`\`\`
 `;
 

@@ -13,11 +13,14 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Code, P } from "@vanilla-ts/dom";
 
 const c = new Code("dolor").style("background", "lightgray");
 
-const p = new P("Lorem ipsum ", c, " sit amet.");
+const example = new P("Lorem ipsum ", c, " sit amet.");
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

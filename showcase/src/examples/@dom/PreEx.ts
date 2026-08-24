@@ -13,6 +13,7 @@ const example = `
 ### Code example
 
 \`\`\`text
+import { VTS_App } from "@vanilla-ts/core";
 import { Code, Pre } from "@vanilla-ts/dom";
 
 const cow = new Code(\`
@@ -23,7 +24,9 @@ const cow = new Code(\`
     ||     ||
 \`);
 
-const pre = new Pre(cow);
+const example = new Pre(cow);
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

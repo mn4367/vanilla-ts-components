@@ -15,9 +15,12 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Comment } from "@vanilla-ts/dom";
 
-const cmt = new Comment("Lorem ipsum dolor sit amet.");
+const example = new Comment("Lorem ipsum dolor sit amet.");
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

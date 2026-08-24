@@ -16,9 +16,12 @@ const example = `
 
 \`\`\`
 import { LabeledParagraph } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 
-const paragraph = new LabeledParagraph("Sample text", "Lorem ipsum ...")
+const example = new LabeledParagraph("Sample text", "Lorem ipsum ...")
     .addClass("labeled-paragraph");
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

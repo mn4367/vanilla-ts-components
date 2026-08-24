@@ -13,15 +13,18 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Img, P } from "@vanilla-ts/dom";
 
-const img = new Img("./res/XPR15789.jpg")
+const example = new Img("./res/XPR15789.jpg")
     .width(3240)   // If possible, always set width and height
     .height(2160)  // explicitly to avoid layout shifts!
     .style({ "width": "25rem", "height": "auto" })
     .loading("lazy");
 const p = new P("Of course it has to be a picture of a cat!")
     .style("textAlign", "center");
+
+new VTS_App(document.body).append(example, p);
 \`\`\`
 `;
 

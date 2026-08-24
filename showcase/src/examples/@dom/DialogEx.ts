@@ -17,7 +17,7 @@ const example = `
 ### Code example
 
 \`\`\`
-import { IElementComponent } from "@vanilla-ts/core";
+import { IElementComponent, VTS_App } from "@vanilla-ts/core";
 import { Br, Code, Dialog, P } from "@vanilla-ts/dom";
 
 function getDialog(modal: boolean, caller?: IElementComponent<HTMLElement>): Dialog {
@@ -50,6 +50,8 @@ const btnModal = new Button("Open a modal dialog")
             ? modalDlg.close()
             : btnModal.disabled(true) && modalDlg.showModal()
     );
+
+new VTS_App(document.body).append(btnNonModal, btnModal);
 \`\`\`
 `;
 

@@ -14,6 +14,19 @@ button styles for different usage contexts (like dialogs, toolbars, icon buttons
 `;
 
 const example = `
+### Code example (unstyled default button)
+
+\`\`\`
+import { VTS_App } from "@vanilla-ts/core";
+import { Button } from "@vanilla-ts/dom";
+
+const example = new Button("Button");
+
+new VTS_App(document.body).append(example);
+\`\`\`
+`;
+
+const exampleStyled = `
 Nevertheless, it is expected that every CSS theme (like the default the theme of Vanilla-ts already
 does) provides styles for the following common button types:
 
@@ -27,11 +40,14 @@ does) provides styles for the following common button types:
 ### Code example (styled default buttons)
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Button } from "@vanilla-ts/dom";
 
-btnSkip = new Button("Skip").addClass("regular", "warn"),
-btnCancel = new Button("Cancel").addClass("regular"),
-btnOk = new Button("OK").addClass("regular", "default"),
+const btnSkip = new Button("Skip").addClass("regular", "warn");
+const btnCancel = new Button("Cancel").addClass("regular");
+const btnOk = new Button("OK").addClass("regular", "default");
+
+new VTS_App(document.body).append(btnSkip, btnCancel, btnOk);
 \`\`\`
 `;
 
@@ -43,6 +59,7 @@ Because always adding class names manually is not very convenient, it's recommen
 
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { ButtonFactory } from "@vanilla-ts/dom";
 
 const bf = new ButtonFactory();
@@ -50,10 +67,12 @@ const bf = new ButtonFactory();
 const btnSkip = bf.buttonWarn("Skip");
 const btnCancel = bf.buttonRegular("Cancel");
 const btnOk = bf.buttonDefault("OK");
+
+new VTS_App(document.body).append(btnSkip, btnCancel, btnOk);
 \`\`\`
 
-This way, the correct class names are applied automatically. For an advanced usage of component
-factories see §@core/ComponentFactories§.
+This way, the correct class names are applied automatically (the result is optically identical to
+the previous example). For an advanced usage of component factories see §@core/ComponentFactories§.
 `;
 
 
@@ -69,10 +88,11 @@ export class ButtonEx extends BaseExample {
         let btnOk: Button;
         this.append(
             this.markdown(intro),
+            this.markdown(example),
             this.example([
                 new Button("Button")
             ]),
-            this.markdown(example),
+            this.markdown(exampleStyled),
             this.example([
                 btnSkip = $.buttonWarn("Skip"),
                 new Text("\u2003"),

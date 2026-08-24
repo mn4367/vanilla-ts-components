@@ -16,44 +16,49 @@ const example = `
 ### Code example
 
 \`\`\`
-import { Em, Hr, LiOl, LiUl, Ol, P, Ul } from "@vanilla-ts/dom";
+import { VTS_App } from "@vanilla-ts/core";
+import { Div, Em, Hr, LiOl, LiUl, Ol, P, Ul } from "@vanilla-ts/dom";
 
-new P("Shopping List:");
-new Ul(
-    // List items can be strings ...
-    "Flour",
-    "Baking powder",
-    "Sugar",
-    "Salt",
-    "Oil",
-    // ... or @vanilla-ts/dom/LiUl components ...
-    new LiUl(
-        "From the cooling shelf:",
-        // ... or simply any other component, e.g. another @vanilla-ts/dom/Ul instance.
-        new Ul(
-            new LiUl("Eggs"),
-            new LiUl("Milk")
+const example = new Div(
+    new P("Shopping List:"),
+    new Ul(
+        // List items can be strings ...
+        "Flour",
+        "Baking powder",
+        "Sugar",
+        "Salt",
+        "Oil",
+        // ... or @vanilla-ts/dom/LiUl components ...
+        new LiUl(
+            "From the cooling shelf:",
+            // ... or simply any other component, e.g. another @vanilla-ts/dom/Ul instance.
+            new Ul(
+                new LiUl("Eggs"),
+                new LiUl("Milk")
+            )
         )
+    ),
+    new Hr(),
+    new P("How to make a muffin:"),
+    new Ol(
+        // For \`Ol\` list items the same applies.
+        new LiOl(0, "Relax (optional)."), // An individual number can be set for every list item
+        "Mix flour, baking powder, sugar, and salt.",
+        "In another bowl, mix eggs, milk, and oil.",
+        "Stir both mixtures together.",
+        "Fill muffin tray 3/4 full.",
+        new Em("Bake for 20 minutes.")
     )
 );
-new Hr();
-new P("How to make a muffin:");
-new Ol(
-    // For \`Ol\` list items the same applies.
-    new LiOl(0, "Relax (optional)."), // An individual number can be set for every list item
-    "Mix flour, baking powder, sugar, and salt.",
-    "In another bowl, mix eggs, milk, and oil.",
-    "Stir both mixtures together.",
-    "Fill muffin tray 3/4 full.",
-    new Em("Bake for 20 minutes.")
-);
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 
 
 export class LiOlUlEx extends BaseExample {
     constructor() {
-        super("LiOl & LiUl");
+        super("LiOl / LiUl");
     }
 
     /** @inheritdoc */
@@ -91,13 +96,3 @@ export class LiOlUlEx extends BaseExample {
         );
     }
 }
-
-
-new LiUl("Milk"),
-    new LiUl(
-        "Cheese",
-        new Ul(
-            new LiUl("Blue cheese"),
-            new LiUl("Feta")
-        )
-    );

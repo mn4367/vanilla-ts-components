@@ -13,9 +13,10 @@ const example = `
 ### Code example
 
 \`\`\`
+import { VTS_App } from "@vanilla-ts/core";
 import { Br, Button, Code, Div, P } from "@vanilla-ts/dom";
 
-new Div(new P("Example ", new Code("<div>").dir("ltr"), "."))
+const example = new Div(new P("Example ", new Code("<div>").dir("ltr"), "."))
     .style({
         padding: "1rem",
         borderRadius: "1rem",
@@ -28,6 +29,8 @@ new Div(new P("Example ", new Code("<div>").dir("ltr"), "."))
             .addClass("regular")
             .on("click", () => alert("Thank you!"))
     );
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 

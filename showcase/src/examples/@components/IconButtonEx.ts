@@ -31,8 +31,8 @@ const exampleIBF = `
 
 \`\`\`
 // Module \`IconButtonFactory.ts\`
-import { ComponentFactory } from "@vanilla-ts/core";
 import { IconButton, IconButtonOptions } from "@vanilla-ts/components";
+import { ComponentFactory } from "@vanilla-ts/core";
 
 class MyIconButtonFactory<T> extends ComponentFactory<IconButton> {
     public iconButton(options?: IconButtonOptions, data?: T): IconButton {
@@ -51,12 +51,14 @@ const exampleBackgroundImages = `
 ### Code example (using background images)
 
 \`\`\`
+import type { IconButton } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { IconButtonFactory as IBF } from "IconButtonFactory.js";
 
 let ibWifi: IconButton;
 
-new Div().append(
+const example = new Div().append(
     IBF.iconButton({
         // The \`-\` character here and in all occurences below results in an empty
         // span element. Since this example uses background images, there is no need
@@ -88,6 +90,8 @@ new Div().append(
             }, 500);
         })
 );
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 
@@ -146,12 +150,14 @@ strings for \`IconStart\` and \`IconEnd\` which don't start with a leading hyphe
 contain the given strings as text content which will be rendered with an icon font.
 
 \`\`\`
+import type { IconButton } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { IconButtonFactory as IBF } from "IconButtonFactory.js";
 
 let ibWifi: IconButton;
 
-new Div().append(
+const example = new Div().append(
     IBF.iconButton({
         // The text content here and in all occurences below must correspond to/trigger
         // the desired icon glyph. See the documentation of the used icon font for details.
@@ -182,6 +188,8 @@ new Div().append(
             }, 500);
         })
 );
+
+new VTS_App(document.body).append(example);
 \`\`\`
 `;
 
