@@ -1,7 +1,7 @@
-import { CheckedEvent, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { CheckedEvent, ComponentFactory, DefaultEventMap, NullableString, Orientation, Phrase, Phrases } from "@vanilla-ts/core";
 import { LabelAlignment, LabelPosition, LabeledComponentGroup } from "./LabeledComponents.js";
 import { LabeledRadioButton } from "./LabeledRadioButton.js";
-import { LabeledRadioButtons, RadioButtonGroup, RadioButtonGroupAlignment } from "./RadioButtonGroup.js";
+import { LabeledRadioButtons, RadioButtonGroup } from "./RadioButtonGroup.js";
 
 
 /** Custom 'checked' event for a radio button group. */
@@ -26,7 +26,7 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
      * @param name The `name` property for all radio buttons.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param alignment The alignment of the labeled radio buttons.
+     * @param orientation The orientation of the labeled radio buttons.
      */
     constructor(
         labelPhrase: Phrase | Phrases,
@@ -34,11 +34,11 @@ export class LabeledRadioButtonGroup<EventMap extends LabeledRadioButtonGroupEve
         name: string,
         lblPosition: LabelPosition = LabelPosition.TOP,
         lblAlignment: LabelAlignment = LabelAlignment.START,
-        alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL
+        orientation: Orientation = Orientation.VERTICAL
     ) {
         super(labelPhrase, lblPosition, lblAlignment);
         // !! Mandatory.
-        this.setContent(new RadioButtonGroup(radioButtons, name, alignment).addClass(RadioButtonGroup.DefaultCSSClassName));
+        this.setContent(new RadioButtonGroup(radioButtons, name, orientation).addClass(RadioButtonGroup.DefaultCSSClassName));
         // Reshape this event to the correct sender (this).
         this._component.on("checked", (ev) => {
             ev.stopImmediatePropagation();
@@ -175,7 +175,7 @@ export class LabeledRadioButtonGroupFactory<T> extends ComponentFactory<LabeledR
      * @param name The `name` property for all radio buttons.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
-     * @param alignment The alignment of the labeled radio buttons.
+     * @param orientation The orientation of the labeled radio buttons.
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledRadioButtonGroup component.
      */
@@ -185,9 +185,9 @@ export class LabeledRadioButtonGroupFactory<T> extends ComponentFactory<LabeledR
         name: string,
         lblPosition: LabelPosition = LabelPosition.TOP,
         lblAlignment: LabelAlignment = LabelAlignment.START,
-        alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL,
+        orientation: Orientation = Orientation.VERTICAL,
         data?: T
     ): LabeledRadioButtonGroup {
-        return this.setupComponent(new LabeledRadioButtonGroup(labelPhrase, radioButtons, name, lblPosition, lblAlignment, alignment), data);
+        return this.setupComponent(new LabeledRadioButtonGroup(labelPhrase, radioButtons, name, lblPosition, lblAlignment, orientation), data);
     }
 }

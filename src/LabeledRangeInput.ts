@@ -1,4 +1,4 @@
-import { cid, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { cid, ComponentFactory, DefaultEventMap, NullableString, Orientation, Phrase, Phrases } from "@vanilla-ts/core";
 import { RangeInput } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledInputComponent, LabelPosition } from "./LabeledComponents.js";
 
@@ -18,8 +18,7 @@ export class LabeledRangeInput<EventMap extends DefaultEventMap = DefaultEventMa
      * @param min The minimum value (attribute) of the range input.
      * @param max The maximum value (attribute) of the range input.
      * @param step The step value (attribute) of the range input.
-     * @param vertical `true` if the range input is to be displayed with a vertical orientation,
-     * otherwise `false`.
+     * @param orientation The orientation of the range input.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      * @param lblAction Controls the following behavior:
@@ -30,14 +29,14 @@ export class LabeledRangeInput<EventMap extends DefaultEventMap = DefaultEventMa
      * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
      *   has been set on the range input element).
      */
-    constructor(labelPhrase: Phrase | Phrases, id?: NullableString, value?: string, name?: string, min: string = "0", max: string = "100", step: string | "any" = "1", vertical: boolean = false, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) { // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
+    constructor(labelPhrase: Phrase | Phrases, id?: NullableString, value?: string, name?: string, min: string = "0", max: string = "100", step: string | "any" = "1", orientation: Orientation = Orientation.HORIZONTAL, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) { // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
         const _id = id === undefined
             ? cid()
             : id === null || id === ""
                 ? null
                 : id;
         super(
-            new RangeInput(_id, value, name, min, max, step, vertical),
+            new RangeInput(_id, value, name, min, max, step, orientation),
             labelPhrase,
             _id,
             lblPosition,
@@ -82,8 +81,7 @@ export class LabeledRangeInputFactory<T> extends ComponentFactory<LabeledRangeIn
      * @param min The minimum value (attribute) of the range input.
      * @param max The maximum value (attribute) of the range input.
      * @param step The step value (attribute) of the range input.
-     * @param vertical `true` if the range input is to be displayed with a vertical orientation,
-     * otherwise `false`.
+     * @param orientation The orientation of the range input.
      * @param lblPosition The position of the label.
      * @param lblAlignment The alignment of the label.
      * @param lblAction Controls the following behavior:
@@ -96,7 +94,7 @@ export class LabeledRangeInputFactory<T> extends ComponentFactory<LabeledRangeIn
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledRangeInput component.
      */
-    public labeledRangeInput(labelPhrase: Phrase | Phrases, id?: NullableString, value?: string, name?: string, min: string = "0", max: string = "100", step: string | "any" = "1", vertical: boolean = false, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledRangeInput { // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
-        return this.setupComponent(new LabeledRangeInput(labelPhrase, id, value, name, min, max, step, vertical, lblPosition, lblAlignment, lblAction), data);
+    public labeledRangeInput(labelPhrase: Phrase | Phrases, id?: NullableString, value?: string, name?: string, min: string = "0", max: string = "100", step: string | "any" = "1", orientation: Orientation = Orientation.HORIZONTAL, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledRangeInput { // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
+        return this.setupComponent(new LabeledRangeInput(labelPhrase, id, value, name, min, max, step, orientation, lblPosition, lblAlignment, lblAction), data);
     }
 }

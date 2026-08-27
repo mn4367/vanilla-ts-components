@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, AnyType, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, ElementComponentVoid, FlowContent, generateUUID, getProp } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, AnyType, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, ElementComponentVoid, FlowContent, generateUUID, getProp, Orientation } from "@vanilla-ts/core";
 import { Div, RangeInput, Span } from "@vanilla-ts/dom";
 import { IconButton, IconButtonOptions } from "./IconButton.js";
 import { PINCH_ZOOM_START, PINCH_ZOOM_STOP, PinchZoomEvent, PinchZoomGestureHandler } from "./PinchZoomGestureHandler.js";
@@ -788,7 +788,11 @@ export class Viewer<EventMap extends ViewerEventMap = ViewerEventMap> extends AE
             [Zoom.FIT, Zoom.FITWIDTH, Zoom.FITHEIGHT].includes(this.item.Zoom) && this.zoom(this.item.Zoom);
             this.itemContainer.scroll(this.item.ScrollPos.x, this.item.ScrollPos.y);
         }
-        this.zoomRange.vertical((this._options.ToolbarPosition === ToolbarPosition.START) || (this._options.ToolbarPosition === ToolbarPosition.END));
+        this.zoomRange.orientation(
+            (this._options.ToolbarPosition === ToolbarPosition.START) || (this._options.ToolbarPosition === ToolbarPosition.END)
+                ? Orientation.VERTICAL
+                : Orientation.HORIZONTAL
+        );
         return this;
     }
 

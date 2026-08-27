@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, DefaultEventMap, NullableString, Orientation, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponents.js";
 import { LabeledRadioButton } from "./LabeledRadioButton.js";
@@ -32,20 +32,12 @@ export interface RadioButtonGroupEventMap extends DefaultEventMap {
 }
 
 /**
- * Alignment of the radio buttons.
- */
-export enum RadioButtonGroupAlignment {
-    HORIZONTAL = 1,
-    VERTICAL
-}
-
-/**
  * A component that holds a group of labeled radio buttons inside a `<div>` container.
  */
 export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioButtonGroupEventMap> extends AElementComponentWithInternalUI<Div, EventMap> {
     protected _labeledRadioButtons: LabeledRadioButton[] = [];
     protected _name: string;
-    protected _alignment: RadioButtonGroupAlignment;
+    protected _orientation: Orientation;
     protected _labelPosition: LabelPosition = LabelPosition.END;
     protected _labelAlignment: LabelAlignment = LabelAlignment.START;
     protected _toggle: boolean;
@@ -54,8 +46,8 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * Create RadioButtonGroup component.
      * @param radioButtons An array of radio button data used to create the buttons.
      * @param name The `name` property for all radio buttons.
-     * @param alignment The alignment of the labeled radio buttons.\
-     * Default: {@link RadioButtonGroupAlignment.VERTICAL}.
+     * @param orientation The orientation of the labeled radio buttons.\
+     * Default: {@link Orientation.VERTICAL}.
      * @param labelPosition The position of the label of the radio buttons.\
      * Default: {@link LabelPosition.END}.
      * @param labelAlignment The alignment of the label of the radio buttons.\
@@ -64,7 +56,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
     constructor(
         radioButtons: LabeledRadioButtons,
         name: string,
-        alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL,
+        orientation: Orientation = Orientation.VERTICAL,
         labelPosition: LabelPosition = LabelPosition.END,
         labelAlignment: LabelAlignment = LabelAlignment.START
     ) {
@@ -72,7 +64,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
         this._name = name;
         super
             .initialize()
-            .alignment(alignment)
+            .orientation(orientation)
             .labelPosition(labelPosition)
             .labelAlignment(labelAlignment)
             .radioButtons(radioButtons, name);
@@ -226,27 +218,27 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
     }
 
     /**
-     * Gets/sets the alignment of the contained labeled radio buttons.
+     * Gets/sets the orientation of the contained labeled radio buttons.
      */
-    public get Alignment(): RadioButtonGroupAlignment {
-        return this._alignment;
+    public get Orientation(): Orientation {
+        return this._orientation;
     }
     /** @inheritdoc */
-    public set Alignment(v: RadioButtonGroupAlignment) {
-        this.alignment(v);
+    public set Orientation(v: Orientation) {
+        this.orientation(v);
     }
 
     /**
-     * Sets the alignment of the contained labeled radio buttons.
-     * @param alignment The alignment of the labeled radio buttons.
+     * Sets the orientation of the contained labeled radio buttons.
+     * @param orientation The orientation of the labeled radio buttons.
      * @returns This instance.
      */
-    public alignment(alignment: RadioButtonGroupAlignment): this {
-        if (alignment !== this._alignment) {
-            this._alignment = alignment;
-            this._alignment === RadioButtonGroupAlignment.VERTICAL
-                ? this.removeClass("horizontal").addClass("vertical")
-                : this.removeClass("vertical").addClass("horizontal");
+    public orientation(orientation: Orientation): this {
+        if (orientation !== this._orientation) {
+            this._orientation = orientation;
+            this._orientation === Orientation.HORIZONTAL
+                ? this.removeClass("vertical").addClass("horizontal")
+                : this.removeClass("horizontal").addClass("vertical");
         }
         return this;
     }
@@ -330,8 +322,8 @@ export class RadioButtonGroupFactory<T> extends ComponentFactory<RadioButtonGrou
      * Create, set up and return RadioButtonGroup component.
      * @param radioButtons An array of radio button data used to create the buttons.
      * @param name The `name` property for all radio buttons.
-     * @param alignment The alignment of the labeled radio buttons.\
-     * Default: {@link RadioButtonGroupAlignment.VERTICAL}.
+     * @param orientation The orientation of the labeled radio buttons.\
+     * Default: {@link Orientation.VERTICAL}.
      * @param labelPosition The position of the label of the radio buttons.\
      * Default: {@link LabelPosition.END}.
      * @param labelAlignment The alignment of the label of the radio buttons.\
@@ -342,11 +334,11 @@ export class RadioButtonGroupFactory<T> extends ComponentFactory<RadioButtonGrou
     public radioButtonGroup(
         radioButtons: LabeledRadioButtons,
         name: string,
-        alignment: RadioButtonGroupAlignment = RadioButtonGroupAlignment.VERTICAL,
+        orientation: Orientation = Orientation.VERTICAL,
         labelPosition: LabelPosition = LabelPosition.END,
         labelAlignment: LabelAlignment = LabelAlignment.START,
         data?: T
     ): RadioButtonGroup {
-        return this.setupComponent(new RadioButtonGroup(radioButtons, name, alignment, labelPosition, labelAlignment), data);
+        return this.setupComponent(new RadioButtonGroup(radioButtons, name, orientation, labelPosition, labelAlignment), data);
     }
 }

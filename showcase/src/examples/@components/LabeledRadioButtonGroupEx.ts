@@ -1,7 +1,7 @@
+import { Orientation } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { LabeledRadioButtonGroup } from "../../../../src/LabeledRadioButtonGroup.js";
 import { LabeledSelect } from "../../../../src/LabeledSelect.js";
-import { RadioButtonGroupAlignment } from "../../../../src/RadioButtonGroup.js";
 import { $ } from "../../App.js";
 import { BaseExample } from "../BaseExample.js";
 import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
@@ -89,10 +89,10 @@ export class LabeledRadioButtonGroupEx extends BaseExample {
                         .on("change", () => {
                             switch (this.#lsAlignment.Value) {
                                 case "vertical":
-                                    this.#lrbg.RadioButtonGroup.alignment(RadioButtonGroupAlignment.VERTICAL);
+                                    this.#lrbg.RadioButtonGroup.orientation(Orientation.VERTICAL);
                                     break;
                                 case "horizontal":
-                                    this.#lrbg.RadioButtonGroup.alignment(RadioButtonGroupAlignment.HORIZONTAL);
+                                    this.#lrbg.RadioButtonGroup.orientation(Orientation.HORIZONTAL);
                                     break;
                                 default:
                                     break;
