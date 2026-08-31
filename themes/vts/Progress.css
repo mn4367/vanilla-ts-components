@@ -1,0 +1,158 @@
+progress {
+    /* #region Common */
+    --progress-size: var(--10px);
+    --progress-background: var(--black-5);
+    --progress-indicator-background: var(--color-primary);
+    --progress-indicator-background-disabled: var(--color-primary-light);
+    --progress-border: var(--1px) solid var(--black-10);
+    --progress-border-radius: var(--border-radius-pill);
+    --progress-box-shadow: inset 0 var(--1px) var(--4px) var(--black-10);
+    --progress-indeterminate-size: 33.333%;
+    --progress-indeterminate-translate: 200%;
+    /* --progress-indeterminate-size: 25%;
+    --progress-indeterminate-translate: 300%; */
+    --progress-indeterminate-animation: 2s infinite ease-in-out;
+    --progress-indeterminate-animation-horizontal: progress-indeterminate-horizontal var(--progress-indeterminate-animation);
+    --progress-indeterminate-animation-horizontal-reverse: progress-indeterminate-horizontal-reverse var(--progress-indeterminate-animation);
+    --progress-indeterminate-animation-vertical: progress-indeterminate-vertical var(--progress-indeterminate-animation);
+    --progress-indeterminate-animation-vertical-reverse: progress-indeterminate-vertical-reverse var(--progress-indeterminate-animation);
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    block-size: var(--progress-size);
+    &.horizontal {
+        writing-mode: horizontal-tb;
+        /* 'width' should be set somewhere else */
+    }
+    &.vertical {
+        &:dir(ltr) {
+            writing-mode: sideways-lr;
+        }
+        &:dir(rtl) {
+            writing-mode: sideways-rl;
+        }
+        /* 'height' should be set somewhere else */
+    }
+    /* 'background' and 'box-shadow' have an effect on Gecko only (outer bar) */
+    background: var(--progress-background);
+    box-shadow: var(--progress-box-shadow);
+    /* 'border' and 'border-radius' apply to both Gecko and WebKit/Blink (outer bar) */
+    border: var(--progress-border);
+    border-radius: var(--progress-border-radius);
+    /* #endregion */
+    /* #region WebKit/Blink */
+    /* #region Normal */
+    &::-webkit-progress-bar {
+        background: var(--progress-background);
+        box-shadow: var(--progress-box-shadow);
+        border-radius: var(--progress-border-radius);
+    }
+    &::-webkit-progress-value {
+        background: var(--progress-indicator-background);
+        border-radius: var(--progress-border-radius);
+    }
+    &.disabled::-webkit-progress-value,
+    &[disabled]::-webkit-progress-value {
+        background: var(--progress-indicator-background-disabled);
+    }
+    /* #endregion */
+    /* #region Indeterminate */
+    &:indeterminate {
+        &::-webkit-progress-bar {
+            inline-size: var(--progress-indeterminate-size);
+            background: var(--progress-indicator-background);
+            box-shadow: none;
+        }
+        &.disabled::-webkit-progress-bar,
+        &[disabled]::-webkit-progress-bar {
+            background: var(--progress-indicator-background-disabled);
+        }
+        &.horizontal {
+            &:dir(ltr)::-webkit-progress-bar {
+                animation: var(--progress-indeterminate-animation-horizontal);
+            }
+            &:dir(rtl)::-webkit-progress-bar {
+                animation: var(--progress-indeterminate-animation-horizontal-reverse);
+            }
+        }
+        &.vertical {
+            &::-webkit-progress-bar {
+                animation: var(--progress-indeterminate-animation-vertical-reverse);
+            }
+        }
+    }
+    /* #endregion */
+    /* #endregion WebKit/Blink */
+    /* #region Gecko */
+    /* #region Normal */
+    &::-moz-progress-bar {
+        background: var(--progress-indicator-background);
+        border-radius: var(--progress-border-radius);
+    }
+    &.disabled::-moz-progress-bar,
+    &[disabled]::-moz-progress-bar {
+        background: var(--progress-indicator-background-disabled);
+    }
+    /* #endregion */
+    /* #region Indeterminate */
+    &:indeterminate {
+        &::-moz-progress-bar {
+            inline-size: var(--progress-indeterminate-size);
+        }
+        &.horizontal::-moz-progress-bar {
+            animation: var(--progress-indeterminate-animation-horizontal);
+        }
+        &.vertical::-moz-progress-bar {
+            animation: var(--progress-indeterminate-animation-vertical-reverse);
+        }
+    }
+    /* #endregion */
+    /* #endregion Gecko */
+}
+/* #endregion */
+/* #region Animations */
+@keyframes progress-indeterminate-horizontal {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(var(--progress-indeterminate-translate));
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+@keyframes progress-indeterminate-horizontal-reverse {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(calc(-1 * var(--progress-indeterminate-translate)));
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+@keyframes progress-indeterminate-vertical {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(var(--progress-indeterminate-translate));
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+@keyframes progress-indeterminate-vertical-reverse {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(calc(-1 * var(--progress-indeterminate-translate)));
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+/* #endregion */

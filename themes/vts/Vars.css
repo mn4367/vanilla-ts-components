@@ -25,6 +25,7 @@
     --base-size: 1rem;
     --base-size-half: 0.5rem;
     --base-size-quarter: 0.25rem;
+    --base-size-three-quarters: 0.75rem;
     --1px: 0.075rem;
     --2px: calc(2 * var(--1px));
     --3px: calc(3 * var(--1px));
@@ -58,6 +59,7 @@
     --border-radius-normal: var(--6px);
     --border-radius-small: var(--3px);
     --border-radius-large: var(--13px);
+    --border-radius-pill: 1000px;
     /* #endregion */
     /* //////////////////////////////////////// */
 
