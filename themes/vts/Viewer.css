@@ -98,9 +98,7 @@
             white-space: nowrap;
         }
         /* Zoom range input. */
-        .zoom-range {
-            flex-grow: 1;
-        }
+        /* .zoom-range {} */
     }
     &.toolbar-hidden {
         > .toolbar {
@@ -223,10 +221,7 @@
                 height: 4.2rem;
                 writing-mode: vertical-rl;
             }
-            > .zoom-range {
-                writing-mode: vertical-rl;
-                transform: rotate(180deg);
-            }
+            /* > .zoom-range {} */
         }
     }
     &.end > .toolbar {
@@ -250,9 +245,7 @@
         > .zoom-level:dir(rtl) {
             transform: rotate(180deg);
         }
-        > .zoom-range:dir(rtl) {
-            transform: rotate(0deg);
-        }
+        /* > .zoom-range {} */
     }
     &.start > .toolbar {
         &:not(:dir(rtl)) {
@@ -285,9 +278,7 @@
         > .zoom-level:dir(rtl) {
             transform: rotate(0deg);
         }
-        > .zoom-range:dir(rtl) {
-            transform: rotate(1800deg);
-        }
+        /* > .zoom-range {} */
     }
     > .item-container {
         flex-grow: 1;

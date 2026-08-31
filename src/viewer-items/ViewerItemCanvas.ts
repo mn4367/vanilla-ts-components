@@ -1,6 +1,6 @@
 import { AElementComponentWithInternalUI, clamp, ComponentFactory, getDebouncedFnc, HTMLElementWithChildren, IElementWithChildrenComponent } from "@vanilla-ts/core";
 import { Canvas, Div, P } from "@vanilla-ts/dom";
-import { IViewerItemComponent, Viewer, ViewerItemReadyEvent } from "../Viewer.js";
+import { IViewerItemComponent, Viewer, ViewerItemReadyEvent, Zoom } from "../Viewer.js";
 
 /**
  * The type of the drawing function used by `ViewerItemCanvas`. The function is called whenever the
@@ -116,6 +116,7 @@ export class ViewerItemCanvas extends AElementComponentWithInternalUI<Div> imple
         // Redrawing isn't necessary since after loading, this viewer item will be scaled
         // immediately by the viewer after receiving the `ViewerItemReadyEvent`.
         this.ui.append(this.#hasError ? this.#error : this.#canvas);
+        success || this.#viewer?.zoom(Zoom.FIT);
         return this.emit(new ViewerItemReadyEvent(this, success));
     }
 
