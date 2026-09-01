@@ -6,7 +6,8 @@ here work correctly.
 select {
     --select-inline-padding: var(--9px) var(--22px);
     --select-multiple-padding: var(--6px);
-    --select-button: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(0, 0%, 15.7%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+    --select-button: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="24" height="24" style="stroke: none; fill: hsl(216, 92%, 63%); stroke-width: 0px;" rx="7" ry="7"/><polyline points="7.5 9.5 12 5 16.5 9.5" style="stroke: hsl(0, 0%, 100%);"/><polyline points="7.5 14.5 12 19 16.5 14.5" style="stroke: hsl(0, 0%, 100%);"/></svg>');
+    --select-button-active: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="24" height="24" style="stroke: none; fill: hsl(216, 92%, 58%); stroke-width: 0px;" rx="7" ry="7"/><polyline points="7.5 9.5 12 5 16.5 9.5" style="stroke: hsl(0, 0%, 100%);"/><polyline points="7.5 14.5 12 19 16.5 14.5" style="stroke: hsl(0, 0%, 100%);"/></svg>');
     height: var(--input-height);
     margin: 0;
     padding: 0;
@@ -32,13 +33,18 @@ select {
     &:not([multiple]) {
         appearance: none;
         background: var(--select-button), linear-gradient(to bottom, var(--input-background), var(--input-background));
+        &:active {
+            background: var(--select-button-active), linear-gradient(to bottom, var(--input-background), var(--input-background));
+        }
+    }
+    &:not([multiple]),
+    &:not([multiple]):active {
         background-repeat: no-repeat, no-repeat;
         background-position: right var(--2px) top 50%, 0 0;
         &:dir(rtl) {
             background-position: left var(--2px) top 50%, 0 0;
         }
-        background-size: var(--18px) auto,
-        100%;
+        background-size: var(--16px) auto, 100%;
         padding-inline: var(--select-inline-padding);
         /* See `Vars.css` */
         /* padding-block: var(--text-input-block-padding); */
