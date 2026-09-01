@@ -2,10 +2,12 @@ import { BaseExample } from "../BaseExample.js";
 
 
 const intro = `
+## Advanced components
+
 The components provided by the \`@vanilla-ts/components\` package are complex elements that address
 common application requirements, such as tabs or dialog windows. They are composed entirely of the
-basic DOM components provided by the \`@vanilla-ts/dom\` package and the building blocks from the
-underlying \`@vanilla-ts/core\` package.
+basic DOM components provided by the [\`@vanilla-ts/dom\`](#@dom/Introduction) package and the
+building blocks from the underlying \`@vanilla-ts/core\` package.
 
 ### Styling
 

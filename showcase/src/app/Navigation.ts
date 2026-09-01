@@ -26,6 +26,7 @@ import { ComponentFactoriesEx } from "../examples/@core/ComponentFactoriesEx.js"
 import { ElementComponentVoidEx } from "../examples/@core/ElementComponentVoidEx.js";
 import { ElementComponentWithChildrenEx } from "../examples/@core/ElementComponentWithChildrenEx.js";
 import { EventBusEx } from "../examples/@core/EventBusEx.js";
+import { CoreIntroductionEx } from "../examples/@core/IntroductionCore.js";
 import { AddressEx } from "../examples/@dom/AddressEx.js";
 import { AEx } from "../examples/@dom/AEx.js";
 import { BEx } from "../examples/@dom/BEx.js";
@@ -47,6 +48,7 @@ import { HxEx } from "../examples/@dom/HxEx.js";
 import { IEx } from "../examples/@dom/IEx.js";
 import { ImgEx } from "../examples/@dom/ImgEx.js";
 import { InputEx } from "../examples/@dom/InputEx.js";
+import { DOMIntroductionEx } from "../examples/@dom/IntroductionDOM.js";
 import { LabelEx } from "../examples/@dom/LabelEx.js";
 import { LiOlUlEx } from "../examples/@dom/LiOlUlEx.js";
 import { MainEx } from "../examples/@dom/MainEx.js";
@@ -81,11 +83,13 @@ export const NAVIGATION_TARGETS = [
     // Introduction
     "#Introduction",
     // Core
+    "#@core/Introduction",
     "#@core/ElementComponentVoid",
     "#@core/ElementComponentWithChildren",
     "#@core/EventBus",
     "#@core/Component factories",
     // DOM
+    "#@dom/Introduction",
     "#@dom/A",
     "#@dom/Address",
     "#@dom/B",
@@ -172,13 +176,15 @@ export const NAVIGATION_ISSUER_COMPONENTS: Map<NAVIGATION_TARGET, IElementCompon
 
 /** All example renderers. */
 // Introduction
-let indroductionEx: IntroductionEx;
+let introductionEx: IntroductionEx;
 // Core
+let coreIntroductionEx: CoreIntroductionEx;
 let elementComponentVoidEx: ElementComponentVoidEx;
 let elementComponentWithChildrenEx: ElementComponentWithChildrenEx;
 let eventBusEx: EventBusEx;
 let componentFactoriesEx: ComponentFactoriesEx;
 // DOM
+let domIntroductionEx: DOMIntroductionEx;
 let aEx: AEx;
 let addressEx: AddressEx;
 let bEx: BEx;
@@ -262,9 +268,12 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
     switch (target) {
         // Introduction
         case "#Introduction":
-            example = indroductionEx ??= new IntroductionEx();
+            example = introductionEx ??= new IntroductionEx();
             break;
         // Core
+        case "#@core/Introduction":
+            example = coreIntroductionEx ??= new CoreIntroductionEx();
+            break;
         case "#@core/ElementComponentVoid":
             example = elementComponentVoidEx ??= new ElementComponentVoidEx();
             break;
@@ -278,6 +287,9 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
             example = componentFactoriesEx ??= new ComponentFactoriesEx();
             break;
         // DOM
+        case "#@dom/Introduction":
+            example = domIntroductionEx ??= new DOMIntroductionEx();
+            break;
         case "#@dom/A":
             example = aEx ??= new AEx();
             break;

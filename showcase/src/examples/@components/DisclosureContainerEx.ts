@@ -156,7 +156,7 @@ export class DisclosureContainerEx extends BaseExample {
                 this.markdown(intro),
                 this.example([this.#dcContainer, logMessage], [this.#dc]),
                 this.markdown("### Configuration"),
-                this.properties(this.#getCofiguration()),
+                this.properties(this.#getConfiguration()),
                 this.markdown(example),
                 this.markdown(css)
             );
@@ -166,7 +166,7 @@ export class DisclosureContainerEx extends BaseExample {
         ev.preventDefault();
     }
 
-    #getCofiguration(): Div {
+    #getConfiguration(): Div {
         const div = new Div();
         const appearance = $.labeledSelect("Appearance", [
             { Text: "TOP_START", Value: "top-start" },

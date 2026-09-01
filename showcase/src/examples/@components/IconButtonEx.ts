@@ -311,7 +311,7 @@ export class IconButtonEx extends BaseExample {
                         })
                 )
             ], [ib0, ib1, ib2, ib3, ib0a, ib1a, ib2a, ib3a]),
-            this.markdown("### Layout"),
+            this.markdown("### Orientation"),
             this.properties(
                 $.labeledCheckbox("Vertical")
                     .checked(false)

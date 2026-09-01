@@ -27,10 +27,14 @@ const selectValues: ISelectValues[] = [
 
 const example = new Select(selectValues)
     .value("cherry")
+    .style("width", "8rem")
     .on("change", () => log.phrase("Selected fruit (value): ", new Em(example.Value)));
 
 const log = new P("Select a fruit from the dropdown above.")
-    .style("marginBlockStart", "1rem");
+    .style({
+        width: "20rem",
+        marginBlockStart: "1rem"
+    });
 
 new VTS_App(document.body).append(example, log);
 \`\`\`
@@ -51,9 +55,10 @@ export class SelectEx extends BaseExample {
             { Text: "Dragonfruit", Value: "dragonfruit" },
             { Text: "Eggplant", Value: "eggplant" }
         ];
-        const log = new P("Select a fruit from the dropdown above.").style("marginBlockStart", "1rem");
+        const log = new P("Select a fruit from the dropdown above.").style({ width: "20rem", marginBlockStart: "1rem" });
         const select = new Select(selectValues)
             .value("cherry")
+            .style("width", "10rem")
             .on("change", () => log.phrase("Selected fruit (value): ", new Em(select.Value)));
         this.append(
             this.markdown(intro),
