@@ -1,5 +1,5 @@
 import { cid, ComponentFactory, DefaultEventMap, NullableString, Phrase, Phrases } from "@vanilla-ts/core";
-import { ISelectValues, Select } from "@vanilla-ts/dom";
+import { Select, SelectChild } from "@vanilla-ts/dom";
 import { LabelAlignment, LabeledComponentWithLabel, LabelPosition } from "./LabeledComponents.js";
 
 
@@ -10,7 +10,7 @@ export class LabeledSelect<EventMap extends DefaultEventMap = DefaultEventMap> e
     /**
      * Create LabeledSelect component.
      * @param labelPhrase The phrasing content for the label.
-     * @param values The values to be displayed in the select element.
+     * @param options The option elements to be displayed in the select element.
      * @param id The id (attribute) of the select element. If `id` is `undefined` or omitted, a
      * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
      * attribute will be set. Any other value will be used as the id attribute.
@@ -26,14 +26,14 @@ export class LabeledSelect<EventMap extends DefaultEventMap = DefaultEventMap> e
      * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
      *   has been set on the select element).
      */
-    constructor(labelPhrase: Phrase | Phrases, values: ISelectValues[], id?: NullableString, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
+    constructor(labelPhrase: Phrase | Phrases, options: SelectChild[], id?: NullableString, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean) {
         const _id = id === undefined
             ? cid()
             : id === null || id === ""
                 ? null
                 : id;
         super(
-            new Select(values, _id, value, name),
+            new Select(options, _id, value, name),
             labelPhrase,
             _id,
             lblPosition,
@@ -92,7 +92,7 @@ export class LabeledSelectFactory<T> extends ComponentFactory<LabeledSelect> {
     /**
      * Create, set up and return LabeledSelect component.
      * @param labelPhrase The phrasing content for the label.
-     * @param values The values to be displayed in the select element.
+     * @param options The option elements to be displayed in the select element.
      * @param id The id (attribute) of the select element. If `id` is `undefined` or omitted, a
      * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
      * attribute will be set. Any other value will be used as the id attribute.
@@ -110,7 +110,7 @@ export class LabeledSelectFactory<T> extends ComponentFactory<LabeledSelect> {
      * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
      * @returns LabeledSelect component.
      */
-    public labeledSelect(labelPhrase: Phrase | Phrases, values: ISelectValues[], id?: NullableString, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledSelect {
-        return this.setupComponent(new LabeledSelect(labelPhrase, values, id, value, name, lblPosition, lblAlignment, lblAction), data);
+    public labeledSelect(labelPhrase: Phrase | Phrases, options: SelectChild[], id?: NullableString, value?: string, name?: string, lblPosition?: LabelPosition, lblAlignment?: LabelAlignment, lblAction?: boolean, data?: T): LabeledSelect {
+        return this.setupComponent(new LabeledSelect(labelPhrase, options, id, value, name, lblPosition, lblAlignment, lblAction), data);
     }
 }

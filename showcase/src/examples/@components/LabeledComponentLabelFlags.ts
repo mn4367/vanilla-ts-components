@@ -1,4 +1,4 @@
-import { IElementComponent } from "@vanilla-ts/core";
+import { IElementComponent, Option } from "@vanilla-ts/core";
 import { Label, Span } from "@vanilla-ts/dom";
 import { LabeledCheckbox } from "../../../../src/LabeledCheckbox.js";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "../../../../src/LabeledComponents.js";
@@ -18,10 +18,10 @@ export function labeledComponentLabelFlags(
         lsPositionCb = $.labeledSelect(
             "Label position",
             [
-                { Text: "TOP", Value: "top" },
-                { Text: "END", Value: "end" },
-                { Text: "BOTTOM", Value: "bottom" },
-                { Text: "START", Value: "start" },
+                new Option("TOP").value("top"),
+                new Option("END").value("end"),
+                new Option("BOTTOM").value("bottom"),
+                new Option("START").value("start"),
             ],
             undefined,
             positionValue
@@ -47,9 +47,9 @@ export function labeledComponentLabelFlags(
         lsAlignmentCb = $.labeledSelect(
             "Label alignment",
             [
-                { Text: "START", Value: "start" },
-                { Text: "CENTER", Value: "center" },
-                { Text: "END", Value: "end" },
+                new Option("START").value("start"),
+                new Option("CENTER").value("center"),
+                new Option("END").value("end"),
             ],
             undefined,
             alignmentValue

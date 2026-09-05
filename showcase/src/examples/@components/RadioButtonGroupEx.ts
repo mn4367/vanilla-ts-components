@@ -1,4 +1,4 @@
-import { Orientation } from "@vanilla-ts/core";
+import { Option, Orientation } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { LabeledSelect } from "../../../../src/LabeledSelect.js";
 import { RadioButtonGroup } from "../../../../src/RadioButtonGroup.js";
@@ -72,8 +72,8 @@ export class RadioButtonGroupEx extends BaseExample {
                 .addClass("example-properties")
                 .append(
                     this.#lsAlignment = $.labeledSelect("Alignment", [
-                        { Text: "VERTICAL", Value: "vertical" },
-                        { Text: "HORIZONTAL", Value: "horizontal" },
+                        new Option("VERTICAL").value("vertical"),
+                        new Option("HORIZONTAL").value("horizontal"),
                     ])
                         .on("change", () => {
                             switch (this.#lsAlignment.Value) {

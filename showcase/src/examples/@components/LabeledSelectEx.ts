@@ -1,4 +1,5 @@
-import { Div, Em, ISelectValues, P } from "@vanilla-ts/dom";
+import { Option } from "@vanilla-ts/core";
+import { Div, Em, P, SelectChild } from "@vanilla-ts/dom";
 import { LabelPosition } from "../../../../src/LabeledComponents.js";
 import { LabeledSelect } from "../../../../src/LabeledSelect.js";
 import { $ } from "../../App.js";
@@ -17,24 +18,27 @@ const example = `
 
 \`\`\`
 import { LabeledSelect, LabelPosition } from "@vanilla-ts/components";
-import { VTS_App } from "@vanilla-ts/core";
-import { Em, ISelectValues, P } from "@vanilla-ts/dom";
+import { Option, VTS_App } from "@vanilla-ts/core";
+import { Em, SelectChild, P } from "@vanilla-ts/dom";
 
-const selectValues: ISelectValues[] = [
-    { Text: "Apple", Value: "apple" },
-    { Text: "Banana", Value: "banana" },
-    { Text: "Cherry", Value: "cherry" },
-    { Text: "Dragonfruit", Value: "dragonfruit" },
-    { Text: "Eggplant", Value: "eggplant" }
+const options: SelectChild[] = [
+    new Option("Apple").value("apple"),
+    new Option("Banana").value("banana"),
+    new Option("Cherry").value("cherry"),
+    new Option("Dragonfruit").value("dragonfruit"),
+    new Option("Eggplant").value("eggplant")
 ];
 
-const example = new LabeledSelect("Fruits", selectValues)
+const example = new LabeledSelect("Fruits", options)
     .value("cherry")
     .labelPosition(LabelPosition.TOP)
     .on("change", () => log.phrase("Selected fruit (value): ", new Em(example.Value)));
 
 const log = new P("Select a fruit from the dropdown above.")
-    .style("marginBlockStart", "1rem");
+    .style({
+        width: "20rem",
+        marginBlockStart: "1rem"
+    });
 
 new VTS_App(document.body).append(example, log);
 \`\`\`
@@ -50,15 +54,15 @@ export class LabeledSelectEx extends BaseExample {
 
     /** @inheritdoc */
     protected override buildExample(): void {
-        const selectValues: ISelectValues[] = [
-            { Text: "Apple", Value: "apple" },
-            { Text: "Banana", Value: "banana" },
-            { Text: "Cherry", Value: "cherry" },
-            { Text: "Dragonfruit", Value: "dragonfruit" },
-            { Text: "Eggplant", Value: "eggplant" }
+        const options: SelectChild[] = [
+            new Option("Apple").value("apple"),
+            new Option("Banana").value("banana"),
+            new Option("Cherry").value("cherry"),
+            new Option("Dragonfruit").value("dragonfruit"),
+            new Option("Eggplant").value("eggplant")
         ];
-        const log = new P("Select a fruit from the dropdown above.").style("marginBlockStart", "1rem");
-        this.#lInput = $.labeledSelect("Fruits", selectValues)
+        const log = new P("Select a fruit from the dropdown above.").style({ width: "20rem", marginBlockStart: "1rem" });
+        this.#lInput = $.labeledSelect("Fruits", options)
             .value("cherry")
             .labelPosition(LabelPosition.TOP)
             .on("change", () => log.phrase("Selected fruit (value): ", new Em(this.#lInput.Value)));

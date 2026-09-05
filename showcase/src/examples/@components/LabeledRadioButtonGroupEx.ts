@@ -1,4 +1,4 @@
-import { Orientation } from "@vanilla-ts/core";
+import { Option, Orientation } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { LabeledRadioButtonGroup } from "../../../../src/LabeledRadioButtonGroup.js";
 import { LabeledSelect } from "../../../../src/LabeledSelect.js";
@@ -83,8 +83,8 @@ export class LabeledRadioButtonGroupEx extends BaseExample {
                     $.br(),
                     this.markdown("\u2014 Inner radio button group \u2014"),
                     this.#lsAlignment = $.labeledSelect("Alignment", [
-                        { Text: "VERTICAL", Value: "vertical" },
-                        { Text: "HORIZONTAL", Value: "horizontal" },
+                        new Option("VERTICAL").value("vertical"),
+                        new Option("HORIZONTAL").value("horizontal"),
                     ])
                         .on("change", () => {
                             switch (this.#lsAlignment.Value) {

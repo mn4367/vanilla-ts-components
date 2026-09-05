@@ -1,4 +1,5 @@
-import { Em, ISelectValues, P, Select } from "@vanilla-ts/dom";
+import { Option } from "@vanilla-ts/core";
+import { Em, P, Select, SelectChild } from "@vanilla-ts/dom";
 import { BaseExample } from "../BaseExample.js";
 
 
@@ -14,18 +15,18 @@ const example = `
 ### Code example
 
 \`\`\`
-import { VTS_App } from "@vanilla-ts/core";
-import { Em, ISelectValues, P, Select } from "@vanilla-ts/dom";
+import { Option, VTS_App } from "@vanilla-ts/core";
+import { Em, SelectChild, P, Select } from "@vanilla-ts/dom";
 
-const selectValues: ISelectValues[] = [
-    { Text: "Apple", Value: "apple" },
-    { Text: "Banana", Value: "banana" },
-    { Text: "Cherry", Value: "cherry" },
-    { Text: "Dragonfruit", Value: "dragonfruit" },
-    { Text: "Eggplant", Value: "eggplant" }
+const options: SelectChild[] = [
+    new Option("Apple").value("apple"),
+    new Option("Banana").value("banana"),
+    new Option("Cherry").value("cherry"),
+    new Option("Dragonfruit").value("dragonfruit"),
+    new Option("Eggplant").value("eggplant")
 ];
 
-const example = new Select(selectValues)
+const example = new Select(options)
     .value("cherry")
     .style("width", "8rem")
     .on("change", () => log.phrase("Selected fruit (value): ", new Em(example.Value)));
@@ -48,15 +49,15 @@ export class SelectEx extends BaseExample {
 
     /** @inheritdoc */
     protected override buildExample(): void {
-        const selectValues: ISelectValues[] = [
-            { Text: "Apple", Value: "apple" },
-            { Text: "Banana", Value: "banana" },
-            { Text: "Cherry", Value: "cherry" },
-            { Text: "Dragonfruit", Value: "dragonfruit" },
-            { Text: "Eggplant", Value: "eggplant" }
+        const options: SelectChild[] = [
+            new Option("Apple").value("apple"),
+            new Option("Banana").value("banana"),
+            new Option("Cherry").value("cherry"),
+            new Option("Dragonfruit").value("dragonfruit"),
+            new Option("Eggplant").value("eggplant")
         ];
         const log = new P("Select a fruit from the dropdown above.").style({ width: "20rem", marginBlockStart: "1rem" });
-        const select = new Select(selectValues)
+        const select = new Select(options)
             .value("cherry")
             .style("width", "10rem")
             .on("change", () => log.phrase("Selected fruit (value): ", new Em(select.Value)));

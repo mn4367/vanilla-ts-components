@@ -1,4 +1,4 @@
-import { AChildren, AElementComponentWithInternalUI, FlowContent, HTMLElementWithChildren, IChildrenMixin, IElementComponent, IElementWithChildrenComponent, mixin } from "@vanilla-ts/core";
+import { AChildren, AElementComponentWithInternalUI, FlowContent, HTMLElementWithChildren, IChildrenMixin, IElementComponent, IElementWithChildrenComponent, mixin, Option } from "@vanilla-ts/core";
 import { Div, H2, Text } from "@vanilla-ts/dom";
 import { LabeledSelect } from "../../../src/LabeledSelect.js";
 import { ScrollContainer } from "../../../src/ScrollContainer.js";
@@ -67,18 +67,18 @@ export abstract class BaseExample extends AElementComponentWithInternalUI<Scroll
                     .addClass("toolbar")
                     .append(
                         sizeSelect = $.labeledSelect("Size", [
-                            { Text: "Tiny (50%)", Value: "tiny" },
-                            { Text: "Small (67%)", Value: "small" },
-                            { Text: "Smaller (83%)", Value: "smaller" },
-                            { Text: "Normal", Value: "normal" },
-                            { Text: "Larger (125%)", Value: "larger" },
-                            { Text: "Medium (150%)", Value: "medium" },
-                            { Text: "Large (175%)", Value: "large" },
-                            { Text: "Huge (200%)", Value: "huge" },
-                            { Text: "110%", Value: "110" },
-                            { Text: "120%", Value: "120" },
-                            { Text: "130%", Value: "130" },
-                            { Text: "140%", Value: "140" },
+                            new Option("Tiny (50%)").value("tiny"),
+                            new Option("Small (67%)").value("small"),
+                            new Option("Smaller (83%)").value("smaller"),
+                            new Option("Normal").value("normal"),
+                            new Option("Larger (125%)").value("larger"),
+                            new Option("Medium (150%)").value("medium"),
+                            new Option("Large (175%)").value("large"),
+                            new Option("Huge (200%)").value("huge"),
+                            new Option("110%").value("110"),
+                            new Option("120%").value("120"),
+                            new Option("130%").value("130"),
+                            new Option("140%").value("140"),
                         ])
                             .value("normal")
                             .on("change", () => {

@@ -1,3 +1,4 @@
+import { Option } from "@vanilla-ts/core";
 import { Code, Div, P } from "@vanilla-ts/dom";
 import { DiscloseEvent, DisclosureContainer, DisclosureContainerAppearance } from "../../../../src/DisclosureContainer.js";
 import { $ } from "../../App.js";
@@ -169,14 +170,15 @@ export class DisclosureContainerEx extends BaseExample {
     #getConfiguration(): Div {
         const div = new Div();
         const appearance = $.labeledSelect("Appearance", [
-            { Text: "TOP_START", Value: "top-start" },
-            { Text: "TOP_END", Value: "top-end" },
-            { Text: "END_TOP", Value: "end-top" },
-            { Text: "END_BOTTOM", Value: "end-bottom" },
-            { Text: "BOTTOM_END", Value: "bottom-end" },
-            { Text: "BOTTOM_START", Value: "bottom-start" },
-            { Text: "START_BOTTOM", Value: "start-bottom" },
-            { Text: "START_TOP", Value: "start-top" },
+            new Option("TOP_START").value("top-start"),
+            new Option("TOP_START").value("top-start"),
+            new Option("TOP_END").value("top-end"),
+            new Option("END_TOP").value("end-top"),
+            new Option("END_BOTTOM").value("end-bottom"),
+            new Option("BOTTOM_END").value("bottom-end"),
+            new Option("BOTTOM_START").value("bottom-start"),
+            new Option("START_BOTTOM").value("start-bottom"),
+            new Option("START_TOP").value("start-top"),
         ]).on("change", () => {
             switch (appearance.Value) {
                 case "top-start":
