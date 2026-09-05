@@ -56,7 +56,7 @@ import { MenuEx } from "../examples/@dom/MenuEx.js";
 import { NavEx } from "../examples/@dom/NavEx.js";
 import { NumberInputEx } from "../examples/@dom/NumberInputEx.js";
 import { OlEx } from "../examples/@dom/OlEx.js";
-import { OptGroupEx } from "../examples/@dom/OptgroupEx.js";
+import { OptGroupEx } from "../examples/@dom/OptGroupEx.js";
 import { OutputEx } from "../examples/@dom/OutputEx.js";
 import { PasswordInputEx } from "../examples/@dom/PasswordInputEx.js";
 import { PEx } from "../examples/@dom/PEx.js";
