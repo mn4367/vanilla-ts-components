@@ -36,6 +36,7 @@ import { CanvasEx } from "../examples/@dom/CanvasEx.js";
 import { CheckboxEx } from "../examples/@dom/CheckboxEx.js";
 import { CodeEx } from "../examples/@dom/CodeEx.js";
 import { CommentEx } from "../examples/@dom/CommentEx.js";
+import { DataListEx } from "../examples/@dom/DataListEx.js";
 import { DialogEx } from "../examples/@dom/DialogEx.js";
 import { DivEx } from "../examples/@dom/DivEx.js";
 import { EmailInputEx } from "../examples/@dom/EmailInputEx.js";
@@ -99,6 +100,7 @@ export const NAVIGATION_TARGETS = [
     "#@dom/Checkbox / Switch",
     "#@dom/Code",
     "#@dom/Comment",
+    "#@dom/DataList",
     "#@dom/Dialog",
     "#@dom/Div",
     "#@dom/Em",
@@ -194,6 +196,7 @@ let canvasEx: CanvasEx;
 let checkboxEx: CheckboxEx;
 let commentEx: CommentEx;
 let codeEx: CodeEx;
+let dataListEx: DataListEx;
 let dialogEx: DialogEx;
 let divEx: DivEx;
 let emEx: EmEx;
@@ -316,6 +319,9 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
             break;
         case "#@dom/Comment":
             example = commentEx ??= new CommentEx();
+            break;
+        case "#@dom/DataList":
+            example = dataListEx ??= new DataListEx();
             break;
         case "#@dom/Dialog":
             example = dialogEx ??= new DialogEx();
