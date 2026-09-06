@@ -56,4 +56,48 @@ select {
         /* See `Vars.css` */
         /* padding-block: var(--text-input-block-padding); */
     }
+    &:autofill {
+        &:hover,
+        &:focus,
+        &:active,
+        &.disabled,
+        &:disabled,
+        &.disabled:hover,
+        &:disabled:hover,
+        &.disabled:focus,
+        &:disabled:focus,
+        &.disabled:active,
+        &:disabled:active {
+            background-clip: text;
+            -webkit-background-clip: text;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+        &:hover,
+        &:focus,
+        &:active {
+            color: var(--font-color) !important;
+            -webkit-text-fill-color: var(--font-color);
+            background: var(--input-background) !important;
+            box-shadow: inset 0 0 0 1000px var(--input-background) !important;
+        }
+        &.disabled,
+        &:disabled,
+        &.disabled:hover,
+        &:disabled:hover,
+        &.disabled:focus,
+        &:disabled:focus,
+        &.disabled:active,
+        &:disabled:active {
+            color: var(--font-disabled-color) !important;
+            -webkit-text-fill-color: var(--font-disabled-color);
+            background: var(--input-disabled-background) !important;
+            box-shadow: inset 0 0 0 1000px var(--input-disabled-background) !important;
+        }
+        &:disabled::selection {
+            background: transparent;
+        }
+        &:focus {
+            box-shadow: var(--input-focused) !important;
+        }
+    }
 }
