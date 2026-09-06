@@ -2996,12 +2996,6 @@ class AutocompleteAttr extends AElementComponent {
         return this;
     }
 }
-// export interface Option {
-//     Value: string;
-//     Label?: string;
-//     Selected?: boolean;
-//     Disabled?: boolean;
-// }
 /**
  * 'Dirname' getter/setter and set method returning this instance.
  */
@@ -3132,37 +3126,6 @@ class HreflangAttr extends AElementComponent {
      */
     hreflang(v) {
         this.attrib("hreflang", v);
-        return this;
-    }
-}
-/**
- * 'Label' getter/setter and set method returning this instance.
- */
-class LabelAttr extends AElementComponent {
-    /**
-     * Get/set the `label` attribute value of the component. `null` or an empty string removes the
-     * attribute.
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option#label
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup#label
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/track#label
-     */
-    get Label() {
-        return this._dom.label;
-    }
-    /** @inheritdoc */
-    set Label(v) {
-        this.label(v);
-    }
-    /**
-     * Set `label` attribute value of the component.
-     * @param v The value to be set. `null` or an empty string removes the attribute.
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option#label
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup#label
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/track#label
-     * @returns This instance.
-     */
-    label(v) {
-        this.attrib("label", v);
         return this;
     }
 }
@@ -3604,51 +3567,6 @@ class SelectionEndProp extends AElementComponent {
     }
 }
 // #endregion Properties
-/////////////////////////////
-/////////////////////////////
-// #region Utility DOM components
-/**
- * Option component (`<option>`).\
- * __Note:__ This class is part of `@vanilla-ts/core` and not of `@vanilla-ts/dom` because it is
- * used in the {@link DataListAttr} DOM property (to avoid cyclic package dependencies).
- */
-class Option extends ElementComponentWithChildren {
-    /**
-     * Create Option component.
-     * @param phrase The phrasing content for the `<option>` element. Due to the limited styling
-     * capabilities of <option> elements, it is strongly recommended to use a text string text only.
-     */
-    constructor(...phrase) {
-        super("option");
-        phrase.length > 0 && this.phrase(...phrase);
-    }
-    /**
-     * Get/set the `selected` attribute value of the component.
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/option#selected
-     */
-    get Selecetd() {
-        return this._dom.selected;
-    }
-    /** @inheritdoc */
-    set Selecetd(v) {
-        this._dom.selected = v;
-    }
-    /**
-     * Set `selected` attribute value of the component.
-     * @param v The value to be set.
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/option#selected
-     * @returns This instance.
-     */
-    selected(v) {
-        this._dom.selected = v;
-        return this;
-    }
-    static {
-        /** Mixin additional DOM attributes/properties. */
-        mixinDOMProperties(this, (LabelAttr), (NativeDisabledAttr), (ValueAttr));
-    }
-}
-// #endregion Utility DOM components
 /////////////////////////////
 
 /**
