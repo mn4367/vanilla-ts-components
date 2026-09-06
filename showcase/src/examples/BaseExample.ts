@@ -1,5 +1,5 @@
-import { AChildren, AElementComponentWithInternalUI, FlowContent, HTMLElementWithChildren, IChildrenMixin, IElementComponent, IElementWithChildrenComponent, mixin, Option } from "@vanilla-ts/core";
-import { Div, H2, Text } from "@vanilla-ts/dom";
+import { AChildren, AElementComponentWithInternalUI, FlowContent, HTMLElementWithChildren, IChildrenMixin, IElementComponent, IElementWithChildrenComponent, mixin } from "@vanilla-ts/core";
+import { Div, H2, Option, Text } from "@vanilla-ts/dom";
 import { LabeledSelect } from "../../../src/LabeledSelect.js";
 import { ScrollContainer } from "../../../src/ScrollContainer.js";
 import { $ } from "../App.js";

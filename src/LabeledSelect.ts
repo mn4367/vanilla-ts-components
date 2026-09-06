@@ -75,7 +75,7 @@ export class LabeledSelect<EventMap extends DefaultEventMap = DefaultEventMap> e
 
     /**
      * __The function `value()` here is an alias for the function `this.Select.value()` but it
-     * returns _this_ instance instead of the 'TextArea' instance.__
+     * returns _this_ instance instead of the 'Select' instance.__
      * @param v The value to be set.
      * @returns This instance.
      */

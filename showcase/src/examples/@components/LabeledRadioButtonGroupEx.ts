@@ -1,5 +1,5 @@
-import { Option, Orientation } from "@vanilla-ts/core";
-import { Div } from "@vanilla-ts/dom";
+import { Orientation } from "@vanilla-ts/core";
+import { Div, Option } from "@vanilla-ts/dom";
 import { LabeledRadioButtonGroup } from "../../../../src/LabeledRadioButtonGroup.js";
 import { LabeledSelect } from "../../../../src/LabeledSelect.js";
 import { $ } from "../../App.js";

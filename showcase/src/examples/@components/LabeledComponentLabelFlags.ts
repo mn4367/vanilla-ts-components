@@ -1,5 +1,5 @@
-import { IElementComponent, Option } from "@vanilla-ts/core";
-import { Label, Span } from "@vanilla-ts/dom";
+import { IElementComponent } from "@vanilla-ts/core";
+import { Label, Option, Span } from "@vanilla-ts/dom";
 import { LabeledCheckbox } from "../../../../src/LabeledCheckbox.js";
 import { LabelAlignment, LabeledComponent, LabelPosition } from "../../../../src/LabeledComponents.js";
 import { LabeledSelect } from "../../../../src/LabeledSelect.js";

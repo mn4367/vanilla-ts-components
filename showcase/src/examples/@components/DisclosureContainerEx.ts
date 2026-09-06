@@ -1,5 +1,4 @@
-import { Option } from "@vanilla-ts/core";
-import { Code, Div, P } from "@vanilla-ts/dom";
+import { Code, Div, Option, P } from "@vanilla-ts/dom";
 import { DiscloseEvent, DisclosureContainer, DisclosureContainerAppearance } from "../../../../src/DisclosureContainer.js";
 import { $ } from "../../App.js";
 import { BaseExample } from "../BaseExample.js";
