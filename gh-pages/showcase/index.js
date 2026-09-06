@@ -2971,9 +2971,7 @@
      * mixins to some DOM components to avoid repeating the code in the components themselves.
      *
      * To prevent circular dependencies and reference/initialization errors due to module
-     * loading/execution these classes must not be used from classes in this project! The only exception
-     * to this rule is currently the {@link Option} component (in this module) which is used by the
-     * {@link DataListAttr} DOM property class.
+     * loading/execution these classes must not be used from classes in this project!
      * ---
      * @todo Extend with more DOM attributes/properties/utility DOM components.
      */
@@ -3099,76 +3097,6 @@
             return this;
         }
     }
-    /**
-     * 'DataList' (suggestion values) getter/setter and set method returning this instance.\
-     * __Note:__ Only some inputs can have a 'DataList' attribute (`list` attribute).
-     * @see `@vanilla-ts/core HTMLInputsWithDataList`
-     */
-    class DataListAttr extends AElementComponent {
-        /**
-         * Get/set the datalist (suggestion values) of the component. If the length of `values` is `0`,
-         * the attribute is removed.
-         */
-        get DataList() {
-            const result = [];
-            const dataListID = this.attr("list");
-            if (dataListID) {
-                const dataList = this._dom.querySelector("#" + dataListID);
-                if (dataList) {
-                    for (const option of dataList.querySelectorAll("option")) {
-                        result.push(option.value);
-                    }
-                }
-            }
-            return result;
-        }
-        /** @inheritdoc */
-        set DataList(values) {
-            this.dataList(values);
-        }
-        /**
-         * Set new suggestion values.
-         * @param values The new suggestion values. If the length of `values` is `0`, the attribute is
-         * removed.
-         * @returns This instance.
-         */
-        dataList(values) {
-            let dataListID = this.attr("list");
-            if (!dataListID) {
-                if (values.length === 0) {
-                    return this;
-                }
-                dataListID = `dl${cid().slice(1)}`;
-            }
-            let dataList = document.getElementById(dataListID);
-            if (dataList && values.length === 0) {
-                this.attrib("list", null);
-                dataList.remove();
-                return this;
-            }
-            if (!dataList) {
-                dataList = document.createElement("datalist");
-                dataList.id = dataListID;
-                this.attrib("list", dataListID);
-                this._dom.appendChild(dataList);
-            }
-            while (dataList.lastChild) {
-                dataList.lastChild.remove();
-            }
-            for (const value of values) {
-                const option = document.createElement("option");
-                option.value = value;
-                dataList.append(option);
-            }
-            return this;
-        }
-    }
-    // export interface Option {
-    //     Value: string;
-    //     Label?: string;
-    //     Selected?: boolean;
-    //     Disabled?: boolean;
-    // }
     /**
      * 'Dirname' getter/setter and set method returning this instance.
      */
@@ -4036,51 +3964,6 @@
     }
     // #endregion Properties
     /////////////////////////////
-    /////////////////////////////
-    // #region Utility DOM components
-    /**
-     * Option component (`<option>`).\
-     * __Note:__ This class is part of `@vanilla-ts/core` and not of `@vanilla-ts/dom` because it is
-     * used in the {@link DataListAttr} DOM property (to avoid cyclic package dependencies).
-     */
-    class Option extends ElementComponentWithChildren {
-        /**
-         * Create Option component.
-         * @param phrase The phrasing content for the `<option>` element. Due to the limited styling
-         * capabilities of <option> elements, it is strongly recommended to use a text string text only.
-         */
-        constructor(...phrase) {
-            super("option");
-            phrase.length > 0 && this.phrase(...phrase);
-        }
-        /**
-         * Get/set the `selected` attribute value of the component.
-         * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/option#selected
-         */
-        get Selecetd() {
-            return this._dom.selected;
-        }
-        /** @inheritdoc */
-        set Selecetd(v) {
-            this._dom.selected = v;
-        }
-        /**
-         * Set `selected` attribute value of the component.
-         * @param v The value to be set.
-         * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/option#selected
-         * @returns This instance.
-         */
-        selected(v) {
-            this._dom.selected = v;
-            return this;
-        }
-        static {
-            /** Mixin additional DOM attributes/properties. */
-            mixinDOMProperties(this, (LabelAttr), (NativeDisabledAttr), (ValueAttr));
-        }
-    }
-    // #endregion Utility DOM components
-    /////////////////////////////
 
     /**
      * Text component (for DOM text nodes).
@@ -4304,6 +4187,70 @@
         }
     }
 
+    /**
+     * 'DataList' (suggestion values) getter/setter and set method returning this instance.\
+     * __Note:__ Only some inputs can have a 'DataList' attribute (`list` attribute).
+     * @see {@link HTMLInputsWithDataList}
+     */
+    class DataListAttr extends AElementComponent {
+        /**
+         * Get/set the datalist (suggestion values) of the component. If the length of `values` is `0`,
+         * the attribute is removed.
+         */
+        get DataList() {
+            const result = [];
+            const dataListID = this.attr("list");
+            if (dataListID) {
+                const dataList = this._dom.querySelector("#" + dataListID);
+                if (dataList) {
+                    for (const option of dataList.querySelectorAll("option")) {
+                        result.push(option.value);
+                    }
+                }
+            }
+            return result;
+        }
+        /** @inheritdoc */
+        set DataList(values) {
+            this.dataList(values);
+        }
+        /**
+         * Set new suggestion values.
+         * @param values The new suggestion values. If the length of `values` is `0`, the attribute is
+         * removed.
+         * @returns This instance.
+         */
+        dataList(values) {
+            let dataListID = this.attr("list");
+            if (!dataListID) {
+                if (values.length === 0) {
+                    return this;
+                }
+                dataListID = `dl${cid().slice(1)}`;
+            }
+            let dataList = document.getElementById(dataListID);
+            if (dataList && values.length === 0) {
+                this.attrib("list", null);
+                dataList.remove();
+                return this;
+            }
+            if (!dataList) {
+                dataList = document.createElement("datalist");
+                dataList.id = dataListID;
+                this.attrib("list", dataListID);
+                this._dom.appendChild(dataList);
+            }
+            while (dataList.lastChild) {
+                dataList.lastChild.remove();
+            }
+            for (const value of values) {
+                const option = document.createElement("option");
+                option.value = value;
+                dataList.append(option);
+            }
+            return this;
+        }
+    }
     /**
      * Abstract base Input component (`<input>`).\
      * __Note:__ This class has mixins for the properties `readonly`, `required`, `dirName`, `multiple`
@@ -4578,6 +4525,22 @@
         constructor(text) {
             super();
             this._dom = document.createComment(text);
+        }
+    }
+
+    /**
+     * DataList component (`<datalist>`).
+     */
+    class DataList extends ElementComponentWithChildren {
+        // @ts-expect-error ---
+        #brand;
+        /**
+         * Create DataList component.
+         * @param options The option elements for the `<datalist>` element.
+         */
+        constructor(...options) {
+            super("datalist");
+            options.length > 0 && this.append(...options);
         }
     }
 
@@ -5353,6 +5316,47 @@
     }
 
     /**
+     * Option component (`<option>`).
+     */
+    class Option extends ElementComponentWithChildren {
+        /**
+         * Create Option component.
+         * @param phrase The phrasing content for the `<option>` element. Due to the limited styling
+         * capabilities of `<option>` elements, it is strongly recommended to use a text string text
+         * only.
+         */
+        constructor(...phrase) {
+            super("option");
+            phrase.length > 0 && this.phrase(...phrase);
+        }
+        /**
+         * Get/set the `selected` attribute value of the component.
+         * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/option#selected
+         */
+        get Selected() {
+            return this._dom.selected;
+        }
+        /** @inheritdoc */
+        set Selected(v) {
+            this._dom.selected = v;
+        }
+        /**
+         * Set `selected` attribute value of the component.
+         * @param v The value to be set.
+         * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/option#selected
+         * @returns This instance.
+         */
+        selected(v) {
+            this._dom.selected = v;
+            return this;
+        }
+        static {
+            /** Mixin additional DOM attributes/properties. */
+            mixinDOMProperties(this, (LabelAttr), (NativeDisabledAttr), (ValueAttr));
+        }
+    }
+
+    /**
      * Output component (`<output>`).
      */
     class Output extends ElementComponentWithChildren {
@@ -5958,19 +5962,18 @@
     class Select extends ElementComponentWithChildren {
         // @ts-expect-error ---
         #brand;
-        _values;
         /**
          * Create Select component.
-         * @param values The values to be displayed in the select.
+         * @param options The option elements to be displayed in the select.
          * @param id The id (attribute) of the select. If `id` is `undefined` or omitted, a unique ID
          * will be generated. If `id` is explicitely set to `null` or an empty string, no id attribute
          * will be set. Any other value will be used as the id attribute.
          * @param value The value of the select.
          * @param name The name (attribute) of the select.
          */
-        constructor(values, id, value, name) {
+        constructor(options, id, value, name) {
             super("select");
-            this.values(values);
+            this.options(options ?? []);
             id === undefined
                 ? this.id(cid())
                 : id && this.id(id);
@@ -5978,41 +5981,53 @@
             name && this.name(name);
         }
         /**
-         * Get/set the values of the drop-down list.
+         * Get/set the options of the drop-down list.
+         * - The __getter__ _only_ returns all `Option` instances which are child components of this
+         *   `Select` instance list. If there are any `OptGroup` instances in the list, their child
+         *   `Option` instances will also be included in the returned array, but not the `OptGroup`
+         *   instances themselves (or instances of `Hr`, if any).
+         * - The __setter__ will _replace_ all child components of this `Select` instance with the
+         *   specified values; these child components are also disposed of(!), so if they are needed or
+         *   referenced somewhere else they must be extracted or removed before calling the setter
+         *   (using `<selectInstance>.extract()`, `<selectInstance>.remove()`).
          */
-        get Values() {
-            return this._values;
+        get Options() {
+            const result = [];
+            const addOptions = (children) => {
+                for (const child of children) {
+                    if (child instanceof Option) {
+                        result.push(child);
+                    }
+                    else if (child instanceof OptGroup) {
+                        addOptions(child.Children);
+                    }
+                }
+            };
+            addOptions(this.Children);
+            return result;
         }
         /** @inheritdoc */
-        set Values(v) {
-            this.values(v);
+        set Options(v) {
+            this.options(v);
         }
         /**
-         * Set the values of the drop-down list.
-         * @param v The values for the drop-down list.
+         * Set the options of the drop-down list. __Note:__ this will _replace_ all child components of
+         * this `Select` instance with the specified values; these child components are also disposed
+         * of(!), so if they are needed or referenced somewhere else they must be extracted or removed
+         * before calling the setter (using `<selectInstance>.extract()`, `<selectInstance>.remove()`).
+         * @param v The options for the drop-down list.
          * @returns This instance.
          */
-        values(v) {
-            const oldValue = { Text: this.TextValue, Value: this.Value }; // eslint-disable-line jsdoc/require-jsdoc
-            this._values = v;
-            while (this._dom.lastChild) {
-                this._dom.lastChild.remove();
+        options(v) {
+            const oldValue = this.Value;
+            const extracted = [];
+            this.extract(extracted);
+            for (const component of extracted) {
+                component.dispose();
             }
-            let i = 0;
-            let newIndex = -1;
-            for (const value of this._values) {
-                const option = document.createElement("option");
-                option.textContent = value.Text;
-                option.value = value.Value;
-                this._dom.appendChild(option);
-                if ((newIndex === -1) && (value.Text === oldValue.Text) && (value.Value === oldValue.Value)) {
-                    newIndex = i;
-                }
-                i++;
-            }
-            if (newIndex !== -1) {
-                this.SelectedIndex = newIndex;
-            }
+            this._dom.replaceChildren();
+            this.append(...v);
+            this.value(oldValue);
             return this;
         }
         /**
@@ -6034,9 +6049,10 @@
          * @returns This instance.
          */
         textValue(v) {
-            let l = this._values.length;
+            const options = this.Options;
+            let l = options.length;
             while (l--) {
-                if (this._values[l].Text === v) {
+                if (options[l].Value === v) {
                     this.SelectedIndex = l;
                     break;
                 }
@@ -6044,7 +6060,10 @@
             return this;
         }
         /**
-         * Get/set the index of the selected value in the drop-down list.
+         * Get/set the index of the selected value in the drop-down list. If `Multiple` is set to
+         * `true`, this will be the index of the first selected value.
+         * - The __getter__ returns `-1` if no value is selected.
+         * - The __setter__ will select the value at the specified index, and deselect all other values.
          */
         get SelectedIndex() {
             return this._dom.selectedIndex;
@@ -6054,13 +6073,72 @@
             this._dom.selectedIndex = v;
         }
         /**
-         * Set the index of the selected value in the drop-down list.
+         * Set the index of the selected value in the drop-down list. If `Multiple` is set to `true`,
+         * this will deselect all other values.
          * @param v The index of the value to be selected in the drop-down list.
          * @returns This instance.
          */
         selectedIndex(v) {
             this._dom.selectedIndex = v;
             return this;
+        }
+        /**
+         * Get the selected option in the drop-down list. If `Multiple` is set to `true`, this will be
+         * the first selected option. If no option is selected, this will return `undefined`.\
+         * __Note:__ There is no setter and also no `selectedOption()` function for this property since
+         * it is just easier to use the `Options` property and set the `Selected` property of the
+         * desired `Option` instance in the returned array.
+         */
+        get SelectedOption() {
+            const index = this._dom.selectedIndex;
+            return index >= 0 ? this.Options[index] : undefined;
+        }
+        /**
+         * Get/set the zero-based indexes of the selected options in `Options`, including options
+         * inside option groups.
+         * - The __getter__ returns the indexes in option order, or an empty array if none are selected.
+         * - The __setter__ selects options whose indexes are included in the array and deselects the
+         *   others. Indexes that do not match an option are ignored.
+         * - `Multiple` must be `true` to select more than one option; otherwise, the native select
+         *   element's single-selection behavior applies.
+         */
+        get SelectedIndexes() {
+            const result = [];
+            const options = this.Options;
+            for (let i = 0; i < options.length; i++) {
+                options[i].Selected && result.push(i);
+            }
+            return result;
+        }
+        /** @inheritdoc */
+        set SelectedIndexes(v) {
+            this.selectedIndexes(v);
+        }
+        /**
+         * Select options by their zero-based indexes in `Options`, including options inside option
+         * groups, and deselect all other options. Indexes that do not match an option are ignored.
+         * `Multiple` must be `true` to select more than one option; otherwise, the native select
+         * element's single-selection behavior applies.
+         * @param v The indexes of the options to select. An empty array deselects all options when
+         * `Multiple` is `true`.
+         * @returns This instance.
+         */
+        selectedIndexes(v) {
+            const options = this.Options;
+            for (let i = 0; i < options.length; i++) {
+                options[i].Selected = v.includes(i);
+            }
+            return this;
+        }
+        /**
+         * Get the selected options in the drop-down list. If `Multiple` is set to `true`, this will be
+         * all selected options. If no option is selected, this will return an empty array.\
+         * __Note:__ There is no setter and also no `selectedOptions()` function for this property since
+         * it is just easier to use the `Options` property and set the `Selected` property of the
+         * individual `Option` instances in the returned array.
+         */
+        get SelectedOptions() {
+            return this.Options.filter(option => option.Selected);
         }
         static {
             /** Mixin additional DOM attributes/properties. */
@@ -9149,7 +9227,7 @@
         /**
          * Create LabeledSelect component.
          * @param labelPhrase The phrasing content for the label.
-         * @param values The values to be displayed in the select element.
+         * @param options The option elements to be displayed in the select element.
          * @param id The id (attribute) of the select element. If `id` is `undefined` or omitted, a
          * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
          * attribute will be set. Any other value will be used as the id attribute.
@@ -9165,13 +9243,13 @@
          * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
          *   has been set on the select element).
          */
-        constructor(labelPhrase, values, id, value, name, lblPosition, lblAlignment, lblAction) {
+        constructor(labelPhrase, options, id, value, name, lblPosition, lblAlignment, lblAction) {
             const _id = id === undefined
                 ? cid()
                 : id === null || id === ""
                     ? null
                     : id;
-            super(new Select(values, _id, value, name), labelPhrase, _id, lblPosition, lblAlignment, lblAction);
+            super(new Select(options, _id, value, name), labelPhrase, _id, lblPosition, lblAlignment, lblAction);
         }
         /**
          * Get select component of this component. Equivalent to `Component`, just with a more
@@ -9203,7 +9281,7 @@
         }
         /**
          * __The function `value()` here is an alias for the function `this.Select.value()` but it
-         * returns _this_ instance instead of the 'TextArea' instance.__
+         * returns _this_ instance instead of the 'Select' instance.__
          * @param v The value to be set.
          * @returns This instance.
          */
@@ -9219,7 +9297,7 @@
         /**
          * Create, set up and return LabeledSelect component.
          * @param labelPhrase The phrasing content for the label.
-         * @param values The values to be displayed in the select element.
+         * @param options The option elements to be displayed in the select element.
          * @param id The id (attribute) of the select element. If `id` is `undefined` or omitted, a
          * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
          * attribute will be set. Any other value will be used as the id attribute.
@@ -9237,8 +9315,8 @@
          * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
          * @returns LabeledSelect component.
          */
-        labeledSelect(labelPhrase, values, id, value, name, lblPosition, lblAlignment, lblAction, data) {
-            return this.setupComponent(new LabeledSelect(labelPhrase, values, id, value, name, lblPosition, lblAlignment, lblAction), data);
+        labeledSelect(labelPhrase, options, id, value, name, lblPosition, lblAlignment, lblAction, data) {
+            return this.setupComponent(new LabeledSelect(labelPhrase, options, id, value, name, lblPosition, lblAlignment, lblAction), data);
         }
     }
 
@@ -11192,18 +11270,18 @@
                 .append(toolbar = new Div()
                 .addClass("toolbar")
                 .append(sizeSelect = $.labeledSelect("Size", [
-                { Text: "Tiny (50%)", Value: "tiny" },
-                { Text: "Small (67%)", Value: "small" },
-                { Text: "Smaller (83%)", Value: "smaller" },
-                { Text: "Normal", Value: "normal" },
-                { Text: "Larger (125%)", Value: "larger" },
-                { Text: "Medium (150%)", Value: "medium" },
-                { Text: "Large (175%)", Value: "large" },
-                { Text: "Huge (200%)", Value: "huge" },
-                { Text: "110%", Value: "110" },
-                { Text: "120%", Value: "120" },
-                { Text: "130%", Value: "130" },
-                { Text: "140%", Value: "140" },
+                new Option("Tiny (50%)").value("tiny"),
+                new Option("Small (67%)").value("small"),
+                new Option("Smaller (83%)").value("smaller"),
+                new Option("Normal").value("normal"),
+                new Option("Larger (125%)").value("larger"),
+                new Option("Medium (150%)").value("medium"),
+                new Option("Large (175%)").value("large"),
+                new Option("Huge (200%)").value("huge"),
+                new Option("110%").value("110"),
+                new Option("120%").value("120"),
+                new Option("130%").value("130"),
+                new Option("140%").value("140"),
             ])
                 .value("normal")
                 .on("change", () => {
@@ -11264,7 +11342,7 @@
         }
     }
 
-    const intro$_ = `
+    const intro$$ = `
 \`BusyOverlay\` is a component for displaying an overlay that indicates a
 'busy-with-no-defined-end' state. The overlay covers the complete viewport and prevents any user
 interaction with the UI below it. It is typically used during long-running operations where user
@@ -11280,7 +11358,7 @@ The component offers additional features:
 - Support for nested calls to \`busy()\`/\`idle()\`. This makes it very easy to use the overlay in
   scenarios where multiple (asynchronous) operations may overlap.
 `;
-    const example$V = `
+    const example$W = `
 ### Basic usage
 
 \`\`\`
@@ -11435,12 +11513,12 @@ longRunning3();
             const btnBusy3 = new Button("Show")
                 .addClass("regular")
                 .on("click", async () => await show(false, 3500, 500));
-            this.append(this.markdown(intro$_), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
-            ), this.markdown(example$V), this.markdown(example2));
+            this.append(this.markdown(intro$$), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
+            ), this.markdown(example$W), this.markdown(example2));
         }
     }
 
-    const intro$Z = `
+    const intro$_ = `
 A container component whose content can be disclosed/undisclosed.
 
 **Class:** \`@vanilla-ts/components/DisclosureContainer\`
@@ -11456,7 +11534,7 @@ The \`DisclosureContainer\` component supports the follwoing features:
 
 All features are configurable at runtime on an already existing instance.
 `;
-    const example$U = `
+    const example$V = `
 ### Notes
 - If \`WeakUndisclosed\` is \`true\` the inner content container will keep its content in the DOM
   when it is undisclosed, otherwise the content will be removed from the DOM.
@@ -11573,7 +11651,7 @@ if (someCondition) {
                 "textAlign": "center",
             });
             this
-                .append(this.markdown(intro$Z), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$U), this.markdown(css$1));
+                .append(this.markdown(intro$_), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$V), this.markdown(css$1));
         }
         #handleDisclose(ev) {
             ev.preventDefault();
@@ -11581,14 +11659,15 @@ if (someCondition) {
         #getConfiguration() {
             const div = new Div();
             const appearance = $.labeledSelect("Appearance", [
-                { Text: "TOP_START", Value: "top-start" },
-                { Text: "TOP_END", Value: "top-end" },
-                { Text: "END_TOP", Value: "end-top" },
-                { Text: "END_BOTTOM", Value: "end-bottom" },
-                { Text: "BOTTOM_END", Value: "bottom-end" },
-                { Text: "BOTTOM_START", Value: "bottom-start" },
-                { Text: "START_BOTTOM", Value: "start-bottom" },
-                { Text: "START_TOP", Value: "start-top" },
+                new Option("TOP_START").value("top-start"),
+                new Option("TOP_START").value("top-start"),
+                new Option("TOP_END").value("top-end"),
+                new Option("END_TOP").value("end-top"),
+                new Option("END_BOTTOM").value("end-bottom"),
+                new Option("BOTTOM_END").value("bottom-end"),
+                new Option("BOTTOM_START").value("bottom-start"),
+                new Option("START_BOTTOM").value("start-bottom"),
+                new Option("START_TOP").value("start-top"),
             ]).on("change", () => {
                 switch (appearance.Value) {
                     case "top-start":
@@ -11654,7 +11733,7 @@ if (someCondition) {
         }
     }
 
-    const intro$Y = `
+    const intro$Z = `
 \`IconButton\` is a component to display buttons with icons and/or text. The
 component itself is a regular \`§@dom/Button§\` component that contains three inner \`§@dom/Span§\`
 components which can be styled individually:
@@ -11885,7 +11964,7 @@ Compared to the example which uses background images the amount of CSS needed he
             let ib2a;
             let ib3a;
             const ibf = new MyIconButtonFactory();
-            this.append(this.markdown(intro$Y), this.example([
+            this.append(this.markdown(intro$Z), this.example([
                 new P("IconButtons with background images:"),
                 new Div().addClass("icon-button-container").append(ib0 = ibf.iconButton({
                     IconStart: "-ios_share",
@@ -11945,7 +12024,7 @@ Compared to the example which uses background images the amount of CSS needed he
         }
     }
 
-    const intro$X = `
+    const intro$Y = `
 ## Advanced components
 
 The components provided by the \`@vanilla-ts/components\` package are complex elements that address
@@ -12013,7 +12092,7 @@ labeled components.
         buildExample() {
             this
                 .addClass("ex-components-introduction")
-                .append(this.markdown(intro$X));
+                .append(this.markdown(intro$Y));
         }
     }
 
@@ -12022,10 +12101,10 @@ labeled components.
         let lsAlignmentCb;
         return [
             lsPositionCb = $.labeledSelect("Label position", [
-                { Text: "TOP", Value: "top" },
-                { Text: "END", Value: "end" },
-                { Text: "BOTTOM", Value: "bottom" },
-                { Text: "START", Value: "start" },
+                new Option("TOP").value("top"),
+                new Option("END").value("end"),
+                new Option("BOTTOM").value("bottom"),
+                new Option("START").value("start"),
             ], undefined, positionValue)
                 .on("change", () => {
                 switch (lsPositionCb.Value) {
@@ -12044,9 +12123,9 @@ labeled components.
                 }
             }),
             lsAlignmentCb = $.labeledSelect("Label alignment", [
-                { Text: "START", Value: "start" },
-                { Text: "CENTER", Value: "center" },
-                { Text: "END", Value: "end" },
+                new Option("START").value("start"),
+                new Option("CENTER").value("center"),
+                new Option("END").value("end"),
             ], undefined, alignmentValue)
                 .on("change", () => {
                 switch (lsAlignmentCb.Value) {
@@ -12068,12 +12147,12 @@ labeled components.
         ];
     }
 
-    const intro$W = `
+    const intro$X = `
 A component with an §@dom/A§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledAnchor\`
 `;
-    const example$T = `
+    const example$U = `
 ### Code example
 
 \`\`\`
@@ -12109,9 +12188,9 @@ new VTS_App(document.body).append(anchor1, anchor2);
         buildExample() {
             this.#lAnchor1 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-dom", "DOM project home", "Vanilla.ts DOM").target("_blank");
             this.#lAnchor2 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-components", "Components project home").target("_blank");
-            this.append(this.markdown(intro$W), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$X), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$T));
+                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$U));
         }
     }
 
@@ -12249,13 +12328,13 @@ For an advanced usage of component factories see §@core/Component factories§.
         }
     }
 
-    const intro$V = `
+    const intro$W = `
 A component with a §@dom/Div§ as a (inner) container for other components and a §@dom/Span§
 representing the caption for the container component.
 
 **Class:** \`@vanilla-ts/components/LabeledContainer\`
 `;
-    const example$S = `
+    const example$T = `
 ### Code example
 
 \`\`\`
@@ -12330,17 +12409,17 @@ new VTS_App(document.body).append(example);
                 { Label: "Nightly builds", Value: "nightly" },
             ], "rbg-sample-1")
                 .value("beta"), $.hr(), new P("Choose how updates should be installed"), $.labeledCheckbox("Automatically download available updates").checked(true), $.labeledCheckbox("Install updates automatically").checked(true), $.labeledCheckbox("Install security updates automatically").checked(true).disabled(true));
-            this.append(this.markdown(intro$V), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$S), this.markdown(exampleCSS$1));
+            this.append(this.markdown(intro$W), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$T), this.markdown(exampleCSS$1));
         }
     }
 
-    const intro$U = `
+    const intro$V = `
 A component with an §@dom/EmailInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledEmailInput\`
 `;
-    const example$R = `
+    const example$S = `
 ### Code example
 
 \`\`\`
@@ -12364,18 +12443,18 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledEmailInput("Business contact")
                 .emailInput(c => c.placeholder("sophie@example.com"));
-            this.append(this.markdown(intro$U), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$V), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$R));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$S));
         }
     }
 
-    const intro$T = `
+    const intro$U = `
 A component with a §@dom/NumberInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledNumberInput\`
 `;
-    const example$Q = `
+    const example$R = `
 ### Code example
 
 \`\`\`
@@ -12439,18 +12518,18 @@ new VTS_App(document.body).append(example);
                 .on("input", () => {
                 this.#lInput.NumberInput.DOM.setCustomValidity(this.#lInput.Value === "42" ? "" : "not_42");
             });
-            this.append(this.markdown(intro$T), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$U), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$Q), this.markdown(css));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$R), this.markdown(css));
         }
     }
 
-    const intro$S = `
+    const intro$T = `
 A component with a §@dom/P§ and a §@dom/Span§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledParagraph\`
 `;
-    const example$P = `
+    const example$Q = `
 ### Code example
 
 \`\`\`
@@ -12476,18 +12555,18 @@ et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est.
         /** @inheritdoc */
         buildExample() {
             this.#lParagraph = $.labeledParagraph("Sample text", lorem);
-            this.append(this.markdown(intro$S), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$T), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$P));
+                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$Q));
         }
     }
 
-    const intro$R = `
+    const intro$S = `
 A component with a §@dom/PasswordInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledPasswordInput\`
 `;
-    const example$O = `
+    const example$P = `
 ### Code example
 
 \`\`\`
@@ -12511,20 +12590,20 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledPasswordInput("Password")
                 .passwordInput(c => c.placeholder("Enter password"));
-            this.append(this.markdown(intro$R), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$S), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$O));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$P));
         }
     }
 
-    const intro$Q = `
+    const intro$R = `
 A component with a §@dom/RadioButton§ and a §@dom/Label§ representing a caption for the component.
 This class mainly exists as a building block for §@components/RadioButtonGroup§s and
 §@components/LabeledRadioButtonGroup§s.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButton\`
 `;
-    const example$N = `
+    const example$O = `
 ### Code example
 
 \`\`\`
@@ -12551,7 +12630,7 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$Q), this.example([
+            this.append(this.markdown(intro$R), this.example([
                 this.#lrb = $.labeledRadioButton("Beta versions")
                     .on("checked", () => this.#rbgCb.value(this.#lrb.Checked ? "checked" : "unchecked"))
             ]), this.markdown("### Label position, label alignment and radio button state"), new Div()
@@ -12571,17 +12650,17 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
                         break;
                 }
             }), ...labeledComponentLabelFlags([this.#lrb], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$N));
+                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$O));
         }
     }
 
-    const intro$P = `
+    const intro$Q = `
 A component that groups multiple §@components/LabeledRadioButton§s into a single component that is
 similar to a §@components/LabeledContainer§.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButtonGroup\`
 `;
-    const example$M = `
+    const example$N = `
 ### Code example
 
 \`\`\`
@@ -12621,7 +12700,7 @@ in the \`RadioButtonGroup\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$P), this.example([
+            this.append(this.markdown(intro$Q), this.example([
                 this.#lrbg = $.labeledRadioButtonGroup("Your position", [
                     { Label: "Software developer", Value: "software_developer" },
                     { Label: "Security engineer", Value: "security_engineer" },
@@ -12633,8 +12712,8 @@ in the \`RadioButtonGroup\` class.
             ]), this.markdown("### Alignment, label positions, label alignments and radio button states"), new Div()
                 .addClass("example-properties")
                 .append(this.markdown("\u2014 Outer labeled container \u2014"), ...labeledComponentLabelFlags([this.#lrbg], false, "top", "start"), $.br(), this.markdown("\u2014 Inner radio button group \u2014"), this.#lsAlignment = $.labeledSelect("Alignment", [
-                { Text: "VERTICAL", Value: "vertical" },
-                { Text: "HORIZONTAL", Value: "horizontal" },
+                new Option("VERTICAL").value("vertical"),
+                new Option("HORIZONTAL").value("horizontal"),
             ])
                 .on("change", () => {
                 switch (this.#lsAlignment.Value) {
@@ -12648,16 +12727,16 @@ in the \`RadioButtonGroup\` class.
             }), 
             // $.labeledContainer("Inner radio button group").append(
             ...labeledComponentLabelFlags([this.#lrbg.RadioButtonGroup], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$M));
+                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$N));
         }
     }
 
-    const intro$O = `
+    const intro$P = `
 A component with a §@dom/SearchInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledSearchInput\`
 `;
-    const example$L = `
+    const example$M = `
 ### Code example
 
 \`\`\`
@@ -12681,78 +12760,162 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledSearchInput("Search")
                 .searchInput(c => c.placeholder("Enter search term..."));
-            this.append(this.markdown(intro$O), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$P), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$L));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$M));
         }
     }
 
-    const intro$N = `
+    const intro$O = `
 A component with an §@dom/Select§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledSelect\`
 `;
-    const example$K = `
+    const example$L = `
 ### Code example
 
 \`\`\`
-import { LabeledSelect, LabelPosition } from "@vanilla-ts/components";
+import { LabelPosition, LabeledSelect } from "@vanilla-ts/components";
 import { VTS_App } from "@vanilla-ts/core";
-import { Em, ISelectValues, P } from "@vanilla-ts/dom";
+import { Em, Option, P, SelectChild } from "@vanilla-ts/dom";
 
-const selectValues: ISelectValues[] = [
-    { Text: "Apple", Value: "apple" },
-    { Text: "Banana", Value: "banana" },
-    { Text: "Cherry", Value: "cherry" },
-    { Text: "Dragonfruit", Value: "dragonfruit" },
-    { Text: "Eggplant", Value: "eggplant" }
+const options: SelectChild[] = [
+    new Option("Apple").value("apple"),
+    new Option("Banana").value("banana"),
+    new Option("Cherry").value("cherry"),
+    new Option("Dragonfruit").value("dragonfruit"),
+    new Option("Eggplant").value("eggplant")
 ];
 
-const example = new LabeledSelect("Fruits", selectValues)
+const example = new LabeledSelect("Fruits", options)
+    .addClass("labeled-select")
     .value("cherry")
     .labelPosition(LabelPosition.TOP)
     .on("change", () => log.phrase("Selected fruit (value): ", new Em(example.Value)));
 
 const log = new P("Select a fruit from the dropdown above.")
-    .style("marginBlockStart", "1rem");
+    .style({
+        width: "20rem",
+        marginBlockStart: "1rem"
+    });
+
+new VTS_App(document.body).append(example, log);
+\`\`\`
+`;
+    const introMultiple$1 = `
+## Multiple selection
+
+The inner \`Select\` component also supports multiple selection. It can be configured while creating
+the \`LabeledSelect\` instance by passing a callback to \`select()\` and calling \`multiple(true)\`.
+The selected options/values can be read from the \`SelectedOptions\` property of the inner \`Select\`
+component. Depending on the operating system, users can select multiple entries by holding the
+*Ctrl*, *Command* or *Shift* key.
+`;
+    const exampleMultiple$1 = `
+### Code example (multiple selection)
+
+\`\`\`
+import { LabelPosition, LabeledSelect } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+import { Em, Option, P } from "@vanilla-ts/dom";
+
+const example = new LabeledSelect("Fruits", [
+    new Option("Apple").value("apple").selected(true),
+    new Option("Banana").value("banana"),
+    new Option("Cherry").value("cherry").selected(true),
+    new Option("Dragonfruit").value("dragonfruit"),
+    new Option("Eggplant").value("eggplant")
+])
+    .addClass("labeled-select")
+    .labelPosition(LabelPosition.TOP)
+    .select(select => select
+        .multiple(true)
+        .size(5)
+    )
+    .on("change", updateLog);
+
+const log = new P("Select fruits from the list above.")
+    .style({
+        width: "20rem",
+        marginBlockStart: "1rem"
+    });
+
+function updateLog(): void {
+    const selectedValues = example.Select.SelectedOptions.map(option => option.Value);
+    log.phrase(
+        "Selected fruits (values): ",
+        new Em(selectedValues.join(", ") || "None")
+    );
+}
 
 new VTS_App(document.body).append(example, log);
 \`\`\`
 `;
     class LabeledSelectEx extends BaseExample {
         #lInput;
+        #lInputMultiple;
         constructor() {
             super("LabeledSelect");
         }
         /** @inheritdoc */
         buildExample() {
-            const selectValues = [
-                { Text: "Apple", Value: "apple" },
-                { Text: "Banana", Value: "banana" },
-                { Text: "Cherry", Value: "cherry" },
-                { Text: "Dragonfruit", Value: "dragonfruit" },
-                { Text: "Eggplant", Value: "eggplant" }
+            const options = [
+                new Option("Apple").value("apple"),
+                new Option("Banana").value("banana"),
+                new Option("Cherry").value("cherry"),
+                new Option("Dragonfruit").value("dragonfruit"),
+                new Option("Eggplant").value("eggplant")
             ];
-            const log = new P("Select a fruit from the dropdown above.").style("marginBlockStart", "1rem");
-            this.#lInput = $.labeledSelect("Fruits", selectValues)
+            const log = new P("Select a fruit from the dropdown above.")
+                .style({
+                width: "20rem",
+                marginBlockStart: "1rem"
+            });
+            this.#lInput = $.labeledSelect("Fruits", options)
                 .value("cherry")
                 .labelPosition(LabelPosition.TOP)
                 .on("change", () => log.phrase("Selected fruit (value): ", new Em(this.#lInput.Value)));
-            this.append(this.markdown(intro$N), this.example([
+            const logMultiple = new P("Select fruits from the list above.")
+                .style({
+                width: "20rem",
+                marginBlockStart: "1rem"
+            });
+            const updateMultipleLog = () => {
+                const selectedValues = this.#lInputMultiple.Select.SelectedOptions.map(option => option.Value);
+                logMultiple.phrase("Selected fruits (values): ", new Em(selectedValues.join(", ") || "None"));
+            };
+            this.#lInputMultiple = $.labeledSelect("Fruits", [
+                new Option("Apple").value("apple").selected(true),
+                new Option("Banana").value("banana"),
+                new Option("Cherry").value("cherry").selected(true),
+                new Option("Dragonfruit").value("dragonfruit"),
+                new Option("Eggplant").value("eggplant")
+            ])
+                .labelPosition(LabelPosition.TOP)
+                .select(select => select
+                .multiple(true)
+                .size(5))
+                .on("change", updateMultipleLog);
+            this.append(this.markdown(intro$O), this.example([
                 this.#lInput,
                 log
             ]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$K));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$L), this.markdown("---"), this.markdown(introMultiple$1), this.example([
+                this.#lInputMultiple,
+                logMultiple
+            ]), this.markdown("### Label position and label alignment"), new Div()
+                .addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#lInputMultiple], true, "top", "start")), this.markdown(exampleMultiple$1));
         }
     }
 
-    const intro$M = `
+    const intro$N = `
 A component with a §@dom/TextInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledTextInput\`
 `;
-    const example$J = `
+    const example$K = `
 ### Code example
 
 \`\`\`
@@ -12776,18 +12939,18 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledTextInput("Username")
                 .textInput(c => c.placeholder("Enter your name here"));
-            this.append(this.markdown(intro$M), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$N), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$J));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$K));
         }
     }
 
-    const intro$L = `
+    const intro$M = `
 A component that groups multiple §@components/LabeledRadioButton§s into a single component.
 
 **Class:** \`@vanilla-ts/components/RadioButtonGroup\`
 `;
-    const example$I = `
+    const example$J = `
 ### Code example
 
 \`\`\`
@@ -12824,7 +12987,7 @@ in the \`RadioButtonGroup\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$L), this.example([
+            this.append(this.markdown(intro$M), this.example([
                 this.#rbg = $.radioButtonGroup([
                     { Label: "Regular updates", Value: "regular" },
                     { Label: "Beta versions", Value: "beta" },
@@ -12834,8 +12997,8 @@ in the \`RadioButtonGroup\` class.
             ]), this.markdown("### Alignment, label position, label alignment and radio button state"), new Div()
                 .addClass("example-properties")
                 .append(this.#lsAlignment = $.labeledSelect("Alignment", [
-                { Text: "VERTICAL", Value: "vertical" },
-                { Text: "HORIZONTAL", Value: "horizontal" },
+                new Option("VERTICAL").value("vertical"),
+                new Option("HORIZONTAL").value("horizontal"),
             ])
                 .on("change", () => {
                 switch (this.#lsAlignment.Value) {
@@ -12847,7 +13010,7 @@ in the \`RadioButtonGroup\` class.
                         break;
                 }
             }), ...labeledComponentLabelFlags([this.#rbg], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#rbg.toggle(!this.#rbg.Toggle))), this.markdown(example$I));
+                .on("checked", () => this.#rbg.toggle(!this.#rbg.Toggle))), this.markdown(example$J));
         }
     }
 
@@ -12895,7 +13058,7 @@ in the \`RadioButtonGroup\` class.
         }
     }
 
-    const intro$K = `
+    const intro$L = `
 The components provided by the \`@vanilla-ts/core\` package ...
 `;
     class CoreIntroductionEx extends BaseExample {
@@ -12906,17 +13069,17 @@ The components provided by the \`@vanilla-ts/core\` package ...
         buildExample() {
             this
                 .addClass("ex-core-introduction")
-                .append(this.markdown(intro$K));
+                .append(this.markdown(intro$L));
         }
     }
 
-    const intro$J = `
+    const intro$K = `
 A component that encapsulates the DOM element
 %\`<address>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/address%.
 
 **Class:** \`@vanilla-ts/dom/Address\`
 `;
-    const example$H = `
+    const example$I = `
 ### Code example
 
 \`\`\`
@@ -12943,21 +13106,21 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             let address;
-            this.append(this.markdown(intro$J), this.example([
+            this.append(this.markdown(intro$K), this.example([
                 new P("Contact the author of this page:"),
                 address = new Address().append(new A("mailto:jim@example.com", "jim@example.com"), new Br(), new A("tel:+14155550132", "+1 (415) 555‑0132"))
-            ], [address]), this.markdown(example$H));
+            ], [address]), this.markdown(example$I));
         }
     }
 
-    const intro$I = `
+    const intro$J = `
 A component that encapsulates a native DOM anchor element
 (%\`<a>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a%).
 This component is also available as a §@components/LabeledAnchor§.
 
 **Class:** \`@vanilla-ts/dom/A\`
 `;
-    const example$G = `
+    const example$H = `
 ### Code example
 
 \`\`\`
@@ -12979,19 +13142,19 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$I), this.example([
+            this.append(this.markdown(intro$J), this.example([
                 new A("https://github.com/mn4367/vanilla-ts-components", "Go to vanilla-ts-components at GitHub.").target("_blank")
-            ]), this.markdown(example$G));
+            ]), this.markdown(example$H));
         }
     }
 
-    const intro$H = `
+    const intro$I = `
 A component that encapsulates the DOM element
 %\`<b>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/b%.
 
 **Class:** \`@vanilla-ts/dom/B\`
 `;
-    const example$F = `
+    const example$G = `
 ### Code example
 
 \`\`\`
@@ -13012,19 +13175,19 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             const b = new B("dolor");
-            this.append(this.markdown(intro$H), this.example([
+            this.append(this.markdown(intro$I), this.example([
                 new P("Lorem ipsum ", b, " sit amet.")
-            ], [b]), this.markdown(example$F));
+            ], [b]), this.markdown(example$G));
         }
     }
 
-    const intro$G = `
+    const intro$H = `
 A component that encapsulates the DOM element
 %\`<br>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/br%.
 
 **Class:** \`@vanilla-ts/dom/Br\`
 `;
-    const example$E = `
+    const example$F = `
 ### Code example
 
 \`\`\`
@@ -13042,13 +13205,13 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$G), this.example([
+            this.append(this.markdown(intro$H), this.example([
                 new P("Lorem ipsum dolor", new Br(), "sit amet.")
-            ]), this.markdown(example$E));
+            ]), this.markdown(example$F));
         }
     }
 
-    const intro$F = `
+    const intro$G = `
 A component that encapsulates the native DOM button element
 (%\`<button>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button%).
 
@@ -13057,7 +13220,7 @@ A component that encapsulates the native DOM button element
 __Note:__ Buttons do not have a default styling. This is done to ease the creation of dedicated
 button styles for different usage contexts (like dialogs, toolbars, icon buttons etc.).
 `;
-    const example$D = `
+    const example$E = `
 ### Code example (unstyled default button)
 
 \`\`\`
@@ -13125,7 +13288,7 @@ the previous example). For an advanced usage of component factories see §@core/
             let btnSkip;
             let btnCancel;
             let btnOk;
-            this.append(this.markdown(intro$F), this.markdown(example$D), this.example([
+            this.append(this.markdown(intro$G), this.markdown(example$E), this.example([
                 new Button("Button")
             ]), this.markdown(exampleStyled), this.example([
                 btnSkip = $.buttonWarn("Skip"),
@@ -13137,13 +13300,13 @@ the previous example). For an advanced usage of component factories see §@core/
         }
     }
 
-    const intro$E = `
+    const intro$F = `
 A component that encapsulates the DOM element
 %\`<canvas>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas%.
 
 **Class:** \`@vanilla-ts/dom/Canvas\`
 `;
-    const example$C = `
+    const example$D = `
 ### Code example
 
 \`\`\`
@@ -13192,7 +13355,7 @@ new VTS_App(document.body).append(example);
             drawCircle(50, 50, 40, "red");
             drawCircle(100, 100, 40, "green");
             drawCircle(150, 150, 40, "blue");
-            this.append(this.markdown(intro$E), this.exampleNoToolbar(canvas), this.markdown(example$C));
+            this.append(this.markdown(intro$F), this.exampleNoToolbar(canvas), this.markdown(example$D));
         }
     }
 
@@ -13320,13 +13483,13 @@ For an advanced usage of component factories see §@core/Component factories§.
         }
     }
 
-    const intro$D = `
+    const intro$E = `
 A component that encapsulates the DOM element
 %\`<code>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/code%.
 
 **Class:** \`@vanilla-ts/dom/Code\`
 `;
-    const example$B = `
+    const example$C = `
 ### Code example
 
 \`\`\`
@@ -13347,13 +13510,13 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             const c = new Code("dolor").style("background", "lightgray");
-            this.append(this.markdown(intro$D), this.example([
+            this.append(this.markdown(intro$E), this.example([
                 new P("Lorem ipsum ", c, " sit amet.")
-            ], [c]), this.markdown(example$B));
+            ], [c]), this.markdown(example$C));
         }
     }
 
-    const intro$C = `
+    const intro$D = `
 A component that encapsulates a DOM comment node
 (%\`<!-\u200b- -->\`|https://developer.mozilla.org/en-US/docs/Web/API/Comment%).
 There is, of course, no visual representation of a comment node in a web page but the created
@@ -13361,7 +13524,7 @@ component can be used like any other 'real' component.
 
 **Class:** \`@vanilla-ts/dom/Comment\`
 `;
-    const example$A = `
+    const example$B = `
 ### Code example
 
 \`\`\`
@@ -13379,7 +13542,60 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$C), this.exampleNoToolbar(new Comment("Lorem ipsum dolor sit amet."), new Code("<!--", new Text$1(new Comment("Lorem ipsum dolor sit amet.").Text), "-->")), this.markdown(example$A));
+            this.append(this.markdown(intro$D), this.exampleNoToolbar(new Comment("Lorem ipsum dolor sit amet."), new Code("<!--", new Text$1(new Comment("Lorem ipsum dolor sit amet.").Text), "-->")), this.markdown(example$B));
+        }
+    }
+
+    const intro$C = `
+A component that encapsulates the DOM element
+%\`<datalist>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist%.
+It provides a list of predefined suggestions for an input component. The \`DataList\` and the input
+are associated by setting the input's \`list\` attribute to the ID of the \`DataList\` component.
+Unlike a §@dom/Select§ component, the input still allows values that are not part of the suggestions.
+
+**Class:** \`@vanilla-ts/dom/DataList\`
+`;
+    const example$A = `
+### Code example
+
+\`\`\`
+import { VTS_App } from "@vanilla-ts/core";
+import { DataList, Option, TextInput } from "@vanilla-ts/dom";
+
+const dataList = new DataList(
+    new Option("Berlin"),
+    new Option("London"),
+    // Some browsers will display the label as an additional description for the option.
+    // Gecko-based browsers (e.g. Firefox) will display the label instead of the value,
+    // but the value will still be used when the option is selected.
+    new Option("Paris").label("Capital of France"),
+    new Option("Rome"),
+    new Option("Vienna")
+).id("city-suggestions");
+
+const example = new TextInput()
+    .attrib("list", dataList.ID)
+    .placeholder("Choose or enter a city")
+    .style("width", "12rem");
+
+new VTS_App(document.body).append(example, dataList);
+\`\`\`
+`;
+    class DataListEx extends BaseExample {
+        constructor() {
+            super("DataList");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            const dataList = new DataList(new Option("Berlin"), new Option("London"), new Option("Paris").label("Capital of France"), new Option("Rome"), new Option("Vienna")).id("city-suggestions");
+            const textInput = new TextInput()
+                .attrib("list", dataList.ID)
+                .placeholder("Choose or enter a city")
+                .style("width", "12rem");
+            this.append(this.markdown(intro$C), this.example([
+                textInput,
+                dataList
+            ], [textInput]), this.markdown(example$A));
         }
     }
 
@@ -14300,6 +14516,8 @@ new VTS_App(document.body).append(example);
     const intro$h = `
 A component that encapsulates the DOM element
 %\`<optgroup>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup%.
+It groups related \`@vanilla-ts/core/Option\` components within a §@dom/Select§ component. The first
+constructor argument sets the group label; all following arguments are the options of the group.
 
 **Class:** \`@vanilla-ts/dom/OptGroup\`
 `;
@@ -14308,11 +14526,44 @@ A component that encapsulates the DOM element
 
 \`\`\`
 import { VTS_App } from "@vanilla-ts/core";
-import { OptGroup } from "@vanilla-ts/dom";
+import { Em, Hr, OptGroup, Option, P, Select } from "@vanilla-ts/dom";
 
-const example = new OptGroup();
+const example = new Select([
+    new Option("Berlin").value("berlin"),
+    new Option("London").value("london"),
+    new Option("Paris").value("paris"),
+    new Hr(),
+    new OptGroup(
+        "North America",
+        new Option("Chicago").value("chicago"),
+        new Option("Los Angeles").value("los-angeles"),
+        new Option("New York").value("new-york"),
+    ),
+    new OptGroup(
+        "South America",
+        new Option("São Paulo").value("sao-paulo"),
+        new Option("Buenos Aires").value("buenos-aires"),
+        new Option("Rio de Janeiro").value("rio-de-janeiro"),
+    ).disabled(true),
+    new OptGroup(
+        "Asia",
+        new Option("Seoul").value("seoul"),
+        new Option("Kyoto").value("kyoto").disabled(true),
+        new Option("Shanghai").value("shanghai"),
+        new Option("Tokyo").value("tokyo")
+    )
+])
+    .value("tokyo")
+    .style("width", "10rem")
+    .on("change", () => log.phrase("Selected city (value): ", new Em(example.Value)));
 
-new VTS_App(document.body).append(example);
+const log = new P("Select a city from the grouped dropdown above.")
+    .style({
+        width: "25rem",
+        marginBlockStart: "1rem"
+    });
+
+new VTS_App(document.body).append(example, log);
 \`\`\`
 `;
     class OptGroupEx extends BaseExample {
@@ -14321,8 +14572,27 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
+            const log = new P("Select a city from the grouped dropdown above.")
+                .style({
+                width: "25rem",
+                marginBlockStart: "1rem"
+            });
+            const select = new Select([
+                // .append(
+                new Option("Berlin").value("berlin"),
+                new Option("London").value("london"),
+                new Option("Paris").value("paris"),
+                new Hr(),
+                new OptGroup("North America", new Option("Chicago").value("chicago"), new Option("Los Angeles").value("los-angeles"), new Option("New York").value("new-york")),
+                new OptGroup("South America", new Option("São Paulo").value("sao-paulo"), new Option("Buenos Aires").value("buenos-aires"), new Option("Rio de Janeiro").value("rio-de-janeiro")).disabled(true),
+                new OptGroup("Asia", new Option("Seoul").value("seoul"), new Option("Kyoto").value("kyoto").disabled(true), new Option("Shanghai").value("shanghai"), new Option("Tokyo").value("tokyo"))
+            ])
+                .value("tokyo")
+                .style("width", "10rem")
+                .on("change", () => log.phrase("Selected city (value): ", new Em(select.Value)));
             this.append(this.markdown(intro$h), this.example([
-                new OptGroup("label")
+                select,
+                log
             ]), this.markdown(example$h));
         }
     }
@@ -14786,17 +15056,17 @@ This component is also available as a §@components/LabeledSelect§.
 
 \`\`\`
 import { VTS_App } from "@vanilla-ts/core";
-import { Em, ISelectValues, P, Select } from "@vanilla-ts/dom";
+import { Em, Option, P, Select, SelectChild } from "@vanilla-ts/dom";
 
-const selectValues: ISelectValues[] = [
-    { Text: "Apple", Value: "apple" },
-    { Text: "Banana", Value: "banana" },
-    { Text: "Cherry", Value: "cherry" },
-    { Text: "Dragonfruit", Value: "dragonfruit" },
-    { Text: "Eggplant", Value: "eggplant" }
+const options: SelectChild[] = [
+    new Option("Apple").value("apple"),
+    new Option("Banana").value("banana"),
+    new Option("Cherry").value("cherry"),
+    new Option("Dragonfruit").value("dragonfruit"),
+    new Option("Eggplant").value("eggplant")
 ];
 
-const example = new Select(selectValues)
+const example = new Select(options)
     .value("cherry")
     .style("width", "8rem")
     .on("change", () => log.phrase("Selected fruit (value): ", new Em(example.Value)));
@@ -14810,28 +15080,102 @@ const log = new P("Select a fruit from the dropdown above.")
 new VTS_App(document.body).append(example, log);
 \`\`\`
 `;
+    const introMultiple = `
+## Multiple selection
+
+Setting \`Multiple\` to \`true\` (or calling \`multiple(true)\`) allows users to select more than
+one option. The selected options/values can be read from the \`SelectedOptions\` property of the
+component. Depending on the operating system, users can select multiple entries by holding the
+*Ctrl*, *Command* or *Shift* key.
+`;
+    const exampleMultiple = `
+### Code example (multiple selection)
+
+\`\`\`
+import { VTS_App } from "@vanilla-ts/core";
+import { Em, Option, P, Select } from "@vanilla-ts/dom";
+
+const example = new Select([
+    new Option("Apple").value("apple").selected(true),
+    new Option("Banana").value("banana"),
+    new Option("Cherry").value("cherry").selected(true),
+    new Option("Dragonfruit").value("dragonfruit"),
+    new Option("Eggplant").value("eggplant")
+])
+    .multiple(true)
+    .size(5)
+    .style("width", "10rem")
+    .on("change", updateLog);
+
+const log = new P("Select fruits from the list above.")
+    .style({
+        width: "20rem",
+        marginBlockStart: "1rem"
+    });
+
+function updateLog(): void {
+    const selectedValues = Array.from(example.SelectedOptions, option => option.Value);
+    log.phrase(
+        "Selected fruits (values): ",
+        new Em(selectedValues.join(", ") || "None")
+    );
+}
+
+new VTS_App(document.body).append(example, log);
+\`\`\`
+`;
     class SelectEx extends BaseExample {
         constructor() {
             super("Select");
         }
         /** @inheritdoc */
         buildExample() {
-            const selectValues = [
-                { Text: "Apple", Value: "apple" },
-                { Text: "Banana", Value: "banana" },
-                { Text: "Cherry", Value: "cherry" },
-                { Text: "Dragonfruit", Value: "dragonfruit" },
-                { Text: "Eggplant", Value: "eggplant" }
+            const options = [
+                new Option("Apple").value("apple"),
+                new Option("Banana").value("banana"),
+                new Option("Cherry").value("cherry"),
+                new Option("Dragonfruit").value("dragonfruit"),
+                new Option("Eggplant").value("eggplant")
             ];
-            const log = new P("Select a fruit from the dropdown above.").style({ width: "20rem", marginBlockStart: "1rem" });
-            const select = new Select(selectValues)
+            const log = new P("Select a fruit from the dropdown above.")
+                .style({
+                width: "20rem", marginBlockStart: "1rem"
+            });
+            function updateSingleLog() {
+                log.phrase("Selected fruit (value): ", new Em(select.Value));
+            }
+            const select = new Select(options)
                 .value("cherry")
                 .style("width", "10rem")
-                .on("change", () => log.phrase("Selected fruit (value): ", new Em(select.Value)));
+                .on("change", updateSingleLog);
+            //
+            const logMultiple = new P("Select fruits from the list above.")
+                .style({
+                width: "20rem",
+                marginBlockStart: "1rem"
+            });
+            function updateMultipleLog() {
+                const selectedValues = Array.from(selectMultiple.SelectedOptions, option => option.Value);
+                logMultiple.phrase("Selected fruits (values): ", new Em(selectedValues.join(", ") || "None"));
+            }
+            const selectMultiple = new Select([
+                new Option("Apple").value("apple").selected(true),
+                new Option("Banana").value("banana"),
+                new Option("Cherry").value("cherry").selected(true),
+                new Option("Dragonfruit").value("dragonfruit"),
+                new Option("Eggplant").value("eggplant")
+            ])
+                .multiple(true)
+                .size(5)
+                .style("width", "10rem")
+                .on("change", updateMultipleLog);
             this.append(this.markdown(intro$7), this.example([
                 select,
                 log
-            ]), this.markdown(example$7));
+            ]), this.markdown(example$7), this.markdown("---"), this.markdown(introMultiple), this.example([
+                selectMultiple,
+                logMultiple
+            ]), this.markdown(exampleMultiple));
         }
     }
 
@@ -15228,6 +15572,7 @@ new VTS_App(document.body).append(example);
         "#@dom/Checkbox / Switch",
         "#@dom/Code",
         "#@dom/Comment",
+        "#@dom/DataList",
         "#@dom/Dialog",
         "#@dom/Div",
         "#@dom/Em",
@@ -15320,6 +15665,7 @@ new VTS_App(document.body).append(example);
     let checkboxEx;
     let commentEx;
     let codeEx;
+    let dataListEx;
     let dialogEx;
     let divEx;
     let emEx;
@@ -15440,6 +15786,9 @@ new VTS_App(document.body).append(example);
                 break;
             case "#@dom/Comment":
                 example = commentEx ??= new CommentEx();
+                break;
+            case "#@dom/DataList":
+                example = dataListEx ??= new DataListEx();
                 break;
             case "#@dom/Dialog":
                 example = dialogEx ??= new DialogEx();
