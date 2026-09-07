@@ -17,7 +17,7 @@ const example = `
 ### Code example
 
 \`\`\`
-import { LabeledCheckbox, LabeledContainer, RadioButtonGroup } from "@vanilla-ts/components";
+import { LabeledCheckbox, LabeledContainer, LabelAlignment, RadioButtonGroup } from "@vanilla-ts/components";
 import { VTS_App } from "@vanilla-ts/core";
 import { Hr, P } from "@vanilla-ts/dom";
 

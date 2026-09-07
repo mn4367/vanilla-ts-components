@@ -14,7 +14,7 @@ const example = `
 ### Code example
 
 \`\`\`
-import { VTS_App } from "@vanilla-ts/core";
+import { CSSStyleDeclarations, VTS_App } from "@vanilla-ts/core";
 import { Div, Label, TextInput } from "@vanilla-ts/dom";
 
 const style: CSSStyleDeclarations = {

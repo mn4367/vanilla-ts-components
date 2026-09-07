@@ -18,7 +18,7 @@ const example = `
 
 \`\`\`
 import { IElementComponent, VTS_App } from "@vanilla-ts/core";
-import { Br, Code, Dialog, P } from "@vanilla-ts/dom";
+import { Br, Button, Code, Dialog, P } from "@vanilla-ts/dom";
 
 function getDialog(modal: boolean, caller?: IElementComponent<HTMLElement>): Dialog {
     const dlg = new Dialog(
@@ -36,9 +36,6 @@ function getDialog(modal: boolean, caller?: IElementComponent<HTMLElement>): Dia
     return dlg;
 }
 
-const nonModalDlg = getDialog(false, btnNonModal);
-const modalDlg = getDialog(true, btnModal);
-
 const btnNonModal = new Button("Open a non-modal dialog")
     .on("click", () =>
         nonModalDlg.Open || btnNonModal.disabled(true) && nonModalDlg.show()
@@ -50,6 +47,9 @@ const btnModal = new Button("Open a modal dialog")
             ? modalDlg.close()
             : btnModal.disabled(true) && modalDlg.showModal()
     );
+
+const nonModalDlg = getDialog(false, btnNonModal);
+const modalDlg = getDialog(true, btnModal);
 
 new VTS_App(document.body).append(btnNonModal, btnModal);
 \`\`\`
