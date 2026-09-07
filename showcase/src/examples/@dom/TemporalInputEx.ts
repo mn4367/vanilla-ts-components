@@ -74,7 +74,7 @@ const example = new Div(
         TemporalType.DateTimeSeconds, TemporalType.DateTime,
         TemporalType.Date, TemporalType.TimeSeconds,
         TemporalType.Time, TemporalType.Month, TemporalType.Week
-    ].map((e) => this.getTemporalInput(e))
+    ].map((e) => getTemporalInput(e))
 )
     .style({ display: "flex", flexDirection: "column", gap: "0.5rem" });
 

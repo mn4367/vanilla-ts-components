@@ -168,7 +168,7 @@ example.Header.on("click", () => {
 // or (doesn't interrupt chaining calls to other functions of the component)
 example.headerCb(header => header.on("click", () => {
     example.Disclosed = !example.Disclosed;
-})),
+}));
 \`\`\`
 `),
                 this.markdown(`

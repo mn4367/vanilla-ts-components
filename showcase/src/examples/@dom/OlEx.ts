@@ -15,7 +15,7 @@ const example = `
 
 \`\`\`
 import { VTS_App } from "@vanilla-ts/core";
-import { Div, LiOl, Ol, P } from "@vanilla-ts/dom";
+import { Em, Div, LiOl, Ol, P } from "@vanilla-ts/dom";
 
 const example = new Div(
     new P("How to make a muffin:"),

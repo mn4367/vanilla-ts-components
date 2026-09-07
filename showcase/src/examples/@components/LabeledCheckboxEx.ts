@@ -45,10 +45,17 @@ const exampleLabeledSwitch = `
 \`\`\`
 import { LabeledCheckbox } from "@vanilla-ts/components";
 
-const lcb = new LabeledCheckbox("Use modern design")
+const lcb1 = new LabeledCheckbox("Use modern design")
     .addClass("labeled-checkbox")
     .checked(true);
-lcb.Checkbox.addClass("switch");
+lcb1.Checkbox.addClass("switch");
+
+// or (doesn't interrupt chaining calls to other functions of the component)
+
+const lcb2 = new LabeledCheckbox("Use modern design")
+    .addClass("labeled-checkbox")
+    .checkbox(cb => cb.addClass("switch"))
+    .checked(true);
 \`\`\`
 `;
 
@@ -133,7 +140,7 @@ export class LabeledCheckboxEx extends BaseExample {
             this.markdown("---"),
             this.markdown(introLabeledSwitch),
             this.example([
-                this.#lswitch = $.labeledCheckbox("Use modern design")
+                this.#lswitch = $.labeledSwitch("Use modern design")
                     .checked(true)
                     .on("checked", () => this.#rbgSwitch.value(this.#lswitch.Checked ? "checked" : "unchecked"))
             ]),
@@ -168,6 +175,5 @@ export class LabeledCheckboxEx extends BaseExample {
             this.markdown("---"),
             this.markdown(exampleComponentFactory),
         );
-        this.#lswitch.Checkbox.addClass("switch");
     }
 }

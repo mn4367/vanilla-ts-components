@@ -51,7 +51,7 @@ const exampleBackgroundImages = `
 ### Code example (using background images)
 
 \`\`\`
-import type { IconButton } from "@vanilla-ts/components";
+import { IconButton } from "@vanilla-ts/components";
 import { VTS_App } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { IconButtonFactory as IBF } from "IconButtonFactory.js";
@@ -150,7 +150,7 @@ strings for \`IconStart\` and \`IconEnd\` which don't start with a leading hyphe
 contain the given strings as text content which will be rendered with an icon font.
 
 \`\`\`
-import type { IconButton } from "@vanilla-ts/components";
+import { IconButton } from "@vanilla-ts/components";
 import { VTS_App } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { IconButtonFactory as IBF } from "IconButtonFactory.js";

@@ -86,6 +86,7 @@ export class LabeledRadioButtonGroupEx extends BaseExample {
                         new Option("VERTICAL").value("vertical"),
                         new Option("HORIZONTAL").value("horizontal"),
                     ])
+                        .value("vertical")
                         .on("change", () => {
                             switch (this.#lsAlignment.Value) {
                                 case "vertical":

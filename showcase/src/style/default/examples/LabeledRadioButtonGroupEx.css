@@ -1,0 +1,9 @@
+.example {
+    .example-properties {
+        > div.md:first-of-type {
+            > p {
+                margin-block-start: 0;
+            }
+        }
+    }
+}
