@@ -244,6 +244,19 @@ export class DisclosureContainer<Child extends FlowContent = FlowContent, EventM
     }
 
     /**
+     * Access the internal header content container component via a callback function. Useful for
+     * seamless chaining when creating instances of this component.
+     * @param cb A callback function that receives the current header content component instance and
+     * this instance as parameters. The callback function can be used to modify the header content
+     * component.
+     * @returns This instance.
+     */
+    public headerCb(cb: (header: IElementWithChildrenComponent<HTMLDivElement>, owner?: this) => void): this {
+        cb(this.headerContent, this);
+        return this;
+    }
+
+    /**
      * Get/set the disclosed state.
      */
     public get Disclosed(): boolean {

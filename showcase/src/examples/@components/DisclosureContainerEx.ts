@@ -75,7 +75,7 @@ if (someCondition) {
 const css = `
 \`\`\`
 /* Custom design CSS */
-> .disclosure-container {
+.disclosure-container {
     > .header-container > .disclose.icon-button.custom-design {
         width: 1.4rem;
         height: 1.4rem;
@@ -158,7 +158,31 @@ export class DisclosureContainerEx extends BaseExample {
                 this.markdown("### Configuration"),
                 this.properties(this.#getConfiguration()),
                 this.markdown(example),
-                this.markdown(css)
+                this.markdown(css),
+                this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"),
+                this.markdown(`
+\`\`\`typescript
+example.Header.on("click", () => {
+    example.Disclosed = !example.Disclosed;
+});
+// or (doesn't interrupt chaining calls to other functions of the component)
+example.headerCb(header => header.on("click", () => {
+    example.Disclosed = !example.Disclosed;
+})),
+\`\`\`
+`),
+                this.markdown(`
+\`\`\`CSS
+.disclosure-container {
+    > .header-content {
+        cursor: pointer;
+        * {
+            cursor: pointer;
+        }
+    }
+}
+\`\`\`
+`)
             );
     }
 
@@ -170,7 +194,6 @@ export class DisclosureContainerEx extends BaseExample {
         const div = new Div();
         const appearance = $.labeledSelect("Appearance", [
             new Option("TOP_START").value("top-start"),
-            new Option("TOP_START").value("top-start"),
             new Option("TOP_END").value("top-end"),
             new Option("END_TOP").value("end-top"),
             new Option("END_BOTTOM").value("end-bottom"),
@@ -178,36 +201,38 @@ export class DisclosureContainerEx extends BaseExample {
             new Option("BOTTOM_START").value("bottom-start"),
             new Option("START_BOTTOM").value("start-bottom"),
             new Option("START_TOP").value("start-top"),
-        ]).on("change", () => {
-            switch (appearance.Value) {
-                case "top-start":
-                    this.#dc.Appearance = DisclosureContainerAppearance.TOP_START;
-                    break;
-                case "top-end":
-                    this.#dc.Appearance = DisclosureContainerAppearance.TOP_END;
-                    break;
-                case "end-top":
-                    this.#dc.Appearance = DisclosureContainerAppearance.END_TOP;
-                    break;
-                case "end-bottom":
-                    this.#dc.Appearance = DisclosureContainerAppearance.END_BOTTOM;
-                    break;
-                case "bottom-end":
-                    this.#dc.Appearance = DisclosureContainerAppearance.BOTTOM_END;
-                    break;
-                case "bottom-start":
-                    this.#dc.Appearance = DisclosureContainerAppearance.BOTTOM_START;
-                    break;
-                case "start-bottom":
-                    this.#dc.Appearance = DisclosureContainerAppearance.START_BOTTOM;
-                    break;
-                case "start-top":
-                    this.#dc.Appearance = DisclosureContainerAppearance.START_TOP;
-                    break;
-                default:
-                    break;
-            }
-        });
+        ])
+            .value("top-start")
+            .on("change", () => {
+                switch (appearance.Value) {
+                    case "top-start":
+                        this.#dc.Appearance = DisclosureContainerAppearance.TOP_START;
+                        break;
+                    case "top-end":
+                        this.#dc.Appearance = DisclosureContainerAppearance.TOP_END;
+                        break;
+                    case "end-top":
+                        this.#dc.Appearance = DisclosureContainerAppearance.END_TOP;
+                        break;
+                    case "end-bottom":
+                        this.#dc.Appearance = DisclosureContainerAppearance.END_BOTTOM;
+                        break;
+                    case "bottom-end":
+                        this.#dc.Appearance = DisclosureContainerAppearance.BOTTOM_END;
+                        break;
+                    case "bottom-start":
+                        this.#dc.Appearance = DisclosureContainerAppearance.BOTTOM_START;
+                        break;
+                    case "start-bottom":
+                        this.#dc.Appearance = DisclosureContainerAppearance.START_BOTTOM;
+                        break;
+                    case "start-top":
+                        this.#dc.Appearance = DisclosureContainerAppearance.START_TOP;
+                        break;
+                    default:
+                        break;
+                }
+            });
         const weakUndisclosed = $.labeledCheckbox("WeakUndisclosed")
             .on("checked", (ev) => {
                 animatable.disabled(!ev.$.Checked);
