@@ -33,6 +33,21 @@
                     padding: var(--base-size-half);
                     border-radius: var(--border-radius-normal);
                     background: var(--black-5);
+                    > code {
+                        margin-block-start: -2rem;
+                    }
+                    > .button-copy-code {
+                        position: sticky;
+                        inset-block-start: -1.5rem;
+                        left: 100%;
+                        z-index: 1;
+                        opacity: 0;
+                        font-family: var(--system-ui);
+                        transition: opacity 0.2s ease-in-out;
+                    }
+                    &:hover > .button-copy-code {
+                        opacity: 1;
+                    }
                 }
                 :not(pre) > code {
                     padding: var(--2px) var(--4px);

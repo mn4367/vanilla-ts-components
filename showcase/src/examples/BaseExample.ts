@@ -1,5 +1,5 @@
 import { AChildren, AElementComponentWithInternalUI, FlowContent, HTMLElementWithChildren, IChildrenMixin, IElementComponent, IElementWithChildrenComponent, mixin } from "@vanilla-ts/core";
-import { Div, H2, Option, Text } from "@vanilla-ts/dom";
+import { Button, Div, H2, Option, Text, TextArea } from "@vanilla-ts/dom";
 import { LabeledSelect } from "../../../src/LabeledSelect.js";
 import { ScrollContainer } from "../../../src/ScrollContainer.js";
 import { $ } from "../App.js";
@@ -11,6 +11,7 @@ import { markdown } from "./Drawdown.js";
  */
 export abstract class BaseExample extends AElementComponentWithInternalUI<ScrollContainer> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     #scrollOffset = { X: 0, Y: 0 };
+    #copyCodeButtons: Button[] = [];
 
     constructor(title?: string) {
         super();
@@ -18,13 +19,16 @@ export abstract class BaseExample extends AElementComponentWithInternalUI<Scroll
         // A class extending this class isn't fully constructed yet here, so defer `buildExample()`.
         queueMicrotask(() => {
             this.buildExample();
-            // @ts-expect-error - `highlightElement` is not typed in `@types/highlight.js` (which is used by `markdown`), but it exists at runtime.
-            this.DOM.querySelectorAll("pre > code").forEach((e) => hljs.highlightElement(e));
+            const codeBlocks = this.DOM.querySelectorAll("pre > code");
+            for (const codeBlock of codeBlocks) {
+                // @ts-expect-error - `highlightElement` is not typed in `@types/highlight.js` (which is used by `markdown`), but it exists at runtime.
+                hljs.highlightElement(codeBlock);
+                this.addCopyCodeButton(codeBlock as HTMLElement);
+            }
         });
     }
 
     // #region
-
     /** @inheritdoc */
     public override onBeforeUnmount(): void {
         this.#scrollOffset = this.ui.ScrollOffset;
@@ -149,10 +153,61 @@ export abstract class BaseExample extends AElementComponentWithInternalUI<Scroll
         result.DOM.insertAdjacentHTML("beforeend", html);
         return result;
     }
+
+    protected addCopyCodeButton(codeBlock: HTMLElement): void {
+        function copyTextFallback(text: string): boolean {
+            const ta = new TextArea()
+                .value(text)
+                .readonly(true)
+                .style({ position: "fixed", opacity: "0" });
+            document.body.append(ta.DOM);
+            ta.select();
+            const copied = document.execCommand("copy");
+            !copied && console.error("Fallback: also failed to copy code.");
+            document.body.removeChild(ta.DOM);
+            ta.dispose();
+            return copied;
+        }
+
+        const copyBtn = new Button("Copy")
+            .addClass("regular", "button-copy-code")
+            .title("Copy code to clipboard")
+            .on("click", () => {
+                const code = codeBlock.textContent ?? "";
+                navigator.clipboard.writeText(code)
+                    .then(() => {
+                        copyBtn.Text = "Copied!";
+                        setTimeout(() => {
+                            copyBtn.Text = "Copy";
+                        }, 2000);
+                    })
+                    .catch((err) => {
+                        console.error("Failed to copy code: ", err);
+                        if (!copyTextFallback(code)) {
+                            copyBtn.Text = "Failed to copy!";
+                            setTimeout(() => {
+                                copyBtn.Text = "Copy";
+                            }, 2000);
+                        }
+                    });
+            });
+        this.#copyCodeButtons.push(copyBtn);
+        codeBlock.parentElement?.insertBefore(copyBtn.DOM, codeBlock);
+    }
     // #endregion
 
     /** Build the example's content. */
     protected abstract buildExample(): void;
+
+    /** @inheritdoc */
+    protected override clearOwner(): void {
+        for (const btn of this.#copyCodeButtons) {
+            btn.DOM.parentElement?.removeChild(btn.DOM);
+            btn.dispose();
+        }
+        this.#copyCodeButtons = [];
+        super.clearOwner();
+    }
 
     static {
         /** Mixin the IChildren implementation (which targets `this.ui.Content`). */
