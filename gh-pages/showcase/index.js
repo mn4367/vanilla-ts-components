@@ -1094,6 +1094,19 @@
             return this;
         }
         /** @inheritdoc */
+        get AutoCorrect() {
+            return this._dom.autocorrect;
+        }
+        /** @inheritdoc */
+        set AutoCorrect(v) {
+            this._dom.autocorrect = v;
+        }
+        /** @inheritdoc */
+        autoCorrect(v) {
+            this._dom.autocorrect = v;
+            return this;
+        }
+        /** @inheritdoc */
         get Autofocus() {
             return this._dom.autofocus;
         }
@@ -1107,19 +1120,6 @@
             return this;
         }
         /** @inheritdoc */
-        get ContentEditable() {
-            return this._dom.contentEditable;
-        }
-        /** @inheritdoc */
-        set ContentEditable(v) {
-            this.contentEditable(v);
-        }
-        /** @inheritdoc */
-        contentEditable(v) {
-            v === false || v === "" ? this._dom.removeAttribute("contenteditable") : this._dom.contentEditable = v;
-            return this;
-        }
-        /** @inheritdoc */
         get Clazz() {
             return !this._dom.hasAttribute("class") ? null : this._dom.className;
         }
@@ -1130,6 +1130,19 @@
         /** @inheritdoc */
         clazz(v) {
             v === null || v === "" ? this._dom.removeAttribute("class") : this._dom.className = v;
+            return this;
+        }
+        /** @inheritdoc */
+        get ContentEditable() {
+            return this._dom.contentEditable;
+        }
+        /** @inheritdoc */
+        set ContentEditable(v) {
+            this.contentEditable(v);
+        }
+        /** @inheritdoc */
+        contentEditable(v) {
+            v === false || v === "" ? this._dom.removeAttribute("contenteditable") : this._dom.contentEditable = v;
             return this;
         }
         /** @inheritdoc */
@@ -7148,6 +7161,18 @@
             return this;
         }
         /**
+         * Access the internal header content container component via a callback function. Useful for
+         * seamless chaining when creating instances of this component.
+         * @param cb A callback function that receives the current header content component instance and
+         * this instance as parameters. The callback function can be used to modify the header content
+         * component.
+         * @returns This instance.
+         */
+        headerCb(cb) {
+            cb(this.headerContent, this);
+            return this;
+        }
+        /**
          * Get/set the disclosed state.
          */
         get Disclosed() {
@@ -11224,14 +11249,19 @@
      */
     class BaseExample extends AElementComponentWithInternalUI {
         #scrollOffset = { X: 0, Y: 0 };
+        #copyCodeButtons = [];
         constructor(title) {
             super();
             this.initialize(undefined, title);
             // A class extending this class isn't fully constructed yet here, so defer `buildExample()`.
             queueMicrotask(() => {
                 this.buildExample();
-                // @ts-expect-error - `highlightElement` is not typed in `@types/highlight.js` (which is used by `markdown`), but it exists at runtime.
-                this.DOM.querySelectorAll("pre > code").forEach((e) => hljs.highlightElement(e));
+                const codeBlocks = this.DOM.querySelectorAll("pre > code");
+                for (const codeBlock of codeBlocks) {
+                    // @ts-expect-error - `highlightElement` is not typed in `@types/highlight.js` (which is used by `markdown`), but it exists at runtime.
+                    hljs.highlightElement(codeBlock);
+                    this.addCopyCodeButton(codeBlock);
+                }
             });
         }
         // #region
@@ -11335,6 +11365,54 @@
                 .replaceAll("<code>", '<code dir="ltr">');
             result.DOM.insertAdjacentHTML("beforeend", html);
             return result;
+        }
+        addCopyCodeButton(codeBlock) {
+            function copyTextFallback(text) {
+                const ta = new TextArea()
+                    .value(text)
+                    .readonly(true)
+                    .style({ position: "fixed", opacity: "0" });
+                document.body.append(ta.DOM);
+                ta.select();
+                const copied = document.execCommand("copy");
+                !copied && console.error("Fallback: also failed to copy code.");
+                document.body.removeChild(ta.DOM);
+                ta.dispose();
+                return copied;
+            }
+            const copyBtn = new Button("Copy")
+                .addClass("regular", "button-copy-code")
+                .title("Copy code to clipboard")
+                .on("click", () => {
+                const code = codeBlock.textContent ?? "";
+                navigator.clipboard.writeText(code)
+                    .then(() => {
+                    copyBtn.Text = "Copied!";
+                    setTimeout(() => {
+                        copyBtn.Text = "Copy";
+                    }, 2000);
+                })
+                    .catch((err) => {
+                    console.error("Failed to copy code: ", err);
+                    if (!copyTextFallback(code)) {
+                        copyBtn.Text = "Failed to copy!";
+                        setTimeout(() => {
+                            copyBtn.Text = "Copy";
+                        }, 2000);
+                    }
+                });
+            });
+            this.#copyCodeButtons.push(copyBtn);
+            codeBlock.parentElement?.insertBefore(copyBtn.DOM, codeBlock);
+        }
+        /** @inheritdoc */
+        clearOwner() {
+            for (const btn of this.#copyCodeButtons) {
+                btn.DOM.parentElement?.removeChild(btn.DOM);
+                btn.dispose();
+            }
+            this.#copyCodeButtons = [];
+            super.clearOwner();
         }
         static {
             /** Mixin the IChildren implementation (which targets `this.ui.Content`). */
@@ -11587,7 +11665,7 @@ if (someCondition) {
     const css$1 = `
 \`\`\`
 /* Custom design CSS */
-> .disclosure-container {
+.disclosure-container {
     > .header-container > .disclose.icon-button.custom-design {
         width: 1.4rem;
         height: 1.4rem;
@@ -11651,7 +11729,28 @@ if (someCondition) {
                 "textAlign": "center",
             });
             this
-                .append(this.markdown(intro$_), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$V), this.markdown(css$1));
+                .append(this.markdown(intro$_), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$V), this.markdown(css$1), this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"), this.markdown(`
+\`\`\`typescript
+example.Header.on("click", () => {
+    example.Disclosed = !example.Disclosed;
+});
+// or (doesn't interrupt chaining calls to other functions of the component)
+example.headerCb(header => header.on("click", () => {
+    example.Disclosed = !example.Disclosed;
+}));
+\`\`\`
+`), this.markdown(`
+\`\`\`CSS
+.disclosure-container {
+    > .header-content {
+        cursor: pointer;
+        * {
+            cursor: pointer;
+        }
+    }
+}
+\`\`\`
+`));
         }
         #handleDisclose(ev) {
             ev.preventDefault();
@@ -11660,7 +11759,6 @@ if (someCondition) {
             const div = new Div();
             const appearance = $.labeledSelect("Appearance", [
                 new Option("TOP_START").value("top-start"),
-                new Option("TOP_START").value("top-start"),
                 new Option("TOP_END").value("top-end"),
                 new Option("END_TOP").value("end-top"),
                 new Option("END_BOTTOM").value("end-bottom"),
@@ -11668,7 +11766,9 @@ if (someCondition) {
                 new Option("BOTTOM_START").value("bottom-start"),
                 new Option("START_BOTTOM").value("start-bottom"),
                 new Option("START_TOP").value("start-top"),
-            ]).on("change", () => {
+            ])
+                .value("top-start")
+                .on("change", () => {
                 switch (appearance.Value) {
                     case "top-start":
                         this.#dc.Appearance = DisclosureContainerAppearance.TOP_START;
@@ -11777,7 +11877,7 @@ export const IconButtonFactory = new MyIconButtonFactory();
 ### Code example (using background images)
 
 \`\`\`
-import type { IconButton } from "@vanilla-ts/components";
+import { IconButton } from "@vanilla-ts/components";
 import { VTS_App } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { IconButtonFactory as IBF } from "IconButtonFactory.js";
@@ -11874,7 +11974,7 @@ strings for \`IconStart\` and \`IconEnd\` which don't start with a leading hyphe
 contain the given strings as text content which will be rendered with an icon font.
 
 \`\`\`
-import type { IconButton } from "@vanilla-ts/components";
+import { IconButton } from "@vanilla-ts/components";
 import { VTS_App } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { IconButtonFactory as IBF } from "IconButtonFactory.js";
@@ -12230,10 +12330,17 @@ class \`switch\` to the \`Checkbox\` property available on the \`LabeledCheckbox
 \`\`\`
 import { LabeledCheckbox } from "@vanilla-ts/components";
 
-const lcb = new LabeledCheckbox("Use modern design")
+const lcb1 = new LabeledCheckbox("Use modern design")
     .addClass("labeled-checkbox")
     .checked(true);
-lcb.Checkbox.addClass("switch");
+lcb1.Checkbox.addClass("switch");
+
+// or (doesn't interrupt chaining calls to other functions of the component)
+
+const lcb2 = new LabeledCheckbox("Use modern design")
+    .addClass("labeled-checkbox")
+    .checkbox(cb => cb.addClass("switch"))
+    .checked(true);
 \`\`\`
 `;
     const exampleComponentFactory$1 = `
@@ -12300,7 +12407,7 @@ For an advanced usage of component factories see §@core/Component factories§.
                         break;
                 }
             })), this.markdown(exampleLabeledCheckbox), this.markdown("---"), this.markdown(introLabeledSwitch), this.example([
-                this.#lswitch = $.labeledCheckbox("Use modern design")
+                this.#lswitch = $.labeledSwitch("Use modern design")
                     .checked(true)
                     .on("checked", () => this.#rbgSwitch.value(this.#lswitch.Checked ? "checked" : "unchecked"))
             ]), this.markdown("### Label position, label alignment and switch states"), new Div()
@@ -12324,7 +12431,6 @@ For an advanced usage of component factories see §@core/Component factories§.
                         break;
                 }
             })), this.markdown(exampleLabeledSwitch), this.markdown("---"), this.markdown(exampleComponentFactory$1));
-            this.#lswitch.Checkbox.addClass("switch");
         }
     }
 
@@ -12338,7 +12444,7 @@ representing the caption for the container component.
 ### Code example
 
 \`\`\`
-import { LabeledCheckbox, LabeledContainer, RadioButtonGroup } from "@vanilla-ts/components";
+import { LabeledCheckbox, LabeledContainer, LabelAlignment, RadioButtonGroup } from "@vanilla-ts/components";
 import { VTS_App } from "@vanilla-ts/core";
 import { Hr, P } from "@vanilla-ts/dom";
 
@@ -12715,6 +12821,7 @@ in the \`RadioButtonGroup\` class.
                 new Option("VERTICAL").value("vertical"),
                 new Option("HORIZONTAL").value("horizontal"),
             ])
+                .value("vertical")
                 .on("change", () => {
                 switch (this.#lsAlignment.Value) {
                     case "vertical":
@@ -13000,6 +13107,7 @@ in the \`RadioButtonGroup\` class.
                 new Option("VERTICAL").value("vertical"),
                 new Option("HORIZONTAL").value("horizontal"),
             ])
+                .value("vertical")
                 .on("change", () => {
                 switch (this.#lsAlignment.Value) {
                     case "vertical":
@@ -13612,7 +13720,7 @@ a lot of advanced features.
 
 \`\`\`
 import { IElementComponent, VTS_App } from "@vanilla-ts/core";
-import { Br, Code, Dialog, P } from "@vanilla-ts/dom";
+import { Br, Button, Code, Dialog, P } from "@vanilla-ts/dom";
 
 function getDialog(modal: boolean, caller?: IElementComponent<HTMLElement>): Dialog {
     const dlg = new Dialog(
@@ -13630,9 +13738,6 @@ function getDialog(modal: boolean, caller?: IElementComponent<HTMLElement>): Dia
     return dlg;
 }
 
-const nonModalDlg = getDialog(false, btnNonModal);
-const modalDlg = getDialog(true, btnModal);
-
 const btnNonModal = new Button("Open a non-modal dialog")
     .on("click", () =>
         nonModalDlg.Open || btnNonModal.disabled(true) && nonModalDlg.show()
@@ -13644,6 +13749,9 @@ const btnModal = new Button("Open a modal dialog")
             ? modalDlg.close()
             : btnModal.disabled(true) && modalDlg.showModal()
     );
+
+const nonModalDlg = getDialog(false, btnNonModal);
+const modalDlg = getDialog(true, btnModal);
 
 new VTS_App(document.body).append(btnNonModal, btnModal);
 \`\`\`
@@ -14136,7 +14244,7 @@ A component that encapsulates the DOM element
 ### Code example
 
 \`\`\`
-import { VTS_App } from "@vanilla-ts/core";
+import { CSSStyleDeclarations, VTS_App } from "@vanilla-ts/core";
 import { Div, Label, TextInput } from "@vanilla-ts/dom";
 
 const style: CSSStyleDeclarations = {
@@ -14480,7 +14588,7 @@ properties \`start\`, \`reversed\` and \`type\`.
 
 \`\`\`
 import { VTS_App } from "@vanilla-ts/core";
-import { Div, LiOl, Ol, P } from "@vanilla-ts/dom";
+import { Em, Div, LiOl, Ol, P } from "@vanilla-ts/dom";
 
 const example = new Div(
     new P("How to make a muffin:"),
@@ -15316,7 +15424,7 @@ const example = new Div(
         TemporalType.DateTimeSeconds, TemporalType.DateTime,
         TemporalType.Date, TemporalType.TimeSeconds,
         TemporalType.Time, TemporalType.Month, TemporalType.Week
-    ].map((e) => this.getTemporalInput(e))
+    ].map((e) => getTemporalInput(e))
 )
     .style({ display: "flex", flexDirection: "column", gap: "0.5rem" });
 
