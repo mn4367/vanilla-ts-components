@@ -1099,6 +1099,19 @@ class AGlobalDOMAttributes extends ANodeComponent {
         return this;
     }
     /** @inheritdoc */
+    get AutoCorrect() {
+        return this._dom.autocorrect;
+    }
+    /** @inheritdoc */
+    set AutoCorrect(v) {
+        this._dom.autocorrect = v;
+    }
+    /** @inheritdoc */
+    autoCorrect(v) {
+        this._dom.autocorrect = v;
+        return this;
+    }
+    /** @inheritdoc */
     get Autofocus() {
         return this._dom.autofocus;
     }
@@ -1112,19 +1125,6 @@ class AGlobalDOMAttributes extends ANodeComponent {
         return this;
     }
     /** @inheritdoc */
-    get ContentEditable() {
-        return this._dom.contentEditable;
-    }
-    /** @inheritdoc */
-    set ContentEditable(v) {
-        this.contentEditable(v);
-    }
-    /** @inheritdoc */
-    contentEditable(v) {
-        v === false || v === "" ? this._dom.removeAttribute("contenteditable") : this._dom.contentEditable = v;
-        return this;
-    }
-    /** @inheritdoc */
     get Clazz() {
         return !this._dom.hasAttribute("class") ? null : this._dom.className;
     }
@@ -1135,6 +1135,19 @@ class AGlobalDOMAttributes extends ANodeComponent {
     /** @inheritdoc */
     clazz(v) {
         v === null || v === "" ? this._dom.removeAttribute("class") : this._dom.className = v;
+        return this;
+    }
+    /** @inheritdoc */
+    get ContentEditable() {
+        return this._dom.contentEditable;
+    }
+    /** @inheritdoc */
+    set ContentEditable(v) {
+        this.contentEditable(v);
+    }
+    /** @inheritdoc */
+    contentEditable(v) {
+        v === false || v === "" ? this._dom.removeAttribute("contenteditable") : this._dom.contentEditable = v;
         return this;
     }
     /** @inheritdoc */
@@ -4880,6 +4893,18 @@ class DisclosureContainer extends AElementComponentWithInternalUI {
         this.headerContent.append(...(Array.isArray(header)
             ? header
             : [typeof header === "string" ? new Span(header).addClass("header-text") : header]).map(e => typeof e === "string" ? new Text(e) : e));
+        return this;
+    }
+    /**
+     * Access the internal header content container component via a callback function. Useful for
+     * seamless chaining when creating instances of this component.
+     * @param cb A callback function that receives the current header content component instance and
+     * this instance as parameters. The callback function can be used to modify the header content
+     * component.
+     * @returns This instance.
+     */
+    headerCb(cb) {
+        cb(this.headerContent, this);
         return this;
     }
     /**
