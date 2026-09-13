@@ -1,6 +1,5 @@
 import { Orientation } from "@vanilla-ts/core";
-import { Div, Option } from "@vanilla-ts/dom";
-import { LabeledSelect } from "../../../../src/LabeledSelect.js";
+import { Div } from "@vanilla-ts/dom";
 import { RadioButtonGroup } from "../../../../src/RadioButtonGroup.js";
 import { $ } from "../../App.js";
 import { BaseExample } from "../BaseExample.js";
@@ -46,7 +45,6 @@ in the \`RadioButtonGroup\` class.
 
 export class RadioButtonGroupEx extends BaseExample {
     #rbg: RadioButtonGroup;
-    #lsAlignment: LabeledSelect;
 
     constructor() {
         super("RadioButtonGroup");
@@ -71,24 +69,9 @@ export class RadioButtonGroupEx extends BaseExample {
             new Div()
                 .addClass("example-properties")
                 .append(
-                    this.#lsAlignment = $.labeledSelect("Alignment", [
-                        new Option("VERTICAL").value("vertical"),
-                        new Option("HORIZONTAL").value("horizontal"),
-                    ])
-                        .value("vertical")
-                        .on("change", () => {
-                            switch (this.#lsAlignment.Value) {
-                                case "vertical":
-                                    this.#rbg.orientation(Orientation.VERTICAL);
-                                    break;
-                                case "horizontal":
-                                    this.#rbg.orientation(Orientation.HORIZONTAL);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }),
                     ...labeledComponentLabelFlags([this.#rbg], true, "end", "start"),
+                    $.labeledCheckbox("Horizontal alignment")
+                        .on("checked", (ev) => this.#rbg.orientation(ev.$.Checked ? Orientation.HORIZONTAL : Orientation.VERTICAL)),
                     $.labeledCheckbox("Allow toggling the state")
                         .on("checked", () => this.#rbg.toggle(!this.#rbg.Toggle)),
                 ),

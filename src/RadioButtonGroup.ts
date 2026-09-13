@@ -1,4 +1,4 @@
-import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, DefaultEventMap, NullableString, Orientation, Phrase, Phrases } from "@vanilla-ts/core";
+import { AElementComponentWithInternalUI, CheckedEvent, ComponentFactory, DefaultEventMap, mixinDOMProperties, NullableString, Orientation, OrientationAttr, Phrase, Phrases } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 import { LabelAlignment, LabelPosition } from "./LabeledComponents.js";
 import { LabeledRadioButton } from "./LabeledRadioButton.js";
@@ -34,7 +34,7 @@ export interface RadioButtonGroupEventMap extends DefaultEventMap {
 /**
  * A component that holds a group of labeled radio buttons inside a `<div>` container.
  */
-export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioButtonGroupEventMap> extends AElementComponentWithInternalUI<Div, EventMap> {
+export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioButtonGroupEventMap> extends AElementComponentWithInternalUI<Div, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     protected _labeledRadioButtons: LabeledRadioButton[] = [];
     protected _name: string;
     protected _orientation: Orientation;
@@ -218,32 +218,6 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
     }
 
     /**
-     * Gets/sets the orientation of the contained labeled radio buttons.
-     */
-    public get Orientation(): Orientation {
-        return this._orientation;
-    }
-    /** @inheritdoc */
-    public set Orientation(v: Orientation) {
-        this.orientation(v);
-    }
-
-    /**
-     * Sets the orientation of the contained labeled radio buttons.
-     * @param orientation The orientation of the labeled radio buttons.
-     * @returns This instance.
-     */
-    public orientation(orientation: Orientation): this {
-        if (orientation !== this._orientation) {
-            this._orientation = orientation;
-            this._orientation === Orientation.HORIZONTAL
-                ? this.removeClass("vertical").addClass("horizontal")
-                : this.removeClass("horizontal").addClass("vertical");
-        }
-        return this;
-    }
-
-    /**
      * Gets/sets the label position of the contained labeled radio buttons.
      */
     public get LabelPosition(): LabelPosition {
@@ -312,7 +286,20 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
         (this._labeledRadioButtons.find(e => e.Checked) || this._labeledRadioButtons[0])?.blur();
         return this;
     }
+
+    static {
+        /** Mixin additional DOM attributes/properties. */
+        mixinDOMProperties(
+            this,
+            OrientationAttr<HTMLInputElement>,
+        );
+    }
 }
+
+// Augment class definition with the DOM attributes/properties introduced by `mixinDOMProperties()`
+// above.
+export interface RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioButtonGroupEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, // eslint-disable-line jsdoc/require-jsdoc
+    OrientationAttr<HTMLElement, EventMap> { }
 
 /**
  * Factory for `RadioButtonGroup` components.
