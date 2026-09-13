@@ -677,7 +677,7 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends Defau
     protected closeTabBtn: IconButton;
     protected showCloseTabBtn: boolean;
     // Inner content container to make layout, content access/switching and tab switching easier.
-    protected contentContainer: IElementWithChildrenComponent<HTMLDivElement>;
+    protected _contentContainer: IElementWithChildrenComponent<HTMLDivElement>;
     protected _tabGroup?: TabGroup;
     protected active = false;
     protected tabEventFnc = this.tabEvent.bind(this);
@@ -737,20 +737,20 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends Defau
 
     /** @inheritdoc */
     public override get Text(): NullableString | null {
-        return this._dom.textContent + "\n" + this.contentContainer.Text;
+        return this._dom.textContent + "\n" + this._contentContainer.Text;
     }
 
     /** @inheritdoc */
     public override disabled(disabled: boolean): this {
         super.disabled(disabled);
-        this.contentContainer.disabled(disabled);
+        this._contentContainer.disabled(disabled);
         return this;
     }
 
     /** @inheritdoc */
     public override parentDisabled(disabled: boolean): this {
         super.parentDisabled(disabled);
-        this.contentContainer.parentDisabled(disabled);
+        this._contentContainer.parentDisabled(disabled);
         return this;
     }
 
@@ -791,7 +791,7 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends Defau
     }
 
     /**
-     * Get the container component, that holds the header content (excluding the close button).
+     * Get the container component that holds the header content (excluding the close button).
      */
     public get Header(): IElementWithChildrenComponent<HTMLDivElement> {
         return this.headerContent;
@@ -818,6 +818,19 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends Defau
     }
 
     /**
+     * Access the internal container component that holds the header content (excluding the close
+     * button) via a callback function. Useful for seamless chaining when creating instances of this
+     * component.
+     * @param cb A callback function that receives the current header container component and this
+     * instance as parameters.
+     * @returns This instance.
+     */
+    public headerContainer(cb: (header: IElementWithChildrenComponent<HTMLDivElement>, owner?: this) => void): this {
+        cb(this.headerContent, this);
+        return this;
+    }
+
+    /**
      * Get the container component, that holds content of the tab.\
      * __Notes:__
      * - This property __must not be used to add/remove/... components__, instead use the respective
@@ -827,7 +840,19 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends Defau
      *   to enable `TabGroup` to mount/unmount the content of tabs!
      */
     public get Content(): IElementWithChildrenComponent<HTMLDivElement> {
-        return this.contentContainer;
+        return this._contentContainer;
+    }
+
+    /**
+     * Access the internal container component that holds the tab content via a callback function.
+     * Useful for seamless chaining when creating instances of this component.
+     * @param cb A callback function that receives the current content container component and this
+     * instance as parameters.
+     * @returns This instance.
+     */
+    public contentContainer(cb: (content: IElementWithChildrenComponent<HTMLDivElement>, owner?: this) => void): this {
+        cb(this._contentContainer, this);
+        return this;
     }
 
     /**
@@ -887,8 +912,8 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends Defau
         // The content container is always cleared due to the `AChildren` but since it is never
         // mounted in `this.ui` it must be disposed of manually.
         // Remove first from a potential parent.
-        this.contentContainer.Parent?.remove(this.contentContainer);
-        this.contentContainer.dispose();
+        this._contentContainer.Parent?.remove(this._contentContainer);
+        this._contentContainer.dispose();
         super.clearOwner();
     }
 
@@ -913,9 +938,9 @@ export class Tab<Child extends FlowContent = FlowContent, EventMap extends Defau
         this.closeTabBtn = new IconButton()
             .addClass("close", IconButton.DefaultCSSClassName)
             .on("click", () => this._tabGroup?.requestCloseTab(this));
-        this.contentContainer = new TabContentContainer(this).addClass("content-container");
+        this._contentContainer = new TabContentContainer(this).addClass("content-container");
         // Set target DOM for the `IChildren` mixin!!
-        this.setChildrenDOMTarget(this.contentContainer.DOM);
+        this.setChildrenDOMTarget(this._contentContainer.DOM);
         return this;
     }
 
