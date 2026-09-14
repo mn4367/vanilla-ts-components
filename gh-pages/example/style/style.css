@@ -75,6 +75,11 @@
     --color-success-light: hsl(120, 100%, 75%);
     --color-success-darker: hsl(120, 100%, 25%);
     --color-success-dark: hsl(120, 100%, 15%);
+    --color-caution: hsl(30, 100%, 72.5%);
+    --color-caution-lighter: hsl(30, 100%, 89.3%);
+    --color-caution-light: hsl(30, 100%, 92.5%);
+    --color-caution-darker: hsl(30, 100%, 59%);
+    --color-caution-dark: hsl(30, 100%, 35.7%);
     --color-warn: hsl(0, 100%, 72.5%);
     --color-warn-lighter: hsl(0, 100%, 89.3%);
     --color-warn-light: hsl(0, 100%, 92.5%);
@@ -542,6 +547,20 @@ a {
             }
         }
     }
+    .disabled button,
+    :disabled button,
+    [disabled] button {
+        border: var(--btn-disabled-border);
+        border-bottom: var(--btn-disabled-border-bottom);
+        background: var(--btn-disabled-background);
+        color: var(--btn-disabled-font-color);
+        &.default {
+            background: var(--btn-default-disabled-background);
+        }
+        &.warn {
+            color: var(--btn-warn-disabled-font-color);
+        }
+    }
 }
 /* #endregion */
 
@@ -798,6 +817,26 @@ textarea {
         }
         &:focus {
             box-shadow: var(--input-focused) !important;
+        }
+    }
+}
+.disabled textarea,
+:disabled textarea,
+[disabled] textarea {
+    color: var(--font-disabled-color);
+    border: var(--input-disabled-border);
+    border-bottom: var(--input-disabled-border-dark);
+    background: var(--input-disabled-background);
+    &:autofill {
+        background-clip: text;
+        -webkit-background-clip: text;
+        transition: background-color 5000s ease-in-out 0s;
+        color: var(--font-disabled-color) !important;
+        -webkit-text-fill-color: var(--font-disabled-color);
+        background: var(--input-disabled-background) !important;
+        box-shadow: inset 0 0 0 1000px var(--input-disabled-background) !important;
+        &::selection {
+            background: transparent;
         }
     }
 }

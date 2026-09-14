@@ -3527,10 +3527,6 @@ class ValueAttr extends AElementComponent {
         return this;
     }
 }
-// #endregion Attibutes
-/////////////////////////////
-/////////////////////////////
-// #region Properties
 /**
  * 'SelectionStart' getter/setter and set method returning this instance.
  */
@@ -3579,7 +3575,7 @@ class SelectionEndProp extends AElementComponent {
         return this;
     }
 }
-// #endregion Properties
+// #endregion Other (common) (DOM) properties
 /////////////////////////////
 
 /**

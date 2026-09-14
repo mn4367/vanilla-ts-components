@@ -75,6 +75,11 @@
     --color-success-light: hsl(120, 100%, 75%);
     --color-success-darker: hsl(120, 100%, 25%);
     --color-success-dark: hsl(120, 100%, 15%);
+    --color-caution: hsl(30, 100%, 72.5%);
+    --color-caution-lighter: hsl(30, 100%, 89.3%);
+    --color-caution-light: hsl(30, 100%, 92.5%);
+    --color-caution-darker: hsl(30, 100%, 59%);
+    --color-caution-dark: hsl(30, 100%, 35.7%);
     --color-warn: hsl(0, 100%, 72.5%);
     --color-warn-lighter: hsl(0, 100%, 89.3%);
     --color-warn-light: hsl(0, 100%, 92.5%);
@@ -485,6 +490,20 @@ a {
             &:disabled {
                 color: var(--btn-warn-disabled-font-color);
             }
+        }
+    }
+    .disabled button,
+    :disabled button,
+    [disabled] button {
+        border: var(--btn-disabled-border);
+        border-bottom: var(--btn-disabled-border-bottom);
+        background: var(--btn-disabled-background);
+        color: var(--btn-disabled-font-color);
+        &.default {
+            background: var(--btn-default-disabled-background);
+        }
+        &.warn {
+            color: var(--btn-warn-disabled-font-color);
         }
     }
 }
@@ -1035,6 +1054,153 @@ input[type="email"] {
 }
 /* #endregion */
 
+/* #region ../../themes/vts/Meter.css */
+meter {
+    /* #region Common */
+    --meter-size: var(--10px);
+    --meter-background: var(--black-5);
+    --meter-background-disabled: var(--black-5);
+    --meter-indicator-background-optimum: var(--color-success);
+    --meter-indicator-background-suboptimum: var(--color-caution-darker);
+    --meter-indicator-background-even-less-good: var(--color-warn-darker);
+    --meter-indicator-background-optimum-disabled: hsl(from var(--meter-indicator-background-optimum) h calc(s - 45) calc(l + 30));
+    --meter-indicator-background-suboptimum-disabled: hsl(from var(--meter-indicator-background-suboptimum) h calc(s - 35) calc(l + 15));
+    --meter-indicator-background-even-less-good-disabled: hsl(from var(--meter-indicator-background-even-less-good) h calc(s - 35) calc(l + 15));
+    --meter-border-width: var(--1px);
+    --meter-border: var(--meter-border-width) solid var(--black-10);
+    --meter-border-radius: var(--border-radius-pill);
+    --meter-box-shadow: inset 0 var(--1px) var(--4px) var(--black-10);
+    --meter-box-shadow-disabled: inset 0 var(--1px) var(--4px) var(--black-10);
+    /* Blink does not render the meter with 'appearance: none'. */
+    appearance: auto;
+    @supports (-moz-appearance: none) {
+        appearance: none;
+    }
+    @supports (-webkit-touch-callout: none) {
+        /* WebKit requires this to expose the meter pseudo-elements. */
+        appearance: none;
+    }
+    margin: 0;
+    padding: 0;
+    block-size: var(--meter-size);
+    background: var(--meter-background);
+    border: var(--meter-border);
+    border-radius: var(--meter-border-radius);
+    box-shadow: var(--meter-box-shadow);
+    overflow: hidden;
+    &.horizontal {
+        writing-mode: horizontal-tb;
+        /* 'width' should be set somewhere else */
+    }
+    &.vertical {
+        &:dir(ltr) {
+            writing-mode: sideways-lr;
+        }
+        &:dir(rtl) {
+            writing-mode: sideways-rl;
+        }
+        /* 'height' should be set somewhere else */
+    }
+    /* #endregion */
+    /* #region WebKit/Blink */
+    &::-webkit-meter-bar {
+        block-size: calc(var(--meter-size) - 2 * var(--meter-border-width));
+        background: var(--meter-background);
+        border-radius: var(--meter-border-radius);
+        box-shadow: var(--meter-box-shadow);
+    }
+    &::-webkit-meter-optimum-value {
+        background: var(--meter-indicator-background-optimum);
+        border-radius: var(--meter-border-radius);
+    }
+    &::-webkit-meter-suboptimum-value {
+        background: var(--meter-indicator-background-suboptimum);
+        border-radius: var(--meter-border-radius);
+    }
+    &::-webkit-meter-even-less-good-value {
+        background: var(--meter-indicator-background-even-less-good);
+        border-radius: var(--meter-border-radius);
+    }
+    &.disabled,
+    &[disabled] {
+        &::-webkit-meter-bar {
+            background: var(--meter-background-disabled);
+            box-shadow: var(--meter-box-shadow-disabled);
+        }
+        &::-webkit-meter-optimum-value {
+            background: var(--meter-indicator-background-optimum-disabled);
+        }
+        &::-webkit-meter-suboptimum-value {
+            background: var(--meter-indicator-background-suboptimum-disabled);
+        }
+        &::-webkit-meter-even-less-good-value {
+            background: var(--meter-indicator-background-even-less-good-disabled);
+        }
+    }
+    /* #endregion */
+    /* #region Gecko */
+    &:-moz-meter-optimum::-moz-meter-bar {
+        background: var(--meter-indicator-background-optimum);
+        border-radius: var(--meter-border-radius);
+    }
+    &:-moz-meter-sub-optimum::-moz-meter-bar {
+        background: var(--meter-indicator-background-suboptimum);
+        border-radius: var(--meter-border-radius);
+    }
+    &:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+        background: var(--meter-indicator-background-even-less-good);
+        border-radius: var(--meter-border-radius);
+    }
+    &.disabled,
+    &[disabled] {
+        background: var(--meter-background-disabled);
+        box-shadow: var(--meter-box-shadow-disabled);
+        &:-moz-meter-optimum::-moz-meter-bar {
+            background: var(--meter-indicator-background-optimum-disabled);
+        }
+        &:-moz-meter-sub-optimum::-moz-meter-bar {
+            background: var(--meter-indicator-background-suboptimum-disabled);
+        }
+        &:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+            background: var(--meter-indicator-background-even-less-good-disabled);
+        }
+    }
+    /* #endregion */
+}
+.disabled meter,
+:disabled meter,
+[disabled] meter {
+    /* #region WebKit/Blink */
+    &::-webkit-meter-bar {
+        background: var(--meter-background-disabled);
+        box-shadow: var(--meter-box-shadow-disabled);
+    }
+    &::-webkit-meter-optimum-value {
+        background: var(--meter-indicator-background-optimum-disabled);
+    }
+    &::-webkit-meter-suboptimum-value {
+        background: var(--meter-indicator-background-suboptimum-disabled);
+    }
+    &::-webkit-meter-even-less-good-value {
+        background: var(--meter-indicator-background-even-less-good-disabled);
+    }
+    /* #endregion */
+    /* #region Gecko */
+    background: var(--meter-background-disabled);
+    box-shadow: var(--meter-box-shadow-disabled);
+    &:-moz-meter-optimum::-moz-meter-bar {
+        background: var(--meter-indicator-background-optimum-disabled);
+    }
+    &:-moz-meter-sub-optimum::-moz-meter-bar {
+        background: var(--meter-indicator-background-suboptimum-disabled);
+    }
+    &:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+        background: var(--meter-indicator-background-even-less-good-disabled);
+    }
+    /* #endregion */
+}
+/* #endregion */
+
 /* #region ../../themes/vts/NumberInput.css */
 /*
 __Note:__ This CSS uses CSS variables defined in `Input.css` (`--input-*`) to achieve a consistent
@@ -1211,6 +1377,23 @@ progress {
     /* #endregion */
     /* #endregion Gecko */
 }
+.disabled progress,
+:disabled progress,
+[disabled] progress {
+    /* #region WebKit/Blink */
+    &::-webkit-progress-value {
+        background: var(--progress-indicator-background-disabled);
+    }
+    &:indeterminate::-webkit-progress-bar {
+        background: var(--progress-indicator-background-disabled);
+    }
+    /* #endregion */
+    /* #region Gecko */
+    &::-moz-progress-bar {
+        background: var(--progress-indicator-background-disabled);
+    }
+    /* #endregion */
+}
 /* #region Animations */
 @keyframes progress-indeterminate-horizontal {
     0% {
@@ -1363,7 +1546,7 @@ input[type="range"] {
     --input-range-thumb-border-radius: var(--border-radius-pill);
     --input-range-thumb-box-shadow: 0px 0px 10px var(--black-15);
     appearance: none;
-    block-size: calc(var(--input-range-track-size) + var(--input-range-track-border-width) * 2);
+    block-size: calc(var(--input-range-track-size) + 2 * var(--input-range-track-border-width));
     cursor: pointer;
     border-radius: var(--border-radius-pill);
     &.horizontal {
@@ -1664,6 +1847,36 @@ select {
         }
     }
 }
+.disabled select,
+:disabled select,
+[disabled] select {
+    color: var(--font-disabled-color);
+    border: var(--input-disabled-border);
+    border-bottom: var(--input-disabled-border-dark);
+    background: var(--input-disabled-background);
+    &:not([multiple]) {
+        background: var(--select-button-disabled), linear-gradient(to bottom, var(--input-background), var(--input-background));
+        background-repeat: no-repeat, no-repeat;
+        background-position: right var(--2px) top 50%, 0 0;
+        &:dir(rtl) {
+            background-position: left var(--2px) top 50%, 0 0;
+        }
+        background-size: var(--16px) auto, 100%;
+        padding-inline: var(--select-inline-padding);
+    }
+    &:autofill {
+        background-clip: text;
+        -webkit-background-clip: text;
+        transition: background-color 5000s ease-in-out 0s;
+        color: var(--font-disabled-color) !important;
+        -webkit-text-fill-color: var(--font-disabled-color);
+        background: var(--input-disabled-background) !important;
+        box-shadow: inset 0 0 0 1000px var(--input-disabled-background) !important;
+        &::selection {
+            background: transparent;
+        }
+    }
+}
 /* #endregion */
 
 /* #region ../../themes/vts/TemporalInput.css */
@@ -1770,6 +1983,26 @@ textarea {
         }
         &:focus {
             box-shadow: var(--input-focused) !important;
+        }
+    }
+}
+.disabled textarea,
+:disabled textarea,
+[disabled] textarea {
+    color: var(--font-disabled-color);
+    border: var(--input-disabled-border);
+    border-bottom: var(--input-disabled-border-dark);
+    background: var(--input-disabled-background);
+    &:autofill {
+        background-clip: text;
+        -webkit-background-clip: text;
+        transition: background-color 5000s ease-in-out 0s;
+        color: var(--font-disabled-color) !important;
+        -webkit-text-fill-color: var(--font-disabled-color);
+        background: var(--input-disabled-background) !important;
+        box-shadow: inset 0 0 0 1000px var(--input-disabled-background) !important;
+        &::selection {
+            background: transparent;
         }
     }
 }

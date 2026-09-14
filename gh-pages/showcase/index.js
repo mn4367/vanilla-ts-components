@@ -3301,12 +3301,16 @@
         }
     }
     /**
-     * 'Min/Max' getter/setter and set method returning this instance.
+     * 'Min'/'Max' (string|number) getter/setter and set method returning this instance.
+     * __Note:__ this is a hybrid attribute: for `HTMLInputElement` the type of `min`/`max` is `string`
+     * while for `HTMLMeterElement` the type is `number`.
      */
     class MinMaxAttr extends AElementComponent {
         /**
-         * Get/set the `min` attribute value of the component. `null` or an empty string removes the
-         * attribute.
+         * Get/set the `min` attribute value of the component. `undefined` removes the attribute.\
+         * For __`HTMLInputElement`__: The getter returns `0` if the attribute is missing or invalid.
+         * When setting a value, the native DOM property handles range limits when reading the value;
+         * the supplied attribute value is preserved.
          */
         get Min() {
             return this._dom.min;
@@ -3316,16 +3320,18 @@
             this.min(v);
         }
         /**
-         * Set `min` attribute value of the component.
-         * @param v The value to be set. `null` or an empty string removes the attribute.
+         * Set the `min` attribute value of the component.
+         * @param v The value to be set. If omitted or `undefined`, the attribute is removed.
          * @returns This instance.
          */
         min(v) {
-            this.attrib("min", v);
+            v === undefined
+                ? this._dom.removeAttribute("min")
+                : this._dom.min = v;
             return this;
         }
         /**
-         * Get/set the `max` attribute value of the component. `null` removes the attribute.
+         * Get/set the `max` attribute value of the component. `undefined` removes the attribute.
          */
         get Max() {
             return this._dom.max;
@@ -3335,12 +3341,14 @@
             this.max(v);
         }
         /**
-         * Set `max` attribute value of the component.
-         * @param v The value to be set. `null` removes the attribute.
+         * Set the `max` attribute value of the component.
+         * @param v The value to be set. If omitted or `undefined`, the attribute is removed.
          * @returns This instance.
          */
         max(v) {
-            this.attrib("max", v);
+            v === undefined
+                ? this._dom.removeAttribute("max")
+                : this._dom.max = v;
             return this;
         }
     }
@@ -3926,7 +3934,39 @@
     // #endregion Attibutes
     /////////////////////////////
     /////////////////////////////
-    // #region Properties
+    // #region Other (common) (DOM) properties
+    /**
+     * 'Orientation' getter/setter and set method returning this instance.\
+     * __Note:__ This is _not_ a native DOM attribute but a custom property managed by the component. It
+     * is available for all components which need/want to expose an orientation property.
+     */
+    class OrientationAttr extends AElementComponent {
+        _orientation = Orientation.HORIZONTAL;
+        /**
+         * Get/set the orientation of the component.
+         */
+        get Orientation() {
+            return this._orientation;
+        }
+        /** @inheritdoc */
+        set Orientation(v) {
+            this.orientation(v);
+        }
+        /**
+         * Sets the orientation of the component.
+         * @param orientation The new orientation.
+         * @returns This instance.
+         */
+        orientation(orientation) {
+            if (this._orientation !== orientation) {
+                this._orientation = orientation;
+                this._orientation === Orientation.HORIZONTAL
+                    ? this.removeClass("vertical").addClass("horizontal")
+                    : this.removeClass("horizontal").addClass("vertical");
+            }
+            return this;
+        }
+    }
     /**
      * 'SelectionStart' getter/setter and set method returning this instance.
      */
@@ -3975,7 +4015,7 @@
             return this;
         }
     }
-    // #endregion Properties
+    // #endregion Other (common) (DOM) properties
     /////////////////////////////
 
     /**
@@ -5156,6 +5196,125 @@
     }
 
     /**
+     * Meter component (`<meter>`).\
+     * Represents a scalar measurement within a known range. Phrasing content must not contain
+     * descendant `<meter>` elements.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meter
+     */
+    class Meter extends ElementComponentWithChildren {
+        // @ts-expect-error ---
+        #brand;
+        /**
+         * Create, set up and return Meter component.
+         * @param max The maximum value for the component. Default: `1`.
+         * @param value The current value for the element. The DOM getter limits the value to the
+         * current minimum and maximum. Default: `0`.
+         * @param min The minimum value for the component. Default: `0`.
+         * @param low The upper boundary of the low range. If omitted, the DOM getter defaults to
+         * the current minimum.
+         * @param high The lower boundary of the high range. If omitted, the DOM getter defaults to
+         * the current maximum.
+         * @param optimum The optimum value. If omitted, the DOM getter defaults to the midpoint of
+         * the current range.
+         * @param phrase The phrasing content for the `<meter>` element.
+         */
+        constructor(max = 1, value = 0, min = 0, low, high, optimum, ...phrase) {
+            super("meter");
+            this
+                .orientation(Orientation.HORIZONTAL)
+                .min(min)
+                .max(max)
+                .low(low)
+                .high(high)
+                .optimum(optimum)
+                .value(value);
+            phrase.length > 0 && this.phrase(...phrase);
+        }
+        /**
+         * Get/set the `low` attribute value of the component.
+         * The getter defaults to the minimum and is limited to the current minimum and maximum.
+         * Setting `undefined` removes the attribute.
+         */
+        get Low() {
+            return this._dom.low;
+        }
+        /** @inheritdoc */
+        set Low(v) {
+            this.low(v);
+        }
+        /**
+         * Set the `low` attribute value of the component. The native DOM property handles range
+         * limits when reading the value; the supplied attribute value is preserved.
+         * @param v The value to be set. If omitted or `undefined`, the attribute is removed.
+         * @returns This instance.
+         */
+        low(v) {
+            v === undefined
+                ? this._dom.removeAttribute("low")
+                : this._dom.low = v;
+            return this;
+        }
+        /**
+         * Get/set the `high` attribute value of the component.
+         * The getter defaults to the maximum and is limited to the current low boundary and maximum.
+         * Setting `undefined` removes the attribute.
+         */
+        get High() {
+            return this._dom.high;
+        }
+        /** @inheritdoc */
+        set High(v) {
+            this.high(v);
+        }
+        /**
+         * Set the `high` attribute value of the component. The native DOM property handles range
+         * limits when reading the value; the supplied attribute value is preserved.
+         * @param v The value to be set. If omitted or `undefined`, the attribute is removed.
+         * @returns This instance.
+         */
+        high(v) {
+            v === undefined
+                ? this._dom.removeAttribute("high")
+                : this._dom.high = v;
+            return this;
+        }
+        /**
+         * Get/set the `optimum` attribute value of the component.
+         * The getter defaults to the midpoint of the range and is limited to the current minimum and maximum.
+         * Setting `undefined` removes the attribute.
+         */
+        get Optimum() {
+            return this._dom.optimum;
+        }
+        /** @inheritdoc */
+        set Optimum(v) {
+            this.optimum(v);
+        }
+        /**
+         * Set the `optimum` attribute value of the component. The native DOM property handles range
+         * limits when reading the value; the supplied attribute value is preserved.
+         * @param v The value to be set. If omitted or `undefined`, the attribute is removed.
+         * @returns This instance.
+         */
+        optimum(v) {
+            v === undefined
+                ? this._dom.removeAttribute("optimum")
+                : this._dom.optimum = v;
+            return this;
+        }
+        /**
+         * Get the live list of label elements associated with this component (read-only).
+         */
+        get Labels() {
+            return this._dom.labels;
+        }
+        static {
+            /** Mixin additional DOM attributes/properties. */
+            mixinDOMProperties(this, (MinMaxAttr), (OrientationAttr), (ValueAttr));
+        }
+    }
+
+    /**
      * Navigation component Nav (`<nav>`).
      */
     class Nav extends ElementComponentWithChildren {
@@ -5613,35 +5772,15 @@
                 : this._dom.value = Math.max(0, Math.min(v, this._dom.max));
             return this;
         }
-        /**
-         * Get/set the orientation of the component.
-         */
-        get Orientation() {
-            return this._orientation;
-        }
-        /** @inheritdoc */
-        set Orientation(v) {
-            this.orientation(v);
-        }
-        /**
-         * Sets the orientation of the component.
-         * @param orientation The new orientation.
-         * @returns This instance.
-         */
-        orientation(orientation) {
-            if (this._orientation !== orientation) {
-                this._orientation = orientation;
-                this._orientation === Orientation.HORIZONTAL
-                    ? this.removeClass("vertical").addClass("horizontal")
-                    : this.removeClass("horizontal").addClass("vertical");
-            }
-            return this;
-        }
         /** @inheritdoc */
         dispose() {
             this.valueObserver?.disconnect();
             this.valueObserver = undefined;
             super.dispose();
+        }
+        static {
+            /** Mixin additional DOM attributes/properties. */
+            mixinDOMProperties(this, (OrientationAttr));
         }
     }
 
@@ -5870,30 +6009,6 @@
         required(_v) {
             return this;
         }
-        /**
-         * Get/set the orientation of the range input.
-         */
-        get Orientation() {
-            return this._orientation;
-        }
-        /** @inheritdoc */
-        set Orientation(v) {
-            this.orientation(v);
-        }
-        /**
-         * Sets the orientation of the range input.
-         * @param orientation The new orientation.
-         * @returns This instance.
-         */
-        orientation(orientation) {
-            if (this._orientation !== orientation) {
-                this._orientation = orientation;
-                this._orientation === Orientation.HORIZONTAL
-                    ? this.removeClass("vertical").addClass("horizontal")
-                    : this.removeClass("horizontal").addClass("vertical");
-            }
-            return this;
-        }
         /** @inheritdoc */
         onValue() {
             this.updatePercentage();
@@ -5924,7 +6039,7 @@
         }
         static {
             /** Mixin additional DOM attributes/properties. */
-            mixinDOMProperties(this, (MinMaxAttr), (StepAttr));
+            mixinDOMProperties(this, (MinMaxAttr), (OrientationAttr), (StepAttr));
         }
     }
 
@@ -8353,6 +8468,215 @@
     }
 
     /**
+     * Labeled meter component.
+     */
+    class LabeledMeter extends LabeledComponentWithSpan {
+        /**
+         * Create LabeledMeter component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param max The maximum value for the component. Default: `1`.
+         * @param value The current value for the element. The DOM getter limits the value to the
+         * current minimum and maximum. Default: `0`.
+         * @param min The minimum value for the component. Default: `0`.
+         * @param low The upper boundary of the low range. If omitted, the DOM getter defaults to the
+         * current minimum.
+         * @param high The lower boundary of the high range. If omitted, the DOM getter defaults to the
+         * current maximum.
+         * @param optimum The optimum value. If omitted, the DOM getter defaults to the midpoint of the
+         * current range.
+         * @param meterPhrase The phrasing content for the meter element.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         */
+        constructor(labelPhrase, max = 1, value = 0, min = 0, low, high, optimum, meterPhrase, lblPosition, lblAlignment) {
+            super(new Meter(max, value, min, low, high, optimum, ...[meterPhrase ?? []].flat()), labelPhrase, lblPosition, lblAlignment);
+        }
+        /**
+         * Get Meter component of this component. Equivalent to `Component`, just with a more
+         * descriptive name.
+         */
+        get Meter() {
+            return this._component;
+        }
+        /**
+         * Access the internal `Meter` component via a callback function. Useful for seamless chaining
+         * when creating instances of this component.
+         * @param cb A callback function that receives the current `Meter` component instance and this
+         * instance as parameters.
+         * @returns This instance.
+         */
+        meter(cb) {
+            cb(this._component, this);
+            return this;
+        }
+        /**
+         * Set the phrasing content of the components meter element. __The setter `Phrase` here is an
+         * alias for the property `this.Meter.Phrase`.__
+         */
+        set Phrase(phrase) {
+            this._component.Phrase = phrase;
+        }
+        /**
+         * Set the phrasing content of the components meter element. __The function `phrase()` here is
+         * an alias for the function `this.Meter.phrase()` but it returns _this_ instance instead of
+         * the 'Meter' instance.__
+         * @param phrase The phrasing content to be set for the meter element.
+         * @returns This instance.
+         */
+        phrase(...phrase) {
+            this._component.phrase(...phrase);
+            return this;
+        }
+        /**
+         * Set the phrasing content of the components meter element. __The setter `Rephrase` here is an
+         * alias for the property `this.Meter.Rephrase`.__
+         */
+        set Rephrase(phrase) {
+            this._component.Rephrase = phrase;
+        }
+        /**
+         * Set the phrasing content of the components meter element. __The function `rephrase()` here
+         * is an alias for the function `this.Meter.rephrase()` but it returns _this_ instance instead
+         * of the 'Meter' instance.__
+         * @param phrase The phrasing content to be set for the meter element.
+         * @returns This instance.
+         */
+        rephrase(...phrase) {
+            this._component.rephrase(...phrase);
+            return this;
+        }
+        /** Get/set the `min` attribute value of the meter component. */
+        get Min() {
+            return this._component.Min;
+        }
+        /** @inheritdoc */
+        set Min(v) {
+            this._component.Min = v;
+        }
+        /**
+         * Set the `min` attribute value of the meter component.
+         * @param v The value to be set.
+         * @returns This instance.
+         */
+        min(v) {
+            this._component.min(v);
+            return this;
+        }
+        /** Get/set the `max` attribute value of the meter component. */
+        get Max() {
+            return this._component.Max;
+        }
+        /** @inheritdoc */
+        set Max(v) {
+            this._component.Max = v;
+        }
+        /**
+         * Set the `max` attribute value of the meter component.
+         * @param v The value to be set.
+         * @returns This instance.
+         */
+        max(v) {
+            this._component.max(v);
+            return this;
+        }
+        /** Get/set the `low` attribute value of the meter component. */
+        get Low() {
+            return this._component.Low;
+        }
+        /** @inheritdoc */
+        set Low(v) {
+            this._component.Low = v;
+        }
+        /**
+         * Set the `low` attribute value of the meter component.
+         * @param v The value to be set. If omitted or `undefined`, the attribute is removed.
+         * @returns This instance.
+         */
+        low(v) {
+            this._component.low(v);
+            return this;
+        }
+        /** Get/set the `high` attribute value of the meter component. */
+        get High() {
+            return this._component.High;
+        }
+        /** @inheritdoc */
+        set High(v) {
+            this._component.High = v;
+        }
+        /**
+         * Set the `high` attribute value of the meter component.
+         * @param v The value to be set. If omitted or `undefined`, the attribute is removed.
+         * @returns This instance.
+         */
+        high(v) {
+            this._component.high(v);
+            return this;
+        }
+        /** Get/set the `optimum` attribute value of the meter component. */
+        get Optimum() {
+            return this._component.Optimum;
+        }
+        /** @inheritdoc */
+        set Optimum(v) {
+            this._component.Optimum = v;
+        }
+        /**
+         * Set the `optimum` attribute value of the meter component.
+         * @param v The value to be set. If omitted or `undefined`, the attribute is removed.
+         * @returns This instance.
+         */
+        optimum(v) {
+            this._component.optimum(v);
+            return this;
+        }
+        /** Get/set the `value` attribute value of the meter component. */
+        get Value() {
+            return this._component.Value;
+        }
+        /** @inheritdoc */
+        set Value(v) {
+            this._component.Value = v;
+        }
+        /**
+         * Set the `value` attribute value of the meter component.
+         * @param v The value to be set.
+         * @returns This instance.
+         */
+        value(v) {
+            this._component.value(v);
+            return this;
+        }
+    }
+    /**
+     * Factory for `LabeledMeter` components.
+     */
+    class LabeledMeterFactory extends ComponentFactory {
+        /**
+         * Create, set up and return LabeledMeter component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param max The maximum value for the component. Default: `1`.
+         * @param value The current value for the element. The DOM getter limits the value to the
+         * current minimum and maximum. Default: `0`.
+         * @param min The minimum value for the component. Default: `0`.
+         * @param low The upper boundary of the low range. If omitted, the DOM getter defaults to the
+         * current minimum.
+         * @param high The lower boundary of the high range. If omitted, the DOM getter defaults to the
+         * current maximum.
+         * @param optimum The optimum value. If omitted, the DOM getter defaults to the midpoint of the
+         * current range.
+         * @param meterPhrase The phrasing content for the meter element.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+         * @returns LabeledMeter component.
+         */
+        labeledMeter(labelPhrase, max = 1, value = 0, min = 0, low, high, optimum, meterPhrase, lblPosition, lblAlignment, data) {
+            return this.setupComponent(new LabeledMeter(labelPhrase, max, value, min, low, high, optimum, meterPhrase, lblPosition, lblAlignment), data);
+        }
+    }
+
+    /**
      * Labeled number input component.
      */
     class LabeledNumberInput extends LabeledInputComponent {
@@ -8607,6 +8931,179 @@
          */
         labeledPasswordInput(labelPhrase, id, value, name, lblPosition, lblAlignment, lblAction, data) {
             return this.setupComponent(new LabeledPasswordInput(labelPhrase, id, value, name, lblPosition, lblAlignment, lblAction), data);
+        }
+    }
+
+    /**
+     * Labeled progress component.
+     */
+    class LabeledProgress extends LabeledComponentWithSpan {
+        /**
+         * Create LabeledProgress component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param max The maximum value for the component. For the setter the value must be greater than
+         * `0` (it is automatically corrected to `1` if it is lower than or equal to `0`). Default: `1`.
+         * @param value The current value for the element. The value must be greater than or equal to
+         * `0` and less than or equal to the maximum value (it is automatically corrected so that it
+         * complies with these limit values). If the value is undefined, the component shows an
+         * 'indeterminate' state.
+         * @param progressPhrase The phrasing content for the progress element.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         */
+        constructor(labelPhrase, max = 1, value, progressPhrase, lblPosition, lblAlignment) {
+            super(new Progress(max, value, ...[progressPhrase ?? []].flat()), labelPhrase, lblPosition, lblAlignment);
+        }
+        /**
+         * Get Progress component of this component. Equivalent to `Component`, just with a more
+         * descriptive name.
+         */
+        get Progress() {
+            return this._component;
+        }
+        /**
+         * Access the internal `Progress` component via a callback function. Useful for seamless
+         * chaining when creating instances of this component.
+         * @param cb A callback function that receives the current `Progress` component instance and
+         * this instance as parameters.
+         * @returns This instance.
+         */
+        progress(cb) {
+            cb(this._component, this);
+            return this;
+        }
+        /**
+         * Set the phrasing content of the components progress element. __The setter `Phrase` here is an
+         * alias for the property `this.Progress.Phrase`.__
+         */
+        set Phrase(phrase) {
+            this._component.Phrase = phrase;
+        }
+        /**
+         * Set the phrasing content of the the components progress element. __The function `phrase()`
+         * here is an alias for the function `this.Progress.phrase()` but it returns _this_ instance
+         * instead of the 'Progress' instance.__
+         * @param phrase The phrasing content to be set for the progress element.
+         * @returns This instance.
+         */
+        phrase(...phrase) {
+            this._component.phrase(...phrase);
+            return this;
+        }
+        /**
+         * Set the phrasing content of the components progress element. __The setter `Rephrase` here is
+         * an alias for the property `this.Progress.Rephrase`.__
+         */
+        set Rephrase(phrase) {
+            this._component.Rephrase = phrase;
+        }
+        /**
+         * Set the phrasing content of the the components progress element. __The function `rephrase()`
+         * here is an alias for the function `this.Progress.rephrase()` but it returns _this_ instance
+         * instead of the 'Progress' instance.__
+         * @param phrase The phrasing content to be set for the progress element.
+         * @returns This instance.
+         */
+        rephrase(...phrase) {
+            this._component.rephrase(...phrase);
+            return this;
+        }
+        /**
+         * Get/set the indeterminate state of the progress element (re-exported for easier direct
+         * access).
+         */
+        get Indeterminate() {
+            return this._component.Indeterminate;
+        }
+        /** @inheritdoc */
+        set Indeterminate(v) {
+            this._component.Indeterminate = v;
+        }
+        /**
+         * Sets the indeterminate state of the progress element (re-exported for easier direct access).
+         * @param indeterminate `true`, if the state of the component should be indeterminate, otherwise
+         * false. If `indeterminate` is `true`, the `value` attribute is removed, otherwise the value
+         * attribute is set to `0`, if the component has no value attribute, or the current `value`
+         * attribute is unchanged.
+         * @returns This instance.
+         */
+        indeterminate(indeterminate) {
+            this._component.indeterminate(indeterminate);
+            return this;
+        }
+        /**
+         * Get/set the `max` attribute value of the progress component (re-exported for easier direct
+         * access). For the setter the value must be greater than `0` (it is automatically corrected to
+         * `1` if it is lower than or equal to `0`).
+         */
+        get Max() {
+            return this._component.Max;
+        }
+        /** @inheritdoc */
+        set Max(v) {
+            this._component.max(v);
+        }
+        /**
+         * Get/set the `max` attribute value of the progress component (re-exported for easier direct
+         * access). The value must be greater than `0` (it is automatically corrected to `1` if it is
+         * lower than or equal to `0`). If the new maximum value is also greater than the current value,
+         * the current value is set to the maximum value.
+         * @param v The value to be set.
+         * @returns This instance.
+         */
+        max(v) {
+            this._component.max(v);
+            return this;
+        }
+        /**
+         * Get/set the `value` attribute value of the component (re-exported for easier direct access).
+         * For the setter, the value must be greater than or equal to `0` and less than or equal to the
+         * maximum value (it is automatically corrected so that it lies between these limits). If the
+         * component has no `value` attribute (it is in an 'indeterminate' state), the return value of
+         * the getter is nevertheless always `0`. If `Value` is set to `undefined`, the `value`
+         * attribute is removed.
+         */
+        get Value() {
+            return this._component.Value;
+        }
+        /** @inheritdoc */
+        set Value(v) {
+            this._component.value(v);
+        }
+        /**
+         * Get/set the `value` attribute value of the component (re-exported for easier direct access).
+         * The value must be greater than or equal to `0` and less than or equal to the maximum value
+         * (it is automatically corrected so that it lies between these limits). If `v` is omitted or is
+         * `undefined`, the `value` attribute is removed.
+         * @param v The value to be set.
+         * @returns This instance.
+         */
+        value(v) {
+            this._component.value(v);
+            return this;
+        }
+    }
+    /**
+     * Factory for `LabeledProgress` components.
+     */
+    class LabeledProgressFactory extends ComponentFactory {
+        /**
+         * Create LabeledProgress component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param max The maximum value for the component. For the setter the value must be greater than
+         * `0` (it is automatically corrected to `1` if it is lower than or equal to `0`). Default: `1`.
+         * @param value The current value for the element. The value must be greater than or equal to
+         * `0` and less than or equal to the maximum value (it is automatically corrected so that it
+         * complies with these limit values). If the value is undefined, the component shows an
+         * 'indeterminate' state.
+         * @param progressPhrase The phrasing content for the progress element.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+         * @returns LabeledProgress component.
+         */
+        labeledProgress(labelPhrase, max = 1, value, progressPhrase, lblPosition, lblAlignment, data) {
+            return this.setupComponent(new LabeledProgress(labelPhrase, max, value, progressPhrase, lblPosition, lblAlignment), data);
         }
     }
 
@@ -8909,30 +9406,6 @@
             return this;
         }
         /**
-         * Gets/sets the orientation of the contained labeled radio buttons.
-         */
-        get Orientation() {
-            return this._orientation;
-        }
-        /** @inheritdoc */
-        set Orientation(v) {
-            this.orientation(v);
-        }
-        /**
-         * Sets the orientation of the contained labeled radio buttons.
-         * @param orientation The orientation of the labeled radio buttons.
-         * @returns This instance.
-         */
-        orientation(orientation) {
-            if (orientation !== this._orientation) {
-                this._orientation = orientation;
-                this._orientation === Orientation.HORIZONTAL
-                    ? this.removeClass("vertical").addClass("horizontal")
-                    : this.removeClass("horizontal").addClass("vertical");
-            }
-            return this;
-        }
-        /**
          * Gets/sets the label position of the contained labeled radio buttons.
          */
         get LabelPosition() {
@@ -8994,6 +9467,10 @@
         blur() {
             (this._labeledRadioButtons.find(e => e.Checked) || this._labeledRadioButtons[0])?.blur();
             return this;
+        }
+        static {
+            /** Mixin additional DOM attributes/properties. */
+            mixinDOMProperties(this, (OrientationAttr));
         }
     }
     /**
@@ -9164,6 +9641,92 @@
          */
         labeledRadioButtonGroup(labelPhrase, radioButtons, name, lblPosition = LabelPosition.TOP, lblAlignment = LabelAlignment.START, orientation = Orientation.VERTICAL, data) {
             return this.setupComponent(new LabeledRadioButtonGroup(labelPhrase, radioButtons, name, lblPosition, lblAlignment, orientation), data);
+        }
+    }
+
+    /**
+     * Labeled range input component.
+     */
+    class LabeledRangeInput extends LabeledInputComponent {
+        /**
+         * Create LabeledRangeInput component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param id The id (attribute) of the range input element. If `id` is `undefined` or omitted, a
+         * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
+         * attribute will be set. Any other value will be used as the id attribute.
+         * @param value The value of the range input element.
+         * @param name The `name` attribute of the range input element.
+         * @param min The minimum value (attribute) of the range input.
+         * @param max The maximum value (attribute) of the range input.
+         * @param step The step value (attribute) of the range input.
+         * @param orientation The orientation of the range input.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         * @param lblAction Controls the following behavior:
+         * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+         *   or `undefined`, a click on the label focuses the range input element (a unique ID has been
+         *   set automatically on the range input element), if `lblAction` is `false`, clicking on the
+         *   label does nothing.
+         * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+         *   has been set on the range input element).
+         */
+        constructor(labelPhrase, id, value, name, min = "0", max = "100", step = "1", orientation = Orientation.HORIZONTAL, lblPosition, lblAlignment, lblAction) {
+            const _id = id === undefined
+                ? cid()
+                : id === null || id === ""
+                    ? null
+                    : id;
+            super(new RangeInput(_id, value, name, min, max, step, orientation), labelPhrase, _id, lblPosition, lblAlignment, lblAction);
+        }
+        /**
+         * Get RangeInput component of this component. Equivalent to `Component`, just with a more
+         * descriptive name.
+         */
+        get RangeInput() {
+            return this._component;
+        }
+        /**
+         * Access the internal `RangeInput` component via a callback function. Useful for seamless
+         * chaining when creating instances of this component.
+         * @param cb A callback function that receives the current `RangeInput` component instance and
+         * this instance as parameters.
+         * @returns This instance.
+         */
+        rangeInput(cb) {
+            cb(this._component, this);
+            return this;
+        }
+    }
+    /**
+     * Factory for `LabeledRangeInput` components.
+     */
+    class LabeledRangeInputFactory extends ComponentFactory {
+        /**
+         * Create, set up and return LabeledRangeInput component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param id The id (attribute) of the range input element. If `id` is `undefined` or omitted, a
+         * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
+         * attribute will be set. Any other value will be used as the id attribute.
+         * @param value The value of the range input element.
+         * @param name The `name` attribute of the range input element.
+         * @param min The minimum value (attribute) of the range input.
+         * @param max The maximum value (attribute) of the range input.
+         * @param step The step value (attribute) of the range input.
+         * @param orientation The orientation of the range input.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         * @param lblAction Controls the following behavior:
+         * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+         *   or `undefined`, a click on the label focuses the range input element (a unique ID has been
+         *   set automatically on the range input element), if `lblAction` is `false`, clicking on the
+         *   label does nothing.
+         * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+         *   has been set on the range input element).
+         * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+         * @returns LabeledRangeInput component.
+         */
+        labeledRangeInput(labelPhrase, id, value, name, min = "0", max = "100", step = "1", orientation = Orientation.HORIZONTAL, lblPosition, lblAlignment, lblAction, data) {
+            return this.setupComponent(new LabeledRangeInput(labelPhrase, id, value, name, min, max, step, orientation, lblPosition, lblAlignment, lblAction), data);
         }
     }
 
@@ -11420,7 +11983,7 @@
         }
     }
 
-    const intro$$ = `
+    const intro$13 = `
 \`BusyOverlay\` is a component for displaying an overlay that indicates a
 'busy-with-no-defined-end' state. The overlay covers the complete viewport and prevents any user
 interaction with the UI below it. It is typically used during long-running operations where user
@@ -11436,7 +11999,7 @@ The component offers additional features:
 - Support for nested calls to \`busy()\`/\`idle()\`. This makes it very easy to use the overlay in
   scenarios where multiple (asynchronous) operations may overlap.
 `;
-    const example$W = `
+    const example$_ = `
 ### Basic usage
 
 \`\`\`
@@ -11591,12 +12154,12 @@ longRunning3();
             const btnBusy3 = new Button("Show")
                 .addClass("regular")
                 .on("click", async () => await show(false, 3500, 500));
-            this.append(this.markdown(intro$$), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
-            ), this.markdown(example$W), this.markdown(example2));
+            this.append(this.markdown(intro$13), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
+            ), this.markdown(example$_), this.markdown(example2));
         }
     }
 
-    const intro$_ = `
+    const intro$12 = `
 A container component whose content can be disclosed/undisclosed.
 
 **Class:** \`@vanilla-ts/components/DisclosureContainer\`
@@ -11612,7 +12175,7 @@ The \`DisclosureContainer\` component supports the follwoing features:
 
 All features are configurable at runtime on an already existing instance.
 `;
-    const example$V = `
+    const example$Z = `
 ### Notes
 - If \`WeakUndisclosed\` is \`true\` the inner content container will keep its content in the DOM
   when it is undisclosed, otherwise the content will be removed from the DOM.
@@ -11729,7 +12292,7 @@ if (someCondition) {
                 "textAlign": "center",
             });
             this
-                .append(this.markdown(intro$_), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$V), this.markdown(css$1), this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"), this.markdown(`
+                .append(this.markdown(intro$12), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$Z), this.markdown(css$1), this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"), this.markdown(`
 \`\`\`typescript
 example.Header.on("click", () => {
     example.Disclosed = !example.Disclosed;
@@ -11833,7 +12396,7 @@ example.headerCb(header => header.on("click", () => {
         }
     }
 
-    const intro$Z = `
+    const intro$11 = `
 \`IconButton\` is a component to display buttons with icons and/or text. The
 component itself is a regular \`§@dom/Button§\` component that contains three inner \`§@dom/Span§\`
 components which can be styled individually:
@@ -12064,7 +12627,7 @@ Compared to the example which uses background images the amount of CSS needed he
             let ib2a;
             let ib3a;
             const ibf = new MyIconButtonFactory();
-            this.append(this.markdown(intro$Z), this.example([
+            this.append(this.markdown(intro$11), this.example([
                 new P("IconButtons with background images:"),
                 new Div().addClass("icon-button-container").append(ib0 = ibf.iconButton({
                     IconStart: "-ios_share",
@@ -12124,7 +12687,7 @@ Compared to the example which uses background images the amount of CSS needed he
         }
     }
 
-    const intro$Y = `
+    const intro$10 = `
 ## Advanced components
 
 The components provided by the \`@vanilla-ts/components\` package are complex elements that address
@@ -12192,7 +12755,7 @@ labeled components.
         buildExample() {
             this
                 .addClass("ex-components-introduction")
-                .append(this.markdown(intro$Y));
+                .append(this.markdown(intro$10));
         }
     }
 
@@ -12247,12 +12810,12 @@ labeled components.
         ];
     }
 
-    const intro$X = `
+    const intro$$ = `
 A component with an §@dom/A§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledAnchor\`
 `;
-    const example$U = `
+    const example$Y = `
 ### Code example
 
 \`\`\`
@@ -12288,9 +12851,9 @@ new VTS_App(document.body).append(anchor1, anchor2);
         buildExample() {
             this.#lAnchor1 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-dom", "DOM project home", "Vanilla.ts DOM").target("_blank");
             this.#lAnchor2 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-components", "Components project home").target("_blank");
-            this.append(this.markdown(intro$X), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$$), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$U));
+                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$Y));
         }
     }
 
@@ -12434,13 +12997,13 @@ For an advanced usage of component factories see §@core/Component factories§.
         }
     }
 
-    const intro$W = `
+    const intro$_ = `
 A component with a §@dom/Div§ as a (inner) container for other components and a §@dom/Span§
 representing the caption for the container component.
 
 **Class:** \`@vanilla-ts/components/LabeledContainer\`
 `;
-    const example$T = `
+    const example$X = `
 ### Code example
 
 \`\`\`
@@ -12515,17 +13078,17 @@ new VTS_App(document.body).append(example);
                 { Label: "Nightly builds", Value: "nightly" },
             ], "rbg-sample-1")
                 .value("beta"), $.hr(), new P("Choose how updates should be installed"), $.labeledCheckbox("Automatically download available updates").checked(true), $.labeledCheckbox("Install updates automatically").checked(true), $.labeledCheckbox("Install security updates automatically").checked(true).disabled(true));
-            this.append(this.markdown(intro$W), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$T), this.markdown(exampleCSS$1));
+            this.append(this.markdown(intro$_), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$X), this.markdown(exampleCSS$1));
         }
     }
 
-    const intro$V = `
+    const intro$Z = `
 A component with an §@dom/EmailInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledEmailInput\`
 `;
-    const example$S = `
+    const example$W = `
 ### Code example
 
 \`\`\`
@@ -12549,18 +13112,76 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledEmailInput("Business contact")
                 .emailInput(c => c.placeholder("sophie@example.com"));
-            this.append(this.markdown(intro$V), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$Z), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$S));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$W));
         }
     }
 
-    const intro$U = `
+    const intro$Y = `
+A component with a §@dom/Meter§ and a §@dom/Span§ representing a caption for the component. It
+represents a scalar value within a known range. Use a §@dom/Progress§ component instead to represent
+the progress of a task.
+
+**Class:** \`@vanilla-ts/components/LabeledMeter\`
+`;
+    const example$V = `
+### Code example
+
+\`\`\`
+import { LabelPosition, LabeledMeter } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+
+const example = new LabeledMeter(
+    "Available Storage",
+    100,             // Maximum value
+    68,              // Current value
+    0,               // Minimum value
+    30,              // Upper boundary of the low range
+    70,              // Lower boundary of the high range
+    80,              // Optimum value
+    "68 out of 100"  // Fallback content
+)
+    .addClass("labeled-meter")
+    .meter(meter => meter.style("inlineSize", "15rem"));
+
+new VTS_App(document.body).append(example);
+\`\`\`
+`;
+    class LabeledMeterEx extends BaseExample {
+        #lMeter;
+        constructor() {
+            super("LabeledMeter");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            this.#lMeter = $.labeledMeter("Available Storage", 100, // Maximum value
+            68, // Current value
+            0, // Minimum value
+            30, // Upper boundary of the low range
+            70, // Lower boundary of the high range
+            80, // Optimum value
+            "68 out of 100" // Fallback content
+            )
+                .meter(meter => meter.style("inlineSize", "15rem"));
+            this.append(this.markdown(intro$Y), this.example([this.#lMeter]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+                .on("checked", (ev) => {
+                this.#lMeter.meter(cb => cb.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL));
+            }), $.labeledNumberInput("Current value:", undefined, this.#lMeter.Value.toString(), "", "0", "100")
+                .numberInput(numberInput => numberInput.on("input", () => {
+                this.#lMeter.value(numberInput.ValueAsNumber);
+            }))), this.markdown("### Label position and label alignment"), new Div()
+                .addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#lMeter], true, "start", "start")), this.markdown(example$V));
+        }
+    }
+
+    const intro$X = `
 A component with a §@dom/NumberInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledNumberInput\`
 `;
-    const example$R = `
+    const example$U = `
 ### Code example
 
 \`\`\`
@@ -12624,18 +13245,18 @@ new VTS_App(document.body).append(example);
                 .on("input", () => {
                 this.#lInput.NumberInput.DOM.setCustomValidity(this.#lInput.Value === "42" ? "" : "not_42");
             });
-            this.append(this.markdown(intro$U), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$X), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$R), this.markdown(css));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$U), this.markdown(css));
         }
     }
 
-    const intro$T = `
+    const intro$W = `
 A component with a §@dom/P§ and a §@dom/Span§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledParagraph\`
 `;
-    const example$Q = `
+    const example$T = `
 ### Code example
 
 \`\`\`
@@ -12661,18 +13282,18 @@ et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est.
         /** @inheritdoc */
         buildExample() {
             this.#lParagraph = $.labeledParagraph("Sample text", lorem);
-            this.append(this.markdown(intro$T), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$W), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$Q));
+                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$T));
         }
     }
 
-    const intro$S = `
+    const intro$V = `
 A component with a §@dom/PasswordInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledPasswordInput\`
 `;
-    const example$P = `
+    const example$S = `
 ### Code example
 
 \`\`\`
@@ -12696,20 +13317,86 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledPasswordInput("Password")
                 .passwordInput(c => c.placeholder("Enter password"));
-            this.append(this.markdown(intro$S), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$V), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$P));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$S));
         }
     }
 
-    const intro$R = `
+    const intro$U = `
+A component with a §@dom/Progress§ and a §@dom/Span§ representing a caption for the component. It
+represents the progress of a task, such as a download or file transfer. Use a §@dom/Meter§ component
+instead to represent a scalar value within a known range.
+
+**Class:** \`@vanilla-ts/components/LabeledProgress\`
+`;
+    const example$R = `
+### Code example
+
+\`\`\`
+import { LabelPosition, LabeledProgress } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+
+const example = new LabeledProgress(
+    "Upload progress",
+    100,              // Maximum value
+    70,               // Current value; undefined creates an indeterminate progress indicator
+    "70 out of 100"   // Fallback content
+)
+    .addClass("labeled-progress")
+    .progress(progress => progress.style("inlineSize", "15rem"));
+
+// The methods of the inner Progress component are also available directly on LabeledProgress.
+example.value(80);
+// example.indeterminate(true);
+
+new VTS_App(document.body).append(example);
+\`\`\`
+
+For easier handling, the labeled progress component forwards the \`ProgressValueEvent\` emitted by
+the inner \`Progress\` component; see the corresponding documentation in the \`LabeledProgress\`
+class.
+`;
+    class LabeledProgressEx extends BaseExample {
+        #lProgress;
+        constructor() {
+            super("LabeledProgress");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            let valueInput;
+            this.#lProgress = $.labeledProgress("Upload progress", 100, // Maximum value
+            70, // Current value
+            "70 out of 100" // Fallback content
+            )
+                .progress(progress => progress.style("inlineSize", "15rem"));
+            this.append(this.markdown(intro$U), this.example([this.#lProgress]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+                .on("checked", (ev) => {
+                this.#lProgress.progress(cb => cb.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL));
+            }), $.labeledNumberInput("Maximum value:", undefined, "100", "", "1", "100")
+                .numberInput(numberInput => numberInput.on("input", () => {
+                this.#lProgress.max(numberInput.ValueAsNumber);
+                valueInput.NumberInput.max(numberInput.Value);
+            })), valueInput = $.labeledNumberInput("Current value:", undefined, this.#lProgress.Value.toString(), "", "0", "100")
+                .numberInput(numberInput => numberInput.on("input", () => {
+                this.#lProgress.value(numberInput.ValueAsNumber === 0 ? undefined : numberInput.ValueAsNumber);
+            })), new P("Note: a current value of ", new Code("0"), " will set the progress component to an 'indeterminate' state.")
+                .style({
+                marginBlock: "0.5rem 0"
+            })), this.markdown("### Label position and label alignment"), new Div()
+                .addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#lProgress], true, "start", "start")), this.markdown(example$R));
+        }
+    }
+
+    const intro$T = `
 A component with a §@dom/RadioButton§ and a §@dom/Label§ representing a caption for the component.
 This class mainly exists as a building block for §@components/RadioButtonGroup§s and
 §@components/LabeledRadioButtonGroup§s.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButton\`
 `;
-    const example$O = `
+    const example$Q = `
 ### Code example
 
 \`\`\`
@@ -12736,7 +13423,7 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$R), this.example([
+            this.append(this.markdown(intro$T), this.example([
                 this.#lrb = $.labeledRadioButton("Beta versions")
                     .on("checked", () => this.#rbgCb.value(this.#lrb.Checked ? "checked" : "unchecked"))
             ]), this.markdown("### Label position, label alignment and radio button state"), new Div()
@@ -12756,17 +13443,17 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
                         break;
                 }
             }), ...labeledComponentLabelFlags([this.#lrb], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$O));
+                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$Q));
         }
     }
 
-    const intro$Q = `
+    const intro$S = `
 A component that groups multiple §@components/LabeledRadioButton§s into a single component that is
 similar to a §@components/LabeledContainer§.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButtonGroup\`
 `;
-    const example$N = `
+    const example$P = `
 ### Code example
 
 \`\`\`
@@ -12806,7 +13493,7 @@ in the \`RadioButtonGroup\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$Q), this.example([
+            this.append(this.markdown(intro$S), this.example([
                 this.#lrbg = $.labeledRadioButtonGroup("Your position", [
                     { Label: "Software developer", Value: "software_developer" },
                     { Label: "Security engineer", Value: "security_engineer" },
@@ -12834,16 +13521,103 @@ in the \`RadioButtonGroup\` class.
             }), 
             // $.labeledContainer("Inner radio button group").append(
             ...labeledComponentLabelFlags([this.#lrbg.RadioButtonGroup], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$N));
+                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$P));
         }
     }
 
-    const intro$P = `
+    const intro$R = `
+A component with a §@dom/RangeInput§ and a §@dom/Label§ representing a caption for the component.
+The label is automatically associated with the range input through its \`for\` and \`id\`
+attributes.
+
+**Class:** \`@vanilla-ts/components/LabeledRangeInput\`
+`;
+    const example$O = `
+### Code example
+
+\`\`\`
+import { LabeledRangeInput } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+import { Code, P } from "@vanilla-ts/dom";
+
+const value = new Code("42");
+const example = new LabeledRangeInput(
+    "Volume",
+    undefined, // id (auto-generated if not provided)
+    "42",      // value (initial value)
+    "volume",  // name (form name)
+    "0",       // minimum value
+    "100",     // maximum value
+    "0.1"      // step interval
+)
+    .addClass("labeled-range-input")
+    .rangeInput(rangeInput => rangeInput
+        .style("inlineSize", "15rem")
+        .on("input", () => value.text(example.Value))
+    );
+
+new VTS_App(document.body).append(
+    example,
+    new P("Current value: ", value)
+        .style({
+            marginBlock: "0.5rem 0",
+            width: "11rem"
+        })
+);
+\`\`\`
+`;
+    class LabeledRangeInputEx extends BaseExample {
+        #lRangeInput;
+        constructor() {
+            super("LabeledRangeInput");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            let maxInput;
+            let minInput;
+            let value;
+            this.#lRangeInput = $.labeledRangeInput("Volume", undefined, // id (auto-generated if not provided)
+            "42", // value (initial value)
+            "volume", // name (form name)
+            "0", // minimum value
+            "100", // maximum value
+            "0.1" // step interval
+            )
+                .rangeInput(rangeInput => rangeInput
+                .style("inlineSize", "15rem")
+                .on("input", () => value.text(rangeInput.Value)));
+            this.append(this.markdown(intro$R), this.example([
+                this.#lRangeInput,
+                new P("Current value: ", value = new Code(this.#lRangeInput.Value))
+                    .style({
+                    marginBlock: "0.5rem 0",
+                    width: "11rem"
+                })
+            ]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+                .on("checked", event => {
+                this.#lRangeInput.rangeInput(rangeInput => rangeInput.orientation(event.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL));
+            }), maxInput = $.labeledNumberInput("Maximum value:", undefined, "100", "", "1", "100")
+                .numberInput(numberInput => numberInput.on("input", () => {
+                this.#lRangeInput.RangeInput.max(numberInput.Value);
+                minInput.NumberInput.max(numberInput.Value);
+                value.text(this.#lRangeInput.Value);
+            })), minInput = $.labeledNumberInput("Minimum value:", undefined, "0", "", "0", "100")
+                .numberInput(numberInput => numberInput.on("input", () => {
+                this.#lRangeInput.RangeInput.min(numberInput.Value);
+                maxInput.NumberInput.min(numberInput.Value);
+                value.text(this.#lRangeInput.Value);
+            }))), this.markdown("### Label position and label alignment"), new Div()
+                .addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#lRangeInput], true, "start", "start")), this.markdown(example$O));
+        }
+    }
+
+    const intro$Q = `
 A component with a §@dom/SearchInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledSearchInput\`
 `;
-    const example$M = `
+    const example$N = `
 ### Code example
 
 \`\`\`
@@ -12867,18 +13641,18 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledSearchInput("Search")
                 .searchInput(c => c.placeholder("Enter search term..."));
-            this.append(this.markdown(intro$P), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$Q), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$M));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$N));
         }
     }
 
-    const intro$O = `
+    const intro$P = `
 A component with an §@dom/Select§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledSelect\`
 `;
-    const example$L = `
+    const example$M = `
 ### Code example
 
 \`\`\`
@@ -13003,12 +13777,12 @@ new VTS_App(document.body).append(example, log);
                 .multiple(true)
                 .size(5))
                 .on("change", updateMultipleLog);
-            this.append(this.markdown(intro$O), this.example([
+            this.append(this.markdown(intro$P), this.example([
                 this.#lInput,
                 log
             ]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$L), this.markdown("---"), this.markdown(introMultiple$1), this.example([
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$M), this.markdown("---"), this.markdown(introMultiple$1), this.example([
                 this.#lInputMultiple,
                 logMultiple
             ]), this.markdown("### Label position and label alignment"), new Div()
@@ -13017,12 +13791,12 @@ new VTS_App(document.body).append(example, log);
         }
     }
 
-    const intro$N = `
+    const intro$O = `
 A component with a §@dom/TextInput§ and a §@dom/Label§ representing a caption for the component.
 
 **Class:** \`@vanilla-ts/components/LabeledTextInput\`
 `;
-    const example$K = `
+    const example$L = `
 ### Code example
 
 \`\`\`
@@ -13046,18 +13820,18 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledTextInput("Username")
                 .textInput(c => c.placeholder("Enter your name here"));
-            this.append(this.markdown(intro$N), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$O), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$K));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$L));
         }
     }
 
-    const intro$M = `
+    const intro$N = `
 A component that groups multiple §@components/LabeledRadioButton§s into a single component.
 
 **Class:** \`@vanilla-ts/components/RadioButtonGroup\`
 `;
-    const example$J = `
+    const example$K = `
 ### Code example
 
 \`\`\`
@@ -13088,13 +13862,12 @@ in the \`RadioButtonGroup\` class.
 `;
     class RadioButtonGroupEx extends BaseExample {
         #rbg;
-        #lsAlignment;
         constructor() {
             super("RadioButtonGroup");
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$M), this.example([
+            this.append(this.markdown(intro$N), this.example([
                 this.#rbg = $.radioButtonGroup([
                     { Label: "Regular updates", Value: "regular" },
                     { Label: "Beta versions", Value: "beta" },
@@ -13103,22 +13876,9 @@ in the \`RadioButtonGroup\` class.
                     .value("beta")
             ]), this.markdown("### Alignment, label position, label alignment and radio button state"), new Div()
                 .addClass("example-properties")
-                .append(this.#lsAlignment = $.labeledSelect("Alignment", [
-                new Option("VERTICAL").value("vertical"),
-                new Option("HORIZONTAL").value("horizontal"),
-            ])
-                .value("vertical")
-                .on("change", () => {
-                switch (this.#lsAlignment.Value) {
-                    case "vertical":
-                        this.#rbg.orientation(Orientation.VERTICAL);
-                        break;
-                    case "horizontal":
-                        this.#rbg.orientation(Orientation.HORIZONTAL);
-                        break;
-                }
-            }), ...labeledComponentLabelFlags([this.#rbg], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#rbg.toggle(!this.#rbg.Toggle))), this.markdown(example$J));
+                .append(...labeledComponentLabelFlags([this.#rbg], true, "end", "start"), $.labeledCheckbox("Horizontal alignment")
+                .on("checked", (ev) => this.#rbg.orientation(ev.$.Checked ? Orientation.HORIZONTAL : Orientation.VERTICAL)), $.labeledCheckbox("Allow toggling the state")
+                .on("checked", () => this.#rbg.toggle(!this.#rbg.Toggle))), this.markdown(example$K));
         }
     }
 
@@ -13166,7 +13926,7 @@ in the \`RadioButtonGroup\` class.
         }
     }
 
-    const intro$L = `
+    const intro$M = `
 The components provided by the \`@vanilla-ts/core\` package ...
 `;
     class CoreIntroductionEx extends BaseExample {
@@ -13177,17 +13937,17 @@ The components provided by the \`@vanilla-ts/core\` package ...
         buildExample() {
             this
                 .addClass("ex-core-introduction")
-                .append(this.markdown(intro$L));
+                .append(this.markdown(intro$M));
         }
     }
 
-    const intro$K = `
+    const intro$L = `
 A component that encapsulates the DOM element
 %\`<address>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/address%.
 
 **Class:** \`@vanilla-ts/dom/Address\`
 `;
-    const example$I = `
+    const example$J = `
 ### Code example
 
 \`\`\`
@@ -13214,21 +13974,21 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             let address;
-            this.append(this.markdown(intro$K), this.example([
+            this.append(this.markdown(intro$L), this.example([
                 new P("Contact the author of this page:"),
                 address = new Address().append(new A("mailto:jim@example.com", "jim@example.com"), new Br(), new A("tel:+14155550132", "+1 (415) 555‑0132"))
-            ], [address]), this.markdown(example$I));
+            ], [address]), this.markdown(example$J));
         }
     }
 
-    const intro$J = `
+    const intro$K = `
 A component that encapsulates a native DOM anchor element
 (%\`<a>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a%).
 This component is also available as a §@components/LabeledAnchor§.
 
 **Class:** \`@vanilla-ts/dom/A\`
 `;
-    const example$H = `
+    const example$I = `
 ### Code example
 
 \`\`\`
@@ -13250,19 +14010,19 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$J), this.example([
+            this.append(this.markdown(intro$K), this.example([
                 new A("https://github.com/mn4367/vanilla-ts-components", "Go to vanilla-ts-components at GitHub.").target("_blank")
-            ]), this.markdown(example$H));
+            ]), this.markdown(example$I));
         }
     }
 
-    const intro$I = `
+    const intro$J = `
 A component that encapsulates the DOM element
 %\`<b>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/b%.
 
 **Class:** \`@vanilla-ts/dom/B\`
 `;
-    const example$G = `
+    const example$H = `
 ### Code example
 
 \`\`\`
@@ -13283,19 +14043,19 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             const b = new B("dolor");
-            this.append(this.markdown(intro$I), this.example([
+            this.append(this.markdown(intro$J), this.example([
                 new P("Lorem ipsum ", b, " sit amet.")
-            ], [b]), this.markdown(example$G));
+            ], [b]), this.markdown(example$H));
         }
     }
 
-    const intro$H = `
+    const intro$I = `
 A component that encapsulates the DOM element
 %\`<br>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/br%.
 
 **Class:** \`@vanilla-ts/dom/Br\`
 `;
-    const example$F = `
+    const example$G = `
 ### Code example
 
 \`\`\`
@@ -13313,13 +14073,13 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$H), this.example([
+            this.append(this.markdown(intro$I), this.example([
                 new P("Lorem ipsum dolor", new Br(), "sit amet.")
-            ]), this.markdown(example$F));
+            ]), this.markdown(example$G));
         }
     }
 
-    const intro$G = `
+    const intro$H = `
 A component that encapsulates the native DOM button element
 (%\`<button>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button%).
 
@@ -13328,7 +14088,7 @@ A component that encapsulates the native DOM button element
 __Note:__ Buttons do not have a default styling. This is done to ease the creation of dedicated
 button styles for different usage contexts (like dialogs, toolbars, icon buttons etc.).
 `;
-    const example$E = `
+    const example$F = `
 ### Code example (unstyled default button)
 
 \`\`\`
@@ -13396,7 +14156,7 @@ the previous example). For an advanced usage of component factories see §@core/
             let btnSkip;
             let btnCancel;
             let btnOk;
-            this.append(this.markdown(intro$G), this.markdown(example$E), this.example([
+            this.append(this.markdown(intro$H), this.markdown(example$F), this.example([
                 new Button("Button")
             ]), this.markdown(exampleStyled), this.example([
                 btnSkip = $.buttonWarn("Skip"),
@@ -13408,13 +14168,13 @@ the previous example). For an advanced usage of component factories see §@core/
         }
     }
 
-    const intro$F = `
+    const intro$G = `
 A component that encapsulates the DOM element
 %\`<canvas>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas%.
 
 **Class:** \`@vanilla-ts/dom/Canvas\`
 `;
-    const example$D = `
+    const example$E = `
 ### Code example
 
 \`\`\`
@@ -13463,7 +14223,7 @@ new VTS_App(document.body).append(example);
             drawCircle(50, 50, 40, "red");
             drawCircle(100, 100, 40, "green");
             drawCircle(150, 150, 40, "blue");
-            this.append(this.markdown(intro$F), this.exampleNoToolbar(canvas), this.markdown(example$D));
+            this.append(this.markdown(intro$G), this.exampleNoToolbar(canvas), this.markdown(example$E));
         }
     }
 
@@ -13591,13 +14351,13 @@ For an advanced usage of component factories see §@core/Component factories§.
         }
     }
 
-    const intro$E = `
+    const intro$F = `
 A component that encapsulates the DOM element
 %\`<code>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/code%.
 
 **Class:** \`@vanilla-ts/dom/Code\`
 `;
-    const example$C = `
+    const example$D = `
 ### Code example
 
 \`\`\`
@@ -13618,13 +14378,13 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             const c = new Code("dolor").style("background", "lightgray");
-            this.append(this.markdown(intro$E), this.example([
+            this.append(this.markdown(intro$F), this.example([
                 new P("Lorem ipsum ", c, " sit amet.")
-            ], [c]), this.markdown(example$C));
+            ], [c]), this.markdown(example$D));
         }
     }
 
-    const intro$D = `
+    const intro$E = `
 A component that encapsulates a DOM comment node
 (%\`<!-\u200b- -->\`|https://developer.mozilla.org/en-US/docs/Web/API/Comment%).
 There is, of course, no visual representation of a comment node in a web page but the created
@@ -13632,7 +14392,7 @@ component can be used like any other 'real' component.
 
 **Class:** \`@vanilla-ts/dom/Comment\`
 `;
-    const example$B = `
+    const example$C = `
 ### Code example
 
 \`\`\`
@@ -13650,11 +14410,11 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$D), this.exampleNoToolbar(new Comment("Lorem ipsum dolor sit amet."), new Code("<!--", new Text$1(new Comment("Lorem ipsum dolor sit amet.").Text), "-->")), this.markdown(example$B));
+            this.append(this.markdown(intro$E), this.exampleNoToolbar(new Comment("Lorem ipsum dolor sit amet."), new Code("<!--", new Text$1(new Comment("Lorem ipsum dolor sit amet.").Text), "-->")), this.markdown(example$C));
         }
     }
 
-    const intro$C = `
+    const intro$D = `
 A component that encapsulates the DOM element
 %\`<datalist>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist%.
 It provides a list of predefined suggestions for an input component. The \`DataList\` and the input
@@ -13663,7 +14423,7 @@ Unlike a §@dom/Select§ component, the input still allows values that are not p
 
 **Class:** \`@vanilla-ts/dom/DataList\`
 `;
-    const example$A = `
+    const example$B = `
 ### Code example
 
 \`\`\`
@@ -13700,14 +14460,14 @@ new VTS_App(document.body).append(example, dataList);
                 .attrib("list", dataList.ID)
                 .placeholder("Choose or enter a city")
                 .style("width", "12rem");
-            this.append(this.markdown(intro$C), this.example([
+            this.append(this.markdown(intro$D), this.example([
                 textInput,
                 dataList
-            ], [textInput]), this.markdown(example$A));
+            ], [textInput]), this.markdown(example$B));
         }
     }
 
-    const intro$B = `
+    const intro$C = `
 A component that encapsulates a native dialog DOM element
 (%\`<dialog>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog%).
 The §@components/Dialog§ class from \`@vanilla-ts/components\` builds upon this class here and adds
@@ -13715,7 +14475,7 @@ a lot of advanced features.
 
 **Class:** \`@vanilla-ts/dom/Dialog\`
 `;
-    const example$z = `
+    const example$A = `
 ### Code example
 
 \`\`\`
@@ -13776,17 +14536,17 @@ new VTS_App(document.body).append(btnNonModal, btnModal);
                 .on("click", () => modalDlg.Open ? modalDlg.close() : btnModal.disabled(true) && modalDlg.showModal());
             const nonModalDlg = getDialog(false, btnNonModal);
             const modalDlg = getDialog(true, btnModal);
-            this.append(this.markdown(intro$B), this.markdown("### Examples"), this.properties(btnNonModal, new Text$1("\u2003"), btnModal), this.markdown(example$z));
+            this.append(this.markdown(intro$C), this.markdown("### Examples"), this.properties(btnNonModal, new Text$1("\u2003"), btnModal), this.markdown(example$A));
         }
     }
 
-    const intro$A = `
+    const intro$B = `
 A component that encapsulates the DOM element
 %\`<div>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/div%.
 
 **Class:** \`@vanilla-ts/dom/Div\`
 `;
-    const example$y = `
+    const example$z = `
 ### Code example
 
 \`\`\`
@@ -13816,7 +14576,7 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$A), this.example([
+            this.append(this.markdown(intro$B), this.example([
                 new Div(new P("Example ", new Code("<div>").dir("ltr"), "."))
                     .style({
                     padding: "1rem",
@@ -13826,18 +14586,18 @@ new VTS_App(document.body).append(example);
                     .append(new Br(), new P("Lorem ipsum dolor sit amet."), new Button("Click me!")
                     .addClass("regular")
                     .on("click", () => alert("Thank you!")))
-            ]), this.markdown(example$y));
+            ]), this.markdown(example$z));
         }
     }
 
-    const intro$z = `
+    const intro$A = `
 A component that encapsulates a native email input DOM element
 (%\`<input type="email">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/email%).
 This component is also available as a §@components/LabeledEmailInput§.
 
 **Class:** \`@vanilla-ts/dom/EmailInput\`
 `;
-    const example$x = `
+    const example$y = `
 ### Code example
 
 \`\`\`
@@ -13855,19 +14615,19 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$z), this.example([
+            this.append(this.markdown(intro$A), this.example([
                 new EmailInput().placeholder("sophie@example.com")
-            ]), this.markdown(example$x));
+            ]), this.markdown(example$y));
         }
     }
 
-    const intro$y = `
+    const intro$z = `
 A component that encapsulates the DOM element
 %\`<em>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/em%.
 
 **Class:** \`@vanilla-ts/dom/Em\`
 `;
-    const example$w = `
+    const example$x = `
 ### Code example
 
 \`\`\`
@@ -13888,19 +14648,19 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             let em = new Em("dolor");
-            this.append(this.markdown(intro$y), this.example([
+            this.append(this.markdown(intro$z), this.example([
                 new P("Lorem ipsum ", em, " sit amet."),
-            ], [em]), this.markdown(example$w));
+            ], [em]), this.markdown(example$x));
         }
     }
 
-    const intro$x = `
+    const intro$y = `
 A component that encapsulates the DOM element
 %\`<footer>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/footer%.
 
 **Class:** \`@vanilla-ts/dom/Footer\`
 `;
-    const example$v = `
+    const example$w = `
 ### Code example
 
 \`\`\`
@@ -13934,13 +14694,13 @@ new VTS_App(document.body).append(h, m, f);
             const h = new Header("Header content").style(style);
             const m = new Main("Main content").style("padding", "1rem 0.5rem");
             const f = new Footer("Footer content").style(style);
-            this.append(this.markdown(intro$x), this.example([
+            this.append(this.markdown(intro$y), this.example([
                 new Div(h, m, f).id(cid())
-            ], [f]), this.markdown(example$v));
+            ], [f]), this.markdown(example$w));
         }
     }
 
-    const intro$w = `
+    const intro$x = `
 A component that encapsulates a DOM document fragment
 (%\`DocumentFragment\`|https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment%).
 
@@ -13955,7 +14715,7 @@ Like with a real DOM fragment, the \`Fragment\` component shouldn't be seen as a
 for appending/inserting component collections. If you need to append/insert multiple components to
 another component, the regular \`append()\`/\`insert()\` functions are usually a bit faster.
 `;
-    const example$u = `
+    const example$v = `
 ### Code examples
 
 \`\`\`
@@ -13991,17 +14751,17 @@ f2.dispose();
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$w), this.markdown(example$u));
+            this.append(this.markdown(intro$x), this.markdown(example$v));
         }
     }
 
-    const intro$v = `
+    const intro$w = `
 A component that encapsulates the DOM element
 %\`<header>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/header%.
 
 **Class:** \`@vanilla-ts/dom/Header\`
 `;
-    const example$t = `
+    const example$u = `
 ### Code example
 
 \`\`\`
@@ -14035,19 +14795,19 @@ new VTS_App(document.body).append(h, m, f);
             const h = new Header("Header content").style(style);
             const m = new Main("Main content").style("padding", "1rem 0.5rem");
             const f = new Footer("Footer content").style(style);
-            this.append(this.markdown(intro$v), this.example([
+            this.append(this.markdown(intro$w), this.example([
                 new Div(h, m, f).id(cid())
-            ], [h]), this.markdown(example$t));
+            ], [h]), this.markdown(example$u));
         }
     }
 
-    const intro$u = `
+    const intro$v = `
 A component that encapsulates the DOM element
 %\`<hr>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hr%.
 
 **Class:** \`@vanilla-ts/dom/Hr\`
 `;
-    const example$s = `
+    const example$t = `
 ### Code example
 
 \`\`\`
@@ -14065,19 +14825,19 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$u), this.example([
+            this.append(this.markdown(intro$v), this.example([
                 new Hr(),
-            ]), this.markdown(example$s));
+            ]), this.markdown(example$t));
         }
     }
 
-    const intro$t = `
+    const intro$u = `
 6 components that encapsulate the \`h1\` to \`h6\` section heading DOM elements
 (%\`<h1>\` to \`<h6>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements%).
 
 **Classes:** \`@vanilla-ts/dom/H1\` to \`@vanilla-ts/dom/H6\`
 `;
-    const example$r = `
+    const example$s = `
 ### Code example
 
 \`\`\`
@@ -14109,24 +14869,24 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$t), this.example([
+            this.append(this.markdown(intro$u), this.example([
                 this.#h1 = new H1("H1 Heading"),
                 this.#h2 = new H2("H2 Heading"),
                 this.#h3 = new H3("H3 Heading"),
                 this.#h4 = new H4("H4 Heading"),
                 this.#h5 = new H5("H5 Heading"),
                 this.#h6 = new H6("H6 Heading")
-            ], [this.#h1, this.#h2, this.#h3, this.#h4, this.#h5, this.#h6]), this.markdown(example$r));
+            ], [this.#h1, this.#h2, this.#h3, this.#h4, this.#h5, this.#h6]), this.markdown(example$s));
         }
     }
 
-    const intro$s = `
+    const intro$t = `
 A component that encapsulates the DOM element
 %\`<i>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/i%.
 
 **Class:** \`@vanilla-ts/dom/I\`
 `;
-    const example$q = `
+    const example$r = `
 ### Code example
 
 \`\`\`
@@ -14147,19 +14907,19 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             let i = new I("dolor");
-            this.append(this.markdown(intro$s), this.example([
+            this.append(this.markdown(intro$t), this.example([
                 new P("Lorem ipsum ", i, " sit amet."),
-            ], [i]), this.markdown(example$q));
+            ], [i]), this.markdown(example$r));
         }
     }
 
-    const intro$r = `
+    const intro$s = `
 A component that encapsulates the DOM element
 %\`<img>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img%.
 
 **Class:** \`@vanilla-ts/dom/Img\`
 `;
-    const example$p = `
+    const example$q = `
 ### Code example
 
 \`\`\`
@@ -14190,11 +14950,11 @@ new VTS_App(document.body).append(example, p);
                 .loading("lazy");
             const p = new P("Of course it has to be a picture of a cat!")
                 .style("textAlign", "center");
-            this.append(this.markdown(intro$r), this.example([img, p], [img, p]), this.markdown(example$p));
+            this.append(this.markdown(intro$s), this.example([img, p], [img, p]), this.markdown(example$q));
         }
     }
 
-    const intro$q = `
+    const intro$r = `
 \`Input\` is an *abstract* component that is used as the base class for all input components, such
 as §@dom/TextInput§, §@dom/Checkbox / Switch§, §@dom/RadioButton§, etc., so there is no visual
 example here. It provides basic functionality common to all input components, such as \`required\` /
@@ -14208,11 +14968,11 @@ example here. It provides basic functionality common to all input components, su
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$q));
+            this.append(this.markdown(intro$r));
         }
     }
 
-    const intro$p = `
+    const intro$q = `
 ## DOM components
 
 The components provided by the \`@vanilla-ts/dom\` package are basic elements that encapsulate
@@ -14230,17 +14990,17 @@ being expanded.
         buildExample() {
             this
                 .addClass("ex-dom-introduction")
-                .append(this.markdown(intro$p));
+                .append(this.markdown(intro$q));
         }
     }
 
-    const intro$o = `
+    const intro$p = `
 A component that encapsulates the DOM element
 %\`<label>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label%.
 
 **Class:** \`@vanilla-ts/dom/Label\`
 `;
-    const example$o = `
+    const example$p = `
 ### Code example
 
 \`\`\`
@@ -14283,11 +15043,11 @@ need to manually construct labeled components like in the example aboove.
                 .style(style)
                 .append(this.#label = new Label("ti", "Username"), new TextInput("ti", undefined, "text-input")
                 .placeholder("Enter username here"));
-            this.append(this.markdown(intro$o), this.example([labeledTextInput], [this.#label]), this.markdown(example$o));
+            this.append(this.markdown(intro$p), this.example([labeledTextInput], [this.#label]), this.markdown(example$p));
         }
     }
 
-    const intro$n = `
+    const intro$o = `
 Components that encapsulate the DOM element
 %\`<li>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li%
 for ordered lists (§@dom/Ol§) and unordered lists (§@dom/Ul§). \`LiOl\` components also allow to set
@@ -14296,7 +15056,7 @@ number will be automatically generated by the browser.
 
 **Classes:** \`@vanilla-ts/dom/LiOl\`, \`@vanilla-ts/dom/LiUl\`
 `;
-    const example$n = `
+    const example$o = `
 ### Code example
 
 \`\`\`
@@ -14344,23 +15104,23 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$n), this.example([
+            this.append(this.markdown(intro$o), this.example([
                 new P("Shopping List:"),
                 new Ul("Flour", "Baking powder", "Sugar", "Salt", "Oil", new LiUl("From the cooling shelf:", new Ul(new LiUl("Eggs"), new LiUl("Milk")))),
                 new Hr(),
                 new P("How to make a muffin:"),
                 new Ol(new LiOl(0, "Relax (optional)."), "Mix flour, baking powder, sugar, and salt.", "In another bowl, mix eggs, milk, and oil.", "Stir both mixtures together.", "Fill muffin tray 3/4 full.", new Em("Bake for 20 minutes."))
-            ]), this.markdown(example$n));
+            ]), this.markdown(example$o));
         }
     }
 
-    const intro$m = `
+    const intro$n = `
 A component that encapsulates the DOM element
 %\`<main>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/main%.
 
 **Class:** \`@vanilla-ts/dom/Main\`
 `;
-    const example$m = `
+    const example$n = `
 ### Code example
 
 \`\`\`
@@ -14394,19 +15154,19 @@ new VTS_App(document.body).append(h, m, f);
             const h = new Header("Header content").style(style);
             const m = new Main("Main content").style("padding", "1rem 0.5rem");
             const f = new Footer("Footer content").style(style);
-            this.append(this.markdown(intro$m), this.example([
+            this.append(this.markdown(intro$n), this.example([
                 new Div(h, m, f).id(cid())
-            ], [m]), this.markdown(example$m));
+            ], [m]), this.markdown(example$n));
         }
     }
 
-    const intro$l = `
+    const intro$m = `
 A component that encapsulates the DOM element
 %\`<menu>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/menu%.
 
 **Class:** \`@vanilla-ts/dom/Menu\`
 `;
-    const example$l = `
+    const example$m = `
 ### Code example
 
 \`\`\`
@@ -14464,7 +15224,7 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             const bf = new ButtonFactory();
-            this.append(this.markdown(intro$l), this.example([
+            this.append(this.markdown(intro$m), this.example([
                 new Menu()
                     .addClass("menu-example")
                     .append(new LiUl(bf.buttonRegular("Cut")
@@ -14474,7 +15234,57 @@ new VTS_App(document.body).append(example);
                     .on("click", () => console.log("Fake 'Copy text' executed"))), new LiUl(bf.buttonRegular("Paste")
                     .title("Paste text from the clipboard")
                     .on("click", () => console.log("Fake 'Paste text' executed"))))
-            ]), this.markdown(example$l), this.markdown(exampleCSS));
+            ]), this.markdown(example$m), this.markdown(exampleCSS));
+        }
+    }
+
+    const intro$l = `
+A component that encapsulates the DOM element
+%\`<meter>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meter%.
+It represents a scalar value within a known range. The \`min\` and \`max\` values define the range,
+\`low\` and \`high\` divide it into regions and \`optimum\` indicates the preferred region. Use a
+§@dom/Progress§ component instead to represent the progress of a task. This component is also
+available as a §@components/LabeledMeter§.
+
+**Class:** \`@vanilla-ts/dom/Meter\`
+`;
+    const example$l = `
+### Code example
+
+\`\`\`
+import { VTS_App } from "@vanilla-ts/core";
+import { Meter } from "@vanilla-ts/dom";
+
+const example = new Meter(
+    100,             // Maximum value
+    68,              // Current value
+    0,               // Minimum value
+    30,              // Upper boundary of the low range
+    70,              // Lower boundary of the high range
+    80,              // Optimum value
+    "68 out of 100"  // Fallback content
+)
+    .style("inlineSize", "15rem");
+
+new VTS_App(document.body).append(example);
+\`\`\`
+`;
+    class MeterEx extends BaseExample {
+        constructor() {
+            super("Meter");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            const meter = new Meter(100, 68, 0, 30, 70, 80, "68 out of 100").style("inlineSize", "15rem");
+            this.append(this.markdown(intro$l), this.example([
+                meter
+            ]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+                .on("checked", (ev) => {
+                meter.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL);
+            }), $.labeledNumberInput("Current value:", undefined, meter.Value.toString(), "", "0", "100")
+                .numberInput((numberInput) => numberInput.on("input", () => {
+                meter.value(numberInput.ValueAsNumber);
+            }))), this.markdown(example$l));
         }
     }
 
@@ -14916,9 +15726,13 @@ import { Progress } from "@vanilla-ts/dom";
 
 // Set \`value\` after setting \`max\`, otherwise it may have
 // no effect if \`value\` is greater than the current \`max\`.
-const example = new Progress().max(100).value(70);
+const example = new Progress()
+    .max(100)
+    .value(70)
+    .style("inlineSize", "15rem");
 
-// Initializes the component with an 'indeterminate' state.
+// Initializes the component with an 'indeterminate' state;
+// this sets the value of the progress component to zero (\`0\`).
 // const example = new Progress().indeterminate(true);
 
 new VTS_App(document.body).append(example);
@@ -14936,7 +15750,7 @@ corresponding documentation in the \`Progress\` class.
             let progress;
             let valueInput;
             this.append(this.markdown(intro$c), this.example([
-                progress = new Progress().max(100).value(70)
+                progress = new Progress().max(100).value(70).style("inlineSize", "15rem")
             ]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
                 progress.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL);
@@ -15025,7 +15839,8 @@ const example = new RangeInput()
     .max("100")
     .min("0")
     .step("0.1")
-    .valueAsNumber(42);
+    .valueAsNumber(42)
+    .style("inlineSize", "15rem");
 
 new VTS_App(document.body).append(example);
 \`\`\`
@@ -15046,6 +15861,7 @@ new VTS_App(document.body).append(example);
                     .min("0")
                     .step("0.1")
                     .valueAsNumber(42)
+                    .style("inlineSize", "15rem")
                     .on("input", () => val.text(rangeInput.Value))
             ]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
@@ -15697,6 +16513,7 @@ new VTS_App(document.body).append(example);
         "#@dom/LiOl / LiUl",
         "#@dom/Main",
         "#@dom/Menu",
+        "#@dom/Meter",
         "#@dom/Nav",
         "#@dom/NumberInput",
         "#@dom/Ol",
@@ -15728,6 +16545,7 @@ new VTS_App(document.body).append(example);
         "#@components/LabeledCheckbox / -Switch",
         "#@components/LabeledContainer",
         "#@components/LabeledEmailInput",
+        "#@components/LabeledMeter",
         "#@components/LabeledNumberInput",
         "#@components/LabeledParagraph",
         "#@components/LabeledPasswordInput",
@@ -15790,6 +16608,7 @@ new VTS_App(document.body).append(example);
     let liOlUlEx;
     let mainEx;
     let menuEx;
+    let meterEx;
     let navEx;
     let numberInputEx;
     let olEx;
@@ -15820,11 +16639,14 @@ new VTS_App(document.body).append(example);
     let labeledCheckboxEx;
     let labeledContainerEx;
     let labeledEmailInputEx;
+    let labeledMeterEx;
     let labeledNumberInputEx;
     let labeledParagraphEx;
     let labeledPasswordInputEx;
+    let labeledProgressEx;
     let labeledRadioButtonEx;
     let labeledRadioButtonGroupEx;
+    let labeledRangeInputEx;
     let labeledSearchInputEx;
     let labeledSelectEx;
     let labeledTextInputEx;
@@ -15946,6 +16768,9 @@ new VTS_App(document.body).append(example);
             case "#@dom/Menu":
                 example = menuEx ??= new MenuEx();
                 break;
+            case "#@dom/Meter":
+                example = meterEx ??= new MeterEx();
+                break;
             case "#@dom/Nav":
                 example = navEx ??= new NavEx();
                 break;
@@ -16036,6 +16861,9 @@ new VTS_App(document.body).append(example);
             case "#@components/LabeledEmailInput":
                 example = labeledEmailInputEx ??= new LabeledEmailInputEx();
                 break;
+            case "#@components/LabeledMeter":
+                example = labeledMeterEx ??= new LabeledMeterEx();
+                break;
             case "#@components/LabeledNumberInput":
                 example = labeledNumberInputEx ??= new LabeledNumberInputEx();
                 break;
@@ -16046,6 +16874,7 @@ new VTS_App(document.body).append(example);
                 example = labeledPasswordInputEx ??= new LabeledPasswordInputEx();
                 break;
             case "#@components/LabeledProgress":
+                example = labeledProgressEx ??= new LabeledProgressEx();
                 break;
             case "#@components/LabeledRadioButton":
                 example = labeledRadioButtonEx ??= new LabeledRadioButtonEx();
@@ -16054,6 +16883,7 @@ new VTS_App(document.body).append(example);
                 example = labeledRadioButtonGroupEx ??= new LabeledRadioButtonGroupEx();
                 break;
             case "#@components/LabeledRangeInput":
+                example = labeledRangeInputEx ??= new LabeledRangeInputEx();
                 break;
             case "#@components/LabeledSearchInput":
                 example = labeledSearchInputEx ??= new LabeledSearchInputEx();
@@ -16344,7 +17174,7 @@ new VTS_App(document.body).append(example);
     // Global application component factory instance. Can be imported and used throughout the
     // application to create components with a consistent CSS class name prefix. To be extended with
     // additional component factories as needed.
-    const $ = new (mixinComponentFactories(CSSClassNameFactory, BrFactory, BusyOverlayFactory, ButtonFactory, DisclosureContainerFactory, HrFactory, IconButtonFactory, LabeledAnchorFactory, LabeledCheckboxFactory, LabeledContainerFactory, LabeledEmailInputFactory, LabeledNumberInputFactory, LabeledParagraphFactory, LabeledPasswordInputFactory, LabeledRadioButtonFactory, LabeledRadioButtonGroupFactory, LabeledSearchInputFactory, LabeledSelectFactory, LabeledTextInputFactory, RadioButtonGroupFactory, ScrollContainerFactory, SplitterFactory))();
+    const $ = new (mixinComponentFactories(CSSClassNameFactory, BrFactory, BusyOverlayFactory, ButtonFactory, DisclosureContainerFactory, HrFactory, IconButtonFactory, LabeledAnchorFactory, LabeledCheckboxFactory, LabeledContainerFactory, LabeledEmailInputFactory, LabeledMeterFactory, LabeledNumberInputFactory, LabeledParagraphFactory, LabeledPasswordInputFactory, LabeledProgressFactory, LabeledRadioButtonFactory, LabeledRadioButtonGroupFactory, LabeledRangeInputFactory, LabeledSearchInputFactory, LabeledSelectFactory, LabeledTextInputFactory, RadioButtonGroupFactory, ScrollContainerFactory, SplitterFactory))();
     // Global application instance. Can be used to access the application root and other
     // application-wide features.
     let APP;
@@ -16438,11 +17268,14 @@ new VTS_App(document.body).append(example);
         LabeledCheckboxFactory,
         LabeledContainerFactory,
         LabeledEmailInputFactory,
+        LabeledMeterFactory,
         LabeledNumberInputFactory,
         LabeledParagraphFactory,
         LabeledPasswordInputFactory,
+        LabeledProgressFactory,
         LabeledRadioButtonFactory,
         LabeledRadioButtonGroupFactory,
+        LabeledRangeInputFactory,
         LabeledSearchInputFactory,
         LabeledSelectFactory,
         LabeledTextInputFactory,
