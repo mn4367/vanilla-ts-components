@@ -9,6 +9,7 @@ export * from "./LabeledCheckbox.js";
 export * from "./LabeledComponents.js";
 export * from "./LabeledContainer.js";
 export * from "./LabeledEmailInput.js";
+export * from "./LabeledMeter.js";
 export * from "./LabeledNumberInput.js";
 export * from "./LabeledParagraph.js";
 export * from "./LabeledPasswordInput.js";
