@@ -12,11 +12,14 @@ import { LabeledAnchorFactory } from "../../src/LabeledAnchor.js";
 import { LabeledCheckboxFactory } from "../../src/LabeledCheckbox.js";
 import { LabeledContainerFactory } from "../../src/LabeledContainer.js";
 import { LabeledEmailInputFactory } from "../../src/LabeledEmailInput.js";
+import { LabeledMeterFactory } from "../../src/LabeledMeter.js";
 import { LabeledNumberInputFactory } from "../../src/LabeledNumberInput.js";
 import { LabeledParagraphFactory } from "../../src/LabeledParagraph.js";
 import { LabeledPasswordInputFactory } from "../../src/LabeledPasswordInput.js";
+import { LabeledProgressFactory } from "../../src/LabeledProgress.js";
 import { LabeledRadioButtonFactory } from "../../src/LabeledRadioButton.js";
 import { LabeledRadioButtonGroupFactory } from "../../src/LabeledRadioButtonGroup.js";
+import { LabeledRangeInputFactory } from "../../src/LabeledRangeInput.js";
 import { LabeledSearchInputFactory } from "../../src/LabeledSearchInput.js";
 import { LabeledSelectFactory } from "../../src/LabeledSelect.js";
 import { LabeledTextInputFactory } from "../../src/LabeledTextInput.js";
@@ -102,11 +105,14 @@ export const $ = new (mixinComponentFactories(
     LabeledCheckboxFactory,
     LabeledContainerFactory,
     LabeledEmailInputFactory,
+    LabeledMeterFactory,
     LabeledNumberInputFactory,
     LabeledParagraphFactory,
     LabeledPasswordInputFactory,
+    LabeledProgressFactory,
     LabeledRadioButtonFactory,
     LabeledRadioButtonGroupFactory,
+    LabeledRangeInputFactory,
     LabeledSearchInputFactory,
     LabeledSelectFactory,
     LabeledTextInputFactory,
@@ -215,11 +221,14 @@ const AppClass = mixinComponentFactories(
     LabeledCheckboxFactory,
     LabeledContainerFactory,
     LabeledEmailInputFactory,
+    LabeledMeterFactory,
     LabeledNumberInputFactory,
     LabeledParagraphFactory,
     LabeledPasswordInputFactory,
+    LabeledProgressFactory,
     LabeledRadioButtonFactory,
     LabeledRadioButtonGroupFactory,
+    LabeledRangeInputFactory,
     LabeledSearchInputFactory,
     LabeledSelectFactory,
     LabeledTextInputFactory,

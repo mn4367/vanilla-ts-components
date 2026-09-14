@@ -69,4 +69,19 @@
             }
         }
     }
+    .disabled button,
+    :disabled button,
+    [disabled] button {
+        border: var(--btn-disabled-border);
+        border-bottom: var(--btn-disabled-border-bottom);
+        background: var(--btn-disabled-background);
+        color: var(--btn-disabled-font-color);
+        &.default {
+            background: var(--btn-default-disabled-background);
+        }
+        &.warn {
+            color: var(--btn-warn-disabled-font-color);
+        }
+    }
+
 }

@@ -13,11 +13,14 @@ import { LabeledAnchorEx } from "../examples/@components/LabeledAnchorEx.js";
 import { LabeledCheckboxEx } from "../examples/@components/LabeledCheckboxEx.js";
 import { LabeledContainerEx } from "../examples/@components/LabeledContainerEx.js";
 import { LabeledEmailInputEx } from "../examples/@components/LabeledEmailInputEx.js";
+import { LabeledMeterEx } from "../examples/@components/LabeledMeterEx.js";
 import { LabeledNumberInputEx } from "../examples/@components/LabeledNumberInputEx.js";
 import { LabeledParagraphEx } from "../examples/@components/LabeledParagraphEx.js";
 import { LabeledPasswordInputEx } from "../examples/@components/LabeledPasswordInputEx.js";
+import { LabeledProgressEx } from "../examples/@components/LabeledProgressEx.js";
 import { LabeledRadioButtonEx } from "../examples/@components/LabeledRadioButtonEx.js";
 import { LabeledRadioButtonGroupEx } from "../examples/@components/LabeledRadioButtonGroupEx.js";
+import { LabeledRangeInputEx } from "../examples/@components/LabeledRangeInputEx.js";
 import { LabeledSearchInputEx } from "../examples/@components/LabeledSearchInputEx.js";
 import { LabeledSelectEx } from "../examples/@components/LabeledSelectEx.js";
 import { LabeledTextInputEx } from "../examples/@components/LabeledTextInputEx.js";
@@ -54,6 +57,7 @@ import { LabelEx } from "../examples/@dom/LabelEx.js";
 import { LiOlUlEx } from "../examples/@dom/LiOlUlEx.js";
 import { MainEx } from "../examples/@dom/MainEx.js";
 import { MenuEx } from "../examples/@dom/MenuEx.js";
+import { MeterEx } from "../examples/@dom/MeterEx.js";
 import { NavEx } from "../examples/@dom/NavEx.js";
 import { NumberInputEx } from "../examples/@dom/NumberInputEx.js";
 import { OlEx } from "../examples/@dom/OlEx.js";
@@ -117,6 +121,7 @@ export const NAVIGATION_TARGETS = [
     "#@dom/LiOl / LiUl",
     "#@dom/Main",
     "#@dom/Menu",
+    "#@dom/Meter",
     "#@dom/Nav",
     "#@dom/NumberInput",
     "#@dom/Ol",
@@ -148,6 +153,7 @@ export const NAVIGATION_TARGETS = [
     "#@components/LabeledCheckbox / -Switch",
     "#@components/LabeledContainer",
     "#@components/LabeledEmailInput",
+    "#@components/LabeledMeter",
     "#@components/LabeledNumberInput",
     "#@components/LabeledParagraph",
     "#@components/LabeledPasswordInput",
@@ -213,6 +219,7 @@ let labelEx: LabelEx;
 let liOlUlEx: LiOlUlEx;
 let mainEx: MainEx;
 let menuEx: MenuEx;
+let meterEx: MeterEx;
 let navEx: NavEx;
 let numberInputEx: NumberInputEx;
 let olEx: OlEx;
@@ -243,11 +250,14 @@ let labeledAnchorEx: LabeledAnchorEx;
 let labeledCheckboxEx: LabeledCheckboxEx;
 let labeledContainerEx: LabeledContainerEx;
 let labeledEmailInputEx: LabeledEmailInputEx;
+let labeledMeterEx: LabeledMeterEx;
 let labeledNumberInputEx: LabeledNumberInputEx;
 let labeledParagraphEx: LabeledParagraphEx;
 let labeledPasswordInputEx: LabeledPasswordInputEx;
+let labeledProgressEx: LabeledProgressEx;
 let labeledRadioButtonEx: LabeledRadioButtonEx;
 let labeledRadioButtonGroupEx: LabeledRadioButtonGroupEx;
+let labeledRangeInputEx: LabeledRangeInputEx;
 let labeledSearchInputEx: LabeledSearchInputEx;
 let labeledSelectEx: LabeledSelectEx;
 let labeledTextInputEx: LabeledTextInputEx;
@@ -371,6 +381,9 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
         case "#@dom/Menu":
             example = menuEx ??= new MenuEx();
             break;
+        case "#@dom/Meter":
+            example = meterEx ??= new MeterEx();
+            break;
         case "#@dom/Nav":
             example = navEx ??= new NavEx();
             break;
@@ -461,6 +474,9 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
         case "#@components/LabeledEmailInput":
             example = labeledEmailInputEx ??= new LabeledEmailInputEx();
             break;
+        case "#@components/LabeledMeter":
+            example = labeledMeterEx ??= new LabeledMeterEx();
+            break;
         case "#@components/LabeledNumberInput":
             example = labeledNumberInputEx ??= new LabeledNumberInputEx();
             break;
@@ -471,6 +487,7 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
             example = labeledPasswordInputEx ??= new LabeledPasswordInputEx();
             break;
         case "#@components/LabeledProgress":
+            example = labeledProgressEx ??= new LabeledProgressEx();
             break;
         case "#@components/LabeledRadioButton":
             example = labeledRadioButtonEx ??= new LabeledRadioButtonEx();
@@ -479,6 +496,7 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
             example = labeledRadioButtonGroupEx ??= new LabeledRadioButtonGroupEx();
             break;
         case "#@components/LabeledRangeInput":
+            example = labeledRangeInputEx ??= new LabeledRangeInputEx();
             break;
         case "#@components/LabeledSearchInput":
             example = labeledSearchInputEx ??= new LabeledSearchInputEx();

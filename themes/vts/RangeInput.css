@@ -22,7 +22,7 @@ input[type="range"] {
     --input-range-thumb-border-radius: var(--border-radius-pill);
     --input-range-thumb-box-shadow: 0px 0px 10px var(--black-15);
     appearance: none;
-    block-size: calc(var(--input-range-track-size) + var(--input-range-track-border-width) * 2);
+    block-size: calc(var(--input-range-track-size) + 2 * var(--input-range-track-border-width));
     cursor: pointer;
     border-radius: var(--border-radius-pill);
     &.horizontal {

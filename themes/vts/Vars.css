@@ -76,6 +76,11 @@
     --color-success-light: hsl(120, 100%, 75%);
     --color-success-darker: hsl(120, 100%, 25%);
     --color-success-dark: hsl(120, 100%, 15%);
+    --color-caution: hsl(30, 100%, 72.5%);
+    --color-caution-lighter: hsl(30, 100%, 89.3%);
+    --color-caution-light: hsl(30, 100%, 92.5%);
+    --color-caution-darker: hsl(30, 100%, 59%);
+    --color-caution-dark: hsl(30, 100%, 35.7%);
     --color-warn: hsl(0, 100%, 72.5%);
     --color-warn-lighter: hsl(0, 100%, 89.3%);
     --color-warn-light: hsl(0, 100%, 92.5%);

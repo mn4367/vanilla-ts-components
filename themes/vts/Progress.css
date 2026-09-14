@@ -109,6 +109,23 @@ progress {
     /* #endregion */
     /* #endregion Gecko */
 }
+.disabled progress,
+:disabled progress,
+[disabled] progress {
+    /* #region WebKit/Blink */
+    &::-webkit-progress-value {
+        background: var(--progress-indicator-background-disabled);
+    }
+    &:indeterminate::-webkit-progress-bar {
+        background: var(--progress-indicator-background-disabled);
+    }
+    /* #endregion */
+    /* #region Gecko */
+    &::-moz-progress-bar {
+        background: var(--progress-indicator-background-disabled);
+    }
+    /* #endregion */
+}
 /* #region Animations */
 @keyframes progress-indeterminate-horizontal {
     0% {

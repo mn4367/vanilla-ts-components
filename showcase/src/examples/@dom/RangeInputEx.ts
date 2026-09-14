@@ -24,7 +24,8 @@ const example = new RangeInput()
     .max("100")
     .min("0")
     .step("0.1")
-    .valueAsNumber(42);
+    .valueAsNumber(42)
+    .style("inlineSize", "15rem");
 
 new VTS_App(document.body).append(example);
 \`\`\`
@@ -51,6 +52,7 @@ export class RangeInputEx extends BaseExample {
                     .min("0")
                     .step("0.1")
                     .valueAsNumber(42)
+                    .style("inlineSize", "15rem")
                     .on("input", () => val.text(rangeInput.Value))
             ]),
             this.markdown("### Configuration"),

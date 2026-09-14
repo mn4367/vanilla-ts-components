@@ -22,9 +22,13 @@ import { Progress } from "@vanilla-ts/dom";
 
 // Set \`value\` after setting \`max\`, otherwise it may have
 // no effect if \`value\` is greater than the current \`max\`.
-const example = new Progress().max(100).value(70);
+const example = new Progress()
+    .max(100)
+    .value(70)
+    .style("inlineSize", "15rem");
 
-// Initializes the component with an 'indeterminate' state.
+// Initializes the component with an 'indeterminate' state;
+// this sets the value of the progress component to zero (\`0\`).
 // const example = new Progress().indeterminate(true);
 
 new VTS_App(document.body).append(example);
@@ -48,7 +52,7 @@ export class ProgressEx extends BaseExample {
         this.append(
             this.markdown(intro),
             this.example([
-                progress = new Progress().max(100).value(70)
+                progress = new Progress().max(100).value(70).style("inlineSize", "15rem")
             ]),
             this.markdown("### Configuration"),
             this.properties(
@@ -68,7 +72,7 @@ export class ProgressEx extends BaseExample {
                 new P("Note: a current value of ", new Code("0"), " will set the progress component to an 'indeterminate' state.")
                     .style({
                         marginBlock: "0.5rem 0"
-                    })
+                    }),
             ),
             this.markdown(example),
         );
