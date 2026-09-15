@@ -447,6 +447,7 @@ export class ScrollContainer<Child extends FlowContent = FlowContent, EventMap e
      * @param _event The scroll event.
      */
     #syncScrollBars(_event?: Event): void {
+        this.#isRTL = getComputedStyle(this.#_dom_).direction === "rtl";
         this.#_dom_.classList.add("scrolling");
         this.#repositionScrollBars();
     }
