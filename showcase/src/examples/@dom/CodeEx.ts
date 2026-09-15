@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<code>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/code%.
+It marks a short fragment of computer code and is typically rendered using a monospace font.
 
 **Class:** \`@vanilla-ts/dom/Code\`
 `;

@@ -7,6 +7,8 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 const intro = `
 A component with a §@dom/SearchInput§ and a §@dom/Label§ representing a caption for the component.
+It provides a single-line field for entering search terms and may receive search-specific behavior
+or styling from the browser.
 
 **Class:** \`@vanilla-ts/components/LabeledSearchInput\`
 `;

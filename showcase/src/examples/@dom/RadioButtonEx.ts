@@ -7,6 +7,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a native radio button DOM element
 (%\`<input type="radio">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio%).
+Radio buttons represent mutually exclusive choices where selecting one option deselects the others
+in the same group.
 This component is also available as a §@components/LabeledRadioButton§.
 
 **Class:** \`@vanilla-ts/dom/RadioButton\`

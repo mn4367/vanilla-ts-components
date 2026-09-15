@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a native text input DOM element
 (%\`<input type="text">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text%).
+It provides a single-line field for entering and editing plain text.
 This component is also available as a §@components/LabeledTextInput§.
 
 **Class:** \`@vanilla-ts/dom/TextInput\`

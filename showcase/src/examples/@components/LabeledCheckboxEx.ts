@@ -8,7 +8,8 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 const introLabeledCheckbox = `
 A component with a §@dom/Checkbox / Switch§ and a §@dom/Label§ representing a caption for the
-component.
+component. It lets users enable or disable a single option. An indeterminate state can additionally
+represent a mixed or not-yet-decided value.
 
 **Class:** \`@vanilla-ts/components/LabeledCheckbox\`
 `;

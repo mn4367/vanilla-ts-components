@@ -6,6 +6,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<label>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label%.
+It provides a caption for a form control. Associating both elements makes the control easier to
+understand and lets users activate or focus it through the label.
 
 **Class:** \`@vanilla-ts/dom/Label\`
 `;

@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<section>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/section%.
+It represents a generic standalone section of a document when no more specific semantic element is
+appropriate and should usually contain a heading.
 
 **Class:** \`@vanilla-ts/dom/Section\`
 `;

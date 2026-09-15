@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<pre>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/pre%.
+It represents preformatted text whose whitespace and line breaks are displayed as written.
 
 **Class:** \`@vanilla-ts/dom/Pre\`
 `;

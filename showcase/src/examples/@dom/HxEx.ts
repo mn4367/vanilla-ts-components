@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 6 components that encapsulate the \`h1\` to \`h6\` section heading DOM elements
 (%\`<h1>\` to \`<h6>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements%).
+They identify headings at six levels and establish the hierarchy of sections within a document.
 
 **Classes:** \`@vanilla-ts/dom/H1\` to \`@vanilla-ts/dom/H6\`
 `;

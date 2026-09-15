@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a native DOM anchor element
 (%\`<a>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a%).
+Together with its \`href\` attribute, an anchor creates a hyperlink to any resource or location that
+can be addressed by a URL.
 This component is also available as a §@components/LabeledAnchor§.
 
 **Class:** \`@vanilla-ts/dom/A\`

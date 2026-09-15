@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<span>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/span%.
+It is a generic inline container for phrasing content, commonly used to group content for styling or
+shared attributes when no semantic element is appropriate.
 
 **Class:** \`@vanilla-ts/dom/Span\`
 `;

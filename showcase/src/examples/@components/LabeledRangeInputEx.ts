@@ -10,7 +10,7 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 const intro = `
 A component with a §@dom/RangeInput§ and a §@dom/Label§ representing a caption for the component.
 The label is automatically associated with the range input through its \`for\` and \`id\`
-attributes.
+attributes. It lets users select an approximate numeric value from a bounded range using a slider.
 
 **Class:** \`@vanilla-ts/components/LabeledRangeInput\`
 `;

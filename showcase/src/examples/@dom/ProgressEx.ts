@@ -8,6 +8,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<progress>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/progress%.
+It represents the completion progress of a task, either with a known value or as an indeterminate
+operation. Use a §@dom/Meter§ component instead to represent a scalar value within a known range.
 This component is also available as a §@components/LabeledProgress§.
 
 **Class:** \`@vanilla-ts/dom/Progress\`

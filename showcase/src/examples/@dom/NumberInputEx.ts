@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a native number input DOM element
 (%\`<input type="number">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number%).
+It lets users enter a number and optionally constrains the value through minimum, maximum and step
+attributes.
 This component is also available as a §@components/LabeledNumberInput§.
 
 **Class:** \`@vanilla-ts/dom/NumberInput\`

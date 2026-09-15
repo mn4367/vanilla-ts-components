@@ -5,8 +5,9 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<textarea>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea%. Instances of
-the \`TextArea\` component are resizeable in both directions by default; in the example below, the
-component is intentionally resizeable only horizontally. This component is also available as a
+the \`TextArea\` component provide a control for entering and editing multiple lines of plain text.
+They are resizable in both directions by default; in the example below, the component is
+intentionally resizable only horizontally. This component is also available as a
 §@components/LabeledTextArea§.
 
 **Class:** \`@vanilla-ts/dom/TextArea\`

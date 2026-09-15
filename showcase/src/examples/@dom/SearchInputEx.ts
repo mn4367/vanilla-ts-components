@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a native search input DOM element
 (%\`<input type="search">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search%).
+It provides a single-line field for entering search terms and may receive search-specific behavior
+or styling from the browser.
 This component is also available as a §@components/LabeledSearchInput§.
 
 **Class:** \`@vanilla-ts/dom/SearchInput\`

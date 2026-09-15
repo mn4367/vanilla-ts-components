@@ -9,7 +9,8 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 const intro = `
 A component that groups multiple §@components/LabeledRadioButton§s into a single component that is
-similar to a §@components/LabeledContainer§.
+similar to a §@components/LabeledContainer§. It presents a labeled set of mutually exclusive choices
+and ensures that only one radio button in the group is selected at a time.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButtonGroup\`
 `;

@@ -6,7 +6,8 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 
 const intro = `
-A component with a §@dom/TextInput§ and a §@dom/Label§ representing a caption for the component.
+A component with a §@dom/TextInput§ and a §@dom/Label§ representing a caption for the component. It
+provides a labeled, single-line field for entering and editing plain text.
 
 **Class:** \`@vanilla-ts/components/LabeledTextInput\`
 `;

@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<img>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img%.
+It embeds an image in the document and supports alternative text for situations in which the image
+cannot be seen or loaded.
 
 **Class:** \`@vanilla-ts/dom/Img\`
 `;

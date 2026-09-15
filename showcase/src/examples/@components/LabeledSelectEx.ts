@@ -7,7 +7,8 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 
 const intro = `
-A component with an §@dom/Select§ and a §@dom/Label§ representing a caption for the component.
+A component with an §@dom/Select§ and a §@dom/Label§ representing a caption for the component. It
+lets users choose one or more entries from a predefined list of options.
 
 **Class:** \`@vanilla-ts/components/LabeledSelect\`
 `;

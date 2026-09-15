@@ -7,6 +7,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a native dialog DOM element
 (%\`<dialog>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog%).
+It represents a modal or non-modal dialog box or another interactive component that can be opened
+and closed.
 The §@components/Dialog§ class from \`@vanilla-ts/components\` builds upon this class here and adds
 a lot of advanced features.
 

@@ -6,6 +6,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<header>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/header%.
+It represents introductory content for a page or section, such as headings, a logo, search controls
+or navigation aids.
 
 **Class:** \`@vanilla-ts/dom/Header\`
 `;

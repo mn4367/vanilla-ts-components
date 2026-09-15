@@ -6,6 +6,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the native DOM button element
 (%\`<button>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button%).
+It is an interactive control that users can activate to perform an action, such as submitting a
+form or opening a dialog.
 
 **Class:** \`@vanilla-ts/dom/Button\`
 

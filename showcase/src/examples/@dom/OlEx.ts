@@ -5,7 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<ol>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol%. The list also supports the
-properties \`start\`, \`reversed\` and \`type\`.
+properties \`start\`, \`reversed\` and \`type\`. It represents a list whose items have a meaningful
+order and is typically displayed as a numbered list.
 
 **Class:** \`@vanilla-ts/dom/Ol\`
 `;

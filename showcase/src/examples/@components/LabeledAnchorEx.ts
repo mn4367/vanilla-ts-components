@@ -6,7 +6,9 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 
 const intro = `
-A component with an §@dom/A§ and a §@dom/Label§ representing a caption for the component.
+A component with an §@dom/A§ and a §@dom/Label§ representing a caption for the component. It
+creates a labeled hyperlink to a web page, file, email address or another location identified by a
+URL.
 
 **Class:** \`@vanilla-ts/components/LabeledAnchor\`
 `;

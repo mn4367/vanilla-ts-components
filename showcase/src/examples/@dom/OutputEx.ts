@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<output>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output%.
+It represents the result of a calculation or another action performed by the user or application.
 
 **Class:** \`@vanilla-ts/dom/Output\`
 `;

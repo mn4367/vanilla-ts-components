@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<hr>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hr%.
+It represents a thematic break between paragraph-level elements, such as a change of topic or
+scene.
 
 **Class:** \`@vanilla-ts/dom/Hr\`
 `;

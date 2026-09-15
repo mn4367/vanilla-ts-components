@@ -8,8 +8,9 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 const intro = `
 A component with a §@dom/RadioButton§ and a §@dom/Label§ representing a caption for the component.
-This class mainly exists as a building block for §@components/RadioButtonGroup§s and
-§@components/LabeledRadioButtonGroup§s.
+Radio buttons represent mutually exclusive choices where selecting one option deselects the others
+in the same group. This class mainly exists as a building block for
+§@components/RadioButtonGroup§s and §@components/LabeledRadioButtonGroup§s.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButton\`
 `;

@@ -7,6 +7,7 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 const intro = `
 A component with an §@dom/EmailInput§ and a §@dom/Label§ representing a caption for the component.
+It lets users enter an email address and uses the browser's built-in validation for email syntax.
 
 **Class:** \`@vanilla-ts/components/LabeledEmailInput\`
 `;

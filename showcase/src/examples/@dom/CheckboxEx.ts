@@ -7,6 +7,8 @@ import { BaseExample } from "../BaseExample.js";
 const introCheckbox = `
 A component that encapsulates the native DOM checkbox
 (%\`<input type="checkbox">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/checkbox%).
+It lets users enable or disable a single option. Its indeterminate state can additionally represent
+a mixed or not-yet-decided value.
 This component is also available as a §@components/LabeledCheckbox / -Switch§.
 
 **Class:** \`@vanilla-ts/dom/Checkbox\`

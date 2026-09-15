@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<ul>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul%.
+It represents a list whose item order is not meaningful and is typically displayed as a bulleted
+list.
 
 **Class:** \`@vanilla-ts/dom/Ul\`
 `;

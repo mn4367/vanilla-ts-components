@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<div>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/div%.
+It is a generic container for grouping flow content when no more specific semantic element is
+appropriate, commonly for styling or layout purposes.
 
 **Class:** \`@vanilla-ts/dom/Div\`
 `;

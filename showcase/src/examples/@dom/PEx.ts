@@ -4,8 +4,9 @@ import { BaseExample } from "../BaseExample.js";
 
 const intro = `
 A component that encapsulates the DOM element
-%\`<p>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/p%. This component is
-also available as a §@components/LabeledParagraph§.
+%\`<p>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/p%. It represents a
+paragraph or another block-sized grouping of related content. This component is also available as a
+§@components/LabeledParagraph§.
 
 **Class:** \`@vanilla-ts/dom/P\`
 `;

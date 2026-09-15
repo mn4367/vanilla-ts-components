@@ -11,7 +11,7 @@ const intro = `
 A component with a §@dom/TemporalInput§ and a §@dom/Label§ representing a caption for the component.
 The label is automatically associated with the temporal input through its \`for\` and \`id\`
 attributes. The inner input can represent a date, time, local date and time, month or week, depending
-on the supplied \`TemporalType\`.
+on the supplied \`TemporalType\`, and lets users enter or select a corresponding temporal value.
 
 Please note that the availability and appearance of temporal input types and their pickers may vary
 across browser engines and platforms.

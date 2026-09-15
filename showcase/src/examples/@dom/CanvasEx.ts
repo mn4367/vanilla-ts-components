@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<canvas>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas%.
+It provides a drawing surface for rendering graphics, animations and other visual content through
+JavaScript APIs such as the Canvas API or WebGL.
 
 **Class:** \`@vanilla-ts/dom/Canvas\`
 `;

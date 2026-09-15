@@ -11,6 +11,9 @@ A component that encapsulates various native date/time related DOM input element
 - %\`<input type="month">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/month%
 - %\`<input type="week">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/week%
 
+These controls let users enter or select a date, time or another temporal value in a format
+appropriate for the selected input type.
+
 Please note that the availability of these input types may vary across different browser engines and
 platforms. For example, the \`<input type="week">\` is not supported in the desktop versions of
 Safari and Firefox. The look and feel of the pickers (if available at all) is also different across

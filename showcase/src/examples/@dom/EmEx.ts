@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<em>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/em%.
+It marks text with stress emphasis, which can change the meaning of a sentence.
 
 **Class:** \`@vanilla-ts/dom/Em\`
 `;

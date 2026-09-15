@@ -8,7 +8,7 @@ A container component whose content can be disclosed/undisclosed.
 
 **Class:** \`@vanilla-ts/components/DisclosureContainer\`
 
-The \`DisclosureContainer\` component supports the follwoing features:
+The \`DisclosureContainer\` component supports the following features:
 
 - Both the header and content areas can contain arbitrary components.
 - Several appearance options.

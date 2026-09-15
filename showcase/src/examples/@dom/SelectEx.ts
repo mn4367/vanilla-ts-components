@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a native DOM select element
 (%\`<select>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select%).
+It provides a menu from which users can select one or, when configured accordingly, multiple
+predefined options.
 This component is also available as a §@components/LabeledSelect§.
 
 **Class:** \`@vanilla-ts/dom/Select\`

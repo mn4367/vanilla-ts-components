@@ -7,6 +7,8 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 const intro = `
 A component with a §@dom/NumberInput§ and a §@dom/Label§ representing a caption for the component.
+It lets users enter a number and optionally constrains the value through minimum, maximum and step
+attributes.
 
 **Class:** \`@vanilla-ts/components/LabeledNumberInput\`
 `;

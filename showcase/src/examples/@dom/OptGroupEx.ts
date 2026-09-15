@@ -5,7 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<optgroup>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup%.
-It groups related \`@vanilla-ts/core/Option\` components within a §@dom/Select§ component. The first
+It groups related \`Option\` components within a §@dom/Select§ component. The first
 constructor argument sets the group label; all following arguments are the options of the group.
 
 **Class:** \`@vanilla-ts/dom/OptGroup\`

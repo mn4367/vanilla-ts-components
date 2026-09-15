@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a native password input DOM element
 (%\`<input type="password">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password%).
+It provides a single-line field for sensitive text and obscures the entered characters on screen.
 This component is also available as a §@components/LabeledPasswordInput§.
 
 **Class:** \`@vanilla-ts/dom/PasswordInput\`

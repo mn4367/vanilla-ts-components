@@ -6,6 +6,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a
 %\`DOM Text node\`|https://developer.mozilla.org/en-US/docs/Web/API/Text%.
+It represents the textual content contained by an element or attribute in the DOM tree.
 
 **Class:** \`@vanilla-ts/dom/Text\`
 `;

@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<strong>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/strong%.
+It marks content as having strong importance, seriousness or urgency.
 
 **Class:** \`@vanilla-ts/dom/Strong\`
 `;

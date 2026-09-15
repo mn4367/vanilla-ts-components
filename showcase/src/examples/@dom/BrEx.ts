@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<br>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/br%.
+It inserts a line break where the division of lines is meaningful, for example in an address or a
+poem.
 
 **Class:** \`@vanilla-ts/dom/Br\`
 `;

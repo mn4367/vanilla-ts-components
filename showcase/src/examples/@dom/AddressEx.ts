@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<address>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/address%.
+It represents contact information for a person, a group of people or an organization.
 
 **Class:** \`@vanilla-ts/dom/Address\`
 `;

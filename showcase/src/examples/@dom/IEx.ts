@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<i>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/i%.
+It sets text apart from its surroundings without adding emphasis, for example for technical terms,
+idioms or taxonomic designations.
 
 **Class:** \`@vanilla-ts/dom/I\`
 `;

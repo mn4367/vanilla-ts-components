@@ -6,7 +6,9 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 
 const intro = `
-A component with a §@dom/P§ and a §@dom/Span§ representing a caption for the component.
+A component with a §@dom/P§ and a §@dom/Span§ representing a caption for the component. It combines
+a caption with a paragraph-sized block of related content and is useful for displaying labeled
+values or descriptions.
 
 **Class:** \`@vanilla-ts/components/LabeledParagraph\`
 `;

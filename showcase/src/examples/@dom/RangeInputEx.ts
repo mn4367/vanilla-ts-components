@@ -8,6 +8,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates a native DOM input range element
 (%\`<input type="range">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range%).
+It lets users choose an approximate numeric value from a bounded range using a slider.
 This component is also available as a §@components/LabeledRangeInput§.
 
 **Class:** \`@vanilla-ts/dom/RangeInput\`

@@ -8,7 +8,8 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 const intro = `
 A component with a §@dom/TextArea§ and a §@dom/Label§ representing a caption for the component. The
-label is automatically associated with the textarea through its \`for\` and \`id\` attributes.
+label is automatically associated with the textarea through its \`for\` and \`id\` attributes. It
+lets users enter and edit multiple lines of plain text.
 
 **Class:** \`@vanilla-ts/components/LabeledTextArea\`
 `;

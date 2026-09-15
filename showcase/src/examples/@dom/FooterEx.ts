@@ -6,6 +6,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<footer>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/footer%.
+It represents a footer for its nearest section or for the document and commonly contains authorship,
+copyright or related navigation information.
 
 **Class:** \`@vanilla-ts/dom/Footer\`
 `;

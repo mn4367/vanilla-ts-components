@@ -5,6 +5,7 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<nav>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nav%.
+It represents a section containing navigation links, such as a menu, table of contents or index.
 
 **Class:** \`@vanilla-ts/dom/Nav\`
 `;

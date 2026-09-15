@@ -7,6 +7,7 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 const intro = `
 A component with a §@dom/PasswordInput§ and a §@dom/Label§ representing a caption for the component.
+It lets users enter sensitive text while the browser obscures the entered characters on screen.
 
 **Class:** \`@vanilla-ts/components/LabeledPasswordInput\`
 `;

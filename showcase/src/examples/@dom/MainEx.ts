@@ -6,6 +6,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<main>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/main%.
+It represents the document body's dominant content that is directly related to the page's central
+topic or an application's main functionality.
 
 **Class:** \`@vanilla-ts/dom/Main\`
 `;

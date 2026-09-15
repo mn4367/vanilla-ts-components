@@ -7,8 +7,9 @@ import { labeledComponentLabelFlags } from "./LabeledComponentLabelFlags.js";
 
 
 const intro = `
-A component with a §@dom/Div§ as a (inner) container for other components and a §@dom/Span§
-representing the caption for the container component.
+A component with a §@dom/Div§ as an inner container for other components and a §@dom/Span§
+representing the caption for the container component. It is useful for visually grouping related
+content under a common caption without imposing additional semantics on that content.
 
 **Class:** \`@vanilla-ts/components/LabeledContainer\`
 `;

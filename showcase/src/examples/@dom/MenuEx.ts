@@ -5,6 +5,8 @@ import { BaseExample } from "../BaseExample.js";
 const intro = `
 A component that encapsulates the DOM element
 %\`<menu>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/menu%.
+It represents an unordered list of items and is treated by browsers as a semantic alternative to an
+§@dom/Ul§ component.
 
 **Class:** \`@vanilla-ts/dom/Menu\`
 `;
