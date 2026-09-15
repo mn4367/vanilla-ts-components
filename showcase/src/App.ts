@@ -22,6 +22,8 @@ import { LabeledRadioButtonGroupFactory } from "../../src/LabeledRadioButtonGrou
 import { LabeledRangeInputFactory } from "../../src/LabeledRangeInput.js";
 import { LabeledSearchInputFactory } from "../../src/LabeledSearchInput.js";
 import { LabeledSelectFactory } from "../../src/LabeledSelect.js";
+import { LabeledTemporalInputFactory } from "../../src/LabeledTemporalInput.js";
+import { LabeledTextAreaFactory } from "../../src/LabeledTextArea.js";
 import { LabeledTextInputFactory } from "../../src/LabeledTextInput.js";
 import { RadioButtonGroupFactory } from "../../src/RadioButtonGroup.js";
 import { ScrollContainerFactory } from "../../src/ScrollContainer.js";
@@ -115,6 +117,8 @@ export const $ = new (mixinComponentFactories(
     LabeledRangeInputFactory,
     LabeledSearchInputFactory,
     LabeledSelectFactory,
+    LabeledTemporalInputFactory,
+    LabeledTextAreaFactory,
     LabeledTextInputFactory,
     RadioButtonGroupFactory,
     ScrollContainerFactory,
@@ -231,6 +235,8 @@ const AppClass = mixinComponentFactories(
     LabeledRangeInputFactory,
     LabeledSearchInputFactory,
     LabeledSelectFactory,
+    LabeledTemporalInputFactory,
+    LabeledTextAreaFactory,
     LabeledTextInputFactory,
     RadioButtonGroupFactory,
     ScrollContainerFactory,

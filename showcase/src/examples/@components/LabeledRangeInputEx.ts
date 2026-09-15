@@ -44,7 +44,7 @@ new VTS_App(document.body).append(
     new P("Current value: ", value)
         .style({
             marginBlock: "0.5rem 0",
-            width: "11rem"
+            width: "10rem"
         })
 );
 \`\`\`
@@ -84,7 +84,7 @@ export class LabeledRangeInputEx extends BaseExample {
                 new P("Current value: ", value = new Code(this.#lRangeInput.Value))
                     .style({
                         marginBlock: "0.5rem 0",
-                        width: "11rem"
+                        width: "10rem"
                     })
             ]),
             this.markdown("### Configuration"),

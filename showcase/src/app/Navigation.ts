@@ -23,6 +23,8 @@ import { LabeledRadioButtonGroupEx } from "../examples/@components/LabeledRadioB
 import { LabeledRangeInputEx } from "../examples/@components/LabeledRangeInputEx.js";
 import { LabeledSearchInputEx } from "../examples/@components/LabeledSearchInputEx.js";
 import { LabeledSelectEx } from "../examples/@components/LabeledSelectEx.js";
+import { LabeledTemporalInputEx } from "../examples/@components/LabeledTemporalInputEx.js";
+import { LabeledTextAreaEx } from "../examples/@components/LabeledTextAreaEx.js";
 import { LabeledTextInputEx } from "../examples/@components/LabeledTextInputEx.js";
 import { RadioButtonGroupEx } from "../examples/@components/RadioButtonGroupEx.js";
 import { ComponentFactoriesEx } from "../examples/@core/ComponentFactoriesEx.js";
@@ -260,6 +262,8 @@ let labeledRadioButtonGroupEx: LabeledRadioButtonGroupEx;
 let labeledRangeInputEx: LabeledRangeInputEx;
 let labeledSearchInputEx: LabeledSearchInputEx;
 let labeledSelectEx: LabeledSelectEx;
+let labeledTemporalInputEx: LabeledTemporalInputEx;
+let labeledTextAreaEx: LabeledTextAreaEx;
 let labeledTextInputEx: LabeledTextInputEx;
 let radioButtonGroupEx: RadioButtonGroupEx;
 
@@ -505,8 +509,10 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
             example = labeledSelectEx ??= new LabeledSelectEx();
             break;
         case "#@components/LabeledTemporalInput":
+            example = labeledTemporalInputEx ??= new LabeledTemporalInputEx();
             break;
         case "#@components/LabeledTextArea":
+            example = labeledTextAreaEx ??= new LabeledTextAreaEx();
             break;
         case "#@components/LabeledTextInput":
             example = labeledTextInputEx ??= new LabeledTextInputEx();
