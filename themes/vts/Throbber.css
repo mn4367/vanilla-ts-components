@@ -1,6 +1,10 @@
 .throbber,
 .vts-throbber {
     --throbber-color: var(--black-15);
+    --throbber-color-disabled: var(--black-10);
+    --throbber-track-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+    --throbber-track-color-disabled: color-mix(in srgb, var(--color-primary-light) 10%, transparent);
+    --throbber-stroke-width: 15%;
     --throbber-animation: throbber-rotate360 1.25s linear infinite running;
     /* `width` must be set explicitly on individual throbbers. */
     /* width: <value>; */
@@ -21,6 +25,38 @@
         visibility: visible;
         animation: var(--throbber-animation);
     }
+    &.modern {
+        --throbber-color: var(--color-primary);
+        --throbber-color-disabled: var(--color-primary-light);
+        border: none;
+        background:
+            conic-gradient(from 45deg, transparent 0 15%, var(--throbber-color) 100%),
+            var(--throbber-track-color);
+        -webkit-mask: radial-gradient(
+            farthest-side,
+            transparent calc(100% - var(--throbber-stroke-width)),
+            black 0
+        );
+        mask: radial-gradient(
+            farthest-side,
+            transparent calc(100% - var(--throbber-stroke-width)),
+            black 0
+        );
+    }
+    &.disabled,
+    &[disabled] {
+        --throbber-color: var(--throbber-color-disabled);
+        --throbber-track-color: var(--throbber-track-color-disabled);
+    }
+}
+.disabled .throbber,
+.disabled .vts-throbber,
+:disabled .throbber,
+:disabled .vts-throbber,
+[disabled] .throbber,
+[disabled] .vts-throbber {
+    --throbber-color: var(--throbber-color-disabled);
+    --throbber-track-color: var(--throbber-track-color-disabled);
 }
 @keyframes throbber-rotate360 {
     0% {

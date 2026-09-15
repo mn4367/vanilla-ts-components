@@ -9,6 +9,9 @@
     --stepper-last: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNIDE0OC41IDQ0MC42MTQgQyAxMzkgNDQ4LjUxNCAxMjUuNyA0NTAuMzE0IDExNC40IDQ0NS4wMTQgQyAxMDMuMSA0MzkuNzE0IDk2IDQyOC40MTQgOTYgNDE2LjAxNCBMIDk2IDk2LjAxNCBDIDk2IDgzLjYxNCAxMDMuMiA3Mi4zMTQgMTE0LjQgNjcuMDE0IEMgMTI1LjYgNjEuNzE0IDEzOC45IDYzLjQxNCAxNDguNSA3MS40MTQgTCAzNDAuNSAyMzEuNDE0IEwgMzUyIDI0MS4wMTQgTCAzNTIgOTYuMDE0IEMgMzUyIDc4LjMxNCAzNjYuMyA2NC4wMTQgMzg0IDY0LjAxNCBDIDQwMS43IDY0LjAxNCA0MTYgNzguMzE0IDQxNiA5Ni4wMTQgTCA0MTYgNDE2LjAxNCBDIDQxNiA0MzMuNzE0IDQwMS43IDQ0OC4wMTQgMzg0IDQ0OC4wMTQgQyAzNjYuMyA0NDguMDE0IDM1MiA0MzMuNzE0IDM1MiA0MTYuMDE0IEwgMzUyIDI3MS4wMTQgTCAzNDAuNSAyODAuNjE0IEwgMTQ4LjUgNDQwLjYxNCBaIiBzdHlsZT0iZmlsbDogcmdiKDI1NSwgMCwgMCk7Ii8+Cjwvc3ZnPg==");
     --stepper-button-offset: 0.15rem;
     --stepper-gap: 0rem;
+    --stepper-button-opacity: 0.7;
+    --stepper-disabled-button-opacity: 0.45;
+    --stepper-outer-disabled-button-opacity: 0.3;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -22,9 +25,9 @@
         border: none;
         background-repeat: no-repeat;
         filter: brightness(1) grayscale(1);
-        opacity: 0.7;
+        opacity: var(--stepper-button-opacity);
         &[disabled] {
-            opacity: 0.45;
+            opacity: var(--stepper-disabled-button-opacity);
         }
         &:active:not([disabled]) {
             transform: scale(0.9);
@@ -89,9 +92,9 @@
     }
     &.horizontal-alt {
         > .stepper-button {
-            transform: rotate(90deg);
+            transform: rotate(270deg);
             &:active:not([disabled]) {
-                transform: rotate(90deg) scale(0.9);
+                transform: rotate(270deg) scale(0.9);
             }
         }
     }
@@ -140,6 +143,19 @@
             &:active:not([disabled]) {
                 transform: rotate(180deg) scale(0.9);
             }
+        }
+    }
+}
+.disabled .stepper,
+.disabled .vts-stepper,
+:disabled .stepper,
+:disabled .vts-stepper,
+[disabled] .stepper,
+[disabled] .vts-stepper {
+    > .stepper-button {
+        opacity: var(--stepper-disabled-button-opacity);
+        &[disabled] {
+            opacity: var(--stepper-outer-disabled-button-opacity);
         }
     }
 }

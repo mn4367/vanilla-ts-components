@@ -23,11 +23,11 @@ import { VTS_App } from "@vanilla-ts/core";
 
 const example = new LabeledTextArea(
     "Message",
-    undefined, // initial text
-    6,         // number of visible text lines
-    50,        // visible width in average character widths
-    undefined, // id (auto-generated if not provided)
-    "message"  // name (form name)
+    "Lorem ...", // initial text
+    6,           // number of visible text lines
+    50,          // visible width in average character widths
+    undefined,   // id (auto-generated if not provided)
+    "message"    // name (form name)
 )
     .addClass("labeled-text-area")
     .textArea(textArea => textArea
@@ -65,7 +65,8 @@ export class LabeledTextAreaEx extends BaseExample {
 
         this.#lTextArea = $.labeledTextArea(
             "Message",
-            undefined, // initial text
+            "Lorem ipsum ut wisi enim ad minim veniam, quis nostrud exerci ullamcorper suscipit ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis et blandit augue duis dolore te feugait nulla facilisi.",
+            // undefined, // initial text
             6,         // number of visible text lines
             50,        // visible width in average character widths
             undefined, // id (auto-generated if not provided)

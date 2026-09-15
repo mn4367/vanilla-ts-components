@@ -27,6 +27,9 @@ import { LabeledTemporalInputEx } from "../examples/@components/LabeledTemporalI
 import { LabeledTextAreaEx } from "../examples/@components/LabeledTextAreaEx.js";
 import { LabeledTextInputEx } from "../examples/@components/LabeledTextInputEx.js";
 import { RadioButtonGroupEx } from "../examples/@components/RadioButtonGroupEx.js";
+import { ScrollContainerEx } from "../examples/@components/ScrollContainerEx.js";
+import { StepperEx } from "../examples/@components/StepperEx.js";
+import { ThrobberEx } from "../examples/@components/ThrobberEx.js";
 import { ComponentFactoriesEx } from "../examples/@core/ComponentFactoriesEx.js";
 import { ElementComponentVoidEx } from "../examples/@core/ElementComponentVoidEx.js";
 import { ElementComponentWithChildrenEx } from "../examples/@core/ElementComponentWithChildrenEx.js";
@@ -266,6 +269,9 @@ let labeledTemporalInputEx: LabeledTemporalInputEx;
 let labeledTextAreaEx: LabeledTextAreaEx;
 let labeledTextInputEx: LabeledTextInputEx;
 let radioButtonGroupEx: RadioButtonGroupEx;
+let scrollContainerEx: ScrollContainerEx;
+let stepperEx: StepperEx;
+let throbberEx: ThrobberEx;
 
 /** Previous sender of a `NavigateTo` event. */
 let prevSenderOfNavigateTo: IElementComponent<HTMLElement> | undefined = undefined;
@@ -525,16 +531,19 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
             example = radioButtonGroupEx ??= new RadioButtonGroupEx();
             break;
         case "#@components/ScrollContainer":
+            example = scrollContainerEx ??= new ScrollContainerEx();
             break;
         case "#@components/Splitter":
             break;
         case "#@components/StdDialog":
             break;
         case "#@components/Stepper":
+            example = stepperEx ??= new StepperEx();
             break;
         case "#@components/TabGroup":
             break;
         case "#@components/Throbber":
+            example = throbberEx ??= new ThrobberEx();
             break;
         case "#@components/Viewer":
             break;

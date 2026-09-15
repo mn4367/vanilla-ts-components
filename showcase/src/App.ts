@@ -28,6 +28,8 @@ import { LabeledTextInputFactory } from "../../src/LabeledTextInput.js";
 import { RadioButtonGroupFactory } from "../../src/RadioButtonGroup.js";
 import { ScrollContainerFactory } from "../../src/ScrollContainer.js";
 import { SplitterFactory } from "../../src/Splitter.js";
+import { StepperFactory } from "../../src/Stepper.js";
+import { ThrobberFactory } from "../../src/Throbber.js";
 import { AppFooter } from "./app/AppFooter.js";
 import { AppHeader } from "./app/AppHeader.js";
 import { AppMain } from "./app/AppMain.js";
@@ -123,6 +125,8 @@ export const $ = new (mixinComponentFactories(
     RadioButtonGroupFactory,
     ScrollContainerFactory,
     SplitterFactory,
+    StepperFactory,
+    ThrobberFactory,
     // ))("vts");
 ))();
 
@@ -241,6 +245,8 @@ const AppClass = mixinComponentFactories(
     RadioButtonGroupFactory,
     ScrollContainerFactory,
     SplitterFactory,
+    StepperFactory,
+    ThrobberFactory,
 );
 
 // Global application component factory instance. Can be imported and used throughout the
