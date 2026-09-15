@@ -9909,6 +9909,259 @@
     }
 
     /**
+     * Labeled temporal input component.
+     */
+    class LabeledTemporalInput extends LabeledInputComponent {
+        /**
+         * Create LabeledTemporalInput component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param temporalType The type (attribute) of the temporal input element.
+         * @param id The id (attribute) of the temporal input element. If `id` is `undefined` or
+         * omitted, a unique ID will be generated. If `id` is explicitely set to `null` or an empty
+         * string, no id attribute will be set. Any other value will be used as the id attribute.
+         * @param value The value of the temporal input element.
+         * @param name The name (attribute) of the temporal input element.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         * @param lblAction Controls the following behavior:
+         * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+         *   or `undefined`, a click on the label focuses the temporal input element (a unique ID has
+         *   been set automatically on the temporal input element), if `lblAction` is `false`, clicking
+         *   on the label does nothing.
+         * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+         *   has been set on the temporal input element).
+         */
+        constructor(labelPhrase, temporalType, id, value, name, lblPosition, lblAlignment, lblAction) {
+            const _id = id === undefined
+                ? cid()
+                : id === null || id === ""
+                    ? null
+                    : id;
+            super(new TemporalInput(temporalType, _id, value, name), labelPhrase, _id, lblPosition, lblAlignment, lblAction);
+        }
+        /**
+         * Get TemporalInput component of this component. Equivalent to `Component`, just with a more
+         * descriptive name.
+         */
+        get TemporalInput() {
+            return this._component;
+        }
+        /**
+         * Access the internal `TemporalInput` component via a callback function. Useful for seamless
+         * chaining when creating instances of this component.
+         * @param cb A callback function that receives the current `TemporalInput` component instance
+         * and this instance as parameters.
+         * @returns This instance.
+         */
+        temporalInput(cb) {
+            cb(this._component, this);
+            return this;
+        }
+        /**
+         * Get/set the setp attribute value of the component (re-exported for easier direct access).
+         */
+        get Step() {
+            return this._component.Step;
+        }
+        /** @inheritdoc */
+        set Step(v) {
+            this._component.Step = v;
+        }
+        /**
+         * Set step attribute value of the component (re-exported for easier direct access).
+         * @param step The step attribute value to be set.
+         * @returns This instance.
+         */
+        step(step) {
+            this._component.step(step);
+            return this;
+        }
+        /**
+         * Increments the input control's value by the value given by the `Step` attribute. If the
+         * optional parameter is used, it will will increment the input control's value by that value
+         * (re-exported for easier direct access).
+         * @param n Value to decrement the value by.
+         * @returns This instance.
+         */
+        stepUp(n) {
+            this._component.stepUp(n);
+            return this;
+        }
+        /**
+         * Decrements the input control's value by the value given by the `Step` attribute. If the
+         * optional parameter is used, it will will decrement the input control's value by that value
+         * (re-exported for easier direct access).
+         * @param n Value to decrement the value by.
+         * @returns This instance.
+         */
+        stepDown(n) {
+            this._component.stepDown(n);
+            return this;
+        }
+    }
+    /**
+     * Factory for `LabeledTemporalInput` components.
+     */
+    class LabeledTemporalInputFactory extends ComponentFactory {
+        /**
+         * Create, set up and return LabeledTemporalInput component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param temporalType The type (attribute) of the temporal input element.
+         * @param id The id (attribute) of the temporal input element. If `id` is `undefined` or
+         * omitted, a unique ID will be generated. If `id` is explicitely set to `null` or an empty
+         * string, no id attribute will be set. Any other value will be used as the id attribute.
+         * @param value The value of the temporal input element.
+         * @param name The name (attribute) of the temporal input element.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         * @param lblAction Controls the following behavior:
+         * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+         *   or `undefined`, a click on the label focuses the temporal input element (a unique ID has
+         *   been set automatically on the temporal input element), if `lblAction` is `false`, clicking
+         *   on the label does nothing.
+         * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+         *   has been set on the temporal input element).
+         * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+         * @returns LabeledTemporalInput component.
+         */
+        labeledTemporalInput(labelPhrase, temporalType, id, value, name, lblPosition, lblAlignment, lblAction, data) {
+            return this.setupComponent(new LabeledTemporalInput(labelPhrase, temporalType, id, value, name, lblPosition, lblAlignment, lblAction), data);
+        }
+    }
+
+    /**
+     * Labeled textarea component.
+     */
+    class LabeledTextArea extends LabeledComponentWithLabel {
+        /**
+         * Create LabeledTextArea component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param text The text content for the textarea element.
+         * @param rows The number of visible text lines for the textarea element.
+         * @param cols The visible width of the textarea element, in average character widths.
+         * @param id The id (attribute) of the textarea element. If `id` is `undefined` or omitted, a
+         * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
+         * attribute will be set. Any other value will be used as the id attribute.
+         * @param name The `name` attribute for the textarea element.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         * @param lblAction Controls the following behavior:
+         * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+         *   or `undefined`, a click on the label focuses the textarea element (a unique ID has been set
+         *   automatically on the textarea element), if `lblAction` is `false`, clicking on the label
+         *   does nothing.
+         * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+         *   has been set on the textarea element).
+         */
+        constructor(labelPhrase, text, rows, cols, id, name, lblPosition, lblAlignment, lblAction) {
+            const _id = id === undefined
+                ? cid()
+                : id === null || id === ""
+                    ? null
+                    : id;
+            super(new TextArea(text, rows, cols, _id, name), labelPhrase, _id, lblPosition ?? LabelPosition.TOP, lblAlignment, lblAction);
+        }
+        /**
+         * Get TextArea component of this component. Equivalent to `Component`, just with a more
+         * descriptive name.
+         */
+        get TextArea() {
+            return this._component;
+        }
+        /**
+         * Access the internal `TextArea` component via a callback function. Useful for seamless
+         * chaining when creating instances of this component.
+         * @param cb A callback function that receives the current `TextArea` component instance and
+         * this
+         * instance as parameters.
+         * @returns This instance.
+         */
+        textArea(cb) {
+            cb(this._component, this);
+            return this;
+        }
+        /**
+         * __The property `Value` here is an alias for the property `this.TextArea.Value`.__
+         */
+        get Value() {
+            return this._component.DOM.value;
+        }
+        /** @inheritdoc */
+        set Value(v) {
+            this._component.DOM.value = v;
+        }
+        /**
+         * __The function `value()` here is an alias for the function `this.TextArea.value()` but it
+         * returns _this_ instance instead of the 'TextArea' instance.__
+         * @param v The value to be set.
+         * @returns This instance.
+         */
+        value(v) {
+            this._component.DOM.value = v;
+            return this;
+        }
+        /**
+         * \
+         * \
+         * __The property `Text` here is an alias for the property `this.TextArea.Text`.__
+         * @inheritdoc
+         */
+        get Text() {
+            return this._component.DOM.textContent;
+        }
+        /**
+         * \
+         * \
+         * __The property `Text` here is an alias for the property `this.TextArea.Text`.__
+         * @inheritdoc
+         */
+        set Text(v) {
+            this._component.DOM.textContent = v;
+        }
+        /**
+         * \
+         * \
+         * __The function `text()` here is an alias for the function `this.TextArea.text()` but it
+         * returns _this_ instance instead of the 'TextArea' instance.__
+         * @inheritdoc
+         */
+        text(text) {
+            this._component.DOM.textContent = text;
+            return this;
+        }
+    }
+    /**
+     * Factory for `LabeledTextArea` components.
+     */
+    class LabeledTextAreaFactory extends ComponentFactory {
+        /**
+         * Create, set up and return LabeledTextArea component.
+         * @param labelPhrase The phrasing content for the label.
+         * @param text The text content for the textarea element.
+         * @param rows The number of visible text lines for the textarea element.
+         * @param cols The visible width of the textarea element, in average character widths.
+         * @param id The id (attribute) of the textarea element. If `id` is `undefined` or omitted, a
+         * unique ID will be generated. If `id` is explicitely set to `null` or an empty string, no id
+         * attribute will be set. Any other value will be used as the id attribute.
+         * @param name The `name` attribute for the textarea element.
+         * @param lblPosition The position of the label.
+         * @param lblAlignment The alignment of the label.
+         * @param lblAction Controls the following behavior:
+         * - If `id` is `undefined`, omitted or a regular id attribute value: if `lblAction` is `true`
+         *   or `undefined`, a click on the label focuses the textarea element (a unique ID has been set
+         *   automatically on the textarea element), if `lblAction` is `false`, clicking on the label
+         *   does nothing.
+         * - If `id` is `null` or an empty string: clicking on the label does nothing (no id attribute
+         *   has been set on the textarea element).
+         * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+         * @returns LabeledTextArea component.
+         */
+        labeledTextArea(labelPhrase, text, rows, cols, id, name, lblPosition, lblAlignment, lblAction, data) {
+            return this.setupComponent(new LabeledTextArea(labelPhrase, text, rows, cols, id, name, lblPosition, lblAlignment, lblAction), data);
+        }
+    }
+
+    /**
      * Labeled text input component.
      */
     class LabeledTextInput extends LabeledInputComponent {
@@ -10388,6 +10641,7 @@
          * @param _event The scroll event.
          */
         #syncScrollBars(_event) {
+            this.#isRTL = getComputedStyle(this.#_dom_).direction === "rtl";
             this.#_dom_.classList.add("scrolling");
             this.#repositionScrollBars();
         }
@@ -11634,6 +11888,532 @@
         }
     }
 
+    /** Appearance of a stepper. */
+    var StepperAppearance;
+    (function (StepperAppearance) {
+        /**
+         * Horizontal arrangement of the stepper buttons.
+         */
+        StepperAppearance[StepperAppearance["HORIZONTAL"] = 0] = "HORIZONTAL";
+        /**
+         * Alternative horizontal arrangement of the stepper buttons (e.g. buttons rotated by 90°).
+         */
+        StepperAppearance[StepperAppearance["HORIZONTAL_ALT"] = 1] = "HORIZONTAL_ALT";
+        /**
+         * Vertical arrangement of the stepper buttons.
+         */
+        StepperAppearance[StepperAppearance["VERTICAL"] = 2] = "VERTICAL";
+        /**
+         * Alternative vertical arrangement of the stepper buttons (e.g. buttons rotated by 90°).
+         */
+        StepperAppearance[StepperAppearance["VERTICAL_ALT"] = 3] = "VERTICAL_ALT";
+    })(StepperAppearance || (StepperAppearance = {}));
+    /** Custom 'step' event for objects implementing `IStepper`. */
+    class StepEvent extends ACustomComponentEvent {
+        /**
+         * Create StepEvent event.
+         * @param sender The event emitter (always `Stepper`). Event handlers can prevent changing the
+         * index/position by calling `preventDefault()`.
+         * @param index The new index to which the current index/position in the steppable object is to
+         * be moved.
+         * @param customEventInitDict Optional event properties.
+         */
+        constructor(sender, index, customEventInitDict = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
+            super("step", sender, { Index: index }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+        }
+    }
+    /** Custom 'stepped' event for objects implementing `IStepper`. */
+    class SteppedEvent extends ACustomComponentEvent {
+        /**
+         * Create SteppedEvent event. This event is purely informative and can't be cancelled.
+         * @param sender The event emitter (always `Stepper`).
+         * @param index The new index of the steppable object.
+         * @param customEventInitDict Optional event properties.
+         */
+        constructor(sender, index, customEventInitDict = DEFAULT_EVENT_INIT_DICT) {
+            super("stepped", sender, { Index: index }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+        }
+    }
+    /** Stepper component with configurable buttons for stepping through an instance of `ISteppable`. */
+    class Stepper extends AElementComponentWithInternalUI {
+        steppable;
+        _options = {};
+        btns;
+        btnFirst;
+        btnPageBackward;
+        btnBackward;
+        btnForward;
+        btnPageForward;
+        btnLast;
+        fncFirst = this.First.bind(this);
+        fncPageBackward = this.PageBackward.bind(this);
+        fncBackward = this.Backward.bind(this);
+        fncForward = this.Forward.bind(this);
+        fncPageForward = this.PageForward.bind(this);
+        fncLast = this.Last.bind(this);
+        /**
+         * Create stepper component.
+         * @param steppable An object that imüplements `ISteppable`.
+         * @param options Options for the stepper.
+         */
+        constructor(steppable, options) {
+            super();
+            this.steppable = steppable;
+            super
+                .initialize()
+                .createButtons()
+                .options(options ?? this._options);
+        }
+        /**
+         * Get/set the stepper options. The returned object is a _copy_, modifying this copy has no
+         * effect on the corresponding stepper instance.
+         */
+        get Options() {
+            return {
+                /* eslint-disable jsdoc/require-jsdoc */
+                ...this._options,
+                Continuous: { Delay: this._options.Continuous?.Delay, Interval: this._options.Continuous?.Interval, OnClick: false },
+                FirstBtnOptions: this.btnFirst.Options,
+                PageBackwardBtnOptions: this.btnPageBackward.Options,
+                BackwardBtnOptions: this.btnBackward.Options,
+                ForwardBtnOptions: this.btnForward.Options,
+                PageForwardBtnOptions: this.btnPageForward.Options,
+                LastBtnOptions: this.btnLast.Options,
+                // Continuous: { ...this.options.Continuous } // eslint-disable-line jsdoc/require-jsdoc
+                /* eslint-enable */
+            };
+        }
+        /** @inheritdoc */
+        set Options(v) {
+            this.options(v);
+        }
+        /**
+         * Sets the options for the stepper. See also the documentation for `StepperOptions`.
+         * @param options The new stepper options.
+         * @returns This instance.
+         */
+        options(options) {
+            let separator = this._options.Separator;
+            if (options.Separator !== undefined) {
+                if (options.Separator === null) {
+                    this.ui.remove(separator?.removeClass("separator"));
+                    separator = undefined;
+                }
+                else {
+                    separator = options.Separator;
+                }
+            }
+            this.uninstallButtonEventListeners();
+            this._options = {
+                /* eslint-disable jsdoc/require-jsdoc */
+                Appearance: options.Appearance ?? this._options.Appearance ?? StepperAppearance.HORIZONTAL,
+                HideButtons: options.HideButtons ?? this._options.HideButtons ?? false,
+                Continuous: options.Continuous ?? this._options.Continuous ?? { Delay: 500, Interval: 100 },
+                Separator: separator,
+                First: options.First ?? this._options.First ?? true,
+                FirstBtnOptions: IconButton.mergeOptionsFromTo(options.FirstBtnOptions, this._options.FirstBtnOptions),
+                PageBackward: options.PageBackward ?? this._options.PageBackward ?? true,
+                PageBackwardContinuous: options.PageBackwardContinuous ?? this._options.PageBackwardContinuous ?? false,
+                PageBackwardBtnOptions: IconButton.mergeOptionsFromTo(options.PageBackwardBtnOptions, this._options.PageBackwardBtnOptions),
+                Backward: options.Backward ?? this._options.Backward ?? true,
+                BackwardContinuous: options.BackwardContinuous ?? this._options.BackwardContinuous ?? false,
+                BackwardBtnOptions: IconButton.mergeOptionsFromTo(options.BackwardBtnOptions, this._options.BackwardBtnOptions),
+                Forward: options.Forward ?? this._options.Forward ?? true,
+                ForwardContinuous: options.ForwardContinuous ?? this._options.ForwardContinuous ?? false,
+                ForwardBtnOptions: IconButton.mergeOptionsFromTo(options.ForwardBtnOptions, this._options.ForwardBtnOptions),
+                PageForward: options.PageForward ?? this._options.PageForward ?? true,
+                PageForwardContinuous: options.PageForwardContinuous ?? this._options.PageForwardContinuous ?? false,
+                PageForwardBtnOptions: IconButton.mergeOptionsFromTo(options.PageForwardBtnOptions, this._options.PageForwardBtnOptions),
+                Last: options.Last ?? this._options.Last ?? true,
+                LastBtnOptions: IconButton.mergeOptionsFromTo(options.LastBtnOptions, this._options.LastBtnOptions),
+                /* eslint-enable */
+            };
+            this._options.Continuous.OnClick = true;
+            const backwardButtons = [];
+            const forwardButtons = [];
+            this._options.First && backwardButtons.push(this.btnFirst);
+            this._options.PageBackward && backwardButtons.push(this.btnPageBackward);
+            this._options.Backward && backwardButtons.push(this.btnBackward);
+            this._options.Forward && forwardButtons.push(this.btnForward);
+            this._options.PageForward && forwardButtons.push(this.btnPageForward);
+            this._options.Last && forwardButtons.push(this.btnLast);
+            this.installButtonEventListeners();
+            this.ui.remove();
+            this
+                .appearance(this._options.Appearance)
+                .setButtonOptions(this._options)
+                .updateButtons(this.steppable.Index, this.steppable.Count);
+            this.ui
+                .append(...backwardButtons)
+                .append(this._options.Separator?.addClass("separator"))
+                .append(...forwardButtons);
+            return this;
+        }
+        /**
+         * Get/set the appearance of the stepper.
+         */
+        get Appearance() {
+            return this._options.Appearance;
+        }
+        /** @inheritdoc */
+        set Appearance(v) {
+            this.appearance(v);
+        }
+        /**
+         * Set the appearance of the stepper.
+         * @param appearance The new appearance of the stepper.
+         * @returns This instance.
+         */
+        appearance(appearance) {
+            this._options.Appearance = appearance;
+            this.ui.removeClass("horizontal", "horizontal-alt", "vertical", "vertical-alt");
+            switch (appearance) {
+                case StepperAppearance.HORIZONTAL_ALT:
+                    this.ui.addClass("horizontal-alt");
+                    break;
+                case StepperAppearance.VERTICAL:
+                    this.ui.addClass("vertical");
+                    break;
+                case StepperAppearance.VERTICAL_ALT:
+                    this.ui.addClass("vertical-alt");
+                    break;
+                default:
+                    this.ui.addClass("horizontal");
+            }
+            return this;
+        }
+        /**
+         * Get the current number of entries in the steppable object.
+         */
+        get Count() {
+            return this.steppable.Count;
+        }
+        /**
+         * Get the number of elements of a 'page' in the steppable object.
+         */
+        get PageSize() {
+            return this.steppable.PageSize;
+        }
+        /**
+         * Get/set current index of the steppable object.
+         */
+        get Index() {
+            return this.steppable.Index;
+        }
+        /** @inheritdoc */
+        set Index(v) {
+            this.index(v);
+        }
+        /**
+         * Sets the index/position in the steppable object to a new value.\
+         * __Notes:__
+         * - If the index/position does not differ from the current index, the setter of `Index` on the
+         *   steppable object isn't called!
+         * - If the index/position is lower than `0` or greater or equal to `Count` of the steppable
+         *   object it will always be corrected be in the range of `0`...`Count - 1`.
+         * @param index The index/position to step to in the steppable object.
+         * @returns `true` if no event handler has cancelled the `step` event and if the index/position
+         * in the steppable object could be set to the required value, otherwise `false`. `false` is
+         * also returned, if `Count` of the steppable object is `0`.
+         */
+        index(index) {
+            return this.dispatch(new StepEvent(this, index))
+                ? this.internalSetIndex(0)
+                : false;
+        }
+        /**
+         * Called internally by all functions that change the index in the steppable object.
+         * @see {@link Stepper.index()}
+         */
+        /* eslint-disable-next-line jsdoc/require-jsdoc */
+        internalSetIndex(index) {
+            const count = this.steppable.Count;
+            const oldIndex = this.steppable.Index;
+            if (count === 0) {
+                return false;
+            }
+            const newIndex = index < 0
+                ? 0
+                : index >= count
+                    ? count - 1
+                    : Math.trunc(index);
+            if (newIndex === oldIndex) {
+                return true;
+            }
+            this.steppable.Index = newIndex;
+            this.updateButtons(this.steppable.Index, this.steppable.Count);
+            this.emit(new SteppedEvent(this, newIndex));
+            return this.steppable.Index === newIndex;
+        }
+        /**
+         * Get all buttons of the stepper. The returned array always contains _all_ buttons of the
+         * stepper, regardless of whether they are displayed or not. The order of the buttons in the
+         * array is also always the same: `First`, `PageBackward`, `Backward`, `Forward`, `PageForward`
+         * and `Last`.
+         */
+        get Buttons() {
+            return this.btns.slice();
+        }
+        /** @inheritdoc */
+        First() {
+            return this.dispatch(new StepEvent(this, 0))
+                ? this.internalSetIndex(0)
+                : false;
+        }
+        /** @inheritdoc */
+        PageBackward() {
+            const pageSize = Math.trunc(this.steppable.PageSize);
+            if (pageSize === -1) {
+                return false;
+            }
+            return this.dispatch(new StepEvent(this, this.adjustIndex(this.steppable.Index - pageSize)))
+                ? this.internalSetIndex(this.steppable.Index - pageSize)
+                : false;
+        }
+        /** @inheritdoc */
+        Backward() {
+            return this.dispatch(new StepEvent(this, this.adjustIndex(this.steppable.Index - 1)))
+                ? this.internalSetIndex(this.steppable.Index - 1)
+                : false;
+        }
+        /** @inheritdoc */
+        Forward() {
+            return this.dispatch(new StepEvent(this, this.adjustIndex(this.steppable.Index + 1)))
+                ? this.internalSetIndex(this.steppable.Index + 1)
+                : false;
+        }
+        /** @inheritdoc */
+        PageForward() {
+            const pageSize = Math.trunc(this.steppable.PageSize);
+            if (pageSize === -1) {
+                return false;
+            }
+            return this.dispatch(new StepEvent(this, this.adjustIndex(this.steppable.Index + pageSize)))
+                ? this.internalSetIndex(this.steppable.Index + pageSize)
+                : false;
+        }
+        /** @inheritdoc */
+        Last() {
+            return this.dispatch(new StepEvent(this, this.adjustIndex(this.steppable.Count - 1)))
+                ? this.internalSetIndex(this.steppable.Count - 1)
+                : false;
+        }
+        /**
+         * Synchronizes the stepper with the steppable object. This function _must_ always be called by
+         * the steppable object when the current index/position or the number of elements in it changes!
+         * This is particularly necessary for changes to the index/position that were _not_ triggered by
+         * this stepper instance (e.g. by navigating with the keyboard in a table).
+         */
+        sync() {
+            this.updateButtons(this.steppable.Index, this.steppable.Count);
+        }
+        /**
+         * Checks and adjusts an index value against the limits of `this.steppable`.
+         * @param index The index to be checked.
+         * @returns An index in the range `0 >= index <= this.steppable.Count-1`.
+         */
+        adjustIndex(index) {
+            return Math.min(Math.max(index, 0), this.steppable.Count - 1);
+        }
+        /**
+         * Create all stepper buttons.
+         * @returns This instance.
+         */
+        createButtons() {
+            this.btns = [
+                this.btnFirst = new IconButton().on("click", this.fncFirst),
+                this.btnPageBackward = new IconButton(),
+                this.btnBackward = new IconButton(),
+                this.btnForward = new IconButton(),
+                this.btnPageForward = new IconButton(),
+                this.btnLast = new IconButton().on("click", this.fncLast)
+            ];
+            [
+                "first", "page-backward", "backward",
+                "forward", "page-forward", "last"
+            ].forEach((prop, i) => this.btns[i].addClass("stepper-button", prop, IconButton.DefaultCSSClassName));
+            return this;
+        }
+        /**
+         * (Re-)configure all icon buttons based on the current options.
+         * @param options The current stepper options.
+         * @returns This instance.
+         */
+        setButtonOptions(options) {
+            this.btnFirst.options(options.FirstBtnOptions);
+            this.btnPageBackward.options(options.PageBackwardBtnOptions);
+            this.btnBackward.options(options.BackwardBtnOptions);
+            this.btnForward.options(options.ForwardBtnOptions);
+            this.btnPageForward.options(options.PageForwardBtnOptions);
+            this.btnLast.options(options.LastBtnOptions);
+            return this;
+        }
+        /**
+         * Updates the buttons in the stepper to match the status of the steppable object.
+         * @param index The current index of the steppable object.
+         * @param count The current number of entries in the steppable object.
+         */
+        updateButtons(index, count) {
+            const isAtBegin = (count <= 0) || (index <= 0);
+            const isAtEnd = (count <= 0) || (index >= count - 1);
+            const cssHideAtBegin = this._options.HideButtons && isAtBegin ? "hidden" : "";
+            const cssHideAtEnd = this._options.HideButtons && isAtEnd ? "hidden" : "";
+            for (const btn of this.btns) {
+                btn.removeClass("hidden");
+            }
+            this.btnFirst
+                .disabled(isAtBegin)
+                .addClass(cssHideAtBegin)
+                .title(isAtBegin ? "" : this._options.FirstBtnOptions.Title || null);
+            this.btnPageBackward
+                .disabled(isAtBegin)
+                .addClass(cssHideAtBegin)
+                .title(isAtBegin ? "" : this._options.PageBackwardBtnOptions.Title || null);
+            this.btnBackward
+                .disabled(isAtBegin)
+                .addClass(cssHideAtBegin)
+                .title(isAtBegin ? "" : this._options.BackwardBtnOptions.Title || null);
+            this.btnForward
+                .disabled(isAtEnd)
+                .addClass(cssHideAtEnd)
+                .title(isAtEnd ? "" : this._options.ForwardBtnOptions.Title || null);
+            this.btnPageForward
+                .disabled(isAtEnd)
+                .addClass(cssHideAtEnd)
+                .title(isAtEnd ? "" : this._options.PageForwardBtnOptions.Title || null);
+            this.btnLast
+                .disabled(isAtEnd)
+                .addClass(cssHideAtEnd)
+                .title(isAtEnd ? "" : this._options.LastBtnOptions.Title || null);
+        }
+        /** Remove all current button event listeners. */
+        uninstallButtonEventListeners() {
+            // The following `off` calls will silently fail if the event handlers are not registered or
+            // if the viewer is being initialized for the very first time; however, this is harmless.
+            this.btnPageBackward.off("click", this.fncPageBackward);
+            this.btnPageBackward.off("pointerhold", this.fncPageBackward, this._options.Continuous);
+            this.btnBackward.off("click", this.fncBackward);
+            this.btnBackward.off("pointerhold", this.fncBackward, this._options.Continuous);
+            this.btnForward.off("click", this.fncForward);
+            this.btnForward.off("pointerhold", this.fncForward, this._options.Continuous);
+            this.btnPageForward.off("click", this.fncPageForward);
+            this.btnPageForward.off("pointerhold", this.fncPageForward, this._options.Continuous);
+        }
+        /** Install button event listeners depending on the `*Continuous` options. */
+        installButtonEventListeners() {
+            this._options.PageBackwardContinuous
+                ? this.btnPageBackward.on("pointerhold", this.fncPageBackward, this._options.Continuous)
+                : this.btnPageBackward.on("click", this.fncPageBackward);
+            this._options.BackwardContinuous
+                ? this.btnBackward.on("pointerhold", this.fncBackward, this._options.Continuous)
+                : this.btnBackward.on("click", this.fncBackward);
+            this._options.ForwardContinuous
+                ? this.btnForward.on("pointerhold", this.fncForward, this._options.Continuous)
+                : this.btnForward.on("click", this.fncForward);
+            this._options.PageForwardContinuous
+                ? this.btnPageForward.on("pointerhold", this.fncPageForward, this._options.Continuous)
+                : this.btnPageForward.on("click", this.fncPageForward);
+        }
+        /** @inheritdoc */
+        clearOwner() {
+            // All buttons can be mounted or not, so remove and dispose of them manually.
+            this.ui.remove();
+            for (const btn of this.btns) {
+                btn.dispose();
+            }
+            // Also remove and dispose a separator.
+            this._options.Separator?.dispose();
+            super.clearOwner();
+        }
+        /**
+         * Build UI of the component.
+         * @returns This instance.
+         */
+        buildUI() {
+            this.ui = new Div();
+            return this;
+        }
+    }
+    /**
+     * Factory for `Stepper` components.
+     */
+    class StepperFactory extends ComponentFactory {
+        /**
+         * Create, set up and return Stepper component.
+         * @param steppable An object that imüplements `ISteppable`.
+         * @param options Options for the stepper.
+         * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+         * @returns Stepper component.
+         */
+        stepper(steppable, options, data) {
+            return this.setupComponent(new Stepper(steppable, options), data);
+        }
+    }
+
+    /**
+     * Throbber component for displaying a 'busy-with-no-defined-end' state. Calling this a component is
+     * a bit of an exaggeration, as it is nothing more than a simple div component. The intention is
+     * that the state is visualized with a simple CSS-based animation on the Div component. A very
+     * simple example for such an animation can be found in the file `themes/vts/Throbber.css`.
+     */
+    class Throbber extends AElementComponentWithInternalUI {
+        _active;
+        /**
+         * Create Throbber component.
+         * @param active `true` if the throbber is active (showing an animation), otherwise `false`.
+         */
+        constructor(active = true) {
+            super();
+            super
+                .initialize()
+                .active(active);
+        }
+        /**
+         * Get/set the `Active` state of the throbber (show/hide the animation).
+         */
+        get Active() {
+            return this._active;
+        }
+        /** @inheritdoc */
+        set Active(v) {
+            this.active(v);
+        }
+        /**
+         * Set the `Active` state of the throbber (show/hide the animation).
+         * @param active `true` if the throbber is active (showing an animation), otherwise `false`.
+         * @returns This instance.
+         */
+        active(active) {
+            this._active = active;
+            this._active
+                ? this.ui.addClass("active")
+                : this.ui.removeClass("active");
+            return this;
+        }
+        /**
+         * Build UI of the component.
+         * @returns This instance.
+         */
+        buildUI() {
+            this.ui = new Div();
+            return this;
+        }
+    }
+    /**
+     * Factory for `Throbber` components.
+     */
+    class ThrobberFactory extends ComponentFactory {
+        /**
+         * Create, set up and return Throbber component.
+         * @param active `true` if the throbber is active (showing an animation), otherwise `false`.
+         * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+         * @returns Throbber component.
+         */
+        throbber(active = true, data) {
+            return this.setupComponent(new Throbber(active), data);
+        }
+    }
+
     /**
      * Create the footer section of the app.
      */
@@ -11983,7 +12763,7 @@
         }
     }
 
-    const intro$13 = `
+    const intro$18 = `
 \`BusyOverlay\` is a component for displaying an overlay that indicates a
 'busy-with-no-defined-end' state. The overlay covers the complete viewport and prevents any user
 interaction with the UI below it. It is typically used during long-running operations where user
@@ -11999,7 +12779,7 @@ The component offers additional features:
 - Support for nested calls to \`busy()\`/\`idle()\`. This makes it very easy to use the overlay in
   scenarios where multiple (asynchronous) operations may overlap.
 `;
-    const example$_ = `
+    const example$13 = `
 ### Basic usage
 
 \`\`\`
@@ -12154,17 +12934,17 @@ longRunning3();
             const btnBusy3 = new Button("Show")
                 .addClass("regular")
                 .on("click", async () => await show(false, 3500, 500));
-            this.append(this.markdown(intro$13), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
-            ), this.markdown(example$_), this.markdown(example2));
+            this.append(this.markdown(intro$18), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
+            ), this.markdown(example$13), this.markdown(example2));
         }
     }
 
-    const intro$12 = `
+    const intro$17 = `
 A container component whose content can be disclosed/undisclosed.
 
 **Class:** \`@vanilla-ts/components/DisclosureContainer\`
 
-The \`DisclosureContainer\` component supports the follwoing features:
+The \`DisclosureContainer\` component supports the following features:
 
 - Both the header and content areas can contain arbitrary components.
 - Several appearance options.
@@ -12175,7 +12955,7 @@ The \`DisclosureContainer\` component supports the follwoing features:
 
 All features are configurable at runtime on an already existing instance.
 `;
-    const example$Z = `
+    const example$12 = `
 ### Notes
 - If \`WeakUndisclosed\` is \`true\` the inner content container will keep its content in the DOM
   when it is undisclosed, otherwise the content will be removed from the DOM.
@@ -12292,7 +13072,7 @@ if (someCondition) {
                 "textAlign": "center",
             });
             this
-                .append(this.markdown(intro$12), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$Z), this.markdown(css$1), this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"), this.markdown(`
+                .append(this.markdown(intro$17), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$12), this.markdown(css$1), this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"), this.markdown(`
 \`\`\`typescript
 example.Header.on("click", () => {
     example.Disclosed = !example.Disclosed;
@@ -12396,7 +13176,7 @@ example.headerCb(header => header.on("click", () => {
         }
     }
 
-    const intro$11 = `
+    const intro$16 = `
 \`IconButton\` is a component to display buttons with icons and/or text. The
 component itself is a regular \`§@dom/Button§\` component that contains three inner \`§@dom/Span§\`
 components which can be styled individually:
@@ -12627,7 +13407,7 @@ Compared to the example which uses background images the amount of CSS needed he
             let ib2a;
             let ib3a;
             const ibf = new MyIconButtonFactory();
-            this.append(this.markdown(intro$11), this.example([
+            this.append(this.markdown(intro$16), this.example([
                 new P("IconButtons with background images:"),
                 new Div().addClass("icon-button-container").append(ib0 = ibf.iconButton({
                     IconStart: "-ios_share",
@@ -12687,7 +13467,7 @@ Compared to the example which uses background images the amount of CSS needed he
         }
     }
 
-    const intro$10 = `
+    const intro$15 = `
 ## Advanced components
 
 The components provided by the \`@vanilla-ts/components\` package are complex elements that address
@@ -12755,7 +13535,7 @@ labeled components.
         buildExample() {
             this
                 .addClass("ex-components-introduction")
-                .append(this.markdown(intro$10));
+                .append(this.markdown(intro$15));
         }
     }
 
@@ -12810,12 +13590,14 @@ labeled components.
         ];
     }
 
-    const intro$$ = `
-A component with an §@dom/A§ and a §@dom/Label§ representing a caption for the component.
+    const intro$14 = `
+A component with an §@dom/A§ and a §@dom/Label§ representing a caption for the component. It
+creates a labeled hyperlink to a web page, file, email address or another location identified by a
+URL.
 
 **Class:** \`@vanilla-ts/components/LabeledAnchor\`
 `;
-    const example$Y = `
+    const example$11 = `
 ### Code example
 
 \`\`\`
@@ -12851,15 +13633,16 @@ new VTS_App(document.body).append(anchor1, anchor2);
         buildExample() {
             this.#lAnchor1 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-dom", "DOM project home", "Vanilla.ts DOM").target("_blank");
             this.#lAnchor2 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-components", "Components project home").target("_blank");
-            this.append(this.markdown(intro$$), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$14), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$Y));
+                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$11));
         }
     }
 
     const introLabeledCheckbox = `
 A component with a §@dom/Checkbox / Switch§ and a §@dom/Label§ representing a caption for the
-component.
+component. It lets users enable or disable a single option. An indeterminate state can additionally
+represent a mixed or not-yet-decided value.
 
 **Class:** \`@vanilla-ts/components/LabeledCheckbox\`
 `;
@@ -12997,13 +13780,14 @@ For an advanced usage of component factories see §@core/Component factories§.
         }
     }
 
-    const intro$_ = `
-A component with a §@dom/Div§ as a (inner) container for other components and a §@dom/Span§
-representing the caption for the container component.
+    const intro$13 = `
+A component with a §@dom/Div§ as an inner container for other components and a §@dom/Span§
+representing the caption for the container component. It is useful for visually grouping related
+content under a common caption without imposing additional semantics on that content.
 
 **Class:** \`@vanilla-ts/components/LabeledContainer\`
 `;
-    const example$X = `
+    const example$10 = `
 ### Code example
 
 \`\`\`
@@ -13078,17 +13862,18 @@ new VTS_App(document.body).append(example);
                 { Label: "Nightly builds", Value: "nightly" },
             ], "rbg-sample-1")
                 .value("beta"), $.hr(), new P("Choose how updates should be installed"), $.labeledCheckbox("Automatically download available updates").checked(true), $.labeledCheckbox("Install updates automatically").checked(true), $.labeledCheckbox("Install security updates automatically").checked(true).disabled(true));
-            this.append(this.markdown(intro$_), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$X), this.markdown(exampleCSS$1));
+            this.append(this.markdown(intro$13), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$10), this.markdown(exampleCSS$1));
         }
     }
 
-    const intro$Z = `
+    const intro$12 = `
 A component with an §@dom/EmailInput§ and a §@dom/Label§ representing a caption for the component.
+It lets users enter an email address and uses the browser's built-in validation for email syntax.
 
 **Class:** \`@vanilla-ts/components/LabeledEmailInput\`
 `;
-    const example$W = `
+    const example$$ = `
 ### Code example
 
 \`\`\`
@@ -13112,20 +13897,20 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledEmailInput("Business contact")
                 .emailInput(c => c.placeholder("sophie@example.com"));
-            this.append(this.markdown(intro$Z), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$12), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$W));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$$));
         }
     }
 
-    const intro$Y = `
+    const intro$11 = `
 A component with a §@dom/Meter§ and a §@dom/Span§ representing a caption for the component. It
 represents a scalar value within a known range. Use a §@dom/Progress§ component instead to represent
 the progress of a task.
 
 **Class:** \`@vanilla-ts/components/LabeledMeter\`
 `;
-    const example$V = `
+    const example$_ = `
 ### Code example
 
 \`\`\`
@@ -13164,7 +13949,7 @@ new VTS_App(document.body).append(example);
             "68 out of 100" // Fallback content
             )
                 .meter(meter => meter.style("inlineSize", "15rem"));
-            this.append(this.markdown(intro$Y), this.example([this.#lMeter]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+            this.append(this.markdown(intro$11), this.example([this.#lMeter]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
                 this.#lMeter.meter(cb => cb.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL));
             }), $.labeledNumberInput("Current value:", undefined, this.#lMeter.Value.toString(), "", "0", "100")
@@ -13172,16 +13957,18 @@ new VTS_App(document.body).append(example);
                 this.#lMeter.value(numberInput.ValueAsNumber);
             }))), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lMeter], true, "start", "start")), this.markdown(example$V));
+                .append(...labeledComponentLabelFlags([this.#lMeter], true, "start", "start")), this.markdown(example$_));
         }
     }
 
-    const intro$X = `
+    const intro$10 = `
 A component with a §@dom/NumberInput§ and a §@dom/Label§ representing a caption for the component.
+It lets users enter a number and optionally constrains the value through minimum, maximum and step
+attributes.
 
 **Class:** \`@vanilla-ts/components/LabeledNumberInput\`
 `;
-    const example$U = `
+    const example$Z = `
 ### Code example
 
 \`\`\`
@@ -13245,18 +14032,20 @@ new VTS_App(document.body).append(example);
                 .on("input", () => {
                 this.#lInput.NumberInput.DOM.setCustomValidity(this.#lInput.Value === "42" ? "" : "not_42");
             });
-            this.append(this.markdown(intro$X), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$10), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$U), this.markdown(css));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$Z), this.markdown(css));
         }
     }
 
-    const intro$W = `
-A component with a §@dom/P§ and a §@dom/Span§ representing a caption for the component.
+    const intro$$ = `
+A component with a §@dom/P§ and a §@dom/Span§ representing a caption for the component. It combines
+a caption with a paragraph-sized block of related content and is useful for displaying labeled
+values or descriptions.
 
 **Class:** \`@vanilla-ts/components/LabeledParagraph\`
 `;
-    const example$T = `
+    const example$Y = `
 ### Code example
 
 \`\`\`
@@ -13282,18 +14071,19 @@ et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est.
         /** @inheritdoc */
         buildExample() {
             this.#lParagraph = $.labeledParagraph("Sample text", lorem);
-            this.append(this.markdown(intro$W), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$$), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$T));
+                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$Y));
         }
     }
 
-    const intro$V = `
+    const intro$_ = `
 A component with a §@dom/PasswordInput§ and a §@dom/Label§ representing a caption for the component.
+It lets users enter sensitive text while the browser obscures the entered characters on screen.
 
 **Class:** \`@vanilla-ts/components/LabeledPasswordInput\`
 `;
-    const example$S = `
+    const example$X = `
 ### Code example
 
 \`\`\`
@@ -13317,20 +14107,20 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledPasswordInput("Password")
                 .passwordInput(c => c.placeholder("Enter password"));
-            this.append(this.markdown(intro$V), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$_), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$S));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$X));
         }
     }
 
-    const intro$U = `
+    const intro$Z = `
 A component with a §@dom/Progress§ and a §@dom/Span§ representing a caption for the component. It
 represents the progress of a task, such as a download or file transfer. Use a §@dom/Meter§ component
 instead to represent a scalar value within a known range.
 
 **Class:** \`@vanilla-ts/components/LabeledProgress\`
 `;
-    const example$R = `
+    const example$W = `
 ### Code example
 
 \`\`\`
@@ -13370,7 +14160,7 @@ class.
             "70 out of 100" // Fallback content
             )
                 .progress(progress => progress.style("inlineSize", "15rem"));
-            this.append(this.markdown(intro$U), this.example([this.#lProgress]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+            this.append(this.markdown(intro$Z), this.example([this.#lProgress]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
                 this.#lProgress.progress(cb => cb.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL));
             }), $.labeledNumberInput("Maximum value:", undefined, "100", "", "1", "100")
@@ -13385,18 +14175,19 @@ class.
                 marginBlock: "0.5rem 0"
             })), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lProgress], true, "start", "start")), this.markdown(example$R));
+                .append(...labeledComponentLabelFlags([this.#lProgress], true, "start", "start")), this.markdown(example$W));
         }
     }
 
-    const intro$T = `
+    const intro$Y = `
 A component with a §@dom/RadioButton§ and a §@dom/Label§ representing a caption for the component.
-This class mainly exists as a building block for §@components/RadioButtonGroup§s and
-§@components/LabeledRadioButtonGroup§s.
+Radio buttons represent mutually exclusive choices where selecting one option deselects the others
+in the same group. This class mainly exists as a building block for
+§@components/RadioButtonGroup§s and §@components/LabeledRadioButtonGroup§s.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButton\`
 `;
-    const example$Q = `
+    const example$V = `
 ### Code example
 
 \`\`\`
@@ -13423,7 +14214,7 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$T), this.example([
+            this.append(this.markdown(intro$Y), this.example([
                 this.#lrb = $.labeledRadioButton("Beta versions")
                     .on("checked", () => this.#rbgCb.value(this.#lrb.Checked ? "checked" : "unchecked"))
             ]), this.markdown("### Label position, label alignment and radio button state"), new Div()
@@ -13443,17 +14234,18 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
                         break;
                 }
             }), ...labeledComponentLabelFlags([this.#lrb], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$Q));
+                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$V));
         }
     }
 
-    const intro$S = `
+    const intro$X = `
 A component that groups multiple §@components/LabeledRadioButton§s into a single component that is
-similar to a §@components/LabeledContainer§.
+similar to a §@components/LabeledContainer§. It presents a labeled set of mutually exclusive choices
+and ensures that only one radio button in the group is selected at a time.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButtonGroup\`
 `;
-    const example$P = `
+    const example$U = `
 ### Code example
 
 \`\`\`
@@ -13493,7 +14285,7 @@ in the \`RadioButtonGroup\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$S), this.example([
+            this.append(this.markdown(intro$X), this.example([
                 this.#lrbg = $.labeledRadioButtonGroup("Your position", [
                     { Label: "Software developer", Value: "software_developer" },
                     { Label: "Security engineer", Value: "security_engineer" },
@@ -13521,18 +14313,18 @@ in the \`RadioButtonGroup\` class.
             }), 
             // $.labeledContainer("Inner radio button group").append(
             ...labeledComponentLabelFlags([this.#lrbg.RadioButtonGroup], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$P));
+                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$U));
         }
     }
 
-    const intro$R = `
+    const intro$W = `
 A component with a §@dom/RangeInput§ and a §@dom/Label§ representing a caption for the component.
 The label is automatically associated with the range input through its \`for\` and \`id\`
-attributes.
+attributes. It lets users select an approximate numeric value from a bounded range using a slider.
 
 **Class:** \`@vanilla-ts/components/LabeledRangeInput\`
 `;
-    const example$O = `
+    const example$T = `
 ### Code example
 
 \`\`\`
@@ -13561,7 +14353,7 @@ new VTS_App(document.body).append(
     new P("Current value: ", value)
         .style({
             marginBlock: "0.5rem 0",
-            width: "11rem"
+            width: "10rem"
         })
 );
 \`\`\`
@@ -13586,12 +14378,12 @@ new VTS_App(document.body).append(
                 .rangeInput(rangeInput => rangeInput
                 .style("inlineSize", "15rem")
                 .on("input", () => value.text(rangeInput.Value)));
-            this.append(this.markdown(intro$R), this.example([
+            this.append(this.markdown(intro$W), this.example([
                 this.#lRangeInput,
                 new P("Current value: ", value = new Code(this.#lRangeInput.Value))
                     .style({
                     marginBlock: "0.5rem 0",
-                    width: "11rem"
+                    width: "10rem"
                 })
             ]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", event => {
@@ -13608,16 +14400,18 @@ new VTS_App(document.body).append(
                 value.text(this.#lRangeInput.Value);
             }))), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lRangeInput], true, "start", "start")), this.markdown(example$O));
+                .append(...labeledComponentLabelFlags([this.#lRangeInput], true, "start", "start")), this.markdown(example$T));
         }
     }
 
-    const intro$Q = `
+    const intro$V = `
 A component with a §@dom/SearchInput§ and a §@dom/Label§ representing a caption for the component.
+It provides a single-line field for entering search terms and may receive search-specific behavior
+or styling from the browser.
 
 **Class:** \`@vanilla-ts/components/LabeledSearchInput\`
 `;
-    const example$N = `
+    const example$S = `
 ### Code example
 
 \`\`\`
@@ -13641,18 +14435,19 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledSearchInput("Search")
                 .searchInput(c => c.placeholder("Enter search term..."));
-            this.append(this.markdown(intro$Q), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$V), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$N));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$S));
         }
     }
 
-    const intro$P = `
-A component with an §@dom/Select§ and a §@dom/Label§ representing a caption for the component.
+    const intro$U = `
+A component with an §@dom/Select§ and a §@dom/Label§ representing a caption for the component. It
+lets users choose one or more entries from a predefined list of options.
 
 **Class:** \`@vanilla-ts/components/LabeledSelect\`
 `;
-    const example$M = `
+    const example$R = `
 ### Code example
 
 \`\`\`
@@ -13777,12 +14572,12 @@ new VTS_App(document.body).append(example, log);
                 .multiple(true)
                 .size(5))
                 .on("change", updateMultipleLog);
-            this.append(this.markdown(intro$P), this.example([
+            this.append(this.markdown(intro$U), this.example([
                 this.#lInput,
                 log
             ]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$M), this.markdown("---"), this.markdown(introMultiple$1), this.example([
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$R), this.markdown("---"), this.markdown(introMultiple$1), this.example([
                 this.#lInputMultiple,
                 logMultiple
             ]), this.markdown("### Label position and label alignment"), new Div()
@@ -13791,12 +14586,305 @@ new VTS_App(document.body).append(example, log);
         }
     }
 
-    const intro$O = `
-A component with a §@dom/TextInput§ and a §@dom/Label§ representing a caption for the component.
+    const intro$T = `
+A component with a §@dom/TemporalInput§ and a §@dom/Label§ representing a caption for the component.
+The label is automatically associated with the temporal input through its \`for\` and \`id\`
+attributes. The inner input can represent a date, time, local date and time, month or week, depending
+on the supplied \`TemporalType\`, and lets users enter or select a corresponding temporal value.
+
+Please note that the availability and appearance of temporal input types and their pickers may vary
+across browser engines and platforms.
+
+**Class:** \`@vanilla-ts/components/LabeledTemporalInput\`
+`;
+    const now = new Date();
+    const currentLocalDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60_000)
+        .toISOString()
+        .slice(0, 16);
+    const currentLocalTimeWithSeconds = new Date(now.getTime() - now.getTimezoneOffset() * 60_000)
+        .toISOString()
+        .slice(11, 19);
+    const temporalInputConfigurations = {
+        [TemporalType.Date]: {
+            type: "TemporalType.Date",
+            label: "Select an appointment date",
+            min: "2027-01-01",
+            max: "2027-12-31",
+            step: "1",
+            stepDescription: "one day",
+            value: "2027-09-15"
+        },
+        [TemporalType.Time]: {
+            type: "TemporalType.Time",
+            label: "Desired time of delivery",
+            min: "08:00",
+            max: "18:00",
+            step: "60",
+            stepDescription: "one minute",
+            value: "16:30"
+        },
+        [TemporalType.TimeSeconds]: {
+            type: "TemporalType.TimeSeconds",
+            label: "Ticket opened today at",
+            min: "00:00:00",
+            max: "23:59:59",
+            step: "1",
+            stepDescription: "one second",
+            value: currentLocalTimeWithSeconds
+        },
+        [TemporalType.DateTime]: {
+            type: "TemporalType.DateTime",
+            label: "Date and time of birth",
+            min: "1900-01-01T00:00",
+            max: currentLocalDateTime,
+            step: "60",
+            stepDescription: "one minute",
+            value: currentLocalDateTime
+        },
+        [TemporalType.DateTimeSeconds]: {
+            type: "TemporalType.DateTimeSeconds",
+            label: "Planned date/time of rocket launch",
+            min: "2027-04-01T08:00:00",
+            max: "2027-05-31T23:59:00",
+            step: "1",
+            stepDescription: "one second",
+            value: "2027-04-01T14:30:15"
+        },
+        [TemporalType.Week]: {
+            type: "TemporalType.Week",
+            label: "Expected week of commissioning",
+            min: "2027-W01",
+            max: "2027-W52",
+            step: "1",
+            stepDescription: "one week",
+            value: "2027-W38"
+        },
+        [TemporalType.Month]: {
+            type: "TemporalType.Month",
+            label: "Best before",
+            min: "2027-01",
+            max: "2035-12",
+            step: "1",
+            stepDescription: "one month",
+            value: "2028-09"
+        }
+    };
+    const initialType = TemporalType.DateTime;
+    const initialConfig = temporalInputConfigurations[initialType];
+    const example$Q = `
+### Code example
+
+\`\`\`
+import { LabelPosition, LabeledTemporalInput } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+import { TemporalType } from "@vanilla-ts/dom";
+
+const example = new LabeledTemporalInput(
+    "${initialConfig.label}",
+    ${initialConfig.type},
+    // id (auto-generated if not provided)
+    undefined,
+    // value (initial value)
+    "${initialConfig.value}",
+    // name (form name)
+    "temporal-input"
+)
+    .addClass("labeled-temporal-input")
+    .temporalInput(temporalInput => temporalInput
+        .min("${initialConfig.min}")
+        .max("${initialConfig.max}")
+        .step("${initialConfig.step}") // One minute steps
+    )
+    .labelPosition(LabelPosition.TOP);
+
+new VTS_App(document.body).append(example);
+\`\`\`
+`;
+    class LabeledTemporalInputEx extends BaseExample {
+        #lTemporalInput;
+        constructor() {
+            super("LabeledTemporalInput");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            let stepGranularity;
+            let temporalTypeSelect;
+            let value;
+            this.#lTemporalInput = $.labeledTemporalInput(initialConfig.label, initialType, undefined, initialConfig.value, "temporal-input")
+                .temporalInput(temporalInput => temporalInput
+                .min(initialConfig.min)
+                .max(initialConfig.max)
+                .step(initialConfig.step))
+                .labelPosition(LabelPosition.TOP)
+                .on("input", () => value.text(this.#lTemporalInput.Value));
+            const labeledTemporalInputs = [this.#lTemporalInput];
+            this.append(this.markdown(intro$T), this.example([
+                this.#lTemporalInput,
+                new P("Current value: ", value = new Code(this.#lTemporalInput.Value))
+                    .style({
+                    marginBlock: "0.5rem 0",
+                    width: "20rem"
+                })
+            ]), this.markdown("### Configuration"), this.properties(temporalTypeSelect = $.labeledSelect("Temporal type", [
+                new Option("TemporalType.Date").value(TemporalType.Date.toString()),
+                new Option("TemporalType.Time").value(TemporalType.Time.toString()),
+                new Option("TemporalType.TimeSeconds")
+                    .value(TemporalType.TimeSeconds.toString()),
+                new Option("TemporalType.DateTime").value(TemporalType.DateTime.toString()),
+                new Option("TemporalType.DateTimeSeconds")
+                    .value(TemporalType.DateTimeSeconds.toString()),
+                new Option("TemporalType.Week").value(TemporalType.Week.toString()),
+                new Option("TemporalType.Month").value(TemporalType.Month.toString())
+            ])
+                .style("marginBlockEnd", "0.5rem")
+                .component(cb => cb.style("inlineSize", "19rem"))
+                .value(initialType.toString())
+                .on("change", () => {
+                // The Select component stores its option values as strings.
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+                const temporalType = Number(temporalTypeSelect.Value);
+                const configuration = temporalInputConfigurations[temporalType];
+                const previousTemporalInput = this.#lTemporalInput;
+                const parent = previousTemporalInput.Parent;
+                if (!parent) {
+                    return;
+                }
+                const index = parent.Children.indexOf(previousTemporalInput);
+                const replacement = $.labeledTemporalInput(configuration.label, temporalType, previousTemporalInput.TemporalInput.ID, configuration.value, previousTemporalInput.Name)
+                    .temporalInput(temporalInput => temporalInput
+                    .min(configuration.min)
+                    .max(configuration.max)
+                    .step(configuration.step))
+                    .labelPosition(previousTemporalInput.LabelPosition)
+                    .labelAlignment(previousTemporalInput.LabelAlignment)
+                    .clazz(previousTemporalInput.Clazz)
+                    .dir(previousTemporalInput.Dir)
+                    .disabled(previousTemporalInput.Disabled)
+                    .parentDisabled(previousTemporalInput.ParentDisabled)
+                    .on("input", () => value.text(replacement.Value));
+                parent.remove(previousTemporalInput).insert(index, replacement);
+                this.#lTemporalInput = replacement;
+                labeledTemporalInputs[0] = replacement;
+                previousTemporalInput.dispose();
+                value.text(configuration.value);
+                stepGranularity.text(`\u2003(Step granularity is ${configuration.stepDescription})`);
+            }), new Span("Change value")
+                .style({
+                display: "inline-block",
+                inlineSize: "10rem"
+            }), $.buttonRegular("Step down")
+                .on("click", () => {
+                this.#lTemporalInput.stepDown();
+                value.text(this.#lTemporalInput.Value);
+            }), new Text$1("\u2002"), $.buttonRegular("Step up")
+                .on("click", () => {
+                this.#lTemporalInput.stepUp();
+                value.text(this.#lTemporalInput.Value);
+            }), stepGranularity = new Span(`\u2003(Step granularity is ${initialConfig.stepDescription})`)), this.markdown("### Label position and label alignment"), new Div()
+                .addClass("example-properties")
+                .append(...labeledComponentLabelFlags(labeledTemporalInputs, true, "start", "start")), this.markdown(example$Q));
+        }
+    }
+
+    const intro$S = `
+A component with a §@dom/TextArea§ and a §@dom/Label§ representing a caption for the component. The
+label is automatically associated with the textarea through its \`for\` and \`id\` attributes. It
+lets users enter and edit multiple lines of plain text.
+
+**Class:** \`@vanilla-ts/components/LabeledTextArea\`
+`;
+    const example$P = `
+### Code example
+
+\`\`\`
+import { LabeledTextArea } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+
+const example = new LabeledTextArea(
+    "Message",
+    "Lorem ...", // initial text
+    6,           // number of visible text lines
+    50,          // visible width in average character widths
+    undefined,   // id (auto-generated if not provided)
+    "message"    // name (form name)
+)
+    .addClass("labeled-text-area")
+    .textArea(textArea => textArea
+        .placeholder("Enter your message here")
+        .resizable("vertical")
+    );
+
+new VTS_App(document.body).append(example);
+\`\`\`
+`;
+    class LabeledTextAreaEx extends BaseExample {
+        #lTextArea;
+        constructor() {
+            super("LabeledTextArea");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            let allowResizing;
+            let verticalResizing;
+            let horizontalResizing;
+            const updateResizable = () => {
+                if (!allowResizing.Checked || (!verticalResizing.Checked && !horizontalResizing.Checked)) {
+                    this.#lTextArea.TextArea.resizable("none");
+                }
+                else if (verticalResizing.Checked && horizontalResizing.Checked) {
+                    this.#lTextArea.TextArea.resizable("both");
+                }
+                else {
+                    this.#lTextArea.TextArea.resizable(verticalResizing.Checked ? "vertical" : "horizontal");
+                }
+            };
+            this.#lTextArea = $.labeledTextArea("Message", "Lorem ipsum ut wisi enim ad minim veniam, quis nostrud exerci ullamcorper suscipit ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis et blandit augue duis dolore te feugait nulla facilisi.", 
+            // undefined, // initial text
+            6, // number of visible text lines
+            50, // visible width in average character widths
+            undefined, // id (auto-generated if not provided)
+            "message" // name (form name)
+            )
+                .textArea(textArea => textArea
+                .placeholder("Enter your message here")
+                .resizable("vertical"));
+            this.append(this.markdown(intro$S), this.example([this.#lTextArea]), this.markdown("### Configuration"), this.properties($.labeledNumberInput("Visible rows:", undefined, this.#lTextArea.TextArea.Rows.toString(), "", "1", "20")
+                .numberInput(numberInput => numberInput.on("input", () => {
+                this.#lTextArea.TextArea.rows(numberInput.ValueAsNumber);
+            })), $.labeledNumberInput("Visible columns:", undefined, this.#lTextArea.TextArea.Cols.toString(), "", "1", "100")
+                .numberInput(numberInput => numberInput.on("input", () => {
+                this.#lTextArea.TextArea.cols(numberInput.ValueAsNumber);
+            })), allowResizing = $.labeledCheckbox("Allow resizing")
+                .checked(true)
+                .on("checked", event => {
+                verticalResizing.disabled(!event.$.Checked);
+                horizontalResizing.disabled(!event.$.Checked);
+                updateResizable();
+            }), new Div()
+                .style("marginInlineStart", "2rem")
+                .append(verticalResizing = $.labeledCheckbox("Vertical")
+                .checked(true)
+                .on("checked", updateResizable), horizontalResizing = $.labeledCheckbox("Horizontal")
+                .on("checked", updateResizable)), $.buttonRegular("Reset resizing")
+                .on("click", () => this.#lTextArea.TextArea.style({
+                width: null,
+                height: null,
+                inlineSize: null,
+                blockSize: null
+            }))
+                .style("marginBlockStart", "0.5rem")), this.markdown("### Label position and label alignment"), new Div()
+                .addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#lTextArea], true, "top", "start")), this.markdown(example$P));
+        }
+    }
+
+    const intro$R = `
+A component with a §@dom/TextInput§ and a §@dom/Label§ representing a caption for the component. It
+provides a labeled, single-line field for entering and editing plain text.
 
 **Class:** \`@vanilla-ts/components/LabeledTextInput\`
 `;
-    const example$L = `
+    const example$O = `
 ### Code example
 
 \`\`\`
@@ -13820,18 +14908,20 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledTextInput("Username")
                 .textInput(c => c.placeholder("Enter your name here"));
-            this.append(this.markdown(intro$O), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$R), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$L));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$O));
         }
     }
 
-    const intro$N = `
-A component that groups multiple §@components/LabeledRadioButton§s into a single component.
+    const intro$Q = `
+A component that groups multiple §@components/LabeledRadioButton§s into a single component. It
+presents a set of mutually exclusive choices and ensures that only one radio button is selected at
+a time.
 
 **Class:** \`@vanilla-ts/components/RadioButtonGroup\`
 `;
-    const example$K = `
+    const example$N = `
 ### Code example
 
 \`\`\`
@@ -13867,7 +14957,7 @@ in the \`RadioButtonGroup\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$N), this.example([
+            this.append(this.markdown(intro$Q), this.example([
                 this.#rbg = $.radioButtonGroup([
                     { Label: "Regular updates", Value: "regular" },
                     { Label: "Beta versions", Value: "beta" },
@@ -13878,7 +14968,359 @@ in the \`RadioButtonGroup\` class.
                 .addClass("example-properties")
                 .append(...labeledComponentLabelFlags([this.#rbg], true, "end", "start"), $.labeledCheckbox("Horizontal alignment")
                 .on("checked", (ev) => this.#rbg.orientation(ev.$.Checked ? Orientation.HORIZONTAL : Orientation.VERTICAL)), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#rbg.toggle(!this.#rbg.Toggle))), this.markdown(example$K));
+                .on("checked", () => this.#rbg.toggle(!this.#rbg.Toggle))), this.markdown(example$N));
+        }
+    }
+
+    const intro$P = `
+A container for content that may overflow its available area. It provides horizontal and vertical
+scrolling with consistently styled scroll bars across platforms and user agents. Either direction
+can be enabled independently; native scroll bars can also be used when required.
+
+The outer component must have a defined height and its \`padding\` should remain \`0\`. Apply
+padding and other content-related styles through the \`Content\` property instead. Add and remove
+children through the \`ScrollContainer\` itself so that their size changes are observed and the
+scroll bars remain synchronized.
+
+**Class:** \`@vanilla-ts/components/ScrollContainer\`
+`;
+    const example$M = `
+### Code example
+
+\`\`\`
+import { ScrollContainer } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+import { Div, P } from "@vanilla-ts/dom";
+
+const content = new Div(
+    ...Array.from({ length: 12 }, (_, index) =>
+        new P(\`\${index + 1}. Content that extends beyond the visible width of the container.\`)
+    )
+)
+    .style("width", "max-content");
+
+const scrollContainer = new ScrollContainer(true, true)
+    .addClass("scroll-container")
+    .style({
+        inlineSize: "24rem",
+        blockSize: "14rem",
+        border: "1px solid lightgray"
+    })
+    // Add and remove children through the ScrollContainer, not through Content.
+    .append(content);
+
+// Content may be used for styling the inner scrollable area.
+scrollContainer.Content.style({ padding: "1rem" });
+
+new VTS_App(document.body).append(scrollContainer);
+\`\`\`
+
+The available scroll directions can be changed with \`horizontal()\` and \`vertical()\`.
+\`native(true)\` switches to the user agent's native scroll bars. Scrolling can also be controlled
+programmatically:
+
+\`\`\`
+scrollContainer.scroll({
+    left: getComputedStyle(scrollContainer.DOM).direction === "ltr" ? 100 : -100,
+    top: 0,
+    behavior: "smooth"
+});
+scrollContainer.scrollBy({ left: 100, top: 100, behavior: "smooth" });
+
+const { X, Y } = scrollContainer.ScrollOffset;
+\`\`\`
+`;
+    class ScrollContainerEx extends BaseExample {
+        #scrollContainer;
+        constructor() {
+            super("ScrollContainer");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            const content = new Div(...Array.from({ length: 12 }, (_, index) => new P(`${index + 1}. Content that extends beyond the visible width of the container.`)))
+                .style("width", "max-content");
+            this.#scrollContainer = $.scrollContainer(true, true)
+                .style({
+                inlineSize: "24rem",
+                blockSize: "14rem",
+                border: "var(--panel-border)"
+            })
+                .append(content);
+            this.#scrollContainer.Content.style({
+                padding: "1rem",
+            });
+            this.append(this.markdown(intro$P), this.example([this.#scrollContainer]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Horizontal scrolling")
+                .checked(true)
+                .on("checked", event => {
+                this.#scrollContainer
+                    .horizontal(event.$.Checked)
+                    .sync();
+            }), $.labeledCheckbox("Vertical scrolling")
+                .checked(true)
+                .on("checked", event => {
+                this.#scrollContainer
+                    .vertical(event.$.Checked)
+                    .sync();
+            }), $.labeledCheckbox("Native scroll bars")
+                .on("checked", event => this.#scrollContainer.native(event.$.Checked))
+                .style({
+                marginBlockEnd: "0.5rem"
+            }), $.buttonRegular("Scroll to start")
+                .on("click", () => this.#scrollContainer.scroll({
+                left: 0,
+                top: 0,
+                behavior: "smooth"
+            })), new Text$1("\u2003"), $.buttonRegular("Scroll by 100 px")
+                .on("click", () => this.#scrollContainer.scrollBy({
+                left: getComputedStyle(this.#scrollContainer.DOM).direction === "ltr" ? 100 : -100,
+                top: 100,
+                behavior: "smooth"
+            }))), this.markdown(example$M));
+        }
+    }
+
+    const intro$O = `
+A component that provides controls for navigating through an object that implements \`ISteppable\`.
+It can move to the first, previous, next or last entry and optionally move backwards or forwards by
+a page. The availability of its buttons is automatically synchronized with the current index and
+number of entries.
+
+The preventable \`step\` event is emitted before the index changes; the \`stepped\` event reports a
+completed change.
+
+**Class:** \`@vanilla-ts/components/Stepper\`
+`;
+    const example$L = `
+### Code example
+
+\`\`\`
+import { ISteppable, Stepper } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+import { Code, Div, P } from "@vanilla-ts/dom";
+
+const entries = [
+    "Mercury", "Venus", "Earth", "Mars", "Jupiter",
+    "Saturn", "Uranus", "Neptune", "Ceres", "Pluto"
+];
+let selectedIndex = 0;
+let steppedEventCount = 0;
+
+const selectedEntry = new P(entries[selectedIndex]);
+const position = new Code(\`\${selectedIndex + 1} / \${entries.length}\`)
+    .style({ inlineSize: "5rem", textAlign: "center" });
+const status = new P("No ", new Code("SteppedEvent"), " received yet.");
+const steppable: ISteppable = {
+    Count: entries.length,
+    get Index() {
+        return selectedIndex;
+    },
+    set Index(index: number) {
+        selectedIndex = index;
+        selectedEntry.text(entries[index]);
+    },
+    PageSize: 3
+};
+
+const example = new Stepper(steppable, {
+    Separator: position,
+    FirstBtnOptions: { Title: "First entry" },
+    PageBackwardBtnOptions: { Title: "Previous page" },
+    BackwardBtnOptions: { Title: "Previous entry" },
+    ForwardBtnOptions: { Title: "Next entry" },
+    PageForwardBtnOptions: { Title: "Next page" },
+    LastBtnOptions: { Title: "Last entry" }
+})
+    .addClass("stepper")
+    .on("stepped", event => {
+        position.text(\`\${steppable.Index + 1} / \${steppable.Count}\`);
+        status.phrase(
+            new Code("SteppedEvent"),
+            \` received (\${++steppedEventCount}): Index = \${event.$.Index}.\`
+        );
+    });
+
+new VTS_App(document.body).append(
+    new Div(selectedEntry, example, status)
+        .style({ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" })
+);
+\`\`\`
+`;
+    class StepperEx extends BaseExample {
+        #stepper;
+        constructor() {
+            super("Stepper");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            let appearanceSelect;
+            const entries = [
+                "Mercury", "Venus", "Earth", "Mars", "Jupiter",
+                "Saturn", "Uranus", "Neptune", "Ceres", "Pluto"
+            ];
+            let selectedIndex = 0;
+            let steppedEventCount = 0;
+            const selectedEntry = new P(entries[selectedIndex]);
+            const position = new Code(`${selectedIndex + 1} / ${entries.length}`)
+                .style({ inlineSize: "5rem", textAlign: "center" });
+            const status = new P("No ", new Code("SteppedEvent"), " received yet.");
+            const steppable = {
+                Count: entries.length,
+                get Index() {
+                    return selectedIndex;
+                },
+                set Index(index) {
+                    selectedIndex = index;
+                    selectedEntry.text(entries[index]);
+                },
+                PageSize: 3
+            };
+            this.#stepper = $.stepper(steppable, {
+                Separator: position,
+                FirstBtnOptions: { Title: "First entry" },
+                PageBackwardBtnOptions: { Title: "Previous page" },
+                BackwardBtnOptions: { Title: "Previous entry" },
+                ForwardBtnOptions: { Title: "Next entry" },
+                PageForwardBtnOptions: { Title: "Next page" },
+                LastBtnOptions: { Title: "Last entry" }
+            })
+                .on("stepped", event => {
+                position.text(`${steppable.Index + 1} / ${steppable.Count}`);
+                status.phrase(new Code("SteppedEvent"), ` received (${++steppedEventCount}): Index = ${event.$.Index}.`);
+            });
+            this.append(this.markdown(intro$O), this.example([
+                new Div(selectedEntry, this.#stepper, status)
+                    .style({
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "1rem"
+                })
+            ]), this.markdown("### Configuration"), this.properties(appearanceSelect = $.labeledSelect("Appearance", [
+                new Option("HORIZONTAL").value("horizontal"),
+                new Option("HORIZONTAL_ALT").value("horizontal-alt"),
+                new Option("VERTICAL").value("vertical"),
+                new Option("VERTICAL_ALT").value("vertical-alt")
+            ])
+                .value("horizontal")
+                .on("change", () => {
+                switch (appearanceSelect.Value) {
+                    case "horizontal-alt":
+                        this.#stepper.appearance(StepperAppearance.HORIZONTAL_ALT);
+                        break;
+                    case "vertical":
+                        this.#stepper.appearance(StepperAppearance.VERTICAL);
+                        break;
+                    case "vertical-alt":
+                        this.#stepper.appearance(StepperAppearance.VERTICAL_ALT);
+                        break;
+                    default:
+                        this.#stepper.appearance(StepperAppearance.HORIZONTAL);
+                }
+            }), $.labeledCheckbox("Hide unavailable buttons")
+                .on("checked", event => this.#stepper.options({
+                HideButtons: event.$.Checked
+            })), $.labeledCheckbox("Show page buttons")
+                .checked(true)
+                .on("checked", event => this.#stepper.options({
+                PageBackward: event.$.Checked,
+                PageForward: event.$.Checked
+            })), $.labeledCheckbox("Continuous stepping")
+                .on("checked", event => this.#stepper.options({
+                PageBackwardContinuous: event.$.Checked,
+                BackwardContinuous: event.$.Checked,
+                ForwardContinuous: event.$.Checked,
+                PageForwardContinuous: event.$.Checked
+            }))), this.markdown(example$L));
+        }
+    }
+
+    const intro$N = `
+A component for indicating that an operation is in progress when its duration or completion cannot
+be determined. Unlike a §@components/BusyOverlay§, a \`Throbber\` does not block interaction with
+the rest of the user interface and can be placed next to the content whose busy state it represents.
+
+The component only provides its state and DOM structure; its visual representation is defined by
+CSS. The default theme includes a classic border spinner and the alternative \`modern\` appearance
+shown below.
+
+**Class:** \`@vanilla-ts/components/Throbber\`
+`;
+    const example$K = `
+### Code example
+
+\`\`\`
+import { Throbber } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+import { Div, P } from "@vanilla-ts/dom";
+
+const classic = new Throbber()
+    .addClass("throbber") // Use default styling
+    // Increase/decrease \`borderWidth\` in CSS or at runtime for a thicker/thinner
+    // outer throbber ring. A visually appealing value is \`calc(<width> / 10)\`.
+    .style({ width: "4rem", borderWidth: "0.4rem" });
+
+const modern = new Throbber()
+    .addClass("throbber", "modern") // 'modern' => Use alternate styling
+    // Increase/decrease the variable \`--throbber-stroke-width\` in CSS or
+    // at runtime for a thicker/thinner outer throbber ring.
+    .style("width", "4rem");
+
+const example = new Div(
+    new Div(new P("Classic"), classic)
+        .style({ display: "flex", flexDirection: "column", alignItems: "center" }),
+    new Div(new P("Modern"), modern)
+        .style({ display: "flex", flexDirection: "column", alignItems: "center" })
+)
+    .style({ display: "flex", alignItems: "center", gap: "4rem" });
+
+new VTS_App(document.body).append(example);
+\`\`\`
+
+The animation can be shown or hidden at runtime with \`active()\` or the \`Active\` property:
+
+\`\`\`
+classic.active(false);
+modern.Active = true;
+\`\`\`
+`;
+    class ThrobberEx extends BaseExample {
+        #throbbers;
+        constructor() {
+            super("Throbber");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            let classic;
+            let modern;
+            this.#throbbers = [
+                classic = $.throbber()
+                    .style({ width: "4rem", borderWidth: "0.4rem" }),
+                modern = $.throbber()
+                    .addClass("modern")
+                    .style("width", "4rem")
+            ];
+            this.append(this.markdown(intro$N), this.example([
+                new Div(new Div(new P("Classic"), classic)
+                    .style({
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
+                }), new Div(new P("Modern"), modern)
+                    .style({
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
+                }))
+                    .style({
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4rem"
+                })
+            ]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Active")
+                .checked(true)
+                .on("checked", event => {
+                this.#throbbers.forEach(throbber => throbber.active(event.$.Checked));
+            })), this.markdown(example$K));
         }
     }
 
@@ -13944,6 +15386,7 @@ The components provided by the \`@vanilla-ts/core\` package ...
     const intro$L = `
 A component that encapsulates the DOM element
 %\`<address>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/address%.
+It represents contact information for a person, a group of people or an organization.
 
 **Class:** \`@vanilla-ts/dom/Address\`
 `;
@@ -13984,6 +15427,8 @@ new VTS_App(document.body).append(example);
     const intro$K = `
 A component that encapsulates a native DOM anchor element
 (%\`<a>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a%).
+Together with its \`href\` attribute, an anchor creates a hyperlink to any resource or location that
+can be addressed by a URL.
 This component is also available as a §@components/LabeledAnchor§.
 
 **Class:** \`@vanilla-ts/dom/A\`
@@ -14019,6 +15464,8 @@ new VTS_App(document.body).append(example);
     const intro$J = `
 A component that encapsulates the DOM element
 %\`<b>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/b%.
+It draws attention to text without indicating that the content has additional importance or
+emphasis.
 
 **Class:** \`@vanilla-ts/dom/B\`
 `;
@@ -14052,6 +15499,8 @@ new VTS_App(document.body).append(example);
     const intro$I = `
 A component that encapsulates the DOM element
 %\`<br>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/br%.
+It inserts a line break where the division of lines is meaningful, for example in an address or a
+poem.
 
 **Class:** \`@vanilla-ts/dom/Br\`
 `;
@@ -14082,6 +15531,8 @@ new VTS_App(document.body).append(example);
     const intro$H = `
 A component that encapsulates the native DOM button element
 (%\`<button>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button%).
+It is an interactive control that users can activate to perform an action, such as submitting a
+form or opening a dialog.
 
 **Class:** \`@vanilla-ts/dom/Button\`
 
@@ -14171,6 +15622,8 @@ the previous example). For an advanced usage of component factories see §@core/
     const intro$G = `
 A component that encapsulates the DOM element
 %\`<canvas>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas%.
+It provides a drawing surface for rendering graphics, animations and other visual content through
+JavaScript APIs such as the Canvas API or WebGL.
 
 **Class:** \`@vanilla-ts/dom/Canvas\`
 `;
@@ -14230,6 +15683,8 @@ new VTS_App(document.body).append(example);
     const introCheckbox = `
 A component that encapsulates the native DOM checkbox
 (%\`<input type="checkbox">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/checkbox%).
+It lets users enable or disable a single option. Its indeterminate state can additionally represent
+a mixed or not-yet-decided value.
 This component is also available as a §@components/LabeledCheckbox / -Switch§.
 
 **Class:** \`@vanilla-ts/dom/Checkbox\`
@@ -14354,6 +15809,7 @@ For an advanced usage of component factories see §@core/Component factories§.
     const intro$F = `
 A component that encapsulates the DOM element
 %\`<code>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/code%.
+It marks a short fragment of computer code and is typically rendered using a monospace font.
 
 **Class:** \`@vanilla-ts/dom/Code\`
 `;
@@ -14470,6 +15926,8 @@ new VTS_App(document.body).append(example, dataList);
     const intro$C = `
 A component that encapsulates a native dialog DOM element
 (%\`<dialog>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog%).
+It represents a modal or non-modal dialog box or another interactive component that can be opened
+and closed.
 The §@components/Dialog§ class from \`@vanilla-ts/components\` builds upon this class here and adds
 a lot of advanced features.
 
@@ -14543,6 +16001,8 @@ new VTS_App(document.body).append(btnNonModal, btnModal);
     const intro$B = `
 A component that encapsulates the DOM element
 %\`<div>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/div%.
+It is a generic container for grouping flow content when no more specific semantic element is
+appropriate, commonly for styling or layout purposes.
 
 **Class:** \`@vanilla-ts/dom/Div\`
 `;
@@ -14593,6 +16053,8 @@ new VTS_App(document.body).append(example);
     const intro$A = `
 A component that encapsulates a native email input DOM element
 (%\`<input type="email">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/email%).
+It lets users enter and edit an email address and provides built-in validation for the expected
+syntax. The control can optionally accept multiple addresses.
 This component is also available as a §@components/LabeledEmailInput§.
 
 **Class:** \`@vanilla-ts/dom/EmailInput\`
@@ -14624,6 +16086,7 @@ new VTS_App(document.body).append(example);
     const intro$z = `
 A component that encapsulates the DOM element
 %\`<em>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/em%.
+It marks text with stress emphasis, which can change the meaning of a sentence.
 
 **Class:** \`@vanilla-ts/dom/Em\`
 `;
@@ -14657,6 +16120,8 @@ new VTS_App(document.body).append(example);
     const intro$y = `
 A component that encapsulates the DOM element
 %\`<footer>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/footer%.
+It represents a footer for its nearest section or for the document and commonly contains authorship,
+copyright or related navigation information.
 
 **Class:** \`@vanilla-ts/dom/Footer\`
 `;
@@ -14758,6 +16223,8 @@ f2.dispose();
     const intro$w = `
 A component that encapsulates the DOM element
 %\`<header>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/header%.
+It represents introductory content for a page or section, such as headings, a logo, search controls
+or navigation aids.
 
 **Class:** \`@vanilla-ts/dom/Header\`
 `;
@@ -14804,6 +16271,8 @@ new VTS_App(document.body).append(h, m, f);
     const intro$v = `
 A component that encapsulates the DOM element
 %\`<hr>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hr%.
+It represents a thematic break between paragraph-level elements, such as a change of topic or
+scene.
 
 **Class:** \`@vanilla-ts/dom/Hr\`
 `;
@@ -14834,6 +16303,7 @@ new VTS_App(document.body).append(example);
     const intro$u = `
 6 components that encapsulate the \`h1\` to \`h6\` section heading DOM elements
 (%\`<h1>\` to \`<h6>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements%).
+They identify headings at six levels and establish the hierarchy of sections within a document.
 
 **Classes:** \`@vanilla-ts/dom/H1\` to \`@vanilla-ts/dom/H6\`
 `;
@@ -14883,6 +16353,8 @@ new VTS_App(document.body).append(example);
     const intro$t = `
 A component that encapsulates the DOM element
 %\`<i>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/i%.
+It sets text apart from its surroundings without adding emphasis, for example for technical terms,
+idioms or taxonomic designations.
 
 **Class:** \`@vanilla-ts/dom/I\`
 `;
@@ -14916,6 +16388,8 @@ new VTS_App(document.body).append(example);
     const intro$s = `
 A component that encapsulates the DOM element
 %\`<img>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img%.
+It embeds an image in the document and supports alternative text for situations in which the image
+cannot be seen or loaded.
 
 **Class:** \`@vanilla-ts/dom/Img\`
 `;
@@ -14997,6 +16471,8 @@ being expanded.
     const intro$p = `
 A component that encapsulates the DOM element
 %\`<label>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label%.
+It provides a caption for a form control. Associating both elements makes the control easier to
+understand and lets users activate or focus it through the label.
 
 **Class:** \`@vanilla-ts/dom/Label\`
 `;
@@ -15117,6 +16593,8 @@ new VTS_App(document.body).append(example);
     const intro$n = `
 A component that encapsulates the DOM element
 %\`<main>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/main%.
+It represents the document body's dominant content that is directly related to the page's central
+topic or an application's main functionality.
 
 **Class:** \`@vanilla-ts/dom/Main\`
 `;
@@ -15163,6 +16641,8 @@ new VTS_App(document.body).append(h, m, f);
     const intro$m = `
 A component that encapsulates the DOM element
 %\`<menu>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/menu%.
+It represents an unordered list of items and is treated by browsers as a semantic alternative to an
+§@dom/Ul§ component.
 
 **Class:** \`@vanilla-ts/dom/Menu\`
 `;
@@ -15291,6 +16771,7 @@ new VTS_App(document.body).append(example);
     const intro$k = `
 A component that encapsulates the DOM element
 %\`<nav>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nav%.
+It represents a section containing navigation links, such as a menu, table of contents or index.
 
 **Class:** \`@vanilla-ts/dom/Nav\`
 `;
@@ -15350,6 +16831,8 @@ new VTS_App(document.body).append(example);
     const intro$j = `
 A component that encapsulates a native number input DOM element
 (%\`<input type="number">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number%).
+It lets users enter a number and optionally constrains the value through minimum, maximum and step
+attributes.
 This component is also available as a §@components/LabeledNumberInput§.
 
 **Class:** \`@vanilla-ts/dom/NumberInput\`
@@ -15389,7 +16872,8 @@ new VTS_App(document.body).append(example);
     const intro$i = `
 A component that encapsulates the DOM element
 %\`<ol>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol%. The list also supports the
-properties \`start\`, \`reversed\` and \`type\`.
+properties \`start\`, \`reversed\` and \`type\`. It represents a list whose items have a meaningful
+order and is typically displayed as a numbered list.
 
 **Class:** \`@vanilla-ts/dom/Ol\`
 `;
@@ -15434,7 +16918,7 @@ new VTS_App(document.body).append(example);
     const intro$h = `
 A component that encapsulates the DOM element
 %\`<optgroup>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup%.
-It groups related \`@vanilla-ts/core/Option\` components within a §@dom/Select§ component. The first
+It groups related \`Option\` components within a §@dom/Select§ component. The first
 constructor argument sets the group label; all following arguments are the options of the group.
 
 **Class:** \`@vanilla-ts/dom/OptGroup\`
@@ -15518,6 +17002,7 @@ new VTS_App(document.body).append(example, log);
     const intro$g = `
 A component that encapsulates the DOM element
 %\`<output>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output%.
+It represents the result of a calculation or another action performed by the user or application.
 
 **Class:** \`@vanilla-ts/dom/Output\`
 `;
@@ -15600,6 +17085,7 @@ new VTS_App(document.body).append(example);
     const intro$f = `
 A component that encapsulates a native password input DOM element
 (%\`<input type="password">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password%).
+It provides a single-line field for sensitive text and obscures the entered characters on screen.
 This component is also available as a §@components/LabeledPasswordInput§.
 
 **Class:** \`@vanilla-ts/dom/PasswordInput\`
@@ -15630,8 +17116,9 @@ new VTS_App(document.body).append(example);
 
     const intro$e = `
 A component that encapsulates the DOM element
-%\`<p>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/p%. This component is
-also available as a §@components/LabeledParagraph§.
+%\`<p>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/p%. It represents a
+paragraph or another block-sized grouping of related content. This component is also available as a
+§@components/LabeledParagraph§.
 
 **Class:** \`@vanilla-ts/dom/P\`
 `;
@@ -15668,6 +17155,7 @@ new VTS_App(document.body).append(example);
     const intro$d = `
 A component that encapsulates the DOM element
 %\`<pre>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/pre%.
+It represents preformatted text whose whitespace and line breaks are displayed as written.
 
 **Class:** \`@vanilla-ts/dom/Pre\`
 `;
@@ -15713,6 +17201,8 @@ new VTS_App(document.body).append(example);
     const intro$c = `
 A component that encapsulates the DOM element
 %\`<progress>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/progress%.
+It represents the completion progress of a task, either with a known value or as an indeterminate
+operation. Use a §@dom/Meter§ component instead to represent a scalar value within a known range.
 This component is also available as a §@components/LabeledProgress§.
 
 **Class:** \`@vanilla-ts/dom/Progress\`
@@ -15771,6 +17261,8 @@ corresponding documentation in the \`Progress\` class.
     const intro$b = `
 A component that encapsulates a native radio button DOM element
 (%\`<input type="radio">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio%).
+Radio buttons represent mutually exclusive choices where selecting one option deselects the others
+in the same group.
 This component is also available as a §@components/LabeledRadioButton§.
 
 **Class:** \`@vanilla-ts/dom/RadioButton\`
@@ -15824,6 +17316,7 @@ corresponding documentation in the \`RadioButton\` class.
     const intro$a = `
 A component that encapsulates a native DOM input range element
 (%\`<input type="range">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range%).
+It lets users choose an approximate numeric value from a bounded range using a slider.
 This component is also available as a §@components/LabeledRangeInput§.
 
 **Class:** \`@vanilla-ts/dom/RangeInput\`
@@ -15886,6 +17379,8 @@ new VTS_App(document.body).append(example);
     const intro$9 = `
 A component that encapsulates a native search input DOM element
 (%\`<input type="search">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search%).
+It provides a single-line field for entering search terms and may receive search-specific behavior
+or styling from the browser.
 This component is also available as a §@components/LabeledSearchInput§.
 
 **Class:** \`@vanilla-ts/dom/SearchInput\`
@@ -15917,6 +17412,8 @@ new VTS_App(document.body).append(example);
     const intro$8 = `
 A component that encapsulates the DOM element
 %\`<section>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/section%.
+It represents a generic standalone section of a document when no more specific semantic element is
+appropriate and should usually contain a heading.
 
 **Class:** \`@vanilla-ts/dom/Section\`
 `;
@@ -15971,6 +17468,8 @@ new VTS_App(document.body).append(example);
     const intro$7 = `
 A component that encapsulates a native DOM select element
 (%\`<select>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select%).
+It provides a menu from which users can select one or, when configured accordingly, multiple
+predefined options.
 This component is also available as a §@components/LabeledSelect§.
 
 **Class:** \`@vanilla-ts/dom/Select\`
@@ -16106,6 +17605,8 @@ new VTS_App(document.body).append(example, log);
     const intro$6 = `
 A component that encapsulates the DOM element
 %\`<span>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/span%.
+It is a generic inline container for phrasing content, commonly used to group content for styling or
+shared attributes when no semantic element is appropriate.
 
 **Class:** \`@vanilla-ts/dom/Span\`
 `;
@@ -16139,6 +17640,7 @@ new VTS_App(document.body).append(example);
     const intro$5 = `
 A component that encapsulates the DOM element
 %\`<strong>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/strong%.
+It marks content as having strong importance, seriousness or urgency.
 
 **Class:** \`@vanilla-ts/dom/Strong\`
 `;
@@ -16177,6 +17679,9 @@ A component that encapsulates various native date/time related DOM input element
 - %\`<input type="time">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/time%
 - %\`<input type="month">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/month%
 - %\`<input type="week">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/week%
+
+These controls let users enter or select a date, time or another temporal value in a format
+appropriate for the selected input type.
 
 Please note that the availability of these input types may vary across different browser engines and
 platforms. For example, the \`<input type="week">\` is not supported in the desktop versions of
@@ -16299,8 +17804,9 @@ new VTS_App(document.body).append(example);
     const intro$3 = `
 A component that encapsulates the DOM element
 %\`<textarea>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea%. Instances of
-the \`TextArea\` component are resizeable in both directions by default; in the example below, the
-component is intentionally resizeable only horizontally. This component is also available as a
+the \`TextArea\` component provide a control for entering and editing multiple lines of plain text.
+They are resizable in both directions by default; in the example below, the component is
+intentionally resizable only horizontally. This component is also available as a
 §@components/LabeledTextArea§.
 
 **Class:** \`@vanilla-ts/dom/TextArea\`
@@ -16337,6 +17843,7 @@ new VTS_App(document.body).append(example);
     const intro$2 = `
 A component that encapsulates a
 %\`DOM Text node\`|https://developer.mozilla.org/en-US/docs/Web/API/Text%.
+It represents the textual content contained by an element or attribute in the DOM tree.
 
 **Class:** \`@vanilla-ts/dom/Text\`
 `;
@@ -16385,6 +17892,7 @@ see that it consists of three text nodes and that only the middle one is updated
     const intro$1 = `
 A component that encapsulates a native text input DOM element
 (%\`<input type="text">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text%).
+It provides a single-line field for entering and editing plain text.
 This component is also available as a §@components/LabeledTextInput§.
 
 **Class:** \`@vanilla-ts/dom/TextInput\`
@@ -16416,6 +17924,8 @@ new VTS_App(document.body).append(example);
     const intro = `
 A component that encapsulates the DOM element
 %\`<ul>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul%.
+It represents a list whose item order is not meaningful and is typically displayed as a bulleted
+list.
 
 **Class:** \`@vanilla-ts/dom/Ul\`
 `;
@@ -16649,8 +18159,13 @@ new VTS_App(document.body).append(example);
     let labeledRangeInputEx;
     let labeledSearchInputEx;
     let labeledSelectEx;
+    let labeledTemporalInputEx;
+    let labeledTextAreaEx;
     let labeledTextInputEx;
     let radioButtonGroupEx;
+    let scrollContainerEx;
+    let stepperEx;
+    let throbberEx;
     /** Previous sender of a `NavigateTo` event. */
     let prevSenderOfNavigateTo = undefined;
     /**
@@ -16892,8 +18407,10 @@ new VTS_App(document.body).append(example);
                 example = labeledSelectEx ??= new LabeledSelectEx();
                 break;
             case "#@components/LabeledTemporalInput":
+                example = labeledTemporalInputEx ??= new LabeledTemporalInputEx();
                 break;
             case "#@components/LabeledTextArea":
+                example = labeledTextAreaEx ??= new LabeledTextAreaEx();
                 break;
             case "#@components/LabeledTextInput":
                 example = labeledTextInputEx ??= new LabeledTextInputEx();
@@ -16906,16 +18423,19 @@ new VTS_App(document.body).append(example);
                 example = radioButtonGroupEx ??= new RadioButtonGroupEx();
                 break;
             case "#@components/ScrollContainer":
+                example = scrollContainerEx ??= new ScrollContainerEx();
                 break;
             case "#@components/Splitter":
                 break;
             case "#@components/StdDialog":
                 break;
             case "#@components/Stepper":
+                example = stepperEx ??= new StepperEx();
                 break;
             case "#@components/TabGroup":
                 break;
             case "#@components/Throbber":
+                example = throbberEx ??= new ThrobberEx();
                 break;
             case "#@components/Viewer":
                 break;
@@ -17174,7 +18694,7 @@ new VTS_App(document.body).append(example);
     // Global application component factory instance. Can be imported and used throughout the
     // application to create components with a consistent CSS class name prefix. To be extended with
     // additional component factories as needed.
-    const $ = new (mixinComponentFactories(CSSClassNameFactory, BrFactory, BusyOverlayFactory, ButtonFactory, DisclosureContainerFactory, HrFactory, IconButtonFactory, LabeledAnchorFactory, LabeledCheckboxFactory, LabeledContainerFactory, LabeledEmailInputFactory, LabeledMeterFactory, LabeledNumberInputFactory, LabeledParagraphFactory, LabeledPasswordInputFactory, LabeledProgressFactory, LabeledRadioButtonFactory, LabeledRadioButtonGroupFactory, LabeledRangeInputFactory, LabeledSearchInputFactory, LabeledSelectFactory, LabeledTextInputFactory, RadioButtonGroupFactory, ScrollContainerFactory, SplitterFactory))();
+    const $ = new (mixinComponentFactories(CSSClassNameFactory, BrFactory, BusyOverlayFactory, ButtonFactory, DisclosureContainerFactory, HrFactory, IconButtonFactory, LabeledAnchorFactory, LabeledCheckboxFactory, LabeledContainerFactory, LabeledEmailInputFactory, LabeledMeterFactory, LabeledNumberInputFactory, LabeledParagraphFactory, LabeledPasswordInputFactory, LabeledProgressFactory, LabeledRadioButtonFactory, LabeledRadioButtonGroupFactory, LabeledRangeInputFactory, LabeledSearchInputFactory, LabeledSelectFactory, LabeledTemporalInputFactory, LabeledTextAreaFactory, LabeledTextInputFactory, RadioButtonGroupFactory, ScrollContainerFactory, SplitterFactory, StepperFactory, ThrobberFactory))();
     // Global application instance. Can be used to access the application root and other
     // application-wide features.
     let APP;
@@ -17278,10 +18798,14 @@ new VTS_App(document.body).append(example);
         LabeledRangeInputFactory,
         LabeledSearchInputFactory,
         LabeledSelectFactory,
+        LabeledTemporalInputFactory,
+        LabeledTextAreaFactory,
         LabeledTextInputFactory,
         RadioButtonGroupFactory,
         ScrollContainerFactory,
         SplitterFactory,
+        StepperFactory,
+        ThrobberFactory,
     );
 
     // Global application component factory instance. Can be imported and used throughout the
