@@ -59,6 +59,7 @@ import { ImgEx } from "../examples/@dom/ImgEx.js";
 import { InputEx } from "../examples/@dom/InputEx.js";
 import { DOMIntroductionEx } from "../examples/@dom/IntroductionDOM.js";
 import { LabelEx } from "../examples/@dom/LabelEx.js";
+import { LegendEx } from "../examples/@dom/LegendEx.js";
 import { LiOlUlEx } from "../examples/@dom/LiOlUlEx.js";
 import { MainEx } from "../examples/@dom/MainEx.js";
 import { MenuEx } from "../examples/@dom/MenuEx.js";
@@ -77,6 +78,7 @@ import { RangeInputEx } from "../examples/@dom/RangeInputEx.js";
 import { SearchInputEx } from "../examples/@dom/SearchInputEx.js";
 import { SectionEx } from "../examples/@dom/SectionEx.js";
 import { SelectEx } from "../examples/@dom/SelectEx.js";
+import { SelectedContentEx } from "../examples/@dom/SelectedContentEx.js";
 import { SpanEx } from "../examples/@dom/SpanEx.js";
 import { StrongEx } from "../examples/@dom/StrongEx.js";
 import { TemporalInputEx } from "../examples/@dom/TemporalInputEx.js";
@@ -123,6 +125,7 @@ export const NAVIGATION_TARGETS = [
     "#@dom/Img",
     "#@dom/Input",
     "#@dom/Label",
+    "#@dom/Legend",
     "#@dom/LiOl / LiUl",
     "#@dom/Main",
     "#@dom/Menu",
@@ -141,6 +144,7 @@ export const NAVIGATION_TARGETS = [
     "#@dom/SearchInput",
     "#@dom/Section",
     "#@dom/Select",
+    "#@dom/SelectedContent",
     "#@dom/Span",
     "#@dom/Strong",
     "#@dom/TemporalInput",
@@ -221,6 +225,7 @@ let iEx: IEx;
 let inputEx: InputEx;
 let imgEx: ImgEx;
 let labelEx: LabelEx;
+let legendEx: LegendEx;
 let liOlUlEx: LiOlUlEx;
 let mainEx: MainEx;
 let menuEx: MenuEx;
@@ -239,6 +244,7 @@ let rangeInputEx: RangeInputEx;
 let searchInputEx: SearchInputEx;
 let sectionEx: SectionEx;
 let selectEx: SelectEx;
+let selectedContentEx: SelectedContentEx;
 let spanEx: SpanEx;
 let strongEx: StrongEx;
 let temporalInputEx: TemporalInputEx;
@@ -382,6 +388,9 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
         case "#@dom/Label":
             example = labelEx ??= new LabelEx();
             break;
+        case "#@dom/Legend":
+            example = legendEx ??= new LegendEx();
+            break;
         case "#@dom/LiOl / LiUl":
             example = liOlUlEx ??= new LiOlUlEx();
             break;
@@ -435,6 +444,9 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
             break;
         case "#@dom/Select":
             example = selectEx ??= new SelectEx();
+            break;
+        case "#@dom/SelectedContent":
+            example = selectedContentEx ??= new SelectedContentEx();
             break;
         case "#@dom/Span":
             example = spanEx ??= new SpanEx();

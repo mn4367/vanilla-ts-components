@@ -1,0 +1,12 @@
+.example {
+    .example-area {
+        .canvas {
+            fieldset.legend-example {
+                input[type="checkbox"] {
+                    float: inline-start;
+                    margin-inline-end: var(--base-size-half);
+                }
+            }
+        }
+    }
+}
