@@ -6,7 +6,8 @@ const intro = `
 A component that encapsulates a native DOM select element
 (%\`<select>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select%).
 It provides a menu from which users can select one or, when configured accordingly, multiple
-predefined options.
+predefined options. See also the components §@dom/Legend§, §@dom/OptGroup§ and
+§@dom/SelectedContent§.
 This component is also available as a §@components/LabeledSelect§.
 
 **Class:** \`@vanilla-ts/dom/Select\`
@@ -49,6 +50,11 @@ Setting \`Multiple\` to \`true\` (or calling \`multiple(true)\`) allows users to
 one option. The selected options/values can be read from the \`SelectedOptions\` property of the
 component. Depending on the operating system, users can select multiple entries by holding the
 *Ctrl*, *Command* or *Shift* key.
+
+When one or more options are preselected with \`selected(true)\`, first enable multiple selection
+with \`multiple(true)\` and then add the options using \`options()\`. Preselected options cannot be
+passed to the constructor in this case because the underlying select still behaves as a
+single-selection control while its constructor arguments are added.
 `;
 
 const exampleMultiple = `
@@ -58,15 +64,16 @@ const exampleMultiple = `
 import { VTS_App } from "@vanilla-ts/core";
 import { Em, Option, P, Select } from "@vanilla-ts/dom";
 
-const example = new Select([
-    new Option("Apple").value("apple").selected(true),
-    new Option("Banana").value("banana"),
-    new Option("Cherry").value("cherry").selected(true),
-    new Option("Dragonfruit").value("dragonfruit"),
-    new Option("Eggplant").value("eggplant")
-])
+const example = new Select()
     .multiple(true)
     .size(5)
+    .options([
+        new Option("Apple").value("apple").selected(true),
+        new Option("Banana").value("banana"),
+        new Option("Cherry").value("cherry").selected(true),
+        new Option("Dragonfruit").value("dragonfruit"),
+        new Option("Eggplant").value("eggplant")
+    ])
     .style("width", "10rem")
     .on("change", updateLog);
 
@@ -127,15 +134,16 @@ export class SelectEx extends BaseExample {
                 new Em(selectedValues.join(", ") || "None")
             );
         }
-        const selectMultiple = new Select([
-            new Option("Apple").value("apple").selected(true),
-            new Option("Banana").value("banana"),
-            new Option("Cherry").value("cherry").selected(true),
-            new Option("Dragonfruit").value("dragonfruit"),
-            new Option("Eggplant").value("eggplant")
-        ])
+        const selectMultiple = new Select()
             .multiple(true)
             .size(5)
+            .options([
+                new Option("Apple").value("apple").selected(true),
+                new Option("Banana").value("banana"),
+                new Option("Cherry").value("cherry").selected(true),
+                new Option("Dragonfruit").value("dragonfruit"),
+                new Option("Eggplant").value("eggplant")
+            ])
             .style("width", "10rem")
             .on("change", updateMultipleLog);
 

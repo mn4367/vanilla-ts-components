@@ -18,6 +18,9 @@ select {
     background: var(--input-background);
     font-size: 1rem;
     color: var(--font-color);
+    &::picker-icon {
+        display: none;
+    }
     &.disabled,
     &:disabled {
         color: var(--font-disabled-color);

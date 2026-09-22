@@ -142,6 +142,7 @@ export class StepperEx extends BaseExample {
                     new Option("VERTICAL").value("vertical"),
                     new Option("VERTICAL_ALT").value("vertical-alt")
                 ])
+                    .select(select => select.style("width", "12rem"))
                     .value("horizontal")
                     .on("change", () => {
                         switch (appearanceSelect.Value) {

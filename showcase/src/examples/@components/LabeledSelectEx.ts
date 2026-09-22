@@ -63,18 +63,19 @@ import { LabelPosition, LabeledSelect } from "@vanilla-ts/components";
 import { VTS_App } from "@vanilla-ts/core";
 import { Em, Option, P } from "@vanilla-ts/dom";
 
-const example = new LabeledSelect("Fruits", [
-    new Option("Apple").value("apple").selected(true),
-    new Option("Banana").value("banana"),
-    new Option("Cherry").value("cherry").selected(true),
-    new Option("Dragonfruit").value("dragonfruit"),
-    new Option("Eggplant").value("eggplant")
-])
+const example = new LabeledSelect("Fruits")
     .addClass("labeled-select")
     .labelPosition(LabelPosition.TOP)
     .select(select => select
         .multiple(true)
         .size(5)
+        .options([
+            new Option("Apple").value("apple").selected(true),
+            new Option("Banana").value("banana"),
+            new Option("Cherry").value("cherry").selected(true),
+            new Option("Dragonfruit").value("dragonfruit"),
+            new Option("Eggplant").value("eggplant")
+        ])
     )
     .on("change", updateLog);
 
@@ -136,17 +137,18 @@ export class LabeledSelectEx extends BaseExample {
                 new Em(selectedValues.join(", ") || "None")
             );
         };
-        this.#lInputMultiple = $.labeledSelect("Fruits", [
-            new Option("Apple").value("apple").selected(true),
-            new Option("Banana").value("banana"),
-            new Option("Cherry").value("cherry").selected(true),
-            new Option("Dragonfruit").value("dragonfruit"),
-            new Option("Eggplant").value("eggplant")
-        ])
+        this.#lInputMultiple = $.labeledSelect("Fruits")
             .labelPosition(LabelPosition.TOP)
             .select(select => select
                 .multiple(true)
                 .size(5)
+                .options([
+                    new Option("Apple").value("apple").selected(true),
+                    new Option("Banana").value("banana"),
+                    new Option("Cherry").value("cherry").selected(true),
+                    new Option("Dragonfruit").value("dragonfruit"),
+                    new Option("Eggplant").value("eggplant")
+                ])
             )
             .on("change", updateMultipleLog);
 
