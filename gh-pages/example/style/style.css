@@ -456,7 +456,7 @@ main {
 a {
     --link-color: var(--color-primary-dark);
     --link-hover-color: var(--color-primary);
-    --link-disabled-color: var(--black-25);
+    --link-disabled-color: var(--color-primary-light);
     --link-border-radius: var(--3px);
     color: var(--link-color);
     border-radius: var(--link-border-radius);
@@ -470,8 +470,13 @@ a {
         }
     }
     &.disabled {
-        color: var(--font-disabled-color);
+        color: var(--link-disabled-color);
     }
+}
+.disabled a,
+:disabled a,
+[disabled] a {
+    color: var(--link-disabled-color);
 }
 /* #endregion */
 

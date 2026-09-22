@@ -3579,7 +3579,8 @@ class SelectionEndProp extends AElementComponent {
 /////////////////////////////
 
 /**
- * Text component (for DOM text nodes).
+ * Text component (for DOM text nodes). Represents the textual content of an element in the DOM.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Text
  */
 class Text extends ANodeComponent {
     // @ts-expect-error ---
@@ -3597,7 +3598,9 @@ class Text extends ANodeComponent {
 }
 
 /**
- * A component (`<a>`).
+ * A component (`<a>`). Creates a hyperlink to a URL, file, email address, location on the current
+ * page or anything else that a URL can address.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a
  */
 class A extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3641,7 +3644,8 @@ class A extends ElementComponentWithChildren {
 }
 
 /**
- * Br component (`<br>`).
+ * Br component (`<br>`). Produces a line break in text, for example in an address or poem.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/br
  */
 class Br extends ElementComponentVoid {
     // @ts-expect-error ---
@@ -3655,7 +3659,9 @@ class Br extends ElementComponentVoid {
 }
 
 /**
- * Button component (`<button>`).
+ * Button component (`<button>`). Represents an interactive control that users can activate to
+ * perform an action, such as submitting a form or opening a dialog.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button
  */
 class Button extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3735,7 +3741,8 @@ class ButtonFactory extends ComponentFactory$1 {
 }
 
 /**
- * Code component (`<code>`).
+ * Code component (`<code>`). Represents a short fragment of computer code.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/code
  */
 class Code extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3751,7 +3758,9 @@ class Code extends ElementComponentWithChildren {
 }
 
 /**
- * Dialog component (`<dialog>`).
+ * Dialog component (`<dialog>`). Represents a dialog box or another interactive component that can
+ * be shown either non-modally or as a modal dialog.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
  */
 let Dialog$1 = class Dialog extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3833,7 +3842,9 @@ let Dialog$1 = class Dialog extends ElementComponentWithChildren {
 };
 
 /**
- * Div component (`<div>`).
+ * Div component (`<div>`). Provides a generic container for flow content without adding specific
+ * semantic meaning.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/div
  */
 class Div extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3905,7 +3916,9 @@ class TextField extends AElementComponent {
 }
 
 /**
- * Footer component (`<footer>`).
+ * Footer component (`<footer>`). Represents a footer for its nearest sectioning ancestor or the
+ * document, typically containing authorship, copyright or related information.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/footer
  */
 class Footer extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3921,7 +3934,9 @@ class Footer extends ElementComponentWithChildren {
 }
 
 /**
- * Header component (`<header>`).
+ * Header component (`<header>`). Represents introductory content for its nearest sectioning
+ * ancestor or the document, often including a heading or navigation aids.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/header
  */
 class Header extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3937,7 +3952,8 @@ class Header extends ElementComponentWithChildren {
 }
 
 /**
- * Label component (`<label>`).
+ * Label component (`<label>`). Represents a caption associated with a user-interface control.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label
  */
 class Label extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3960,7 +3976,8 @@ class Label extends ElementComponentWithChildren {
 
 /**
  * List item component (`<li>`), mainly for unordered lists (`<ul>`) but also other types of lists
- * like, for example, menus (`<menu>`).
+ * like, for example, menus (`<menu>`). Represents an individual item in such a list.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/li
  */
 class LiUl extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3976,7 +3993,8 @@ class LiUl extends ElementComponentWithChildren {
 }
 
 /**
- * Main component (`<main>`).
+ * Main component (`<main>`). Represents the dominant content of the document body.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/main
  */
 class Main extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -3992,7 +4010,9 @@ class Main extends ElementComponentWithChildren {
 }
 
 /**
- * Navigation component Nav (`<nav>`).
+ * Navigation component Nav (`<nav>`). Represents a section whose purpose is to provide navigation
+ * links within the current document or to other documents.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/nav
  */
 class Nav extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -4008,7 +4028,8 @@ class Nav extends ElementComponentWithChildren {
 }
 
 /**
- * Paragraph component (`<p>`).
+ * Paragraph component (`<p>`). Represents a paragraph of text or other phrasing content.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/p
  */
 class P extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -4024,7 +4045,9 @@ class P extends ElementComponentWithChildren {
 }
 
 /**
- * Span component (`<span>`).
+ * Span component (`<span>`). Provides a generic inline container for phrasing content without
+ * adding specific semantic meaning.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/span
  */
 class Span extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -4040,7 +4063,8 @@ class Span extends ElementComponentWithChildren {
 }
 
 /**
- * Strong component (`<strong>`).
+ * Strong component (`<strong>`). Marks content as having strong importance, seriousness or urgency.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/strong
  */
 class Strong extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -4056,7 +4080,9 @@ class Strong extends ElementComponentWithChildren {
 }
 
 /**
- * Textarea component (`<textarea>`).
+ * Textarea component (`<textarea>`). Provides a control for entering and editing multiple lines of
+ * plain text.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/textarea
  */
 class TextArea extends ElementComponentWithChildren {
     // @ts-expect-error ---
@@ -4172,7 +4198,8 @@ class TextArea extends ElementComponentWithChildren {
 }
 
 /**
- * Unordered list component Ul (`<ul>`).
+ * Unordered list component Ul (`<ul>`). Represents a list whose item order is not meaningful.
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ul
  */
 class Ul extends ElementComponentWithChildren {
     // @ts-expect-error ---

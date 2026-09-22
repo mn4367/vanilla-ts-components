@@ -4019,7 +4019,8 @@
     /////////////////////////////
 
     /**
-     * Text component (for DOM text nodes).
+     * Text component (for DOM text nodes). Represents the textual content of an element in the DOM.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/Text
      */
     let Text$1 = class Text extends ANodeComponent {
         // @ts-expect-error ---
@@ -4037,7 +4038,9 @@
     };
 
     /**
-     * A component (`<a>`).
+     * A component (`<a>`). Creates a hyperlink to a URL, file, email address, location on the current
+     * page or anything else that a URL can address.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a
      */
     class A extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4081,7 +4084,9 @@
     }
 
     /**
-     * Address component (`<address>`).
+     * Address component (`<address>`). Represents contact information for a person, organization or the
+     * nearest enclosing article or document.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/address
      */
     class Address extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4097,7 +4102,8 @@
     }
 
     /**
-     * B component (`<b>`).
+     * B component (`<b>`). Draws attention to text without conveying additional importance or emphasis.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/b
      */
     class B extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4113,7 +4119,8 @@
     }
 
     /**
-     * Br component (`<br>`).
+     * Br component (`<br>`). Produces a line break in text, for example in an address or poem.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/br
      */
     class Br extends ElementComponentVoid {
         // @ts-expect-error ---
@@ -4140,7 +4147,9 @@
     }
 
     /**
-     * Button component (`<button>`).
+     * Button component (`<button>`). Represents an interactive control that users can activate to
+     * perform an action, such as submitting a form or opening a dialog.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button
      */
     class Button extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4220,7 +4229,9 @@
     }
 
     /**
-     * Canvas component (`<canvas>`).
+     * Canvas component (`<canvas>`). Provides a drawing surface for graphics and animations rendered
+     * through a scripting API. Its children provide fallback content.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/canvas
      */
     class Canvas extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4240,6 +4251,8 @@
         }
     }
 
+    // Referenced by a JSDoc `@see` tag below.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     /**
      * 'DataList' (suggestion values) getter/setter and set method returning this instance.\
      * __Note:__ Only some inputs can have a 'DataList' attribute (`list` attribute).
@@ -4305,7 +4318,10 @@
         }
     }
     /**
-     * Abstract base Input component (`<input>`).\
+     * Abstract base Input component (`<input>`). Represents a form control that accepts or selects user
+     * data.\
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input
+     *
      * __Note:__ This class has mixins for the properties `readonly`, `required`, `dirName`, `multiple`
      * and `value`, however, some input elements don't support these attributes, but since the vast
      * majority supports them, they are included here. Nevertheless some derived classes may have to
@@ -4448,8 +4464,10 @@
     }
 
     /**
-     * Checkbox component (`<input type="checkbox">`) extended with a 'Checked' getter/setter and set
-     * method and also with a custom event `checked` that signals checking/unchecking the checkbox.
+     * Checkbox component (`<input type="checkbox">`). Lets users select or clear a single value.
+     * Extended with a 'Checked' getter/setter and set method and also with a custom event `checked`
+     * that signals checking/unchecking the checkbox.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/checkbox
      */
     class Checkbox extends Input {
         // @ts-expect-error ---
@@ -4549,7 +4567,8 @@
     }
 
     /**
-     * Code component (`<code>`).
+     * Code component (`<code>`). Represents a short fragment of computer code.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/code
      */
     class Code extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4565,7 +4584,9 @@
     }
 
     /**
-     * Comment component (for DOM comment nodes).
+     * Comment component (for DOM comment nodes). Represents an annotation in the DOM that is not
+     * rendered as part of the document.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/Comment
      */
     class Comment extends ANodeComponent {
         // @ts-expect-error ---
@@ -4582,7 +4603,9 @@
     }
 
     /**
-     * DataList component (`<datalist>`).
+     * DataList component (`<datalist>`). Contains predefined values that can be offered as suggestions
+     * for an associated input control.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist
      */
     class DataList extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4598,7 +4621,9 @@
     }
 
     /**
-     * Dialog component (`<dialog>`).
+     * Dialog component (`<dialog>`). Represents a dialog box or another interactive component that can
+     * be shown either non-modally or as a modal dialog.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
      */
     class Dialog extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4680,7 +4705,9 @@
     }
 
     /**
-     * Div component (`<div>`).
+     * Div component (`<div>`). Provides a generic container for flow content without adding specific
+     * semantic meaning.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/div
      */
     class Div extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4696,7 +4723,8 @@
     }
 
     /**
-     * Em component (`<em>`).
+     * Em component (`<em>`). Marks text that has stress emphasis relative to its surrounding content.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/em
      */
     class Em extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4768,7 +4796,9 @@
     }
 
     /**
-     * Email input component (`<input type="email">`).
+     * Email input component (`<input type="email">`). Lets users enter and edit an email address, or
+     * multiple addresses when the `multiple` attribute is enabled.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/email
      */
     class EmailInput extends Input {
         // @ts-expect-error ---
@@ -4803,7 +4833,9 @@
     }
 
     /**
-     * Footer component (`<footer>`).
+     * Footer component (`<footer>`). Represents a footer for its nearest sectioning ancestor or the
+     * document, typically containing authorship, copyright or related information.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/footer
      */
     class Footer extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4819,7 +4851,9 @@
     }
 
     /**
-     * Header component (`<header>`).
+     * Header component (`<header>`). Represents introductory content for its nearest sectioning
+     * ancestor or the document, often including a heading or navigation aids.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/header
      */
     class Header extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4835,7 +4869,8 @@
     }
 
     /**
-     * Hr component (`<hr>`).
+     * Hr component (`<hr>`). Represents a thematic break between paragraph-level sections of content.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hr
      */
     class Hr extends ElementComponentVoid {
         // @ts-expect-error ---
@@ -4862,7 +4897,8 @@
     }
 
     /**
-     * H1 component (`<h1>`).
+     * H1 component (`<h1>`). Represents a first-level section heading.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements
      */
     class H1 extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4877,7 +4913,8 @@
         }
     }
     /**
-     * H2 component (`<h2>`).
+     * H2 component (`<h2>`). Represents a second-level section heading.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements
      */
     class H2 extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4892,7 +4929,8 @@
         }
     }
     /**
-     * H3 component (`<h3>`).
+     * H3 component (`<h3>`). Represents a third-level section heading.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements
      */
     class H3 extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4907,7 +4945,8 @@
         }
     }
     /**
-     * H4 component (`<h4>`).
+     * H4 component (`<h4>`). Represents a fourth-level section heading.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements
      */
     class H4 extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4922,7 +4961,8 @@
         }
     }
     /**
-     * H5 component (`<h5>`).
+     * H5 component (`<h5>`). Represents a fifth-level section heading.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements
      */
     class H5 extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4937,7 +4977,8 @@
         }
     }
     /**
-     * H6 component (`<h6>`).
+     * H6 component (`<h6>`). Represents a sixth-level section heading.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements
      */
     class H6 extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4953,7 +4994,9 @@
     }
 
     /**
-     * I component (`<i>`).
+     * I component (`<i>`). Represents text set apart from the surrounding prose for reasons such as an
+     * idiomatic expression, technical term or foreign-language phrase.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/i
      */
     class I extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -4969,7 +5012,8 @@
     }
 
     /**
-     * Img component (`<img>`).
+     * Img component (`<img>`). Embeds an image into the document.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img
      */
     class Img extends ElementComponentVoid {
         // @ts-expect-error ---
@@ -5103,7 +5147,8 @@
     }
 
     /**
-     * Label component (`<label>`).
+     * Label component (`<label>`). Represents a caption associated with a user-interface control.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label
      */
     class Label extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5125,7 +5170,27 @@
     }
 
     /**
-     * List item component (`<li>`) for ordered lists (`<ol>`).
+     * Legend component (`<legend>`). Represents a caption for the contents of its parent `<fieldset>`
+     * element or, in a customizable `<select>` element, its parent `<optgroup>` element.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/legend
+     */
+    class Legend extends ElementComponentWithChildren {
+        // @ts-expect-error ---
+        #brand;
+        /**
+         * Create Legend component.
+         * @param phrase The phrasing content for the `<legend>` element.
+         */
+        constructor(...phrase) {
+            super("legend");
+            phrase.length > 0 && this.phrase(...phrase);
+        }
+    }
+
+    /**
+     * List item component (`<li>`) for ordered lists (`<ol>`). Represents an individual item whose
+     * ordinal value can be set explicitly.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/li
      */
     class LiOl extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5148,7 +5213,8 @@
 
     /**
      * List item component (`<li>`), mainly for unordered lists (`<ul>`) but also other types of lists
-     * like, for example, menus (`<menu>`).
+     * like, for example, menus (`<menu>`). Represents an individual item in such a list.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/li
      */
     class LiUl extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5164,7 +5230,8 @@
     }
 
     /**
-     * Main component (`<main>`).
+     * Main component (`<main>`). Represents the dominant content of the document body.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/main
      */
     class Main extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5180,7 +5247,9 @@
     }
 
     /**
-     * Menu component (`<menu>`).
+     * Menu component (`<menu>`). Represents an unordered list of items, commonly a group of commands
+     * that users can perform or activate.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/menu
      */
     class Menu extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5315,7 +5384,9 @@
     }
 
     /**
-     * Navigation component Nav (`<nav>`).
+     * Navigation component Nav (`<nav>`). Represents a section whose purpose is to provide navigation
+     * links within the current document or to other documents.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/nav
      */
     class Nav extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5331,7 +5402,9 @@
     }
 
     /**
-     * Number input component (`<input type="number">`).
+     * Number input component (`<input type="number">`). Lets users enter a number and optionally
+     * constrains it to a range or step size.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/number
      */
     class NumberInput extends Input {
         // @ts-expect-error ---
@@ -5370,7 +5443,8 @@
     }
 
     /**
-     * Ordered list component Ol (`<ol>`).
+     * Ordered list component Ol (`<ol>`). Represents a list whose items have a meaningful order.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ol
      */
     class Ol extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5465,7 +5539,9 @@
     }
 
     /**
-     * OptGroup component (`<optgroup>`).
+     * OptGroup component (`<optgroup>`). Groups related options within a `<select>` element and gives
+     * the group a label.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/optgroup
      */
     class OptGroup extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5473,7 +5549,7 @@
         /**
          * Create OptGroup component.
          * @param label The label for the `<optgroup>` element.
-         * @param options `Option` components to be added to this `OptGroup` instance.
+         * @param options Child components to be added to this `OptGroup` instance.
          */
         constructor(label, ...options) {
             super("optgroup");
@@ -5488,7 +5564,9 @@
     }
 
     /**
-     * Option component (`<option>`).
+     * Option component (`<option>`). Represents an item that users can choose in a `<select>`,
+     * `<optgroup>` or `<datalist>` element.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/option
      */
     class Option extends ElementComponentWithChildren {
         /**
@@ -5529,7 +5607,8 @@
     }
 
     /**
-     * Output component (`<output>`).
+     * Output component (`<output>`). Represents the result of a calculation or user action.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/output
      */
     class Output extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5551,7 +5630,8 @@
     }
 
     /**
-     * Paragraph component (`<p>`).
+     * Paragraph component (`<p>`). Represents a paragraph of text or other phrasing content.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/p
      */
     class P extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5567,7 +5647,9 @@
     }
 
     /**
-     * Password input component (`<input type="password">`).
+     * Password input component (`<input type="password">`). Lets users enter text while obscuring its
+     * value on screen.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/password
      */
     class PasswordInput extends Input {
         // @ts-expect-error ---
@@ -5631,7 +5713,9 @@
     }
 
     /**
-     * Pre component (`<pre>`).
+     * Pre component (`<pre>`). Represents preformatted text whose whitespace is displayed as written in
+     * the source.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/pre
      */
     class Pre extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5660,7 +5744,9 @@
         }
     }
     /**
-     * Progress component (`<progress>`).
+     * Progress component (`<progress>`). Indicates how much of a task has been completed, either as a
+     * determinate value or in an indeterminate state.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/progress
      */
     class Progress extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -5785,8 +5871,10 @@
     }
 
     /**
-     * Radio button component (`<input type="radio">`)  extended with a 'Checked' getter/setter and set
-     * method and also with a custom event `checked` that signals checking/unchecking the radio button.
+     * Radio button component (`<input type="radio">`). Lets users select one value from a group of
+     * related choices that share the same name. Extended with a 'Checked' getter/setter and set method
+     * and also with a custom event `checked` that signals checking/unchecking the radio button.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/radio
      */
     class RadioButton extends Input {
         // @ts-expect-error ---
@@ -5937,7 +6025,9 @@
     }
 
     /**
-     * Range input component (`<input type="range">`).
+     * Range input component (`<input type="range">`). Lets users choose an approximate numeric value
+     * within a configured range.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/range
      */
     class RangeInput extends Input {
         // @ts-expect-error ---
@@ -6044,7 +6134,9 @@
     }
 
     /**
-     * Search input component (`<input type="search">`).
+     * Search input component (`<input type="search">`). Provides a single-line field for entering a
+     * search query.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/search
      */
     class SearchInput extends Input {
         // @ts-expect-error ---
@@ -6069,7 +6161,27 @@
     }
 
     /**
-     * Section component (`<section>`).
+     * SelectedContent component (`<selectedcontent>`). Displays a clone of the currently selected
+     * `<option>` content inside the first child `<button>` of a customizable `<select>` element. Its
+     * contents are managed by the user agent and therefore cannot be added through the component API.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/selectedcontent
+     */
+    class SelectedContent extends AElementComponent {
+        // @ts-expect-error ---
+        #brand;
+        /**
+         * Create SelectedContent component.
+         */
+        constructor() {
+            super();
+            this._dom = document.createElement("selectedcontent");
+        }
+    }
+
+    /**
+     * Section component (`<section>`). Represents a generic standalone section of a document, which
+     * should usually have a heading.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/section
      */
     class Section extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -6085,7 +6197,8 @@
     }
 
     /**
-     * Select component (`<select>`).
+     * Select component (`<select>`). Provides a menu from which users can choose one or more options.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/select
      */
     class Select extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -6143,11 +6256,17 @@
          * this `Select` instance with the specified values; these child components are also disposed
          * of(!), so if they are needed or referenced somewhere else they must be extracted or removed
          * before calling the setter (using `<selectInstance>.extract()`, `<selectInstance>.remove()`).
+         * When replacing existing options, their selected values are restored in the new list. When
+         * initially populating the select, the selected state of the supplied options is retained.
          * @param v The options for the drop-down list.
          * @returns This instance.
          */
         options(v) {
+            const oldOptions = this.Options;
             const oldValue = this.Value;
+            const oldSelectedValues = this.Multiple
+                ? oldOptions.filter(option => option.Selected).map(option => option.Value)
+                : [];
             const extracted = [];
             this.extract(extracted);
             for (const component of extracted) {
@@ -6155,7 +6274,19 @@
             }
             this._dom.replaceChildren();
             this.append(...v);
-            this.value(oldValue);
+            if (oldOptions.length > 0) {
+                if (this.Multiple) {
+                    const selectedValues = [...oldSelectedValues];
+                    for (const option of this.Options) {
+                        const index = selectedValues.indexOf(option.Value);
+                        option.Selected = index >= 0;
+                        index >= 0 && selectedValues.splice(index, 1);
+                    }
+                }
+                else {
+                    this.value(oldValue);
+                }
+            }
             return this;
         }
         /**
@@ -6275,7 +6406,9 @@
     }
 
     /**
-     * Span component (`<span>`).
+     * Span component (`<span>`). Provides a generic inline container for phrasing content without
+     * adding specific semantic meaning.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/span
      */
     class Span extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -6291,7 +6424,8 @@
     }
 
     /**
-     * Strong component (`<strong>`).
+     * Strong component (`<strong>`). Marks content as having strong importance, seriousness or urgency.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/strong
      */
     class Strong extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -6329,7 +6463,9 @@
         TemporalType[TemporalType["Month"] = 6] = "Month";
     })(TemporalType || (TemporalType = {}));
     /**
-     * Input component (`<input>`) for temporal types (`date`, `datetime-local`, `time` etc.).
+     * Input component (`<input>`) for temporal types (`date`, `datetime-local`, `month`, `time` and
+     * `week`). Lets users enter or select a value appropriate for the configured temporal type.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input
      */
     class TemporalInput extends Input {
         // @ts-expect-error ---
@@ -6400,7 +6536,9 @@
     }
 
     /**
-     * Textarea component (`<textarea>`).
+     * Textarea component (`<textarea>`). Provides a control for entering and editing multiple lines of
+     * plain text.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/textarea
      */
     class TextArea extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -6516,7 +6654,9 @@
     }
 
     /**
-     * Text input component (`<input type="text">`).
+     * Text input component (`<input type="text">`). Provides a control for entering and editing a
+     * single line of plain text.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/text
      */
     class TextInput extends Input {
         // @ts-expect-error ---
@@ -6541,7 +6681,8 @@
     }
 
     /**
-     * Unordered list component Ul (`<ul>`).
+     * Unordered list component Ul (`<ul>`). Represents a list whose item order is not meaningful.
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ul
      */
     class Ul extends ElementComponentWithChildren {
         // @ts-expect-error ---
@@ -12763,7 +12904,7 @@
         }
     }
 
-    const intro$18 = `
+    const intro$1a = `
 \`BusyOverlay\` is a component for displaying an overlay that indicates a
 'busy-with-no-defined-end' state. The overlay covers the complete viewport and prevents any user
 interaction with the UI below it. It is typically used during long-running operations where user
@@ -12779,7 +12920,7 @@ The component offers additional features:
 - Support for nested calls to \`busy()\`/\`idle()\`. This makes it very easy to use the overlay in
   scenarios where multiple (asynchronous) operations may overlap.
 `;
-    const example$13 = `
+    const example$15 = `
 ### Basic usage
 
 \`\`\`
@@ -12934,12 +13075,12 @@ longRunning3();
             const btnBusy3 = new Button("Show")
                 .addClass("regular")
                 .on("click", async () => await show(false, 3500, 500));
-            this.append(this.markdown(intro$18), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
-            ), this.markdown(example$13), this.markdown(example2));
+            this.append(this.markdown(intro$1a), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
+            ), this.markdown(example$15), this.markdown(example2));
         }
     }
 
-    const intro$17 = `
+    const intro$19 = `
 A container component whose content can be disclosed/undisclosed.
 
 **Class:** \`@vanilla-ts/components/DisclosureContainer\`
@@ -12955,7 +13096,7 @@ The \`DisclosureContainer\` component supports the following features:
 
 All features are configurable at runtime on an already existing instance.
 `;
-    const example$12 = `
+    const example$14 = `
 ### Notes
 - If \`WeakUndisclosed\` is \`true\` the inner content container will keep its content in the DOM
   when it is undisclosed, otherwise the content will be removed from the DOM.
@@ -13072,7 +13213,7 @@ if (someCondition) {
                 "textAlign": "center",
             });
             this
-                .append(this.markdown(intro$17), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$12), this.markdown(css$1), this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"), this.markdown(`
+                .append(this.markdown(intro$19), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$14), this.markdown(css$1), this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"), this.markdown(`
 \`\`\`typescript
 example.Header.on("click", () => {
     example.Disclosed = !example.Disclosed;
@@ -13176,7 +13317,7 @@ example.headerCb(header => header.on("click", () => {
         }
     }
 
-    const intro$16 = `
+    const intro$18 = `
 \`IconButton\` is a component to display buttons with icons and/or text. The
 component itself is a regular \`§@dom/Button§\` component that contains three inner \`§@dom/Span§\`
 components which can be styled individually:
@@ -13407,7 +13548,7 @@ Compared to the example which uses background images the amount of CSS needed he
             let ib2a;
             let ib3a;
             const ibf = new MyIconButtonFactory();
-            this.append(this.markdown(intro$16), this.example([
+            this.append(this.markdown(intro$18), this.example([
                 new P("IconButtons with background images:"),
                 new Div().addClass("icon-button-container").append(ib0 = ibf.iconButton({
                     IconStart: "-ios_share",
@@ -13467,7 +13608,7 @@ Compared to the example which uses background images the amount of CSS needed he
         }
     }
 
-    const intro$15 = `
+    const intro$17 = `
 ## Advanced components
 
 The components provided by the \`@vanilla-ts/components\` package are complex elements that address
@@ -13535,7 +13676,7 @@ labeled components.
         buildExample() {
             this
                 .addClass("ex-components-introduction")
-                .append(this.markdown(intro$15));
+                .append(this.markdown(intro$17));
         }
     }
 
@@ -13590,14 +13731,14 @@ labeled components.
         ];
     }
 
-    const intro$14 = `
+    const intro$16 = `
 A component with an §@dom/A§ and a §@dom/Label§ representing a caption for the component. It
 creates a labeled hyperlink to a web page, file, email address or another location identified by a
 URL.
 
 **Class:** \`@vanilla-ts/components/LabeledAnchor\`
 `;
-    const example$11 = `
+    const example$13 = `
 ### Code example
 
 \`\`\`
@@ -13633,9 +13774,9 @@ new VTS_App(document.body).append(anchor1, anchor2);
         buildExample() {
             this.#lAnchor1 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-dom", "DOM project home", "Vanilla.ts DOM").target("_blank");
             this.#lAnchor2 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-components", "Components project home").target("_blank");
-            this.append(this.markdown(intro$14), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$16), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$11));
+                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$13));
         }
     }
 
@@ -13780,14 +13921,14 @@ For an advanced usage of component factories see §@core/Component factories§.
         }
     }
 
-    const intro$13 = `
+    const intro$15 = `
 A component with a §@dom/Div§ as an inner container for other components and a §@dom/Span§
 representing the caption for the container component. It is useful for visually grouping related
 content under a common caption without imposing additional semantics on that content.
 
 **Class:** \`@vanilla-ts/components/LabeledContainer\`
 `;
-    const example$10 = `
+    const example$12 = `
 ### Code example
 
 \`\`\`
@@ -13862,18 +14003,18 @@ new VTS_App(document.body).append(example);
                 { Label: "Nightly builds", Value: "nightly" },
             ], "rbg-sample-1")
                 .value("beta"), $.hr(), new P("Choose how updates should be installed"), $.labeledCheckbox("Automatically download available updates").checked(true), $.labeledCheckbox("Install updates automatically").checked(true), $.labeledCheckbox("Install security updates automatically").checked(true).disabled(true));
-            this.append(this.markdown(intro$13), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$10), this.markdown(exampleCSS$1));
+            this.append(this.markdown(intro$15), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$12), this.markdown(exampleCSS$1));
         }
     }
 
-    const intro$12 = `
+    const intro$14 = `
 A component with an §@dom/EmailInput§ and a §@dom/Label§ representing a caption for the component.
 It lets users enter an email address and uses the browser's built-in validation for email syntax.
 
 **Class:** \`@vanilla-ts/components/LabeledEmailInput\`
 `;
-    const example$$ = `
+    const example$11 = `
 ### Code example
 
 \`\`\`
@@ -13897,20 +14038,20 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledEmailInput("Business contact")
                 .emailInput(c => c.placeholder("sophie@example.com"));
-            this.append(this.markdown(intro$12), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$14), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$$));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$11));
         }
     }
 
-    const intro$11 = `
+    const intro$13 = `
 A component with a §@dom/Meter§ and a §@dom/Span§ representing a caption for the component. It
 represents a scalar value within a known range. Use a §@dom/Progress§ component instead to represent
 the progress of a task.
 
 **Class:** \`@vanilla-ts/components/LabeledMeter\`
 `;
-    const example$_ = `
+    const example$10 = `
 ### Code example
 
 \`\`\`
@@ -13949,7 +14090,7 @@ new VTS_App(document.body).append(example);
             "68 out of 100" // Fallback content
             )
                 .meter(meter => meter.style("inlineSize", "15rem"));
-            this.append(this.markdown(intro$11), this.example([this.#lMeter]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+            this.append(this.markdown(intro$13), this.example([this.#lMeter]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
                 this.#lMeter.meter(cb => cb.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL));
             }), $.labeledNumberInput("Current value:", undefined, this.#lMeter.Value.toString(), "", "0", "100")
@@ -13957,18 +14098,18 @@ new VTS_App(document.body).append(example);
                 this.#lMeter.value(numberInput.ValueAsNumber);
             }))), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lMeter], true, "start", "start")), this.markdown(example$_));
+                .append(...labeledComponentLabelFlags([this.#lMeter], true, "start", "start")), this.markdown(example$10));
         }
     }
 
-    const intro$10 = `
+    const intro$12 = `
 A component with a §@dom/NumberInput§ and a §@dom/Label§ representing a caption for the component.
 It lets users enter a number and optionally constrains the value through minimum, maximum and step
 attributes.
 
 **Class:** \`@vanilla-ts/components/LabeledNumberInput\`
 `;
-    const example$Z = `
+    const example$$ = `
 ### Code example
 
 \`\`\`
@@ -14032,20 +14173,20 @@ new VTS_App(document.body).append(example);
                 .on("input", () => {
                 this.#lInput.NumberInput.DOM.setCustomValidity(this.#lInput.Value === "42" ? "" : "not_42");
             });
-            this.append(this.markdown(intro$10), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$12), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$Z), this.markdown(css));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$$), this.markdown(css));
         }
     }
 
-    const intro$$ = `
+    const intro$11 = `
 A component with a §@dom/P§ and a §@dom/Span§ representing a caption for the component. It combines
 a caption with a paragraph-sized block of related content and is useful for displaying labeled
 values or descriptions.
 
 **Class:** \`@vanilla-ts/components/LabeledParagraph\`
 `;
-    const example$Y = `
+    const example$_ = `
 ### Code example
 
 \`\`\`
@@ -14071,19 +14212,19 @@ et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est.
         /** @inheritdoc */
         buildExample() {
             this.#lParagraph = $.labeledParagraph("Sample text", lorem);
-            this.append(this.markdown(intro$$), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$11), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$Y));
+                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$_));
         }
     }
 
-    const intro$_ = `
+    const intro$10 = `
 A component with a §@dom/PasswordInput§ and a §@dom/Label§ representing a caption for the component.
 It lets users enter sensitive text while the browser obscures the entered characters on screen.
 
 **Class:** \`@vanilla-ts/components/LabeledPasswordInput\`
 `;
-    const example$X = `
+    const example$Z = `
 ### Code example
 
 \`\`\`
@@ -14107,20 +14248,20 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledPasswordInput("Password")
                 .passwordInput(c => c.placeholder("Enter password"));
-            this.append(this.markdown(intro$_), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$10), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$X));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$Z));
         }
     }
 
-    const intro$Z = `
+    const intro$$ = `
 A component with a §@dom/Progress§ and a §@dom/Span§ representing a caption for the component. It
 represents the progress of a task, such as a download or file transfer. Use a §@dom/Meter§ component
 instead to represent a scalar value within a known range.
 
 **Class:** \`@vanilla-ts/components/LabeledProgress\`
 `;
-    const example$W = `
+    const example$Y = `
 ### Code example
 
 \`\`\`
@@ -14160,7 +14301,7 @@ class.
             "70 out of 100" // Fallback content
             )
                 .progress(progress => progress.style("inlineSize", "15rem"));
-            this.append(this.markdown(intro$Z), this.example([this.#lProgress]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+            this.append(this.markdown(intro$$), this.example([this.#lProgress]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
                 this.#lProgress.progress(cb => cb.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL));
             }), $.labeledNumberInput("Maximum value:", undefined, "100", "", "1", "100")
@@ -14175,11 +14316,11 @@ class.
                 marginBlock: "0.5rem 0"
             })), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lProgress], true, "start", "start")), this.markdown(example$W));
+                .append(...labeledComponentLabelFlags([this.#lProgress], true, "start", "start")), this.markdown(example$Y));
         }
     }
 
-    const intro$Y = `
+    const intro$_ = `
 A component with a §@dom/RadioButton§ and a §@dom/Label§ representing a caption for the component.
 Radio buttons represent mutually exclusive choices where selecting one option deselects the others
 in the same group. This class mainly exists as a building block for
@@ -14187,7 +14328,7 @@ in the same group. This class mainly exists as a building block for
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButton\`
 `;
-    const example$V = `
+    const example$X = `
 ### Code example
 
 \`\`\`
@@ -14214,7 +14355,7 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$Y), this.example([
+            this.append(this.markdown(intro$_), this.example([
                 this.#lrb = $.labeledRadioButton("Beta versions")
                     .on("checked", () => this.#rbgCb.value(this.#lrb.Checked ? "checked" : "unchecked"))
             ]), this.markdown("### Label position, label alignment and radio button state"), new Div()
@@ -14234,18 +14375,18 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
                         break;
                 }
             }), ...labeledComponentLabelFlags([this.#lrb], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$V));
+                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$X));
         }
     }
 
-    const intro$X = `
+    const intro$Z = `
 A component that groups multiple §@components/LabeledRadioButton§s into a single component that is
 similar to a §@components/LabeledContainer§. It presents a labeled set of mutually exclusive choices
 and ensures that only one radio button in the group is selected at a time.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButtonGroup\`
 `;
-    const example$U = `
+    const example$W = `
 ### Code example
 
 \`\`\`
@@ -14285,7 +14426,7 @@ in the \`RadioButtonGroup\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$X), this.example([
+            this.append(this.markdown(intro$Z), this.example([
                 this.#lrbg = $.labeledRadioButtonGroup("Your position", [
                     { Label: "Software developer", Value: "software_developer" },
                     { Label: "Security engineer", Value: "security_engineer" },
@@ -14313,18 +14454,18 @@ in the \`RadioButtonGroup\` class.
             }), 
             // $.labeledContainer("Inner radio button group").append(
             ...labeledComponentLabelFlags([this.#lrbg.RadioButtonGroup], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$U));
+                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$W));
         }
     }
 
-    const intro$W = `
+    const intro$Y = `
 A component with a §@dom/RangeInput§ and a §@dom/Label§ representing a caption for the component.
 The label is automatically associated with the range input through its \`for\` and \`id\`
 attributes. It lets users select an approximate numeric value from a bounded range using a slider.
 
 **Class:** \`@vanilla-ts/components/LabeledRangeInput\`
 `;
-    const example$T = `
+    const example$V = `
 ### Code example
 
 \`\`\`
@@ -14378,7 +14519,7 @@ new VTS_App(document.body).append(
                 .rangeInput(rangeInput => rangeInput
                 .style("inlineSize", "15rem")
                 .on("input", () => value.text(rangeInput.Value)));
-            this.append(this.markdown(intro$W), this.example([
+            this.append(this.markdown(intro$Y), this.example([
                 this.#lRangeInput,
                 new P("Current value: ", value = new Code(this.#lRangeInput.Value))
                     .style({
@@ -14400,18 +14541,18 @@ new VTS_App(document.body).append(
                 value.text(this.#lRangeInput.Value);
             }))), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lRangeInput], true, "start", "start")), this.markdown(example$T));
+                .append(...labeledComponentLabelFlags([this.#lRangeInput], true, "start", "start")), this.markdown(example$V));
         }
     }
 
-    const intro$V = `
+    const intro$X = `
 A component with a §@dom/SearchInput§ and a §@dom/Label§ representing a caption for the component.
 It provides a single-line field for entering search terms and may receive search-specific behavior
 or styling from the browser.
 
 **Class:** \`@vanilla-ts/components/LabeledSearchInput\`
 `;
-    const example$S = `
+    const example$U = `
 ### Code example
 
 \`\`\`
@@ -14435,19 +14576,19 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledSearchInput("Search")
                 .searchInput(c => c.placeholder("Enter search term..."));
-            this.append(this.markdown(intro$V), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$X), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$S));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$U));
         }
     }
 
-    const intro$U = `
+    const intro$W = `
 A component with an §@dom/Select§ and a §@dom/Label§ representing a caption for the component. It
 lets users choose one or more entries from a predefined list of options.
 
 **Class:** \`@vanilla-ts/components/LabeledSelect\`
 `;
-    const example$R = `
+    const example$T = `
 ### Code example
 
 \`\`\`
@@ -14478,7 +14619,7 @@ const log = new P("Select a fruit from the dropdown above.")
 new VTS_App(document.body).append(example, log);
 \`\`\`
 `;
-    const introMultiple$1 = `
+    const introMultiple$2 = `
 ## Multiple selection
 
 The inner \`Select\` component also supports multiple selection. It can be configured while creating
@@ -14487,7 +14628,7 @@ The selected options/values can be read from the \`SelectedOptions\` property of
 component. Depending on the operating system, users can select multiple entries by holding the
 *Ctrl*, *Command* or *Shift* key.
 `;
-    const exampleMultiple$1 = `
+    const exampleMultiple$2 = `
 ### Code example (multiple selection)
 
 \`\`\`
@@ -14495,18 +14636,19 @@ import { LabelPosition, LabeledSelect } from "@vanilla-ts/components";
 import { VTS_App } from "@vanilla-ts/core";
 import { Em, Option, P } from "@vanilla-ts/dom";
 
-const example = new LabeledSelect("Fruits", [
-    new Option("Apple").value("apple").selected(true),
-    new Option("Banana").value("banana"),
-    new Option("Cherry").value("cherry").selected(true),
-    new Option("Dragonfruit").value("dragonfruit"),
-    new Option("Eggplant").value("eggplant")
-])
+const example = new LabeledSelect("Fruits")
     .addClass("labeled-select")
     .labelPosition(LabelPosition.TOP)
     .select(select => select
         .multiple(true)
         .size(5)
+        .options([
+            new Option("Apple").value("apple").selected(true),
+            new Option("Banana").value("banana"),
+            new Option("Cherry").value("cherry").selected(true),
+            new Option("Dragonfruit").value("dragonfruit"),
+            new Option("Eggplant").value("eggplant")
+        ])
     )
     .on("change", updateLog);
 
@@ -14560,33 +14702,34 @@ new VTS_App(document.body).append(example, log);
                 const selectedValues = this.#lInputMultiple.Select.SelectedOptions.map(option => option.Value);
                 logMultiple.phrase("Selected fruits (values): ", new Em(selectedValues.join(", ") || "None"));
             };
-            this.#lInputMultiple = $.labeledSelect("Fruits", [
+            this.#lInputMultiple = $.labeledSelect("Fruits")
+                .labelPosition(LabelPosition.TOP)
+                .select(select => select
+                .multiple(true)
+                .size(5)
+                .options([
                 new Option("Apple").value("apple").selected(true),
                 new Option("Banana").value("banana"),
                 new Option("Cherry").value("cherry").selected(true),
                 new Option("Dragonfruit").value("dragonfruit"),
                 new Option("Eggplant").value("eggplant")
-            ])
-                .labelPosition(LabelPosition.TOP)
-                .select(select => select
-                .multiple(true)
-                .size(5))
+            ]))
                 .on("change", updateMultipleLog);
-            this.append(this.markdown(intro$U), this.example([
+            this.append(this.markdown(intro$W), this.example([
                 this.#lInput,
                 log
             ]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$R), this.markdown("---"), this.markdown(introMultiple$1), this.example([
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$T), this.markdown("---"), this.markdown(introMultiple$2), this.example([
                 this.#lInputMultiple,
                 logMultiple
             ]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInputMultiple], true, "top", "start")), this.markdown(exampleMultiple$1));
+                .append(...labeledComponentLabelFlags([this.#lInputMultiple], true, "top", "start")), this.markdown(exampleMultiple$2));
         }
     }
 
-    const intro$T = `
+    const intro$V = `
 A component with a §@dom/TemporalInput§ and a §@dom/Label§ representing a caption for the component.
 The label is automatically associated with the temporal input through its \`for\` and \`id\`
 attributes. The inner input can represent a date, time, local date and time, month or week, depending
@@ -14671,7 +14814,7 @@ across browser engines and platforms.
     };
     const initialType = TemporalType.DateTime;
     const initialConfig = temporalInputConfigurations[initialType];
-    const example$Q = `
+    const example$S = `
 ### Code example
 
 \`\`\`
@@ -14718,7 +14861,7 @@ new VTS_App(document.body).append(example);
                 .labelPosition(LabelPosition.TOP)
                 .on("input", () => value.text(this.#lTemporalInput.Value));
             const labeledTemporalInputs = [this.#lTemporalInput];
-            this.append(this.markdown(intro$T), this.example([
+            this.append(this.markdown(intro$V), this.example([
                 this.#lTemporalInput,
                 new P("Current value: ", value = new Code(this.#lTemporalInput.Value))
                     .style({
@@ -14782,18 +14925,18 @@ new VTS_App(document.body).append(example);
                 value.text(this.#lTemporalInput.Value);
             }), stepGranularity = new Span(`\u2003(Step granularity is ${initialConfig.stepDescription})`)), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags(labeledTemporalInputs, true, "start", "start")), this.markdown(example$Q));
+                .append(...labeledComponentLabelFlags(labeledTemporalInputs, true, "start", "start")), this.markdown(example$S));
         }
     }
 
-    const intro$S = `
+    const intro$U = `
 A component with a §@dom/TextArea§ and a §@dom/Label§ representing a caption for the component. The
 label is automatically associated with the textarea through its \`for\` and \`id\` attributes. It
 lets users enter and edit multiple lines of plain text.
 
 **Class:** \`@vanilla-ts/components/LabeledTextArea\`
 `;
-    const example$P = `
+    const example$R = `
 ### Code example
 
 \`\`\`
@@ -14848,7 +14991,7 @@ new VTS_App(document.body).append(example);
                 .textArea(textArea => textArea
                 .placeholder("Enter your message here")
                 .resizable("vertical"));
-            this.append(this.markdown(intro$S), this.example([this.#lTextArea]), this.markdown("### Configuration"), this.properties($.labeledNumberInput("Visible rows:", undefined, this.#lTextArea.TextArea.Rows.toString(), "", "1", "20")
+            this.append(this.markdown(intro$U), this.example([this.#lTextArea]), this.markdown("### Configuration"), this.properties($.labeledNumberInput("Visible rows:", undefined, this.#lTextArea.TextArea.Rows.toString(), "", "1", "20")
                 .numberInput(numberInput => numberInput.on("input", () => {
                 this.#lTextArea.TextArea.rows(numberInput.ValueAsNumber);
             })), $.labeledNumberInput("Visible columns:", undefined, this.#lTextArea.TextArea.Cols.toString(), "", "1", "100")
@@ -14874,17 +15017,17 @@ new VTS_App(document.body).append(example);
             }))
                 .style("marginBlockStart", "0.5rem")), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lTextArea], true, "top", "start")), this.markdown(example$P));
+                .append(...labeledComponentLabelFlags([this.#lTextArea], true, "top", "start")), this.markdown(example$R));
         }
     }
 
-    const intro$R = `
+    const intro$T = `
 A component with a §@dom/TextInput§ and a §@dom/Label§ representing a caption for the component. It
 provides a labeled, single-line field for entering and editing plain text.
 
 **Class:** \`@vanilla-ts/components/LabeledTextInput\`
 `;
-    const example$O = `
+    const example$Q = `
 ### Code example
 
 \`\`\`
@@ -14908,20 +15051,20 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledTextInput("Username")
                 .textInput(c => c.placeholder("Enter your name here"));
-            this.append(this.markdown(intro$R), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$T), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$O));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$Q));
         }
     }
 
-    const intro$Q = `
+    const intro$S = `
 A component that groups multiple §@components/LabeledRadioButton§s into a single component. It
 presents a set of mutually exclusive choices and ensures that only one radio button is selected at
 a time.
 
 **Class:** \`@vanilla-ts/components/RadioButtonGroup\`
 `;
-    const example$N = `
+    const example$P = `
 ### Code example
 
 \`\`\`
@@ -14957,7 +15100,7 @@ in the \`RadioButtonGroup\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$Q), this.example([
+            this.append(this.markdown(intro$S), this.example([
                 this.#rbg = $.radioButtonGroup([
                     { Label: "Regular updates", Value: "regular" },
                     { Label: "Beta versions", Value: "beta" },
@@ -14968,11 +15111,11 @@ in the \`RadioButtonGroup\` class.
                 .addClass("example-properties")
                 .append(...labeledComponentLabelFlags([this.#rbg], true, "end", "start"), $.labeledCheckbox("Horizontal alignment")
                 .on("checked", (ev) => this.#rbg.orientation(ev.$.Checked ? Orientation.HORIZONTAL : Orientation.VERTICAL)), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#rbg.toggle(!this.#rbg.Toggle))), this.markdown(example$N));
+                .on("checked", () => this.#rbg.toggle(!this.#rbg.Toggle))), this.markdown(example$P));
         }
     }
 
-    const intro$P = `
+    const intro$R = `
 A container for content that may overflow its available area. It provides horizontal and vertical
 scrolling with consistently styled scroll bars across platforms and user agents. Either direction
 can be enabled independently; native scroll bars can also be used when required.
@@ -14984,7 +15127,7 @@ scroll bars remain synchronized.
 
 **Class:** \`@vanilla-ts/components/ScrollContainer\`
 `;
-    const example$M = `
+    const example$O = `
 ### Code example
 
 \`\`\`
@@ -15049,7 +15192,7 @@ const { X, Y } = scrollContainer.ScrollOffset;
             this.#scrollContainer.Content.style({
                 padding: "1rem",
             });
-            this.append(this.markdown(intro$P), this.example([this.#scrollContainer]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Horizontal scrolling")
+            this.append(this.markdown(intro$R), this.example([this.#scrollContainer]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Horizontal scrolling")
                 .checked(true)
                 .on("checked", event => {
                 this.#scrollContainer
@@ -15075,11 +15218,11 @@ const { X, Y } = scrollContainer.ScrollOffset;
                 left: getComputedStyle(this.#scrollContainer.DOM).direction === "ltr" ? 100 : -100,
                 top: 100,
                 behavior: "smooth"
-            }))), this.markdown(example$M));
+            }))), this.markdown(example$O));
         }
     }
 
-    const intro$O = `
+    const intro$Q = `
 A component that provides controls for navigating through an object that implements \`ISteppable\`.
 It can move to the first, previous, next or last entry and optionally move backwards or forwards by
 a page. The availability of its buttons is automatically synchronized with the current index and
@@ -15090,7 +15233,7 @@ completed change.
 
 **Class:** \`@vanilla-ts/components/Stepper\`
 `;
-    const example$L = `
+    const example$N = `
 ### Code example
 
 \`\`\`
@@ -15187,7 +15330,7 @@ new VTS_App(document.body).append(
                 position.text(`${steppable.Index + 1} / ${steppable.Count}`);
                 status.phrase(new Code("SteppedEvent"), ` received (${++steppedEventCount}): Index = ${event.$.Index}.`);
             });
-            this.append(this.markdown(intro$O), this.example([
+            this.append(this.markdown(intro$Q), this.example([
                 new Div(selectedEntry, this.#stepper, status)
                     .style({
                     display: "flex",
@@ -15201,6 +15344,7 @@ new VTS_App(document.body).append(
                 new Option("VERTICAL").value("vertical"),
                 new Option("VERTICAL_ALT").value("vertical-alt")
             ])
+                .select(select => select.style("width", "12rem"))
                 .value("horizontal")
                 .on("change", () => {
                 switch (appearanceSelect.Value) {
@@ -15230,11 +15374,11 @@ new VTS_App(document.body).append(
                 BackwardContinuous: event.$.Checked,
                 ForwardContinuous: event.$.Checked,
                 PageForwardContinuous: event.$.Checked
-            }))), this.markdown(example$L));
+            }))), this.markdown(example$N));
         }
     }
 
-    const intro$N = `
+    const intro$P = `
 A component for indicating that an operation is in progress when its duration or completion cannot
 be determined. Unlike a §@components/BusyOverlay§, a \`Throbber\` does not block interaction with
 the rest of the user interface and can be placed next to the content whose busy state it represents.
@@ -15245,7 +15389,7 @@ shown below.
 
 **Class:** \`@vanilla-ts/components/Throbber\`
 `;
-    const example$K = `
+    const example$M = `
 ### Code example
 
 \`\`\`
@@ -15299,7 +15443,7 @@ modern.Active = true;
                     .addClass("modern")
                     .style("width", "4rem")
             ];
-            this.append(this.markdown(intro$N), this.example([
+            this.append(this.markdown(intro$P), this.example([
                 new Div(new Div(new P("Classic"), classic)
                     .style({
                     display: "flex",
@@ -15320,7 +15464,7 @@ modern.Active = true;
                 .checked(true)
                 .on("checked", event => {
                 this.#throbbers.forEach(throbber => throbber.active(event.$.Checked));
-            })), this.markdown(example$K));
+            })), this.markdown(example$M));
         }
     }
 
@@ -15368,7 +15512,7 @@ modern.Active = true;
         }
     }
 
-    const intro$M = `
+    const intro$O = `
 The components provided by the \`@vanilla-ts/core\` package ...
 `;
     class CoreIntroductionEx extends BaseExample {
@@ -15379,18 +15523,18 @@ The components provided by the \`@vanilla-ts/core\` package ...
         buildExample() {
             this
                 .addClass("ex-core-introduction")
-                .append(this.markdown(intro$M));
+                .append(this.markdown(intro$O));
         }
     }
 
-    const intro$L = `
+    const intro$N = `
 A component that encapsulates the DOM element
 %\`<address>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/address%.
 It represents contact information for a person, a group of people or an organization.
 
 **Class:** \`@vanilla-ts/dom/Address\`
 `;
-    const example$J = `
+    const example$L = `
 ### Code example
 
 \`\`\`
@@ -15417,14 +15561,14 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             let address;
-            this.append(this.markdown(intro$L), this.example([
+            this.append(this.markdown(intro$N), this.example([
                 new P("Contact the author of this page:"),
                 address = new Address().append(new A("mailto:jim@example.com", "jim@example.com"), new Br(), new A("tel:+14155550132", "+1 (415) 555‑0132"))
-            ], [address]), this.markdown(example$J));
+            ], [address]), this.markdown(example$L));
         }
     }
 
-    const intro$K = `
+    const intro$M = `
 A component that encapsulates a native DOM anchor element
 (%\`<a>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a%).
 Together with its \`href\` attribute, an anchor creates a hyperlink to any resource or location that
@@ -15433,7 +15577,7 @@ This component is also available as a §@components/LabeledAnchor§.
 
 **Class:** \`@vanilla-ts/dom/A\`
 `;
-    const example$I = `
+    const example$K = `
 ### Code example
 
 \`\`\`
@@ -15455,13 +15599,13 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$K), this.example([
+            this.append(this.markdown(intro$M), this.example([
                 new A("https://github.com/mn4367/vanilla-ts-components", "Go to vanilla-ts-components at GitHub.").target("_blank")
-            ]), this.markdown(example$I));
+            ]), this.markdown(example$K));
         }
     }
 
-    const intro$J = `
+    const intro$L = `
 A component that encapsulates the DOM element
 %\`<b>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/b%.
 It draws attention to text without indicating that the content has additional importance or
@@ -15469,7 +15613,7 @@ emphasis.
 
 **Class:** \`@vanilla-ts/dom/B\`
 `;
-    const example$H = `
+    const example$J = `
 ### Code example
 
 \`\`\`
@@ -15490,13 +15634,13 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             const b = new B("dolor");
-            this.append(this.markdown(intro$J), this.example([
+            this.append(this.markdown(intro$L), this.example([
                 new P("Lorem ipsum ", b, " sit amet.")
-            ], [b]), this.markdown(example$H));
+            ], [b]), this.markdown(example$J));
         }
     }
 
-    const intro$I = `
+    const intro$K = `
 A component that encapsulates the DOM element
 %\`<br>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/br%.
 It inserts a line break where the division of lines is meaningful, for example in an address or a
@@ -15504,7 +15648,7 @@ poem.
 
 **Class:** \`@vanilla-ts/dom/Br\`
 `;
-    const example$G = `
+    const example$I = `
 ### Code example
 
 \`\`\`
@@ -15522,13 +15666,13 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$I), this.example([
+            this.append(this.markdown(intro$K), this.example([
                 new P("Lorem ipsum dolor", new Br(), "sit amet.")
-            ]), this.markdown(example$G));
+            ]), this.markdown(example$I));
         }
     }
 
-    const intro$H = `
+    const intro$J = `
 A component that encapsulates the native DOM button element
 (%\`<button>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button%).
 It is an interactive control that users can activate to perform an action, such as submitting a
@@ -15539,7 +15683,7 @@ form or opening a dialog.
 __Note:__ Buttons do not have a default styling. This is done to ease the creation of dedicated
 button styles for different usage contexts (like dialogs, toolbars, icon buttons etc.).
 `;
-    const example$F = `
+    const example$H = `
 ### Code example (unstyled default button)
 
 \`\`\`
@@ -15607,7 +15751,7 @@ the previous example). For an advanced usage of component factories see §@core/
             let btnSkip;
             let btnCancel;
             let btnOk;
-            this.append(this.markdown(intro$H), this.markdown(example$F), this.example([
+            this.append(this.markdown(intro$J), this.markdown(example$H), this.example([
                 new Button("Button")
             ]), this.markdown(exampleStyled), this.example([
                 btnSkip = $.buttonWarn("Skip"),
@@ -15619,7 +15763,7 @@ the previous example). For an advanced usage of component factories see §@core/
         }
     }
 
-    const intro$G = `
+    const intro$I = `
 A component that encapsulates the DOM element
 %\`<canvas>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas%.
 It provides a drawing surface for rendering graphics, animations and other visual content through
@@ -15627,7 +15771,7 @@ JavaScript APIs such as the Canvas API or WebGL.
 
 **Class:** \`@vanilla-ts/dom/Canvas\`
 `;
-    const example$E = `
+    const example$G = `
 ### Code example
 
 \`\`\`
@@ -15676,7 +15820,7 @@ new VTS_App(document.body).append(example);
             drawCircle(50, 50, 40, "red");
             drawCircle(100, 100, 40, "green");
             drawCircle(150, 150, 40, "blue");
-            this.append(this.markdown(intro$G), this.exampleNoToolbar(canvas), this.markdown(example$E));
+            this.append(this.markdown(intro$I), this.exampleNoToolbar(canvas), this.markdown(example$G));
         }
     }
 
@@ -15806,14 +15950,14 @@ For an advanced usage of component factories see §@core/Component factories§.
         }
     }
 
-    const intro$F = `
+    const intro$H = `
 A component that encapsulates the DOM element
 %\`<code>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/code%.
 It marks a short fragment of computer code and is typically rendered using a monospace font.
 
 **Class:** \`@vanilla-ts/dom/Code\`
 `;
-    const example$D = `
+    const example$F = `
 ### Code example
 
 \`\`\`
@@ -15834,13 +15978,13 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             const c = new Code("dolor").style("background", "lightgray");
-            this.append(this.markdown(intro$F), this.example([
+            this.append(this.markdown(intro$H), this.example([
                 new P("Lorem ipsum ", c, " sit amet.")
-            ], [c]), this.markdown(example$D));
+            ], [c]), this.markdown(example$F));
         }
     }
 
-    const intro$E = `
+    const intro$G = `
 A component that encapsulates a DOM comment node
 (%\`<!-\u200b- -->\`|https://developer.mozilla.org/en-US/docs/Web/API/Comment%).
 There is, of course, no visual representation of a comment node in a web page but the created
@@ -15848,7 +15992,7 @@ component can be used like any other 'real' component.
 
 **Class:** \`@vanilla-ts/dom/Comment\`
 `;
-    const example$C = `
+    const example$E = `
 ### Code example
 
 \`\`\`
@@ -15866,11 +16010,11 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$E), this.exampleNoToolbar(new Comment("Lorem ipsum dolor sit amet."), new Code("<!--", new Text$1(new Comment("Lorem ipsum dolor sit amet.").Text), "-->")), this.markdown(example$C));
+            this.append(this.markdown(intro$G), this.exampleNoToolbar(new Comment("Lorem ipsum dolor sit amet."), new Code("<!--", new Text$1(new Comment("Lorem ipsum dolor sit amet.").Text), "-->")), this.markdown(example$E));
         }
     }
 
-    const intro$D = `
+    const intro$F = `
 A component that encapsulates the DOM element
 %\`<datalist>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist%.
 It provides a list of predefined suggestions for an input component. The \`DataList\` and the input
@@ -15879,7 +16023,7 @@ Unlike a §@dom/Select§ component, the input still allows values that are not p
 
 **Class:** \`@vanilla-ts/dom/DataList\`
 `;
-    const example$B = `
+    const example$D = `
 ### Code example
 
 \`\`\`
@@ -15916,14 +16060,14 @@ new VTS_App(document.body).append(example, dataList);
                 .attrib("list", dataList.ID)
                 .placeholder("Choose or enter a city")
                 .style("width", "12rem");
-            this.append(this.markdown(intro$D), this.example([
+            this.append(this.markdown(intro$F), this.example([
                 textInput,
                 dataList
-            ], [textInput]), this.markdown(example$B));
+            ], [textInput]), this.markdown(example$D));
         }
     }
 
-    const intro$C = `
+    const intro$E = `
 A component that encapsulates a native dialog DOM element
 (%\`<dialog>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog%).
 It represents a modal or non-modal dialog box or another interactive component that can be opened
@@ -15933,7 +16077,7 @@ a lot of advanced features.
 
 **Class:** \`@vanilla-ts/dom/Dialog\`
 `;
-    const example$A = `
+    const example$C = `
 ### Code example
 
 \`\`\`
@@ -15994,11 +16138,11 @@ new VTS_App(document.body).append(btnNonModal, btnModal);
                 .on("click", () => modalDlg.Open ? modalDlg.close() : btnModal.disabled(true) && modalDlg.showModal());
             const nonModalDlg = getDialog(false, btnNonModal);
             const modalDlg = getDialog(true, btnModal);
-            this.append(this.markdown(intro$C), this.markdown("### Examples"), this.properties(btnNonModal, new Text$1("\u2003"), btnModal), this.markdown(example$A));
+            this.append(this.markdown(intro$E), this.markdown("### Examples"), this.properties(btnNonModal, new Text$1("\u2003"), btnModal), this.markdown(example$C));
         }
     }
 
-    const intro$B = `
+    const intro$D = `
 A component that encapsulates the DOM element
 %\`<div>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/div%.
 It is a generic container for grouping flow content when no more specific semantic element is
@@ -16006,7 +16150,7 @@ appropriate, commonly for styling or layout purposes.
 
 **Class:** \`@vanilla-ts/dom/Div\`
 `;
-    const example$z = `
+    const example$B = `
 ### Code example
 
 \`\`\`
@@ -16036,7 +16180,7 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$B), this.example([
+            this.append(this.markdown(intro$D), this.example([
                 new Div(new P("Example ", new Code("<div>").dir("ltr"), "."))
                     .style({
                     padding: "1rem",
@@ -16046,11 +16190,11 @@ new VTS_App(document.body).append(example);
                     .append(new Br(), new P("Lorem ipsum dolor sit amet."), new Button("Click me!")
                     .addClass("regular")
                     .on("click", () => alert("Thank you!")))
-            ]), this.markdown(example$z));
+            ]), this.markdown(example$B));
         }
     }
 
-    const intro$A = `
+    const intro$C = `
 A component that encapsulates a native email input DOM element
 (%\`<input type="email">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/email%).
 It lets users enter and edit an email address and provides built-in validation for the expected
@@ -16059,7 +16203,7 @@ This component is also available as a §@components/LabeledEmailInput§.
 
 **Class:** \`@vanilla-ts/dom/EmailInput\`
 `;
-    const example$y = `
+    const example$A = `
 ### Code example
 
 \`\`\`
@@ -16077,20 +16221,20 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$A), this.example([
+            this.append(this.markdown(intro$C), this.example([
                 new EmailInput().placeholder("sophie@example.com")
-            ]), this.markdown(example$y));
+            ]), this.markdown(example$A));
         }
     }
 
-    const intro$z = `
+    const intro$B = `
 A component that encapsulates the DOM element
 %\`<em>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/em%.
 It marks text with stress emphasis, which can change the meaning of a sentence.
 
 **Class:** \`@vanilla-ts/dom/Em\`
 `;
-    const example$x = `
+    const example$z = `
 ### Code example
 
 \`\`\`
@@ -16111,13 +16255,13 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             let em = new Em("dolor");
-            this.append(this.markdown(intro$z), this.example([
+            this.append(this.markdown(intro$B), this.example([
                 new P("Lorem ipsum ", em, " sit amet."),
-            ], [em]), this.markdown(example$x));
+            ], [em]), this.markdown(example$z));
         }
     }
 
-    const intro$y = `
+    const intro$A = `
 A component that encapsulates the DOM element
 %\`<footer>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/footer%.
 It represents a footer for its nearest section or for the document and commonly contains authorship,
@@ -16125,7 +16269,7 @@ copyright or related navigation information.
 
 **Class:** \`@vanilla-ts/dom/Footer\`
 `;
-    const example$w = `
+    const example$y = `
 ### Code example
 
 \`\`\`
@@ -16159,13 +16303,13 @@ new VTS_App(document.body).append(h, m, f);
             const h = new Header("Header content").style(style);
             const m = new Main("Main content").style("padding", "1rem 0.5rem");
             const f = new Footer("Footer content").style(style);
-            this.append(this.markdown(intro$y), this.example([
+            this.append(this.markdown(intro$A), this.example([
                 new Div(h, m, f).id(cid())
-            ], [f]), this.markdown(example$w));
+            ], [f]), this.markdown(example$y));
         }
     }
 
-    const intro$x = `
+    const intro$z = `
 A component that encapsulates a DOM document fragment
 (%\`DocumentFragment\`|https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment%).
 
@@ -16180,7 +16324,7 @@ Like with a real DOM fragment, the \`Fragment\` component shouldn't be seen as a
 for appending/inserting component collections. If you need to append/insert multiple components to
 another component, the regular \`append()\`/\`insert()\` functions are usually a bit faster.
 `;
-    const example$v = `
+    const example$x = `
 ### Code examples
 
 \`\`\`
@@ -16216,11 +16360,11 @@ f2.dispose();
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$x), this.markdown(example$v));
+            this.append(this.markdown(intro$z), this.markdown(example$x));
         }
     }
 
-    const intro$w = `
+    const intro$y = `
 A component that encapsulates the DOM element
 %\`<header>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/header%.
 It represents introductory content for a page or section, such as headings, a logo, search controls
@@ -16228,7 +16372,7 @@ or navigation aids.
 
 **Class:** \`@vanilla-ts/dom/Header\`
 `;
-    const example$u = `
+    const example$w = `
 ### Code example
 
 \`\`\`
@@ -16262,13 +16406,13 @@ new VTS_App(document.body).append(h, m, f);
             const h = new Header("Header content").style(style);
             const m = new Main("Main content").style("padding", "1rem 0.5rem");
             const f = new Footer("Footer content").style(style);
-            this.append(this.markdown(intro$w), this.example([
+            this.append(this.markdown(intro$y), this.example([
                 new Div(h, m, f).id(cid())
-            ], [h]), this.markdown(example$u));
+            ], [h]), this.markdown(example$w));
         }
     }
 
-    const intro$v = `
+    const intro$x = `
 A component that encapsulates the DOM element
 %\`<hr>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hr%.
 It represents a thematic break between paragraph-level elements, such as a change of topic or
@@ -16276,7 +16420,7 @@ scene.
 
 **Class:** \`@vanilla-ts/dom/Hr\`
 `;
-    const example$t = `
+    const example$v = `
 ### Code example
 
 \`\`\`
@@ -16294,20 +16438,20 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$v), this.example([
+            this.append(this.markdown(intro$x), this.example([
                 new Hr(),
-            ]), this.markdown(example$t));
+            ]), this.markdown(example$v));
         }
     }
 
-    const intro$u = `
+    const intro$w = `
 6 components that encapsulate the \`h1\` to \`h6\` section heading DOM elements
 (%\`<h1>\` to \`<h6>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements%).
 They identify headings at six levels and establish the hierarchy of sections within a document.
 
 **Classes:** \`@vanilla-ts/dom/H1\` to \`@vanilla-ts/dom/H6\`
 `;
-    const example$s = `
+    const example$u = `
 ### Code example
 
 \`\`\`
@@ -16339,18 +16483,18 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$u), this.example([
+            this.append(this.markdown(intro$w), this.example([
                 this.#h1 = new H1("H1 Heading"),
                 this.#h2 = new H2("H2 Heading"),
                 this.#h3 = new H3("H3 Heading"),
                 this.#h4 = new H4("H4 Heading"),
                 this.#h5 = new H5("H5 Heading"),
                 this.#h6 = new H6("H6 Heading")
-            ], [this.#h1, this.#h2, this.#h3, this.#h4, this.#h5, this.#h6]), this.markdown(example$s));
+            ], [this.#h1, this.#h2, this.#h3, this.#h4, this.#h5, this.#h6]), this.markdown(example$u));
         }
     }
 
-    const intro$t = `
+    const intro$v = `
 A component that encapsulates the DOM element
 %\`<i>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/i%.
 It sets text apart from its surroundings without adding emphasis, for example for technical terms,
@@ -16358,7 +16502,7 @@ idioms or taxonomic designations.
 
 **Class:** \`@vanilla-ts/dom/I\`
 `;
-    const example$r = `
+    const example$t = `
 ### Code example
 
 \`\`\`
@@ -16379,13 +16523,13 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             let i = new I("dolor");
-            this.append(this.markdown(intro$t), this.example([
+            this.append(this.markdown(intro$v), this.example([
                 new P("Lorem ipsum ", i, " sit amet."),
-            ], [i]), this.markdown(example$r));
+            ], [i]), this.markdown(example$t));
         }
     }
 
-    const intro$s = `
+    const intro$u = `
 A component that encapsulates the DOM element
 %\`<img>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img%.
 It embeds an image in the document and supports alternative text for situations in which the image
@@ -16393,7 +16537,7 @@ cannot be seen or loaded.
 
 **Class:** \`@vanilla-ts/dom/Img\`
 `;
-    const example$q = `
+    const example$s = `
 ### Code example
 
 \`\`\`
@@ -16424,11 +16568,11 @@ new VTS_App(document.body).append(example, p);
                 .loading("lazy");
             const p = new P("Of course it has to be a picture of a cat!")
                 .style("textAlign", "center");
-            this.append(this.markdown(intro$s), this.example([img, p], [img, p]), this.markdown(example$q));
+            this.append(this.markdown(intro$u), this.example([img, p], [img, p]), this.markdown(example$s));
         }
     }
 
-    const intro$r = `
+    const intro$t = `
 \`Input\` is an *abstract* component that is used as the base class for all input components, such
 as §@dom/TextInput§, §@dom/Checkbox / Switch§, §@dom/RadioButton§, etc., so there is no visual
 example here. It provides basic functionality common to all input components, such as \`required\` /
@@ -16442,11 +16586,11 @@ example here. It provides basic functionality common to all input components, su
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$r));
+            this.append(this.markdown(intro$t));
         }
     }
 
-    const intro$q = `
+    const intro$s = `
 ## DOM components
 
 The components provided by the \`@vanilla-ts/dom\` package are basic elements that encapsulate
@@ -16464,11 +16608,11 @@ being expanded.
         buildExample() {
             this
                 .addClass("ex-dom-introduction")
-                .append(this.markdown(intro$q));
+                .append(this.markdown(intro$s));
         }
     }
 
-    const intro$p = `
+    const intro$r = `
 A component that encapsulates the DOM element
 %\`<label>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label%.
 It provides a caption for a form control. Associating both elements makes the control easier to
@@ -16476,7 +16620,7 @@ understand and lets users activate or focus it through the label.
 
 **Class:** \`@vanilla-ts/dom/Label\`
 `;
-    const example$p = `
+    const example$r = `
 ### Code example
 
 \`\`\`
@@ -16519,11 +16663,61 @@ need to manually construct labeled components like in the example aboove.
                 .style(style)
                 .append(this.#label = new Label("ti", "Username"), new TextInput("ti", undefined, "text-input")
                 .placeholder("Enter username here"));
-            this.append(this.markdown(intro$p), this.example([labeledTextInput], [this.#label]), this.markdown(example$p));
+            this.append(this.markdown(intro$r), this.example([labeledTextInput], [this.#label]), this.markdown(example$r));
         }
     }
 
-    const intro$o = `
+    const intro$q = `
+A component that encapsulates the DOM element
+%\`<legend>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/legend%.
+It provides a caption for the contents of its parent \`<fieldset>\` element and should be its first
+child. In a customizable §@dom/Select§, a \`Legend\` can also label its parent §@dom/OptGroup§.
+
+**Class:** \`@vanilla-ts/dom/Legend\`
+`;
+    const example$q = `
+### Code example
+
+\`\`\`
+import { ElementComponentWithChildren, VTS_App } from "@vanilla-ts/core";
+import { Br, Checkbox, Label, Legend } from "@vanilla-ts/dom";
+
+const emailCheckboxID = "email-notifications";
+const pushCheckboxID = "push-notifications";
+const emailCheckbox = new Checkbox(emailCheckboxID);
+const pushCheckbox = new Checkbox(pushCheckboxID);
+
+const example = new ElementComponentWithChildren<HTMLFieldSetElement>("fieldset")
+    .append(
+        new Legend("Notification preferences"),
+        emailCheckbox,
+        new Label(emailCheckboxID, "Email notifications"),
+        new Br(),
+        pushCheckbox,
+        new Label(pushCheckboxID, "Push notifications")
+    );
+
+new VTS_App(document.body).append(example);
+\`\`\`
+`;
+    class LegendEx extends BaseExample {
+        constructor() {
+            super("Legend");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            const emailCheckboxID = "legend-example-email";
+            const pushCheckboxID = "legend-example-push";
+            const emailCheckbox = new Checkbox(emailCheckboxID);
+            const pushCheckbox = new Checkbox(pushCheckboxID);
+            const fieldSet = new ElementComponentWithChildren("fieldset")
+                .addClass("legend-example")
+                .append(new Legend("Notification preferences"), emailCheckbox, new Label(emailCheckboxID, "Email notifications"), new Br(), pushCheckbox, new Label(pushCheckboxID, "Push notifications"));
+            this.append(this.markdown(intro$q), this.example([fieldSet]), this.markdown(example$q));
+        }
+    }
+
+    const intro$p = `
 Components that encapsulate the DOM element
 %\`<li>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li%
 for ordered lists (§@dom/Ol§) and unordered lists (§@dom/Ul§). \`LiOl\` components also allow to set
@@ -16532,7 +16726,7 @@ number will be automatically generated by the browser.
 
 **Classes:** \`@vanilla-ts/dom/LiOl\`, \`@vanilla-ts/dom/LiUl\`
 `;
-    const example$o = `
+    const example$p = `
 ### Code example
 
 \`\`\`
@@ -16580,17 +16774,17 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$o), this.example([
+            this.append(this.markdown(intro$p), this.example([
                 new P("Shopping List:"),
                 new Ul("Flour", "Baking powder", "Sugar", "Salt", "Oil", new LiUl("From the cooling shelf:", new Ul(new LiUl("Eggs"), new LiUl("Milk")))),
                 new Hr(),
                 new P("How to make a muffin:"),
                 new Ol(new LiOl(0, "Relax (optional)."), "Mix flour, baking powder, sugar, and salt.", "In another bowl, mix eggs, milk, and oil.", "Stir both mixtures together.", "Fill muffin tray 3/4 full.", new Em("Bake for 20 minutes."))
-            ]), this.markdown(example$o));
+            ]), this.markdown(example$p));
         }
     }
 
-    const intro$n = `
+    const intro$o = `
 A component that encapsulates the DOM element
 %\`<main>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/main%.
 It represents the document body's dominant content that is directly related to the page's central
@@ -16598,7 +16792,7 @@ topic or an application's main functionality.
 
 **Class:** \`@vanilla-ts/dom/Main\`
 `;
-    const example$n = `
+    const example$o = `
 ### Code example
 
 \`\`\`
@@ -16632,13 +16826,13 @@ new VTS_App(document.body).append(h, m, f);
             const h = new Header("Header content").style(style);
             const m = new Main("Main content").style("padding", "1rem 0.5rem");
             const f = new Footer("Footer content").style(style);
-            this.append(this.markdown(intro$n), this.example([
+            this.append(this.markdown(intro$o), this.example([
                 new Div(h, m, f).id(cid())
-            ], [m]), this.markdown(example$n));
+            ], [m]), this.markdown(example$o));
         }
     }
 
-    const intro$m = `
+    const intro$n = `
 A component that encapsulates the DOM element
 %\`<menu>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/menu%.
 It represents an unordered list of items and is treated by browsers as a semantic alternative to an
@@ -16646,7 +16840,7 @@ It represents an unordered list of items and is treated by browsers as a semanti
 
 **Class:** \`@vanilla-ts/dom/Menu\`
 `;
-    const example$m = `
+    const example$n = `
 ### Code example
 
 \`\`\`
@@ -16704,7 +16898,7 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             const bf = new ButtonFactory();
-            this.append(this.markdown(intro$m), this.example([
+            this.append(this.markdown(intro$n), this.example([
                 new Menu()
                     .addClass("menu-example")
                     .append(new LiUl(bf.buttonRegular("Cut")
@@ -16714,11 +16908,11 @@ new VTS_App(document.body).append(example);
                     .on("click", () => console.log("Fake 'Copy text' executed"))), new LiUl(bf.buttonRegular("Paste")
                     .title("Paste text from the clipboard")
                     .on("click", () => console.log("Fake 'Paste text' executed"))))
-            ]), this.markdown(example$m), this.markdown(exampleCSS));
+            ]), this.markdown(example$n), this.markdown(exampleCSS));
         }
     }
 
-    const intro$l = `
+    const intro$m = `
 A component that encapsulates the DOM element
 %\`<meter>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meter%.
 It represents a scalar value within a known range. The \`min\` and \`max\` values define the range,
@@ -16728,7 +16922,7 @@ available as a §@components/LabeledMeter§.
 
 **Class:** \`@vanilla-ts/dom/Meter\`
 `;
-    const example$l = `
+    const example$m = `
 ### Code example
 
 \`\`\`
@@ -16756,7 +16950,7 @@ new VTS_App(document.body).append(example);
         /** @inheritdoc */
         buildExample() {
             const meter = new Meter(100, 68, 0, 30, 70, 80, "68 out of 100").style("inlineSize", "15rem");
-            this.append(this.markdown(intro$l), this.example([
+            this.append(this.markdown(intro$m), this.example([
                 meter
             ]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
@@ -16764,18 +16958,18 @@ new VTS_App(document.body).append(example);
             }), $.labeledNumberInput("Current value:", undefined, meter.Value.toString(), "", "0", "100")
                 .numberInput((numberInput) => numberInput.on("input", () => {
                 meter.value(numberInput.ValueAsNumber);
-            }))), this.markdown(example$l));
+            }))), this.markdown(example$m));
         }
     }
 
-    const intro$k = `
+    const intro$l = `
 A component that encapsulates the DOM element
 %\`<nav>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nav%.
 It represents a section containing navigation links, such as a menu, table of contents or index.
 
 **Class:** \`@vanilla-ts/dom/Nav\`
 `;
-    const example$k = `
+    const example$l = `
 ### Code example
 
 \`\`\`
@@ -16815,7 +17009,7 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$k), this.example([
+            this.append(this.markdown(intro$l), this.example([
                 new Nav(new Ul(new LiUl(new A("#Introduction", "Introduction")), new LiUl(new A("#@core/Introduction", "Core components")), new LiUl(new A("#@dom/Introduction", "DOM components")), new LiUl(new A("#@components/Introduction", "Advanced components"))).style({
                     display: "flex",
                     flexDirection: "row",
@@ -16824,11 +17018,11 @@ new VTS_App(document.body).append(example);
                     margin: "0",
                     padding: "0"
                 }))
-            ]), this.markdown(example$k));
+            ]), this.markdown(example$l));
         }
     }
 
-    const intro$j = `
+    const intro$k = `
 A component that encapsulates a native number input DOM element
 (%\`<input type="number">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number%).
 It lets users enter a number and optionally constrains the value through minimum, maximum and step
@@ -16837,7 +17031,7 @@ This component is also available as a §@components/LabeledNumberInput§.
 
 **Class:** \`@vanilla-ts/dom/NumberInput\`
 `;
-    const example$j = `
+    const example$k = `
 ### Code example
 
 \`\`\`
@@ -16859,17 +17053,17 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$j), this.example([
+            this.append(this.markdown(intro$k), this.example([
                 new NumberInput()
                     .value("22")
                     .min("2")
                     .max("44")
                     .step("2")
-            ]), this.markdown(example$j));
+            ]), this.markdown(example$k));
         }
     }
 
-    const intro$i = `
+    const intro$j = `
 A component that encapsulates the DOM element
 %\`<ol>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol%. The list also supports the
 properties \`start\`, \`reversed\` and \`type\`. It represents a list whose items have a meaningful
@@ -16877,7 +17071,7 @@ order and is typically displayed as a numbered list.
 
 **Class:** \`@vanilla-ts/dom/Ol\`
 `;
-    const example$i = `
+    const example$j = `
 ### Code example
 
 \`\`\`
@@ -16908,22 +17102,23 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$i), this.example([
+            this.append(this.markdown(intro$j), this.example([
                 new P("How to make a muffin:"),
                 new Ol(new LiOl(0, "Relax (optional)."), "Mix flour, baking powder, sugar, and salt.", "In another bowl, mix eggs, milk, and oil.", "Stir both mixtures together.", "Fill muffin tray 3/4 full.", new Em("Bake for 20 minutes."))
-            ]), this.markdown(example$i));
+            ]), this.markdown(example$j));
         }
     }
 
-    const intro$h = `
+    const intro$i = `
 A component that encapsulates the DOM element
 %\`<optgroup>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup%.
 It groups related \`Option\` components within a §@dom/Select§ component. The first
-constructor argument sets the group label; all following arguments are the options of the group.
+constructor argument sets the group label; all following arguments are the contents of the group.
+In a customizable select, a §@dom/Legend§ can be used as the first child to label the group.
 
 **Class:** \`@vanilla-ts/dom/OptGroup\`
 `;
-    const example$h = `
+    const example$i = `
 ### Code example
 
 \`\`\`
@@ -16968,6 +17163,72 @@ const log = new P("Select a city from the grouped dropdown above.")
 new VTS_App(document.body).append(example, log);
 \`\`\`
 `;
+    const introMultiple$1 = `
+## Multiple selection
+
+Option groups can also be used in a \`Select\` that has \`Multiple\` set to \`true\`. The selected
+options/values can be read from the \`SelectedOptions\` property of the \`Select\` component.
+
+When one or more grouped options are preselected with \`selected(true)\`, first enable multiple
+selection with \`multiple(true)\` and then add the options and option groups using \`options()\`.
+Preselected options cannot be passed to the constructor in this case because the underlying select
+still behaves as a single-selection control while its constructor arguments are added.
+`;
+    const exampleMultiple$1 = `
+### Code example (multiple selection)
+
+\`\`\`
+import { VTS_App } from "@vanilla-ts/core";
+import { Em, Hr, OptGroup, Option, P, Select } from "@vanilla-ts/dom";
+
+const example = new Select()
+    .multiple(true)
+    .size(17)
+    .options([
+        new Option("Berlin").value("berlin"),
+        new Option("London").value("london"),
+        new Option("Paris").value("paris"),
+        new Hr(),
+        new OptGroup(
+            "North America",
+            new Option("Chicago").value("chicago").selected(true),
+            new Option("Los Angeles").value("los-angeles"),
+            new Option("New York").value("new-york")
+        ),
+        new OptGroup(
+            "South America",
+            new Option("São Paulo").value("sao-paulo"),
+            new Option("Buenos Aires").value("buenos-aires"),
+            new Option("Rio de Janeiro").value("rio-de-janeiro")
+        ).disabled(true),
+        new OptGroup(
+            "Asia",
+            new Option("Seoul").value("seoul"),
+            new Option("Kyoto").value("kyoto").disabled(true),
+            new Option("Shanghai").value("shanghai"),
+            new Option("Tokyo").value("tokyo").selected(true)
+        )
+    ])
+    .style("width", "10rem")
+    .on("change", updateLog);
+
+const log = new P("Select one or more cities from the list above.")
+    .style({
+        width: "25rem",
+        marginBlockStart: "1rem"
+    });
+
+function updateLog(): void {
+    const selectedValues = Array.from(example.SelectedOptions, option => option.Value);
+    log.phrase(
+        "Selected cities (values): ",
+        new Em(selectedValues.join(", ") || "None")
+    );
+}
+
+new VTS_App(document.body).append(example, log);
+\`\`\`
+`;
     class OptGroupEx extends BaseExample {
         constructor() {
             super("OptGroup");
@@ -16980,7 +17241,6 @@ new VTS_App(document.body).append(example, log);
                 marginBlockStart: "1rem"
             });
             const select = new Select([
-                // .append(
                 new Option("Berlin").value("berlin"),
                 new Option("London").value("london"),
                 new Option("Paris").value("paris"),
@@ -16992,21 +17252,46 @@ new VTS_App(document.body).append(example, log);
                 .value("tokyo")
                 .style("width", "10rem")
                 .on("change", () => log.phrase("Selected city (value): ", new Em(select.Value)));
-            this.append(this.markdown(intro$h), this.example([
+            const logMultiple = new P("Select one or more cities from the list above.")
+                .style({
+                width: "25rem",
+                marginBlockStart: "1rem"
+            });
+            const selectMultiple = new Select()
+                .multiple(true)
+                .size(17)
+                .options([
+                new Option("Berlin").value("berlin"),
+                new Option("London").value("london"),
+                new Option("Paris").value("paris"),
+                new Hr(),
+                new OptGroup("North America", new Option("Chicago").value("chicago").selected(true), new Option("Los Angeles").value("los-angeles"), new Option("New York").value("new-york")),
+                new OptGroup("South America", new Option("São Paulo").value("sao-paulo"), new Option("Buenos Aires").value("buenos-aires"), new Option("Rio de Janeiro").value("rio-de-janeiro")).disabled(true),
+                new OptGroup("Asia", new Option("Seoul").value("seoul"), new Option("Kyoto").value("kyoto").disabled(true), new Option("Shanghai").value("shanghai"), new Option("Tokyo").value("tokyo").selected(true))
+            ])
+                .style("width", "10rem")
+                .on("change", () => {
+                const values = Array.from(selectMultiple.SelectedOptions, option => option.Value);
+                logMultiple.phrase("Selected cities (values): ", new Em(values.join(", ") || "None"));
+            });
+            this.append(this.markdown(intro$i), this.example([
                 select,
                 log
-            ]), this.markdown(example$h));
+            ]), this.markdown(example$i), this.markdown("---"), this.markdown(introMultiple$1), this.example([
+                selectMultiple,
+                logMultiple
+            ]), this.markdown(exampleMultiple$1));
         }
     }
 
-    const intro$g = `
+    const intro$h = `
 A component that encapsulates the DOM element
 %\`<output>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output%.
 It represents the result of a calculation or another action performed by the user or application.
 
 **Class:** \`@vanilla-ts/dom/Output\`
 `;
-    const example$g = `
+    const example$h = `
 ### Code example
 
 \`\`\`
@@ -17060,7 +17345,7 @@ new VTS_App(document.body).append(example);
             function updateOutput() {
                 output.text((ri.ValueAsNumber + ni.ValueAsNumber).toString());
             }
-            this.append(this.markdown(intro$g), this.example([
+            this.append(this.markdown(intro$h), this.example([
                 new Div(ri = new RangeInput()
                     .id("range-output")
                     .value("32"), new Text$1("+"), ni = new NumberInput()
@@ -17077,12 +17362,12 @@ new VTS_App(document.body).append(example);
                     alignItems: "center",
                     gap: "0.5rem"
                 })
-            ]), this.markdown(example$g));
+            ]), this.markdown(example$h));
             updateOutput();
         }
     }
 
-    const intro$f = `
+    const intro$g = `
 A component that encapsulates a native password input DOM element
 (%\`<input type="password">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password%).
 It provides a single-line field for sensitive text and obscures the entered characters on screen.
@@ -17090,7 +17375,7 @@ This component is also available as a §@components/LabeledPasswordInput§.
 
 **Class:** \`@vanilla-ts/dom/PasswordInput\`
 `;
-    const example$f = `
+    const example$g = `
 ### Code example
 
 \`\`\`
@@ -17108,13 +17393,13 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$f), this.example([
+            this.append(this.markdown(intro$g), this.example([
                 new PasswordInput().placeholder("Enter password")
-            ]), this.markdown(example$f));
+            ]), this.markdown(example$g));
         }
     }
 
-    const intro$e = `
+    const intro$f = `
 A component that encapsulates the DOM element
 %\`<p>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/p%. It represents a
 paragraph or another block-sized grouping of related content. This component is also available as a
@@ -17122,7 +17407,7 @@ paragraph or another block-sized grouping of related content. This component is 
 
 **Class:** \`@vanilla-ts/dom/P\`
 `;
-    const example$e = `
+    const example$f = `
 ### Code example
 
 \`\`\`
@@ -17146,20 +17431,20 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$e), this.example([
+            this.append(this.markdown(intro$f), this.example([
                 new P("Lorem", new B(" ipsum"), new Em(" dolor"), new Strong(" sit"), new I(" amet"), "."),
-            ]), this.markdown(example$e));
+            ]), this.markdown(example$f));
         }
     }
 
-    const intro$d = `
+    const intro$e = `
 A component that encapsulates the DOM element
 %\`<pre>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/pre%.
 It represents preformatted text whose whitespace and line breaks are displayed as written.
 
 **Class:** \`@vanilla-ts/dom/Pre\`
 `;
-    const example$d = `
+    const example$e = `
 ### Code example
 
 \`\`\`text
@@ -17192,13 +17477,13 @@ new VTS_App(document.body).append(example);
     ||----w||
     ||     ||
 `);
-            this.append(this.markdown(intro$d), this.example([
+            this.append(this.markdown(intro$e), this.example([
                 new Pre(cow)
-            ], [cow]), this.markdown(example$d));
+            ], [cow]), this.markdown(example$e));
         }
     }
 
-    const intro$c = `
+    const intro$d = `
 A component that encapsulates the DOM element
 %\`<progress>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/progress%.
 It represents the completion progress of a task, either with a known value or as an indeterminate
@@ -17207,7 +17492,7 @@ This component is also available as a §@components/LabeledProgress§.
 
 **Class:** \`@vanilla-ts/dom/Progress\`
 `;
-    const example$c = `
+    const example$d = `
 ### Code example
 
 \`\`\`
@@ -17239,7 +17524,7 @@ corresponding documentation in the \`Progress\` class.
         buildExample() {
             let progress;
             let valueInput;
-            this.append(this.markdown(intro$c), this.example([
+            this.append(this.markdown(intro$d), this.example([
                 progress = new Progress().max(100).value(70).style("inlineSize", "15rem")
             ]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
@@ -17254,11 +17539,11 @@ corresponding documentation in the \`Progress\` class.
             })), new P("Note: a current value of ", new Code("0"), " will set the progress component to an 'indeterminate' state.")
                 .style({
                 marginBlock: "0.5rem 0"
-            })), this.markdown(example$c));
+            })), this.markdown(example$d));
         }
     }
 
-    const intro$b = `
+    const intro$c = `
 A component that encapsulates a native radio button DOM element
 (%\`<input type="radio">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio%).
 Radio buttons represent mutually exclusive choices where selecting one option deselects the others
@@ -17267,7 +17552,7 @@ This component is also available as a §@components/LabeledRadioButton§.
 
 **Class:** \`@vanilla-ts/dom/RadioButton\`
 `;
-    const example$b = `
+    const example$c = `
 ### Code example
 
 \`\`\`
@@ -17293,7 +17578,7 @@ corresponding documentation in the \`RadioButton\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$b), this.example([this.#rb = new RadioButton().on("checked", () => this.#rbgCb.value(this.#rb.Checked ? "checked" : "unchecked"))]), this.markdown("### Radio button states"), new Div().addClass("example-properties")
+            this.append(this.markdown(intro$c), this.example([this.#rb = new RadioButton().on("checked", () => this.#rbgCb.value(this.#rb.Checked ? "checked" : "unchecked"))]), this.markdown("### Radio button states"), new Div().addClass("example-properties")
                 .append(this.#rbgCb = $.radioButtonGroup([
                 { Label: "Checked", Value: "checked" },
                 { Label: "Unchecked", Value: "unchecked" },
@@ -17309,11 +17594,11 @@ corresponding documentation in the \`RadioButton\` class.
                         break;
                 }
             }), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#rb.toggle(!this.#rb.Toggle))), this.markdown(example$b));
+                .on("checked", () => this.#rb.toggle(!this.#rb.Toggle))), this.markdown(example$c));
         }
     }
 
-    const intro$a = `
+    const intro$b = `
 A component that encapsulates a native DOM input range element
 (%\`<input type="range">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range%).
 It lets users choose an approximate numeric value from a bounded range using a slider.
@@ -17321,7 +17606,7 @@ This component is also available as a §@components/LabeledRangeInput§.
 
 **Class:** \`@vanilla-ts/dom/RangeInput\`
 `;
-    const example$a = `
+    const example$b = `
 ### Code example
 
 \`\`\`
@@ -17348,7 +17633,7 @@ new VTS_App(document.body).append(example);
             let maxInput;
             let minInput;
             let val;
-            this.append(this.markdown(intro$a), this.example([
+            this.append(this.markdown(intro$b), this.example([
                 rangeInput = new RangeInput()
                     .max("100")
                     .min("0")
@@ -17372,11 +17657,11 @@ new VTS_App(document.body).append(example);
             })), new P("Current value: ", val = new Code("42"))
                 .style({
                 marginBlock: "0.5rem 0"
-            })), this.markdown(example$a));
+            })), this.markdown(example$b));
         }
     }
 
-    const intro$9 = `
+    const intro$a = `
 A component that encapsulates a native search input DOM element
 (%\`<input type="search">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search%).
 It provides a single-line field for entering search terms and may receive search-specific behavior
@@ -17385,7 +17670,7 @@ This component is also available as a §@components/LabeledSearchInput§.
 
 **Class:** \`@vanilla-ts/dom/SearchInput\`
 `;
-    const example$9 = `
+    const example$a = `
 ### Code example
 
 \`\`\`
@@ -17403,13 +17688,13 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$9), this.example([
+            this.append(this.markdown(intro$a), this.example([
                 new SearchInput().placeholder("Enter search term...")
-            ]), this.markdown(example$9));
+            ]), this.markdown(example$a));
         }
     }
 
-    const intro$8 = `
+    const intro$9 = `
 A component that encapsulates the DOM element
 %\`<section>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/section%.
 It represents a generic standalone section of a document when no more specific semantic element is
@@ -17417,7 +17702,7 @@ appropriate and should usually contain a heading.
 
 **Class:** \`@vanilla-ts/dom/Section\`
 `;
-    const example$8 = `
+    const example$9 = `
 ### Code example
 
 \`\`\`
@@ -17455,26 +17740,27 @@ new VTS_App(document.body).append(example);
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$8), this.example([
+            this.append(this.markdown(intro$9), this.example([
                 new H1("Choosing an Apple*"),
                 new Section(new H2("Introduction"), new P("This document provides a guide to help with the important task of choosing the correct Apple.")),
                 new Section(new H2("Criteria"), new P("There are many different criteria to be considered when choosing an Apple — "
                     + "size, color, firmness, sweetness, tartness...")),
                 new P("* Example text taken from the MDN article on ", new Code("<section>"), " linked to above.").addClass("sz-smaller"),
-            ]), this.markdown(example$8));
+            ]), this.markdown(example$9));
         }
     }
 
-    const intro$7 = `
+    const intro$8 = `
 A component that encapsulates a native DOM select element
 (%\`<select>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select%).
 It provides a menu from which users can select one or, when configured accordingly, multiple
-predefined options.
+predefined options. See also the components §@dom/Legend§, §@dom/OptGroup§ and
+§@dom/SelectedContent§.
 This component is also available as a §@components/LabeledSelect§.
 
 **Class:** \`@vanilla-ts/dom/Select\`
 `;
-    const example$7 = `
+    const example$8 = `
 ### Code example
 
 \`\`\`
@@ -17510,6 +17796,11 @@ Setting \`Multiple\` to \`true\` (or calling \`multiple(true)\`) allows users to
 one option. The selected options/values can be read from the \`SelectedOptions\` property of the
 component. Depending on the operating system, users can select multiple entries by holding the
 *Ctrl*, *Command* or *Shift* key.
+
+When one or more options are preselected with \`selected(true)\`, first enable multiple selection
+with \`multiple(true)\` and then add the options using \`options()\`. Preselected options cannot be
+passed to the constructor in this case because the underlying select still behaves as a
+single-selection control while its constructor arguments are added.
 `;
     const exampleMultiple = `
 ### Code example (multiple selection)
@@ -17518,15 +17809,16 @@ component. Depending on the operating system, users can select multiple entries 
 import { VTS_App } from "@vanilla-ts/core";
 import { Em, Option, P, Select } from "@vanilla-ts/dom";
 
-const example = new Select([
-    new Option("Apple").value("apple").selected(true),
-    new Option("Banana").value("banana"),
-    new Option("Cherry").value("cherry").selected(true),
-    new Option("Dragonfruit").value("dragonfruit"),
-    new Option("Eggplant").value("eggplant")
-])
+const example = new Select()
     .multiple(true)
     .size(5)
+    .options([
+        new Option("Apple").value("apple").selected(true),
+        new Option("Banana").value("banana"),
+        new Option("Cherry").value("cherry").selected(true),
+        new Option("Dragonfruit").value("dragonfruit"),
+        new Option("Eggplant").value("eggplant")
+    ])
     .style("width", "10rem")
     .on("change", updateLog);
 
@@ -17581,24 +17873,113 @@ new VTS_App(document.body).append(example, log);
                 const selectedValues = Array.from(selectMultiple.SelectedOptions, option => option.Value);
                 logMultiple.phrase("Selected fruits (values): ", new Em(selectedValues.join(", ") || "None"));
             }
-            const selectMultiple = new Select([
+            const selectMultiple = new Select()
+                .multiple(true)
+                .size(5)
+                .options([
                 new Option("Apple").value("apple").selected(true),
                 new Option("Banana").value("banana"),
                 new Option("Cherry").value("cherry").selected(true),
                 new Option("Dragonfruit").value("dragonfruit"),
                 new Option("Eggplant").value("eggplant")
             ])
-                .multiple(true)
-                .size(5)
                 .style("width", "10rem")
                 .on("change", updateMultipleLog);
-            this.append(this.markdown(intro$7), this.example([
+            this.append(this.markdown(intro$8), this.example([
                 select,
                 log
-            ]), this.markdown(example$7), this.markdown("---"), this.markdown(introMultiple), this.example([
+            ]), this.markdown(example$8), this.markdown("---"), this.markdown(introMultiple), this.example([
                 selectMultiple,
                 logMultiple
             ]), this.markdown(exampleMultiple));
+        }
+    }
+
+    const intro$7 = `
+A component that encapsulates the DOM element
+%\`<selectedcontent>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/selectedcontent%.
+It displays a clone of the currently selected \`Option\` inside the closed control of a customizable
+§@dom/Select§. The component must be placed inside a \`Button\`, which in turn must be the first
+child of the \`Select\`. Its contents are managed by the browser and therefore cannot be added
+through the component API.
+
+Customizable selects and \`<selectedcontent>\` are not supported by all browsers yet. In browsers
+without support, the select remains usable but is displayed as a conventional native control. In the
+example below the first option's content (the emoji) is hidden inside the \`<selectedcontent>\`
+element.
+
+**Class:** \`@vanilla-ts/dom/SelectedContent\`
+`;
+    const example$7 = `
+### Code example
+
+\`\`\`
+import { VTS_App } from "@vanilla-ts/core";
+import { Button, Em, Option, P, Select, SelectedContent, Span } from "@vanilla-ts/dom";
+
+const example = new Select([
+    new Button(new SelectedContent()),
+    new Option(new Span("🍎 "), "Apple").value("apple"),
+    new Option(new Span("🍌 "), "Banana").value("banana"),
+    new Option(new Span("🍒 "), "Cherry").value("cherry")
+])
+    .addClass("selectedcontent-example")
+    .value("banana")
+    .on("change", () => log.phrase("Selected fruit (value): ", new Em(example.Value)));
+
+const log = new P("Select a fruit from the dropdown above.")
+    .style({
+        width: "20rem",
+        marginBlockStart: "1rem"
+    });
+
+new VTS_App(document.body).append(example, log);
+\`\`\`
+
+
+### CSS
+
+\`\`\`
+select.selectedcontent-example {
+    /* &::picker(select) {
+        appearance: base-select;
+    } */
+    appearance: base-select;
+    display: flex;
+    align-items: center;
+    inline-size: 10rem;
+    selectedcontent {
+        span:first-child {
+            display: none;
+        }
+    }
+}
+\`\`\`
+`;
+    class SelectedContentEx extends BaseExample {
+        constructor() {
+            super("SelectedContent");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            const log = new P("Select a fruit from the dropdown above.")
+                .style({
+                width: "20rem",
+                marginBlockStart: "1rem"
+            });
+            const select = new Select([
+                new Button(new SelectedContent()),
+                new Option(new Span("🍎 "), new Span("Apple")).value("apple"),
+                new Option(new Span("🍌 "), new Span("Banana")).value("banana"),
+                new Option(new Span("🍒 "), new Span("Cherry")).value("cherry")
+            ])
+                .addClass("selectedcontent-example")
+                .value("banana")
+                .on("change", () => log.phrase("Selected fruit (value): ", new Em(select.Value)));
+            this.append(this.markdown(intro$7), this.example([
+                select,
+                log
+            ]), this.markdown(example$7));
         }
     }
 
@@ -18020,6 +18401,7 @@ new VTS_App(document.body).append(example);
         "#@dom/Img",
         "#@dom/Input",
         "#@dom/Label",
+        "#@dom/Legend",
         "#@dom/LiOl / LiUl",
         "#@dom/Main",
         "#@dom/Menu",
@@ -18038,6 +18420,7 @@ new VTS_App(document.body).append(example);
         "#@dom/SearchInput",
         "#@dom/Section",
         "#@dom/Select",
+        "#@dom/SelectedContent",
         "#@dom/Span",
         "#@dom/Strong",
         "#@dom/TemporalInput",
@@ -18115,6 +18498,7 @@ new VTS_App(document.body).append(example);
     let inputEx;
     let imgEx;
     let labelEx;
+    let legendEx;
     let liOlUlEx;
     let mainEx;
     let menuEx;
@@ -18133,6 +18517,7 @@ new VTS_App(document.body).append(example);
     let searchInputEx;
     let sectionEx;
     let selectEx;
+    let selectedContentEx;
     let spanEx;
     let strongEx;
     let temporalInputEx;
@@ -18274,6 +18659,9 @@ new VTS_App(document.body).append(example);
             case "#@dom/Label":
                 example = labelEx ??= new LabelEx();
                 break;
+            case "#@dom/Legend":
+                example = legendEx ??= new LegendEx();
+                break;
             case "#@dom/LiOl / LiUl":
                 example = liOlUlEx ??= new LiOlUlEx();
                 break;
@@ -18327,6 +18715,9 @@ new VTS_App(document.body).append(example);
                 break;
             case "#@dom/Select":
                 example = selectEx ??= new SelectEx();
+                break;
+            case "#@dom/SelectedContent":
+                example = selectedContentEx ??= new SelectedContentEx();
                 break;
             case "#@dom/Span":
                 example = spanEx ??= new SpanEx();
