@@ -26,6 +26,7 @@ import { LabeledSelectEx } from "../examples/@components/LabeledSelectEx.js";
 import { LabeledTemporalInputEx } from "../examples/@components/LabeledTemporalInputEx.js";
 import { LabeledTextAreaEx } from "../examples/@components/LabeledTextAreaEx.js";
 import { LabeledTextInputEx } from "../examples/@components/LabeledTextInputEx.js";
+import { ComponentMenuEx } from "../examples/@components/MenuEx.js";
 import { RadioButtonGroupEx } from "../examples/@components/RadioButtonGroupEx.js";
 import { ScrollContainerEx } from "../examples/@components/ScrollContainerEx.js";
 import { StepperEx } from "../examples/@components/StepperEx.js";
@@ -274,6 +275,7 @@ let labeledSelectEx: LabeledSelectEx;
 let labeledTemporalInputEx: LabeledTemporalInputEx;
 let labeledTextAreaEx: LabeledTextAreaEx;
 let labeledTextInputEx: LabeledTextInputEx;
+let componentMenuEx: ComponentMenuEx;
 let radioButtonGroupEx: RadioButtonGroupEx;
 let scrollContainerEx: ScrollContainerEx;
 let stepperEx: StepperEx;
@@ -536,6 +538,7 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
             example = labeledTextInputEx ??= new LabeledTextInputEx();
             break;
         case "#@components/Menu":
+            example = componentMenuEx ??= new ComponentMenuEx();
             break;
         case "#@components/PinchZoomGestureHandler":
             break;

@@ -27,9 +27,9 @@ import { Button, Em, Option, P, Select, SelectedContent, Span } from "@vanilla-t
 
 const example = new Select([
     new Button(new SelectedContent()),
-    new Option(new Span("🍎 "), "Apple").value("apple"),
-    new Option(new Span("🍌 "), "Banana").value("banana"),
-    new Option(new Span("🍒 "), "Cherry").value("cherry")
+    new Option(new Span("🍎 "), new Span("Apple")).value("apple"),
+    new Option(new Span("🍌 "), new Span("Banana")).value("banana"),
+    new Option(new Span("🍒 "), new Span("Cherry")).value("cherry")
 ])
     .addClass("selectedcontent-example")
     .value("banana")
@@ -57,7 +57,7 @@ select.selectedcontent-example {
     align-items: center;
     inline-size: 10rem;
     selectedcontent {
-        span:first-child {
+        > span:first-child {
             display: none;
         }
     }

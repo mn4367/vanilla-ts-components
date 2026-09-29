@@ -10,7 +10,7 @@
                 align-items: center;
                 inline-size: 10rem;
                 selectedcontent {
-                    span:first-child {
+                    > span:first-child {
                         display: none;
                     }
                 }
