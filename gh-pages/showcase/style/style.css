@@ -988,8 +988,9 @@ input[type="email"] {
         margin: 0;
         padding: 0;
         line-height: 1.1;
+        transition: padding-inline-start 0.15s ease-in-out;
     }
-    &.has-checked {
+    &:has(> .menu-item.checked) {
         > .menu-item,
         > .menu-heading {
             padding-inline-start: var(--19px);
@@ -1760,6 +1761,7 @@ select {
     --select-button: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="24" height="24" style="stroke: none; fill: hsl(216, 92%, 63%); stroke-width: 0px;" rx="7" ry="7"/><polyline points="7.5 9.5 12 5 16.5 9.5" style="stroke: hsl(0, 0%, 100%);"/><polyline points="7.5 14.5 12 19 16.5 14.5" style="stroke: hsl(0, 0%, 100%);"/></svg>');
     --select-button-disabled: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="24" height="24" style="stroke: none; fill: hsl(216, 92%, 73%); stroke-width: 0px;" rx="7" ry="7"/><polyline points="7.5 9.5 12 5 16.5 9.5" style="stroke: hsl(0, 0%, 100%);"/><polyline points="7.5 14.5 12 19 16.5 14.5" style="stroke: hsl(0, 0%, 100%);"/></svg>');
     --select-button-active: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="24" height="24" style="stroke: none; fill: hsl(216, 92%, 58%); stroke-width: 0px;" rx="7" ry="7"/><polyline points="7.5 9.5 12 5 16.5 9.5" style="stroke: hsl(0, 0%, 100%);"/><polyline points="7.5 14.5 12 19 16.5 14.5" style="stroke: hsl(0, 0%, 100%);"/></svg>');
+    --select-hr-block-margin: 0.5rem;
     height: var(--input-height);
     margin: 0;
     padding: 0;
@@ -1853,6 +1855,10 @@ select {
         &:focus {
             box-shadow: var(--input-focused) !important;
         }
+    }
+    /* Doesn't work in WebKit. */
+    hr {
+        margin-block: var(--select-hr-block-margin);
     }
 }
 .disabled select,
@@ -3768,21 +3774,6 @@ input[type="text"] {
 }
 /* #endregion */
 
-/* #region ../src/style/default/examples/LegendEx.css */
-.example {
-    .example-area {
-        .canvas {
-            fieldset.legend-example {
-                input[type="checkbox"] {
-                    float: inline-start;
-                    margin-inline-end: var(--base-size-half);
-                }
-            }
-        }
-    }
-}
-/* #endregion */
-
 /* #region ../src/style/default/examples/MenuEx.css */
 .example {
     .example-area {
@@ -3805,6 +3796,21 @@ input[type="text"] {
 }
 /* #endregion */
 
+/* #region ../src/style/default/examples/LegendEx.css */
+.example {
+    .example-area {
+        .canvas {
+            fieldset.legend-example {
+                input[type="checkbox"] {
+                    float: inline-start;
+                    margin-inline-end: var(--base-size-half);
+                }
+            }
+        }
+    }
+}
+/* #endregion */
+
 /* #region ../src/style/default/examples/SelectedContentEx.css */
 .example {
     .example-area {
@@ -3818,7 +3824,7 @@ input[type="text"] {
                 align-items: center;
                 inline-size: 10rem;
                 selectedcontent {
-                    span:first-child {
+                    > span:first-child {
                         display: none;
                     }
                 }

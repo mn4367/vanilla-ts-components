@@ -1190,6 +1190,24 @@ class AGlobalDOMAttributes extends ANodeComponent {
         return this;
     }
     /** @inheritdoc */
+    get ExportParts() {
+        return !this._dom.hasAttribute("exportparts") ? [] : (this._dom.getAttribute("exportparts") || "").split(",").map(e => e.trim());
+    }
+    /** @inheritdoc */
+    set ExportParts(v) {
+        this.exportParts(v);
+    }
+    /** @inheritdoc */
+    exportParts(v) {
+        if (!v || v.length === 0) {
+            this._dom.removeAttribute("exportparts");
+        }
+        else {
+            this._dom.setAttribute("exportparts", v.map(e => e.trim()).join(","));
+        }
+        return this;
+    }
+    /** @inheritdoc */
     get ID() {
         return !this._dom.hasAttribute("id") ? null : this._dom.id;
     }
@@ -1208,11 +1226,13 @@ class AGlobalDOMAttributes extends ANodeComponent {
     }
     /** @inheritdoc */
     set Inert(v) {
-        this._dom.inert = v;
+        this._explicitInert = v;
+        this.syncInert();
     }
     /** @inheritdoc */
     inert(v) {
-        this._dom.inert = v;
+        this._explicitInert = v;
+        this.syncInert();
         return this;
     }
     /** @inheritdoc */
@@ -1257,6 +1277,24 @@ class AGlobalDOMAttributes extends ANodeComponent {
         return this;
     }
     /** @inheritdoc */
+    get Part() {
+        return !this._dom.hasAttribute("part") ? [] : (this._dom.getAttribute("part") || "").split(" ").map(e => e.trim()).filter(e => e.length > 0);
+    }
+    /** @inheritdoc */
+    set Part(v) {
+        this.part(v);
+    }
+    /** @inheritdoc */
+    part(v) {
+        if (v.length === 0) {
+            this._dom.removeAttribute("part");
+        }
+        else {
+            this._dom.setAttribute("part", v.map(e => e.trim()).filter(e => e.length > 0).join(" "));
+        }
+        return this;
+    }
+    /** @inheritdoc */
     get Popover() {
         return this._dom.popover;
     }
@@ -1280,6 +1318,32 @@ class AGlobalDOMAttributes extends ANodeComponent {
     /** @inheritdoc */
     resizable(v) {
         v === false ? this._dom.style.removeProperty("resize") : this._dom.style.resize = v;
+        return this;
+    }
+    /** @inheritdoc */
+    get Role() {
+        return this._dom.role;
+    }
+    /** @inheritdoc */
+    set Role(v) {
+        this.role(v);
+    }
+    /** @inheritdoc */
+    role(v) {
+        this._dom.role = v;
+        return this;
+    }
+    /** @inheritdoc */
+    get Slot() {
+        return !this._dom.hasAttribute("slot") ? null : this._dom.slot;
+    }
+    /** @inheritdoc */
+    set Slot(v) {
+        this.slot(v);
+    }
+    /** @inheritdoc */
+    slot(v) {
+        v === null || v === "" ? this._dom.removeAttribute("slot") : this._dom.slot = v;
         return this;
     }
     /** @inheritdoc */
@@ -1365,6 +1429,11 @@ class AElementComponent extends ANodeComponent {
     _disabled = false;
     /** The internal flag holding the parentDisabled state of the element. */
     _parentDisabled = false;
+    /**
+     * Internal flag indicating whether the element was explicitly set to be inert (by the global
+     * DOM attribute from `GlobalDOMAttributes`).
+     */
+    _explicitInert = false;
     /** The current state of visibility. */
     _visible = true;
     /** The last state of `this._dom.style.display`. */
@@ -1505,11 +1574,24 @@ class AElementComponent extends ANodeComponent {
     disabled(disabled) {
         if (disabled !== this._disabled) {
             this._disabled = disabled;
-            this._disabled
-                ? this.addClass("disabled")
-                : this.removeClass("disabled");
+            if (this._disabled) {
+                this.addClass("disabled");
+                this._dom.ariaDisabled = "true";
+            }
+            else {
+                this.removeClass("disabled");
+                this._dom.removeAttribute("aria-disabled");
+            }
+            this.syncInert();
         }
         return this;
+    }
+    /**
+     * Synchronizes the `inert` property of the DOM element based on the explicit `inert` state and
+     * the current disabled state.
+     */
+    syncInert() {
+        this._dom.inert = this._explicitInert || this._disabled;
     }
     /** @inheritdoc */
     get ParentDisabled() {
@@ -3498,6 +3580,14 @@ class TargetAttr extends AElementComponent {
         return this;
     }
 }
+// /**
+//  * Custom 'value' event for input components. Like `change` and `input` this event is only emitted
+//  * on user input, not on checking/unchecking the checkbox or radio button by code!
+//  */
+// export class ValueEvent<S extends INodeComponent<Node>, D extends object = {
+//     /** The current value of the input component. */
+//     Value: string;
+// }> extends ACustomComponentEvent<"value", S, D> { }
 /**
  * 'Value' (string|number) getter/setter and set method returning this instance.\
  * __Notes:__

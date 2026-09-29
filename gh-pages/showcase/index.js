@@ -1185,6 +1185,24 @@
             return this;
         }
         /** @inheritdoc */
+        get ExportParts() {
+            return !this._dom.hasAttribute("exportparts") ? [] : (this._dom.getAttribute("exportparts") || "").split(",").map(e => e.trim());
+        }
+        /** @inheritdoc */
+        set ExportParts(v) {
+            this.exportParts(v);
+        }
+        /** @inheritdoc */
+        exportParts(v) {
+            if (!v || v.length === 0) {
+                this._dom.removeAttribute("exportparts");
+            }
+            else {
+                this._dom.setAttribute("exportparts", v.map(e => e.trim()).join(","));
+            }
+            return this;
+        }
+        /** @inheritdoc */
         get ID() {
             return !this._dom.hasAttribute("id") ? null : this._dom.id;
         }
@@ -1203,11 +1221,13 @@
         }
         /** @inheritdoc */
         set Inert(v) {
-            this._dom.inert = v;
+            this._explicitInert = v;
+            this.syncInert();
         }
         /** @inheritdoc */
         inert(v) {
-            this._dom.inert = v;
+            this._explicitInert = v;
+            this.syncInert();
             return this;
         }
         /** @inheritdoc */
@@ -1252,6 +1272,24 @@
             return this;
         }
         /** @inheritdoc */
+        get Part() {
+            return !this._dom.hasAttribute("part") ? [] : (this._dom.getAttribute("part") || "").split(" ").map(e => e.trim()).filter(e => e.length > 0);
+        }
+        /** @inheritdoc */
+        set Part(v) {
+            this.part(v);
+        }
+        /** @inheritdoc */
+        part(v) {
+            if (v.length === 0) {
+                this._dom.removeAttribute("part");
+            }
+            else {
+                this._dom.setAttribute("part", v.map(e => e.trim()).filter(e => e.length > 0).join(" "));
+            }
+            return this;
+        }
+        /** @inheritdoc */
         get Popover() {
             return this._dom.popover;
         }
@@ -1275,6 +1313,32 @@
         /** @inheritdoc */
         resizable(v) {
             v === false ? this._dom.style.removeProperty("resize") : this._dom.style.resize = v;
+            return this;
+        }
+        /** @inheritdoc */
+        get Role() {
+            return this._dom.role;
+        }
+        /** @inheritdoc */
+        set Role(v) {
+            this.role(v);
+        }
+        /** @inheritdoc */
+        role(v) {
+            this._dom.role = v;
+            return this;
+        }
+        /** @inheritdoc */
+        get Slot() {
+            return !this._dom.hasAttribute("slot") ? null : this._dom.slot;
+        }
+        /** @inheritdoc */
+        set Slot(v) {
+            this.slot(v);
+        }
+        /** @inheritdoc */
+        slot(v) {
+            v === null || v === "" ? this._dom.removeAttribute("slot") : this._dom.slot = v;
             return this;
         }
         /** @inheritdoc */
@@ -1360,6 +1424,11 @@
         _disabled = false;
         /** The internal flag holding the parentDisabled state of the element. */
         _parentDisabled = false;
+        /**
+         * Internal flag indicating whether the element was explicitly set to be inert (by the global
+         * DOM attribute from `GlobalDOMAttributes`).
+         */
+        _explicitInert = false;
         /** The current state of visibility. */
         _visible = true;
         /** The last state of `this._dom.style.display`. */
@@ -1500,11 +1569,24 @@
         disabled(disabled) {
             if (disabled !== this._disabled) {
                 this._disabled = disabled;
-                this._disabled
-                    ? this.addClass("disabled")
-                    : this.removeClass("disabled");
+                if (this._disabled) {
+                    this.addClass("disabled");
+                    this._dom.ariaDisabled = "true";
+                }
+                else {
+                    this.removeClass("disabled");
+                    this._dom.removeAttribute("aria-disabled");
+                }
+                this.syncInert();
             }
             return this;
+        }
+        /**
+         * Synchronizes the `inert` property of the DOM element based on the explicit `inert` state and
+         * the current disabled state.
+         */
+        syncInert() {
+            this._dom.inert = this._explicitInert || this._disabled;
         }
         /** @inheritdoc */
         get ParentDisabled() {
@@ -3857,6 +3939,14 @@
             return this;
         }
     }
+    // /**
+    //  * Custom 'value' event for input components. Like `change` and `input` this event is only emitted
+    //  * on user input, not on checking/unchecking the checkbox or radio button by code!
+    //  */
+    // export class ValueEvent<S extends INodeComponent<Node>, D extends object = {
+    //     /** The current value of the input component. */
+    //     Value: string;
+    // }> extends ACustomComponentEvent<"value", S, D> { }
     /**
      * 'Value' (string|number) getter/setter and set method returning this instance.\
      * __Notes:__
@@ -10691,6 +10781,42 @@
             return this.#contentContainer;
         }
         /**
+         * Get the first child component which is visible at the top of the scroll container. Visible
+         * means that _at least a part of it_ is visible at the top end of the scroll container.
+         */
+        get FirstVisibleChild() {
+            return this.#visibleChild(false);
+        }
+        /**
+         * Get the last child component which is visible at the bottom of the scroll container. Visible
+         * means that _at least a part of it_ is visible at the bottom end of the scroll container.
+         */
+        get LastVisibleChild() {
+            return this.#visibleChild(true);
+        }
+        /**
+         * Get the first child component which is visible at the top of the scroll container. Visible
+         * means that its top end is visible at the top end of the scroll container. This also means
+         * that its bottom end may not be visible (it could be clipped by the scroll container). Can be
+         * used together with {@link ScrollContainer.LastVisibleChildBottom} to determine if a child
+         * component is fully visible within the scroll container (`true` if both are defined and
+         * `FirstVisibleChildTop === LastVisibleChildBottom`).
+         */
+        get FirstVisibleChildTop() {
+            return this.#visibleChild(false, "top");
+        }
+        /**
+         * Get the last child component which is visible at the bottom of the scroll container. Visible
+         * means that its bottom end is visible at the bottom end of the scroll container. This also
+         * means that its top end may not be visible (it could be clipped by the scroll container). Can
+         * be used together with {@link ScrollContainer.FirstVisibleChildTop} to determine if a child
+         * component is fully visible within the scroll container (`true` if both are defined and
+         * `FirstVisibleChildTop === LastVisibleChildBottom`).
+         */
+        get LastVisibleChildBottom() {
+            return this.#visibleChild(true, "bottom");
+        }
+        /**
          * Removes _and disposes_ of all regular children from the scroll container.
          * @returns This instance.
          */
@@ -10711,6 +10837,47 @@
          */
         sync() {
             this.#syncScrollBarGeometry();
+        }
+        /**
+         * Find the first or last child whose bounds intersect the scrollable viewport.
+         * @param fromEnd Search the children in reverse order.
+         * @param edge Require the specified edge of the child to be visible, if given.
+         * @returns The visible child, if any, otherwise `undefined`.
+         */
+        #visibleChild(fromEnd, edge) {
+            const viewport = this.#scrollable.getBoundingClientRect();
+            const children = this.Children;
+            for (let i = fromEnd ? children.length - 1 : 0; fromEnd ? i >= 0 : i < children.length; fromEnd ? i-- : i++) {
+                const child = children[i];
+                const node = child.DOM;
+                if (node.nodeType === Node.COMMENT_NODE) {
+                    continue;
+                }
+                let rects;
+                let bounds;
+                if (node instanceof Element) {
+                    rects = node.getClientRects();
+                    bounds = node.getBoundingClientRect();
+                }
+                else {
+                    const range = document.createRange();
+                    range.selectNodeContents(node);
+                    rects = range.getClientRects();
+                    bounds = range.getBoundingClientRect();
+                }
+                if ((edge === "top" && (bounds.top < viewport.top || bounds.top >= viewport.bottom)) ||
+                    (edge === "bottom" && (bounds.bottom <= viewport.top || bounds.bottom > viewport.bottom))) {
+                    continue;
+                }
+                for (const rect of rects) {
+                    if (rect.width > 0 && rect.height > 0 &&
+                        rect.top < viewport.bottom && rect.bottom > viewport.top &&
+                        rect.left < viewport.right && rect.right > viewport.left) {
+                        return child;
+                    }
+                }
+            }
+            return undefined;
         }
         /**
          * Syncs the geometry of the handles and the visibility of the scroll bars based on the current
@@ -12904,7 +13071,7 @@
         }
     }
 
-    const intro$1a = `
+    const intro$1b = `
 \`BusyOverlay\` is a component for displaying an overlay that indicates a
 'busy-with-no-defined-end' state. The overlay covers the complete viewport and prevents any user
 interaction with the UI below it. It is typically used during long-running operations where user
@@ -12920,7 +13087,7 @@ The component offers additional features:
 - Support for nested calls to \`busy()\`/\`idle()\`. This makes it very easy to use the overlay in
   scenarios where multiple (asynchronous) operations may overlap.
 `;
-    const example$15 = `
+    const example$16 = `
 ### Basic usage
 
 \`\`\`
@@ -13075,12 +13242,12 @@ longRunning3();
             const btnBusy3 = new Button("Show")
                 .addClass("regular")
                 .on("click", async () => await show(false, 3500, 500));
-            this.append(this.markdown(intro$1a), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
-            ), this.markdown(example$15), this.markdown(example2));
+            this.append(this.markdown(intro$1b), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
+            ), this.markdown(example$16), this.markdown(example2));
         }
     }
 
-    const intro$19 = `
+    const intro$1a = `
 A container component whose content can be disclosed/undisclosed.
 
 **Class:** \`@vanilla-ts/components/DisclosureContainer\`
@@ -13096,7 +13263,7 @@ The \`DisclosureContainer\` component supports the following features:
 
 All features are configurable at runtime on an already existing instance.
 `;
-    const example$14 = `
+    const example$15 = `
 ### Notes
 - If \`WeakUndisclosed\` is \`true\` the inner content container will keep its content in the DOM
   when it is undisclosed, otherwise the content will be removed from the DOM.
@@ -13213,7 +13380,7 @@ if (someCondition) {
                 "textAlign": "center",
             });
             this
-                .append(this.markdown(intro$19), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$14), this.markdown(css$1), this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"), this.markdown(`
+                .append(this.markdown(intro$1a), this.example([this.#dcContainer, logMessage], [this.#dc]), this.markdown("### Configuration"), this.properties(this.#getConfiguration()), this.markdown(example$15), this.markdown(css$1), this.markdown("If the complete header should be clickable to disclose/undisclose the container, the following code and CSS could be used:"), this.markdown(`
 \`\`\`typescript
 example.Header.on("click", () => {
     example.Disclosed = !example.Disclosed;
@@ -13317,7 +13484,7 @@ example.headerCb(header => header.on("click", () => {
         }
     }
 
-    const intro$18 = `
+    const intro$19 = `
 \`IconButton\` is a component to display buttons with icons and/or text. The
 component itself is a regular \`§@dom/Button§\` component that contains three inner \`§@dom/Span§\`
 components which can be styled individually:
@@ -13548,7 +13715,7 @@ Compared to the example which uses background images the amount of CSS needed he
             let ib2a;
             let ib3a;
             const ibf = new MyIconButtonFactory();
-            this.append(this.markdown(intro$18), this.example([
+            this.append(this.markdown(intro$19), this.example([
                 new P("IconButtons with background images:"),
                 new Div().addClass("icon-button-container").append(ib0 = ibf.iconButton({
                     IconStart: "-ios_share",
@@ -13608,7 +13775,7 @@ Compared to the example which uses background images the amount of CSS needed he
         }
     }
 
-    const intro$17 = `
+    const intro$18 = `
 ## Advanced components
 
 The components provided by the \`@vanilla-ts/components\` package are complex elements that address
@@ -13676,7 +13843,7 @@ labeled components.
         buildExample() {
             this
                 .addClass("ex-components-introduction")
-                .append(this.markdown(intro$17));
+                .append(this.markdown(intro$18));
         }
     }
 
@@ -13731,14 +13898,14 @@ labeled components.
         ];
     }
 
-    const intro$16 = `
+    const intro$17 = `
 A component with an §@dom/A§ and a §@dom/Label§ representing a caption for the component. It
 creates a labeled hyperlink to a web page, file, email address or another location identified by a
 URL.
 
 **Class:** \`@vanilla-ts/components/LabeledAnchor\`
 `;
-    const example$13 = `
+    const example$14 = `
 ### Code example
 
 \`\`\`
@@ -13774,9 +13941,9 @@ new VTS_App(document.body).append(anchor1, anchor2);
         buildExample() {
             this.#lAnchor1 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-dom", "DOM project home", "Vanilla.ts DOM").target("_blank");
             this.#lAnchor2 = $.labeledAnchor("https://github.com/mn4367/vanilla-ts-components", "Components project home").target("_blank");
-            this.append(this.markdown(intro$16), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$17), this.example([new Div(this.#lAnchor1, new Br(), this.#lAnchor2)]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$13));
+                .append(...labeledComponentLabelFlags([this.#lAnchor1, this.#lAnchor2], true, "start", "start")), this.markdown(example$14));
         }
     }
 
@@ -13921,14 +14088,14 @@ For an advanced usage of component factories see §@core/Component factories§.
         }
     }
 
-    const intro$15 = `
+    const intro$16 = `
 A component with a §@dom/Div§ as an inner container for other components and a §@dom/Span§
 representing the caption for the container component. It is useful for visually grouping related
 content under a common caption without imposing additional semantics on that content.
 
 **Class:** \`@vanilla-ts/components/LabeledContainer\`
 `;
-    const example$12 = `
+    const example$13 = `
 ### Code example
 
 \`\`\`
@@ -14003,18 +14170,18 @@ new VTS_App(document.body).append(example);
                 { Label: "Nightly builds", Value: "nightly" },
             ], "rbg-sample-1")
                 .value("beta"), $.hr(), new P("Choose how updates should be installed"), $.labeledCheckbox("Automatically download available updates").checked(true), $.labeledCheckbox("Install updates automatically").checked(true), $.labeledCheckbox("Install security updates automatically").checked(true).disabled(true));
-            this.append(this.markdown(intro$15), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$12), this.markdown(exampleCSS$1));
+            this.append(this.markdown(intro$16), this.example([this.#container]), this.markdown("### Label position and label alignment"), new Div().addClass("example-properties")
+                .append(...labeledComponentLabelFlags([this.#container], false, "top", "center")), this.markdown(example$13), this.markdown(exampleCSS$1));
         }
     }
 
-    const intro$14 = `
+    const intro$15 = `
 A component with an §@dom/EmailInput§ and a §@dom/Label§ representing a caption for the component.
 It lets users enter an email address and uses the browser's built-in validation for email syntax.
 
 **Class:** \`@vanilla-ts/components/LabeledEmailInput\`
 `;
-    const example$11 = `
+    const example$12 = `
 ### Code example
 
 \`\`\`
@@ -14038,20 +14205,20 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledEmailInput("Business contact")
                 .emailInput(c => c.placeholder("sophie@example.com"));
-            this.append(this.markdown(intro$14), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$15), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$11));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$12));
         }
     }
 
-    const intro$13 = `
+    const intro$14 = `
 A component with a §@dom/Meter§ and a §@dom/Span§ representing a caption for the component. It
 represents a scalar value within a known range. Use a §@dom/Progress§ component instead to represent
 the progress of a task.
 
 **Class:** \`@vanilla-ts/components/LabeledMeter\`
 `;
-    const example$10 = `
+    const example$11 = `
 ### Code example
 
 \`\`\`
@@ -14090,7 +14257,7 @@ new VTS_App(document.body).append(example);
             "68 out of 100" // Fallback content
             )
                 .meter(meter => meter.style("inlineSize", "15rem"));
-            this.append(this.markdown(intro$13), this.example([this.#lMeter]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+            this.append(this.markdown(intro$14), this.example([this.#lMeter]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
                 this.#lMeter.meter(cb => cb.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL));
             }), $.labeledNumberInput("Current value:", undefined, this.#lMeter.Value.toString(), "", "0", "100")
@@ -14098,18 +14265,18 @@ new VTS_App(document.body).append(example);
                 this.#lMeter.value(numberInput.ValueAsNumber);
             }))), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lMeter], true, "start", "start")), this.markdown(example$10));
+                .append(...labeledComponentLabelFlags([this.#lMeter], true, "start", "start")), this.markdown(example$11));
         }
     }
 
-    const intro$12 = `
+    const intro$13 = `
 A component with a §@dom/NumberInput§ and a §@dom/Label§ representing a caption for the component.
 It lets users enter a number and optionally constrains the value through minimum, maximum and step
 attributes.
 
 **Class:** \`@vanilla-ts/components/LabeledNumberInput\`
 `;
-    const example$$ = `
+    const example$10 = `
 ### Code example
 
 \`\`\`
@@ -14173,20 +14340,20 @@ new VTS_App(document.body).append(example);
                 .on("input", () => {
                 this.#lInput.NumberInput.DOM.setCustomValidity(this.#lInput.Value === "42" ? "" : "not_42");
             });
-            this.append(this.markdown(intro$12), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$13), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$$), this.markdown(css));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$10), this.markdown(css));
         }
     }
 
-    const intro$11 = `
+    const intro$12 = `
 A component with a §@dom/P§ and a §@dom/Span§ representing a caption for the component. It combines
 a caption with a paragraph-sized block of related content and is useful for displaying labeled
 values or descriptions.
 
 **Class:** \`@vanilla-ts/components/LabeledParagraph\`
 `;
-    const example$_ = `
+    const example$$ = `
 ### Code example
 
 \`\`\`
@@ -14212,19 +14379,19 @@ et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est.
         /** @inheritdoc */
         buildExample() {
             this.#lParagraph = $.labeledParagraph("Sample text", lorem);
-            this.append(this.markdown(intro$11), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$12), this.example([this.#lParagraph]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$_));
+                .append(...labeledComponentLabelFlags([this.#lParagraph], true, "start", "start")), this.markdown(example$$));
         }
     }
 
-    const intro$10 = `
+    const intro$11 = `
 A component with a §@dom/PasswordInput§ and a §@dom/Label§ representing a caption for the component.
 It lets users enter sensitive text while the browser obscures the entered characters on screen.
 
 **Class:** \`@vanilla-ts/components/LabeledPasswordInput\`
 `;
-    const example$Z = `
+    const example$_ = `
 ### Code example
 
 \`\`\`
@@ -14248,20 +14415,20 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledPasswordInput("Password")
                 .passwordInput(c => c.placeholder("Enter password"));
-            this.append(this.markdown(intro$10), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$11), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$Z));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$_));
         }
     }
 
-    const intro$$ = `
+    const intro$10 = `
 A component with a §@dom/Progress§ and a §@dom/Span§ representing a caption for the component. It
 represents the progress of a task, such as a download or file transfer. Use a §@dom/Meter§ component
 instead to represent a scalar value within a known range.
 
 **Class:** \`@vanilla-ts/components/LabeledProgress\`
 `;
-    const example$Y = `
+    const example$Z = `
 ### Code example
 
 \`\`\`
@@ -14301,7 +14468,7 @@ class.
             "70 out of 100" // Fallback content
             )
                 .progress(progress => progress.style("inlineSize", "15rem"));
-            this.append(this.markdown(intro$$), this.example([this.#lProgress]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
+            this.append(this.markdown(intro$10), this.example([this.#lProgress]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical orientation", undefined, "orientation")
                 .on("checked", (ev) => {
                 this.#lProgress.progress(cb => cb.orientation(ev.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL));
             }), $.labeledNumberInput("Maximum value:", undefined, "100", "", "1", "100")
@@ -14316,11 +14483,11 @@ class.
                 marginBlock: "0.5rem 0"
             })), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lProgress], true, "start", "start")), this.markdown(example$Y));
+                .append(...labeledComponentLabelFlags([this.#lProgress], true, "start", "start")), this.markdown(example$Z));
         }
     }
 
-    const intro$_ = `
+    const intro$$ = `
 A component with a §@dom/RadioButton§ and a §@dom/Label§ representing a caption for the component.
 Radio buttons represent mutually exclusive choices where selecting one option deselects the others
 in the same group. This class mainly exists as a building block for
@@ -14328,7 +14495,7 @@ in the same group. This class mainly exists as a building block for
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButton\`
 `;
-    const example$X = `
+    const example$Y = `
 ### Code example
 
 \`\`\`
@@ -14355,7 +14522,7 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$_), this.example([
+            this.append(this.markdown(intro$$), this.example([
                 this.#lrb = $.labeledRadioButton("Beta versions")
                     .on("checked", () => this.#rbgCb.value(this.#lrb.Checked ? "checked" : "unchecked"))
             ]), this.markdown("### Label position, label alignment and radio button state"), new Div()
@@ -14375,18 +14542,18 @@ the corresponding documentation in the \`LabeledRadioButton\` class.
                         break;
                 }
             }), ...labeledComponentLabelFlags([this.#lrb], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$X));
+                .on("checked", () => this.#lrb.toggle(!this.#lrb.Toggle))), this.markdown(example$Y));
         }
     }
 
-    const intro$Z = `
+    const intro$_ = `
 A component that groups multiple §@components/LabeledRadioButton§s into a single component that is
 similar to a §@components/LabeledContainer§. It presents a labeled set of mutually exclusive choices
 and ensures that only one radio button in the group is selected at a time.
 
 **Class:** \`@vanilla-ts/components/LabeledRadioButtonGroup\`
 `;
-    const example$W = `
+    const example$X = `
 ### Code example
 
 \`\`\`
@@ -14426,7 +14593,7 @@ in the \`RadioButtonGroup\` class.
         }
         /** @inheritdoc */
         buildExample() {
-            this.append(this.markdown(intro$Z), this.example([
+            this.append(this.markdown(intro$_), this.example([
                 this.#lrbg = $.labeledRadioButtonGroup("Your position", [
                     { Label: "Software developer", Value: "software_developer" },
                     { Label: "Security engineer", Value: "security_engineer" },
@@ -14454,18 +14621,18 @@ in the \`RadioButtonGroup\` class.
             }), 
             // $.labeledContainer("Inner radio button group").append(
             ...labeledComponentLabelFlags([this.#lrbg.RadioButtonGroup], true, "end", "start"), $.labeledCheckbox("Allow toggling the state")
-                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$W));
+                .on("checked", () => this.#lrbg.toggle(!this.#lrbg.Toggle))), this.markdown(example$X));
         }
     }
 
-    const intro$Y = `
+    const intro$Z = `
 A component with a §@dom/RangeInput§ and a §@dom/Label§ representing a caption for the component.
 The label is automatically associated with the range input through its \`for\` and \`id\`
 attributes. It lets users select an approximate numeric value from a bounded range using a slider.
 
 **Class:** \`@vanilla-ts/components/LabeledRangeInput\`
 `;
-    const example$V = `
+    const example$W = `
 ### Code example
 
 \`\`\`
@@ -14519,7 +14686,7 @@ new VTS_App(document.body).append(
                 .rangeInput(rangeInput => rangeInput
                 .style("inlineSize", "15rem")
                 .on("input", () => value.text(rangeInput.Value)));
-            this.append(this.markdown(intro$Y), this.example([
+            this.append(this.markdown(intro$Z), this.example([
                 this.#lRangeInput,
                 new P("Current value: ", value = new Code(this.#lRangeInput.Value))
                     .style({
@@ -14541,18 +14708,18 @@ new VTS_App(document.body).append(
                 value.text(this.#lRangeInput.Value);
             }))), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lRangeInput], true, "start", "start")), this.markdown(example$V));
+                .append(...labeledComponentLabelFlags([this.#lRangeInput], true, "start", "start")), this.markdown(example$W));
         }
     }
 
-    const intro$X = `
+    const intro$Y = `
 A component with a §@dom/SearchInput§ and a §@dom/Label§ representing a caption for the component.
 It provides a single-line field for entering search terms and may receive search-specific behavior
 or styling from the browser.
 
 **Class:** \`@vanilla-ts/components/LabeledSearchInput\`
 `;
-    const example$U = `
+    const example$V = `
 ### Code example
 
 \`\`\`
@@ -14576,19 +14743,19 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledSearchInput("Search")
                 .searchInput(c => c.placeholder("Enter search term..."));
-            this.append(this.markdown(intro$X), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$Y), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$U));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$V));
         }
     }
 
-    const intro$W = `
+    const intro$X = `
 A component with an §@dom/Select§ and a §@dom/Label§ representing a caption for the component. It
 lets users choose one or more entries from a predefined list of options.
 
 **Class:** \`@vanilla-ts/components/LabeledSelect\`
 `;
-    const example$T = `
+    const example$U = `
 ### Code example
 
 \`\`\`
@@ -14715,12 +14882,12 @@ new VTS_App(document.body).append(example, log);
                 new Option("Eggplant").value("eggplant")
             ]))
                 .on("change", updateMultipleLog);
-            this.append(this.markdown(intro$W), this.example([
+            this.append(this.markdown(intro$X), this.example([
                 this.#lInput,
                 log
             ]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$T), this.markdown("---"), this.markdown(introMultiple$2), this.example([
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "top", "start")), this.markdown(example$U), this.markdown("---"), this.markdown(introMultiple$2), this.example([
                 this.#lInputMultiple,
                 logMultiple
             ]), this.markdown("### Label position and label alignment"), new Div()
@@ -14729,7 +14896,7 @@ new VTS_App(document.body).append(example, log);
         }
     }
 
-    const intro$V = `
+    const intro$W = `
 A component with a §@dom/TemporalInput§ and a §@dom/Label§ representing a caption for the component.
 The label is automatically associated with the temporal input through its \`for\` and \`id\`
 attributes. The inner input can represent a date, time, local date and time, month or week, depending
@@ -14814,7 +14981,7 @@ across browser engines and platforms.
     };
     const initialType = TemporalType.DateTime;
     const initialConfig = temporalInputConfigurations[initialType];
-    const example$S = `
+    const example$T = `
 ### Code example
 
 \`\`\`
@@ -14861,7 +15028,7 @@ new VTS_App(document.body).append(example);
                 .labelPosition(LabelPosition.TOP)
                 .on("input", () => value.text(this.#lTemporalInput.Value));
             const labeledTemporalInputs = [this.#lTemporalInput];
-            this.append(this.markdown(intro$V), this.example([
+            this.append(this.markdown(intro$W), this.example([
                 this.#lTemporalInput,
                 new P("Current value: ", value = new Code(this.#lTemporalInput.Value))
                     .style({
@@ -14925,18 +15092,18 @@ new VTS_App(document.body).append(example);
                 value.text(this.#lTemporalInput.Value);
             }), stepGranularity = new Span(`\u2003(Step granularity is ${initialConfig.stepDescription})`)), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags(labeledTemporalInputs, true, "start", "start")), this.markdown(example$S));
+                .append(...labeledComponentLabelFlags(labeledTemporalInputs, true, "start", "start")), this.markdown(example$T));
         }
     }
 
-    const intro$U = `
+    const intro$V = `
 A component with a §@dom/TextArea§ and a §@dom/Label§ representing a caption for the component. The
 label is automatically associated with the textarea through its \`for\` and \`id\` attributes. It
 lets users enter and edit multiple lines of plain text.
 
 **Class:** \`@vanilla-ts/components/LabeledTextArea\`
 `;
-    const example$R = `
+    const example$S = `
 ### Code example
 
 \`\`\`
@@ -14991,7 +15158,7 @@ new VTS_App(document.body).append(example);
                 .textArea(textArea => textArea
                 .placeholder("Enter your message here")
                 .resizable("vertical"));
-            this.append(this.markdown(intro$U), this.example([this.#lTextArea]), this.markdown("### Configuration"), this.properties($.labeledNumberInput("Visible rows:", undefined, this.#lTextArea.TextArea.Rows.toString(), "", "1", "20")
+            this.append(this.markdown(intro$V), this.example([this.#lTextArea]), this.markdown("### Configuration"), this.properties($.labeledNumberInput("Visible rows:", undefined, this.#lTextArea.TextArea.Rows.toString(), "", "1", "20")
                 .numberInput(numberInput => numberInput.on("input", () => {
                 this.#lTextArea.TextArea.rows(numberInput.ValueAsNumber);
             })), $.labeledNumberInput("Visible columns:", undefined, this.#lTextArea.TextArea.Cols.toString(), "", "1", "100")
@@ -15017,17 +15184,17 @@ new VTS_App(document.body).append(example);
             }))
                 .style("marginBlockStart", "0.5rem")), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lTextArea], true, "top", "start")), this.markdown(example$R));
+                .append(...labeledComponentLabelFlags([this.#lTextArea], true, "top", "start")), this.markdown(example$S));
         }
     }
 
-    const intro$T = `
+    const intro$U = `
 A component with a §@dom/TextInput§ and a §@dom/Label§ representing a caption for the component. It
 provides a labeled, single-line field for entering and editing plain text.
 
 **Class:** \`@vanilla-ts/components/LabeledTextInput\`
 `;
-    const example$Q = `
+    const example$R = `
 ### Code example
 
 \`\`\`
@@ -15051,9 +15218,906 @@ new VTS_App(document.body).append(example);
             this.#lInput = $
                 .labeledTextInput("Username")
                 .textInput(c => c.placeholder("Enter your name here"));
-            this.append(this.markdown(intro$T), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
+            this.append(this.markdown(intro$U), this.example([this.#lInput]), this.markdown("### Label position and label alignment"), new Div()
                 .addClass("example-properties")
-                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$Q));
+                .append(...labeledComponentLabelFlags([this.#lInput], true, "start", "start")), this.markdown(example$R));
+        }
+    }
+
+    /**
+     * Menu item component, an entry in a popup menu.
+     */
+    class MenuItem extends AElementComponentWithInternalUI {
+        _checked = false;
+        _hint;
+        _content;
+        _menuItemData;
+        /**
+         * Create menu item component.
+         * @param content The content of the menu item.
+         * @param hint The content of the menu item hint.
+         * @param checked The `Checked` state of the menu item.
+         * @param menuItemData Optional data attached to the menu item.
+         */
+        constructor(content, hint, checked = false, menuItemData) {
+            super();
+            super
+                .initialize()
+                .content(content)
+                .hint(hint)
+                .checked(checked)
+                .menuItemData(menuItemData)
+                .tabIndex(0);
+        }
+        /**
+         * Get/set the content of the menu item.\
+         * __Notes:__
+         * - The getter returns a _copy_ of the internal array of content items.
+         * - The setter replaces _and_ disposes of _all_ content currently present in this menu item
+         *   (the hint remains untouched)!
+         * - The return type of the getter is very general since the content can be almost anything
+         *   (instances of `@vanilla-ts/dom/Text`, phrasing content or a component like, for example, a
+         *   labeled checkbox).
+         * - For the further behaviour of this setter see function `content()`.
+         * @see {@link MenuItem.Recontent}
+         * @see {@link MenuItem.content()}
+         */
+        get Content() {
+            return this._content.Children;
+        }
+        /** @inheritdoc */
+        set Content(content) {
+            this.internalContent(content, false);
+        }
+        /**
+         * Set the content of the menu item.\
+         * __Notes:__
+         * - This setter first removes all content currently present in this menu item and then adds the
+         *   new content. The removed content must be managed/cleared/disposed of by the consumer!
+         * - For the further behaviour of this setter see function `recontent()`.
+         * @see {@link MenuItem.Content}
+         * @see {@link MenuItem.recontent()}
+         */
+        set Recontent(content) {
+            this.internalContent(content, true);
+        }
+        /**
+         * Set the content of the menu item.
+         * @param content The content of the menu item.\
+         * __Notes:__
+         * - Setting new content replaces _and_ disposes of _all_ content currently present in this menu
+         *   item (the hint remains untouched)!
+         * - If `content` is a string, an instance of `@vanilla-ts/dom/Text` from that string will be
+         *   created and appended.
+         * - If `content` is an array with a length of `1` and `content[0]` is a string, an instance of
+         *   `@vanilla-ts/dom/Text` from that string will be created and appended.
+         * - If `content` is an array with a length greater than `0`, then an instance of
+         *   `@vanilla-ts/dom/Text` is created and appended for each element of `content` that is a
+         *   string. All other elements of the array `content` are added unchanged.
+         * @see {@link MenuItem.recontent()}
+         * @returns This instance.
+         */
+        content(content) {
+            return this.internalContent(content, false);
+        }
+        /**
+         * Set the content of the menu item.
+         * @param content The content of the menu item.\
+         * __Notes:__
+         * - Setting new content first removes all content currently present in this menu item and then
+         *   adds the new content. The removed content must be managed/cleared/disposed of by the
+         *   consumer (the hint remains untouched)!
+         * - If `content` is a string, an instance of `@vanilla-ts/dom/Text` from that string will be
+         *   created and appended.
+         * - If `content` is an array with a length of `1` and `content[0]` is a string, an instance of
+         *   `@vanilla-ts/dom/Text` from that string will be created and appended.
+         * - If `content` is an array with a length greater than `0`, then an instance of
+         *   `@vanilla-ts/dom/Text` is created and appended for each element of `content` that is a
+         *   string. All other elements of the array `content` are added unchanged.
+         * @see {@link MenuItem.content()}
+         * @returns This instance.
+         */
+        recontent(content) {
+            return this.internalContent(content, true);
+        }
+        /**
+         * Called internally by `Content`/`Recontent`/`content()`/`content()`.
+         * @param content The menu item content to be set.
+         * @param rephrase `true`, if the previous menu item content is disposed of, `false` if the
+         * previous menu item content remains untouched.
+         * @returns This instance.
+         */
+        internalContent(content, rephrase) {
+            this.removeClass("text", "phrase", "component");
+            rephrase
+                ? this._content.remove()
+                : this._content.clear();
+            if (typeof content === "string") {
+                this._content.phrase(new Text$1(content));
+                this.addClass("text");
+            }
+            else if (content instanceof Text$1) {
+                this._content.append(content);
+                this.addClass("text");
+            }
+            else if (Array.isArray(content)) {
+                if (content.length === 1 && typeof content[0] === "string") {
+                    this._content.phrase(new Text$1(content[0]));
+                    this.addClass("text");
+                }
+                else {
+                    const elements = content.map(e => typeof e === "string" ? new Text$1(e) : e);
+                    this._content.phrase(...elements);
+                    this.addClass(elements.every(e => e instanceof Text$1)
+                        ? "text"
+                        : "phrase");
+                }
+            }
+            else if (content instanceof AElementComponent) {
+                this._content.append(content);
+                this.addClass("component");
+            }
+            return this;
+        }
+        /**
+         * Get/set the content of the menu item hint.\
+         * __Notes:__
+         * - The getter returns a _copy_ of the internal array of the hint contents.
+         * - The setter replaces _and_ disposes of _all_ hint content currently present in this menu
+         *   item hint!
+         * - The return type of the getter is very general since the hint can be almost anything
+         *   (instances of `@vanilla-ts/dom/Text`, phrasing content or a component like, for example, a
+         *   labeled checkbox).
+         * - For the further behaviour of this setter see function `hint()`.
+         * @see {@link MenuItem.Rehint}
+         * @see {@link MenuItem.hint()}
+         */
+        get Hint() {
+            return this._hint.Children;
+        }
+        /** @inheritdoc */
+        set Hint(hint) {
+            this.internalHint(hint, false);
+        }
+        /**
+         * Set the content of the menu item hint.\
+         * __Notes:__
+         * - This setter first removes all hint content currently present in this menu item hint and
+         *   then adds the new hint content. The removed hint content must be managed/cleared/disposed
+         *   of by the consumer!
+         * - For the further behaviour of this setter see function `rehint()`.
+         * @see {@link MenuItem.Hint}
+         * @see {@link MenuItem.rehint()}
+         */
+        set Rehint(hint) {
+            this.internalHint(hint, true);
+        }
+        /**
+         * Set the content of the menu item hint.
+         * @param hint The hint content of the menu item.\
+         * __Notes:__
+         * - Setting new hint content replaces _and_ disposes of _all_ hint content currently present
+         *   in this menu item hint!
+         * - If `hint` is undefined, the current hint content is removed _and_ disposed of!
+         * - If `hint` is a string, an instance of `@vanilla-ts/dom/Text` from that string will be
+         *   created and appended.
+         * - If `hint` is an array with a length of `1` and `hint[0]` is a string, an instance of
+         *   `@vanilla-ts/dom/Text` from that string will be created and appended.
+         * - If `hint` is an array with a length greater than `0`, then an instance of
+         *   `@vanilla-ts/dom/Text` is created and appended for each element of `hint` that is a string.
+         *   All other elements of the array `hint` are added unchanged.
+         * @see {@link MenuItem.rehint()}
+         * @returns This instance.
+         */
+        hint(hint) {
+            return this.internalHint(hint, false);
+        }
+        /**
+         * Set the content of the menu item hint.
+         * @param hint The hint content of the menu item.\
+         * __Notes:__
+         * - Setting new hint content first removes all hint content currently present in this menu item
+         *   hint and then adds the new content. The removed hint content must be
+         *   managed/cleared/disposed of by the consumer!
+         * - If `hint` is undefined, all current hint content is removed. The removed hint content must
+         *   be managed/cleared/disposed of by the consumer!
+         * - If `hint` is a string, an instance of `@vanilla-ts/dom/Text` from that string will be
+         *   created and appended.
+         * - If `hint` is an array with a length of `1` and `hint[0]` is a string, an instance of
+         *   `@vanilla-ts/dom/Text` from that string will be created and appended.
+         * - If `hint` is an array with a length greater than `0`, then an instance of
+         *   `@vanilla-ts/dom/Text` is created and appended for each element of `hint` that is a string.
+         *   All other elements of the array `hint` are added unchanged.
+         * @see {@link MenuItem.hint()}
+         * @returns This instance.
+         */
+        rehint(hint) {
+            return this.internalHint(hint, true);
+        }
+        /**
+         * Called internally by `Hint`/`Rehint`/`hint()`/`rehint()`.
+         * @param hint The hint content to be set.
+         * @param rephrase `true`, if the previous hint content is disposed of, `false` if the previous
+         * hint content remains untouched.
+         * @returns This instance.
+         */
+        internalHint(hint, rephrase) {
+            rephrase
+                ? this._hint.remove()
+                : this._hint.clear();
+            if (hint === undefined) {
+                return this;
+            }
+            if (typeof hint === "string") {
+                this._hint.phrase(new Text$1(hint));
+            }
+            else if (hint instanceof Text$1) {
+                this._hint.append(hint);
+            }
+            else if (Array.isArray(hint)) {
+                if (hint.length === 1 && typeof hint[0] === "string") {
+                    this._hint.phrase(new Text$1(hint[0]));
+                }
+                else {
+                    this._hint.phrase(...hint.map(e => typeof e === "string" ? new Text$1(e) : e));
+                }
+            }
+            else if (hint instanceof AElementComponent) {
+                this._hint.append(hint);
+            }
+            return this;
+        }
+        /**
+         * Get/set the `Checked` state of the menu item.
+         */
+        get Checked() {
+            return this._checked;
+        }
+        /** @inheritdoc */
+        set Checked(v) {
+            this.checked(v);
+        }
+        /**
+         * Set the `Checked` state of the menu item.
+         * @param checked The `Checked` state of the menu item.
+         * @returns This instance.
+         */
+        checked(checked) {
+            this._checked = checked;
+            this._checked
+                ? this.addClass("checked")
+                : this.removeClass("checked");
+            return this;
+        }
+        /**
+         * Get/set the data of the menu item.
+         */
+        get MenuItemData() {
+            return this._menuItemData;
+        }
+        /** @inheritdoc */
+        set MenuItemData(v) {
+            this.menuItemData(v);
+        }
+        /**
+         * Set the data of the menu item.
+         * @param data The data to be set on the menu item.
+         * @returns This instance.
+         */
+        menuItemData(data) {
+            this._menuItemData = data;
+            return this;
+        }
+        /**
+         * Build UI of the component.
+         * @returns This instance.
+         */
+        buildUI() {
+            this.ui = new LiUl()
+                .addClass("menu-item")
+                .append(this._content = new Span(), this._hint = new Span().addClass("hint"));
+            return this;
+        }
+    }
+    /**
+     * Menu heading component. A “Heading” menu item is not meant to be a normal menu item, but a
+     * heading for a popup menu. The intended behavior is that such a heading does not show a hover
+     * effect when the mouse pointer/mouse moves into it, and that the entry is ignored/skipped when
+     * navigating with the keyboard through the list of (other) menu items in the popup menu.
+     */
+    class MenuHeading extends AElementComponentWithInternalUI {
+        /**
+         * Create menu heading component.
+         * @param content The content of the menu heading.
+         */
+        constructor(content) {
+            super();
+            super
+                .initialize()
+                .content(content);
+        }
+        /**
+         * Get/set the content of the menu heading.\
+         * __Note:__ The return type of the getter is very general since the content can be a string or
+         * (an array of) phrasing content.
+         */
+        get Content() {
+            return this.ui.Children;
+        }
+        /** @inheritdoc */
+        set Content(content) {
+            this.content(content);
+        }
+        /**
+         * Set the content of the menu heading.
+         * @param content The content of the menu heading.
+         * @returns This instance.
+         */
+        content(content) {
+            this.ui.removeClass("text", "phrase");
+            if (typeof content === "string") {
+                this.ui.phrase(content);
+                this.ui.addClass("text");
+            }
+            else if (Array.isArray(content)) {
+                this.ui.phrase(...content);
+                this.ui.addClass("phrase");
+            }
+            return this;
+        }
+        /**
+         * Build UI of the component.
+         * @returns This instance.
+         */
+        buildUI() {
+            this.ui = new LiUl().addClass("menu-heading");
+            return this;
+        }
+    }
+    /**
+     * Menu separator component.
+     */
+    class MenuSeparator extends AElementComponentWithInternalUI {
+        /**
+         * Create menu separator component.
+         */
+        constructor() {
+            super();
+            super.initialize();
+        }
+        /**
+         * Build UI of the component.
+         * @returns This instance.
+         */
+        buildUI() {
+            this.ui = new LiUl()
+                .addClass("menu-separator")
+                .append(new Hr());
+            return this;
+        }
+    }
+    /** Custom 'show' event for popup menus. */
+    class PopupMenuShowEvent extends ACustomComponentEvent {
+        /**
+         * Create popup menu show event.
+         * @param sender The event emitter (always `PopupMenu`).
+         * @param customEventInitDict Optional event properties.
+         */
+        constructor(sender, customEventInitDict = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
+            super("show", sender, undefined, customEventInitDict);
+        }
+    }
+    /** Custom 'hide' event for popup menus. */
+    class PopupMenuHideEvent extends ACustomComponentEvent {
+        /**
+         * Create popup menu hide event.
+         * @param sender The event emitter (always `PopupMenu`).
+         * @param customEventInitDict Optional event properties.
+         */
+        constructor(sender, customEventInitDict = DEFAULT_EVENT_INIT_DICT) {
+            super("hide", sender, undefined, customEventInitDict);
+        }
+    }
+    /** Custom 'select' event for menu items. */
+    class PopupMenuItemSelectEvent extends ACustomComponentEvent {
+        /**
+         * Create menu item select event.
+         * @param sender The event emitter (always `PopupMenu`).
+         * @param menuItem The menu item which was selected.
+         * @param customEventInitDict Optional event properties.
+         */
+        constructor(sender, menuItem, customEventInitDict = DEFAULT_CANCELABLE_EVENT_INIT_DICT) {
+            super("select", sender, { MenuItem: menuItem }, customEventInitDict); // eslint-disable-line jsdoc/require-jsdoc
+        }
+    }
+    /**
+     * PopupMenu component, a container for menu items, menu headings and menu separators.
+     */
+    class PopupMenu extends AElementComponentWithInternalUI {
+        focusableItems = [];
+        focusedIndex = -1;
+        lastFocusedElement;
+        fncOnClick = this.onMouseClick.bind(this);
+        fncOnKeyDown = this.onKeyDown.bind(this);
+        fncOnPointerMove = this.onPointerMove.bind(this);
+        fncOnPointerLeave = this.onPointerLeave.bind(this);
+        fncRemovePopupMenu = this.removePopupMenu.bind(this);
+        passiveTrue = { passive: true }; // eslint-disable-line jsdoc/require-jsdoc
+        menuMutationObserver;
+        /**
+         * Create popup menu component.
+         * @param items The menu items for the popup menu.
+         */
+        constructor(...items) {
+            super();
+            super
+                .initialize()
+                .items(...items)
+                .tabbable(true);
+        }
+        /**
+         * Get/set the popup menu items.\
+         * __Notes:__
+         * - The getter returns a _copy_ of the internal array of menu items.
+         * - The setter replaces _and_ disposes of _all_ menu items currently present in this popup
+         *   menu!
+         */
+        get Items() {
+            return this.ui.Children;
+        }
+        /** @inheritdoc */
+        set Items(v) {
+            this.items(...v);
+        }
+        /**
+         * Set the popup menu items.\
+         * __Note:__ This replaces _and_ disposes of _all_ menu items currently present in this popup
+         * menu!
+         * @param items The menu items to be set.
+         * @returns This instance.
+         */
+        items(...items) {
+            this.ui.clear();
+            this.ui.append(...items);
+            this.setFocusableItems();
+            return this;
+        }
+        /**
+         * Displays the pop-up menu.
+         * @param position The position at which the pop-up menu is to be displayed. If no position is
+         * specified, the position from CSS applies (if available there, otherwise 0,0). The position
+         * refers to the top left corner of the page. If `position` is given, it is always adjusted in a
+         * way that ensures that the menu is never clipped by the layout viewport. If another behavior
+         * is desired, `adjustMenuPosition()` must be overridden.
+         * @see {@link PopupMenu.adjustMenuPosition()}
+         * @returns This instance.
+         */
+        show(position) {
+            if (!this.dispatch(new PopupMenuShowEvent(this))) {
+                return this;
+            }
+            this.lastFocusedElement = document.activeElement;
+            this.setFocusableItems();
+            document.body.appendChild(this.DOM);
+            const d = this.DOM.style.display;
+            const v = this.DOM.style.visibility;
+            const layoutViewportWidth = document.documentElement.scrollWidth;
+            const layoutViewportHeight = document.documentElement.scrollHeight;
+            this.style({
+                /* eslint-disable jsdoc/require-jsdoc */
+                visibility: "hidden",
+                display: null
+                /* eslint-enable */
+            });
+            this.adjustMenuItemWidths();
+            if (position) {
+                this.adjustMenuPosition(position, layoutViewportWidth, layoutViewportHeight);
+            }
+            this.style({
+                /* eslint-disable jsdoc/require-jsdoc */
+                visibility: v,
+                display: d
+                /* eslint-enable */
+            });
+            window.addEventListener("pointerdown", this.fncRemovePopupMenu);
+            window.addEventListener("resize", this.fncRemovePopupMenu);
+            window.addEventListener("blur", this.fncRemovePopupMenu);
+            this.on("click", this.fncOnClick)
+                .on("keydown", this.fncOnKeyDown)
+                .on("pointermove", this.fncOnPointerMove, this.passiveTrue)
+                .on("pointerleave", this.fncOnPointerLeave, this.passiveTrue)
+                .visible(true)
+                .focus();
+            this.menuMutationObserver.observe(this.ui.DOM, { childList: true, subtree: true }); // eslint-disable-line jsdoc/require-jsdoc
+            return this;
+        }
+        /**
+         * Hides the pop-up menu and removes it from the DOM.
+         * @returns This instance.
+         */
+        hide() {
+            this.menuMutationObserver.disconnect();
+            window.removeEventListener("pointerdown", this.fncRemovePopupMenu);
+            window.removeEventListener("resize", this.fncRemovePopupMenu);
+            window.removeEventListener("blur", this.fncRemovePopupMenu);
+            this.off("click", this.fncOnClick)
+                .off("keydown", this.fncOnKeyDown)
+                .off("pointermove", this.fncOnPointerMove, this.passiveTrue)
+                .off("pointerleave", this.fncOnPointerLeave, this.passiveTrue)
+                .visible(false);
+            this.DOM.remove();
+            this.emit(new PopupMenuHideEvent(this))
+                .style({
+                /* eslint-disable jsdoc/require-jsdoc */
+                left: null,
+                top: null
+                /* eslint-enable */
+            });
+            this.lastFocusedElement instanceof HTMLElement && this.lastFocusedElement.focus();
+            return this;
+        }
+        /**
+         * Adjust minimum widths of menu items.\
+         * Calculate minimum with with regard to the hints. This code is far from ideal since it
+         * first hides all hints to get the width of the widest menu text and then shows the
+         * hints again, but it works. Care must be taken if `MenuItem` (or an inheriting class)
+         * changes it's inner layout since the code here relies on this layout.
+         */
+        adjustMenuItemWidths() {
+            const items = this.Items.filter(e => e instanceof MenuItem);
+            let minItemWidth = 0;
+            for (const item of items) {
+                item.Hint[0]?.Parent?.visible(false);
+                item.Content[0]?.Parent?.style("minWidth", null);
+            }
+            for (const item of items) {
+                minItemWidth = Math.max(minItemWidth, item.Content[0]?.Parent?.DOM.clientWidth ?? 0);
+            }
+            for (const item of items) {
+                item.Content[0]?.Parent?.style("minWidth", `${minItemWidth}px`);
+                item.Hint[0]?.Parent?.visible(true);
+            }
+        }
+        /**
+         * Update the internal list of menu item components which can be focused.
+         */
+        setFocusableItems() {
+            this.focusableItems.length = 0;
+            for (const item of this.ui.Children) {
+                if (item instanceof MenuItem && !item.Disabled /* !! */) {
+                    this.focusableItems.push(item);
+                }
+            }
+        }
+        /**
+         * Adjusts the position of the menu item in a way that ensures that the menu is never clipped by
+         * the layout viewport.
+         * @param position The position at which the pop-up menu is to be displayed.
+         * @param layoutViewportWidth The width of the layout viewport.
+         * @param layoutViewportHeight The height of the layout viewport.
+         */
+        adjustMenuPosition(position, layoutViewportWidth, layoutViewportHeight) {
+            // Prevent clipped position for negative X and Y values.
+            position.x = Math.max(0, position.x);
+            position.y = Math.max(0, position.y);
+            // this.style("insetInlineStart", `${position?.x}px`);
+            // Initial position of the popup menu.
+            this.style({
+                /* eslint-disable jsdoc/require-jsdoc */
+                left: `${position?.x}px`,
+                top: `${position?.y}px`
+                /* eslint-enable */
+            });
+            /**
+             * Adjust potential clipped positon at the right and the bottom.
+             * @todo Handle other extreme positions?
+             */
+            const rect = this.DOM.getBoundingClientRect();
+            if ((window.scrollX + rect.left + rect.width) > layoutViewportWidth) {
+                this.style("left", `${layoutViewportWidth - rect.width}px`);
+            }
+            if ((window.scrollY + rect.top + rect.height) > layoutViewportHeight) {
+                this.style("top", `${layoutViewportHeight - rect.height}px`);
+            }
+        }
+        /**
+         * A menu item was selected by the mouse/pointer.
+         * @param _event The mouse/pointer event.
+         */
+        onMouseClick(_event) {
+            const menuItem = this.focusableItems[this.focusedIndex];
+            if (menuItem && this.dispatch(new PopupMenuItemSelectEvent(this, menuItem))) {
+                this.hide();
+            }
+        }
+        /**
+         * Keyboard navigation for the popup menu.
+         * @param event The keyboard event.
+         */
+        onKeyDown(event) {
+            const noKBModifiers = !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey;
+            let focusTarget = undefined;
+            const setFocusedIndex = (backward) => {
+                if (this.focusedIndex === -1) {
+                    backward ? this.focusedIndex = this.focusableItems.length - 1 : this.focusedIndex = 0;
+                }
+                else if (backward) {
+                    this.focusedIndex === 0 ? this.focusedIndex = this.focusableItems.length - 1 : this.focusedIndex--;
+                }
+                else {
+                    this.focusedIndex === this.focusableItems.length - 1 ? this.focusedIndex = 0 : this.focusedIndex++;
+                }
+            };
+            switch (event.key) {
+                case " ":
+                case "Enter":
+                    if (noKBModifiers) {
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                        const menuItem = this.focusableItems[this.focusedIndex];
+                        if (menuItem && this.dispatch(new PopupMenuItemSelectEvent(this, menuItem))) {
+                            this.hide();
+                        }
+                    }
+                    break;
+                case "Escape":
+                    if (noKBModifiers) {
+                        this.hide();
+                    }
+                    return;
+                case "Tab":
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    // 'Ctrl', 'Alt' and 'Meta' usually are handled by the operating system therefore
+                    // they are ignored.
+                    if (!event.ctrlKey && !event.altKey && !event.metaKey) {
+                        setFocusedIndex(event.shiftKey);
+                    }
+                    break;
+                case "ArrowUp":
+                case "ArrowDown":
+                    if (!event.shiftKey && !event.ctrlKey && !event.metaKey) {
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                        // => Equivalent to 'Home'/'End', at least on MacOS.
+                        if (event.altKey) {
+                            event.key === "ArrowUp"
+                                ? this.focusedIndex = 0
+                                : this.focusedIndex = this.focusableItems.length - 1;
+                        }
+                        else {
+                            setFocusedIndex(event.key === "ArrowUp");
+                        }
+                    }
+                    break;
+                case "Home":
+                case "End":
+                    if (noKBModifiers) {
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                        event.key === "Home"
+                            ? this.focusedIndex = 0
+                            : this.focusedIndex = this.focusableItems.length - 1;
+                    }
+                    break;
+                default:
+                    return;
+            }
+            focusTarget = this.focusableItems[this.focusedIndex];
+            focusTarget?.hasClass("component")
+                ? focusTarget.Content[0]?.focus()
+                : focusTarget?.focus();
+        }
+        /**
+         * Focusing of menu items on moving the pointer/mouse.
+         * @param event The pointer event.
+         */
+        onPointerMove(event) {
+            const target = event.target;
+            if (target instanceof HTMLElement) {
+                const menuItemIndex = this.focusableItems.findIndex((e) => e.DOM.contains(target));
+                if (menuItemIndex !== -1) {
+                    this.focusedIndex = menuItemIndex;
+                    // In contrast to keyboard navigation, mouse movements do not focus any contained
+                    // component, but only the menu item itself, which otherwise would look unusual.
+                    this.focusableItems[this.focusedIndex]?.focus();
+                }
+                else {
+                    this.focusedIndex = -1;
+                    this.focus();
+                }
+            }
+        }
+        /**
+         * Defocusing (`blur()`) of menu items when the pointer/mouse is moved outside the popup menu.
+         * @param _event The pointer event.
+         */
+        onPointerLeave(_event) {
+            for (const item of this.focusableItems) {
+                item.blur();
+            }
+        }
+        /**
+         * Hides the pop-up menu when clicking outside the pop-up menu or when the window loses focus.
+         * @param event The triggering event.
+         */
+        removePopupMenu(event) {
+            if (this.Visible
+                && event.target
+                && (event.target instanceof Window
+                    || (this.DOM !== event.target && !this.DOM.contains(event.target)))) {
+                this.hide();
+            }
+        }
+        /**
+         * Build UI of the component.
+         * @returns This instance.
+         */
+        buildUI() {
+            this.ui = new Menu();
+            this.menuMutationObserver = new MutationObserver(records => {
+                for (const record of records) {
+                    if (record.type === "childList") {
+                        this.adjustMenuItemWidths();
+                    }
+                }
+            });
+            return this;
+        }
+    }
+
+    const intro$T = `
+A popup menu for presenting a temporary list of commands. A \`PopupMenu\` can contain selectable
+\`MenuItem\` components, non-selectable \`MenuHeading\` components and \`MenuSeparator\` components.
+Menu items can include content and a hint (usually a keyboard shortcut), hold application-specific
+data, be checked or disabled.
+
+The component emits a preventable \`show\` event before it opens, a preventable \`select\` event when
+a menu item is activated and a non-preventable \`hide\` event after it closes. It supports pointer
+interaction as well as keyboard navigation with the arrow, *Home*, *End*, *Tab*, *Enter*, *Space*
+and *Escape* keys.
+
+**Classes:** \`@vanilla-ts/components/PopupMenu\`, \`@vanilla-ts/components/MenuItem\`,
+\`@vanilla-ts/components/MenuHeading\`, \`@vanilla-ts/components/MenuSeparator\`
+`;
+    const example$Q = `
+### Code example
+
+\`\`\`
+import {
+    MenuHeading,
+    MenuItem,
+    MenuSeparator,
+    PopupMenu
+} from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+import { Button, Code, LiUl, P, Strong, Ul } from "@vanilla-ts/dom";
+
+const eventLog = new Ul(new LiUl("No menu event received yet."))
+    .style({ inlineSize: "30rem" });
+let eventReceived = false;
+
+function logEvent(name: string, message: string = ""): void {
+    if (!eventReceived) {
+        eventLog.clear();
+        eventReceived = true;
+    }
+    eventLog.append(new LiUl(new Code(name), message));
+}
+
+const autosaveItem = new MenuItem("Autosave", undefined, true, "autosave");
+const menu = new PopupMenu(
+    new MenuHeading("Document"),
+    new MenuItem("New document", "Ctrl+N", false, "new"),
+    new MenuItem([new Strong("Save"), " document"], "Ctrl+S", false, "save"),
+    new MenuSeparator(),
+    autosaveItem,
+    new MenuItem("Print", "Ctrl+P", false, "print").disabled(true)
+)
+    .addClass("popup-menu")
+    .on("show", () => logEvent("PopupMenuShowEvent", " received."))
+    .on("select", event => {
+        const item = event.$.MenuItem;
+        const itemData = item.MenuItemData;
+        const data = typeof itemData === "object"
+            ? JSON.stringify(itemData)
+            : String(itemData ?? "No data");
+        if (item === autosaveItem) {
+            item.checked(!item.Checked);
+            event.preventDefault(); // Keep the menu open.
+        }
+        logEvent("PopupMenuItemSelectEvent", \` received for "\${data}".\`);
+    })
+    .on("hide", () => logEvent("PopupMenuHideEvent", " received."));
+
+const showMenuButton = new Button("Show menu")
+    .addClass("regular")
+    .style({ inlineSize: "8rem" })
+    .on("click", () => {
+        const rect = showMenuButton.DOM.getBoundingClientRect();
+        menu.show(new DOMPoint(
+            window.scrollX + rect.left,
+            window.scrollY + rect.bottom
+        ));
+    });
+
+new VTS_App(document.body).append(
+    showMenuButton,
+    new P("Received events:"),
+    eventLog,
+    new Button("Clear log")
+        .addClass("regular")
+        .style({ inlineSize: "8rem" })
+        .on("click", () => {
+            eventLog
+                .clear()
+                .append(new LiUl("No menu event received yet."));
+            eventReceived = false;
+        })
+);
+\`\`\`
+`;
+    class ComponentMenuEx extends BaseExample {
+        #menu;
+        constructor() {
+            super("Menu");
+        }
+        /** @inheritdoc */
+        onBeforeUnmount() {
+            this.#menu.DOM.isConnected && this.#menu.hide();
+            super.onBeforeUnmount();
+        }
+        /** @inheritdoc */
+        buildExample() {
+            const eventLog = new Ul(new LiUl("No menu event received yet."))
+                .style({ inlineSize: "30rem" });
+            let eventReceived = false;
+            const logEvent = (name, message = "") => {
+                if (!eventReceived) {
+                    eventLog.clear();
+                    eventReceived = true;
+                }
+                eventLog.append(new LiUl(new Code(name), message));
+            };
+            const autosaveItem = new MenuItem("Autosave", undefined, true, "autosave");
+            this.#menu = new PopupMenu(new MenuHeading("Document"), new MenuItem("New document", "Ctrl+N", false, "new"), new MenuItem([new Strong("Save"), " document"], "Ctrl+S", false, "save"), new MenuSeparator(), autosaveItem, new MenuItem("Print", "Ctrl+P", false, "print").disabled(true))
+                .addClass("popup-menu")
+                .on("show", () => logEvent("PopupMenuShowEvent", " received."))
+                .on("select", event => {
+                const item = event.$.MenuItem;
+                const itemData = item.MenuItemData;
+                const data = typeof itemData === "object"
+                    ? JSON.stringify(itemData)
+                    : String(itemData ?? "No data");
+                if (item === autosaveItem) {
+                    item.checked(!item.Checked);
+                    event.preventDefault();
+                }
+                logEvent("PopupMenuItemSelectEvent", ` received for "${data}".`);
+            })
+                .on("hide", () => logEvent("PopupMenuHideEvent", " received."));
+            let showMenuButton;
+            this.append(this.markdown(intro$T), this.example([
+                showMenuButton = $.buttonRegular("Show menu")
+                    .style({ inlineSize: "8rem" })
+                    .on("click", () => {
+                    const rect = showMenuButton.DOM.getBoundingClientRect();
+                    this.#menu.show(new DOMPoint(window.scrollX + rect.left, window.scrollY + rect.bottom));
+                }),
+                new P("Received events:")
+                    .style("marginBlockEnd", "0.25rem"),
+                eventLog
+                    .style("marginBlockStart", "0"),
+                new Button("Clear log")
+                    .addClass("regular")
+                    .style({ inlineSize: "8rem" })
+                    .on("click", () => {
+                    eventLog
+                        .clear()
+                        .append(new LiUl("No menu event received yet."));
+                    eventReceived = false;
+                })
+            ]), this.markdown(example$Q));
         }
     }
 
@@ -17919,9 +18983,9 @@ import { Button, Em, Option, P, Select, SelectedContent, Span } from "@vanilla-t
 
 const example = new Select([
     new Button(new SelectedContent()),
-    new Option(new Span("🍎 "), "Apple").value("apple"),
-    new Option(new Span("🍌 "), "Banana").value("banana"),
-    new Option(new Span("🍒 "), "Cherry").value("cherry")
+    new Option(new Span("🍎 "), new Span("Apple")).value("apple"),
+    new Option(new Span("🍌 "), new Span("Banana")).value("banana"),
+    new Option(new Span("🍒 "), new Span("Cherry")).value("cherry")
 ])
     .addClass("selectedcontent-example")
     .value("banana")
@@ -17949,7 +19013,7 @@ select.selectedcontent-example {
     align-items: center;
     inline-size: 10rem;
     selectedcontent {
-        span:first-child {
+        > span:first-child {
             display: none;
         }
     }
@@ -18547,6 +19611,7 @@ new VTS_App(document.body).append(example);
     let labeledTemporalInputEx;
     let labeledTextAreaEx;
     let labeledTextInputEx;
+    let componentMenuEx;
     let radioButtonGroupEx;
     let scrollContainerEx;
     let stepperEx;
@@ -18807,6 +19872,7 @@ new VTS_App(document.body).append(example);
                 example = labeledTextInputEx ??= new LabeledTextInputEx();
                 break;
             case "#@components/Menu":
+                example = componentMenuEx ??= new ComponentMenuEx();
                 break;
             case "#@components/PinchZoomGestureHandler":
                 break;
