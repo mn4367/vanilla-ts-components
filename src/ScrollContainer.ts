@@ -355,6 +355,46 @@ export class ScrollContainer<Child extends FlowContent = FlowContent, EventMap e
     }
 
     /**
+     * Get the first child component which is visible at the top of the scroll container. Visible
+     * means that _at least a part of it_ is visible at the top end of the scroll container.
+     */
+    public get FirstVisibleChild(): Child | undefined {
+        return this.#visibleChild(false);
+    }
+
+    /**
+     * Get the last child component which is visible at the bottom of the scroll container. Visible
+     * means that _at least a part of it_ is visible at the bottom end of the scroll container.
+     */
+    public get LastVisibleChild(): Child | undefined {
+        return this.#visibleChild(true);
+    }
+
+    /**
+     * Get the first child component which is visible at the top of the scroll container. Visible
+     * means that its top end is visible at the top end of the scroll container. This also means
+     * that its bottom end may not be visible (it could be clipped by the scroll container). Can be
+     * used together with {@link ScrollContainer.LastVisibleChildBottom} to determine if a child
+     * component is fully visible within the scroll container (`true` if both are defined and
+     * `FirstVisibleChildTop === LastVisibleChildBottom`).
+     */
+    public get FirstVisibleChildTop(): Child | undefined {
+        return this.#visibleChild(false, "top");
+    }
+
+    /**
+     * Get the last child component which is visible at the bottom of the scroll container. Visible
+     * means that its bottom end is visible at the bottom end of the scroll container. This also
+     * means that its top end may not be visible (it could be clipped by the scroll container). Can
+     * be used together with {@link ScrollContainer.FirstVisibleChildTop} to determine if a child
+     * component is fully visible within the scroll container (`true` if both are defined and
+     * `FirstVisibleChildTop === LastVisibleChildBottom`).
+     */
+    public get LastVisibleChildBottom(): Child | undefined {
+        return this.#visibleChild(true, "bottom");
+    }
+
+    /**
      * Removes _and disposes_ of all regular children from the scroll container.
      * @returns This instance.
      */
@@ -376,6 +416,47 @@ export class ScrollContainer<Child extends FlowContent = FlowContent, EventMap e
      */
     public sync(): void {
         this.#syncScrollBarGeometry();
+    }
+
+    /**
+     * Find the first or last child whose bounds intersect the scrollable viewport.
+     * @param fromEnd Search the children in reverse order.
+     * @param edge Require the specified edge of the child to be visible, if given.
+     * @returns The visible child, if any, otherwise `undefined`.
+     */
+    #visibleChild(fromEnd: boolean, edge?: "top" | "bottom"): Child | undefined {
+        const viewport = this.#scrollable.getBoundingClientRect();
+        const children = this.Children;
+        for (let i = fromEnd ? children.length - 1 : 0; fromEnd ? i >= 0 : i < children.length; fromEnd ? i-- : i++) {
+            const child = children[i];
+            const node = child.DOM;
+            if (node.nodeType === Node.COMMENT_NODE) {
+                continue;
+            }
+            let rects: DOMRectList;
+            let bounds: DOMRect;
+            if (node instanceof Element) {
+                rects = node.getClientRects();
+                bounds = node.getBoundingClientRect();
+            } else {
+                const range = document.createRange();
+                range.selectNodeContents(node);
+                rects = range.getClientRects();
+                bounds = range.getBoundingClientRect();
+            }
+            if ((edge === "top" && (bounds.top < viewport.top || bounds.top >= viewport.bottom)) ||
+                (edge === "bottom" && (bounds.bottom <= viewport.top || bounds.bottom > viewport.bottom))) {
+                continue;
+            }
+            for (const rect of rects) {
+                if (rect.width > 0 && rect.height > 0 &&
+                    rect.top < viewport.bottom && rect.bottom > viewport.top &&
+                    rect.left < viewport.right && rect.right > viewport.left) {
+                    return child;
+                }
+            }
+        }
+        return undefined;
     }
 
     /**
