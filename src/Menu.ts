@@ -573,8 +573,6 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         }
         this.lastFocusedElement = document.activeElement;
         this.setFocusableItems();
-        const hasChecked = this.ui.Children.findIndex((e => e instanceof MenuItem && e.Checked)) !== -1;
-        hasChecked ? this.ui.addClass("has-checked") : this.ui.removeClass("has-checked");
         document.body.appendChild(this.DOM);
         const d = this.DOM.style.display;
         const v = this.DOM.style.visibility;
@@ -734,9 +732,13 @@ export class PopupMenu<EventMap extends PopupMenuEventMap = PopupMenuEventMap> e
         switch (event.key) {
             case " ":
             case "Enter":
-                const menuItem = this.focusableItems[this.focusedIndex];
-                if (menuItem && this.dispatch(new PopupMenuItemSelectEvent(this, menuItem))) {
-                    this.hide();
+                if (noKBModifiers) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    const menuItem = this.focusableItems[this.focusedIndex];
+                    if (menuItem && this.dispatch(new PopupMenuItemSelectEvent(this, menuItem))) {
+                        this.hide();
+                    }
                 }
                 break;
             case "Escape":

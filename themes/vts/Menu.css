@@ -25,8 +25,9 @@
         margin: 0;
         padding: 0;
         line-height: 1.1;
+        transition: padding-inline-start 0.15s ease-in-out;
     }
-    &.has-checked {
+    &:has(> .menu-item.checked) {
         > .menu-item,
         > .menu-heading {
             padding-inline-start: var(--19px);
