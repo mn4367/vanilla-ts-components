@@ -13031,24 +13031,26 @@
                 ta.dispose();
                 return copied;
             }
-            const copyBtn = new Button("Copy")
-                .addClass("regular", "button-copy-code")
+            // const copyBtn = new Button("Copy")
+            //     .addClass("regular", "button-copy-code")
+            const copyBtn = new IconButton({ IconStart: "content_copy", Caption: ["Copy"] })
+                .addClass("icon-button", "regular", "button-copy-code")
                 .title("Copy code to clipboard")
                 .on("click", () => {
                 const code = codeBlock.textContent ?? "";
                 navigator.clipboard.writeText(code)
                     .then(() => {
-                    copyBtn.Text = "Copied!";
+                    copyBtn.Phrase = "Copied!";
                     setTimeout(() => {
-                        copyBtn.Text = "Copy";
+                        copyBtn.Phrase = "Copy";
                     }, 2000);
                 })
                     .catch((err) => {
                     console.error("Failed to copy code: ", err);
                     if (!copyTextFallback(code)) {
-                        copyBtn.Text = "Failed to copy!";
+                        copyBtn.Phrase = "Failed to copy!";
                         setTimeout(() => {
-                            copyBtn.Text = "Copy";
+                            copyBtn.Phrase = "Copy";
                         }, 2000);
                     }
                 });
