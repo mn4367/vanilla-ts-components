@@ -37,9 +37,20 @@
                         margin-block-start: -2rem;
                     }
                     > .button-copy-code {
+                        > .start,
+                        > .phrase,
+                        > .end {
+                            /* line-height: normal; */
+                        }
+                        > .start,
+                        > .end {
+                            font-family: "MaterialIconsRounded";
+                            font-size: 1.2rem;
+                        }
                         position: sticky;
                         inset-block-start: -1.5rem;
                         left: 100%;
+                        line-height: normal;
                         z-index: 1;
                         opacity: 0;
                         font-family: var(--system-ui);

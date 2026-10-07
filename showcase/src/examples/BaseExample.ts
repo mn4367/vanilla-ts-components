@@ -1,5 +1,6 @@
 import { AChildren, AElementComponentWithInternalUI, FlowContent, HTMLElementWithChildren, IChildrenMixin, IElementComponent, IElementWithChildrenComponent, mixin } from "@vanilla-ts/core";
-import { Button, Div, H2, Option, Text, TextArea } from "@vanilla-ts/dom";
+import { Div, H2, Option, Text, TextArea } from "@vanilla-ts/dom";
+import { IconButton } from "../../../src/IconButton.js";
 import { LabeledSelect } from "../../../src/LabeledSelect.js";
 import { ScrollContainer } from "../../../src/ScrollContainer.js";
 import { $ } from "../App.js";
@@ -11,7 +12,7 @@ import { markdown } from "./Drawdown.js";
  */
 export abstract class BaseExample extends AElementComponentWithInternalUI<ScrollContainer> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     #scrollOffset = { X: 0, Y: 0 };
-    #copyCodeButtons: Button[] = [];
+    #copyCodeButtons: IconButton[] = [];
 
     constructor(title?: string) {
         super();
@@ -169,24 +170,26 @@ export abstract class BaseExample extends AElementComponentWithInternalUI<Scroll
             return copied;
         }
 
-        const copyBtn = new Button("Copy")
-            .addClass("regular", "button-copy-code")
+        // const copyBtn = new Button("Copy")
+        //     .addClass("regular", "button-copy-code")
+        const copyBtn = new IconButton({ IconStart: "content_copy", Caption: ["Copy"] })
+            .addClass("icon-button", "regular", "button-copy-code")
             .title("Copy code to clipboard")
             .on("click", () => {
                 const code = codeBlock.textContent ?? "";
                 navigator.clipboard.writeText(code)
                     .then(() => {
-                        copyBtn.Text = "Copied!";
+                        copyBtn.Phrase = "Copied!";
                         setTimeout(() => {
-                            copyBtn.Text = "Copy";
+                            copyBtn.Phrase = "Copy";
                         }, 2000);
                     })
                     .catch((err) => {
                         console.error("Failed to copy code: ", err);
                         if (!copyTextFallback(code)) {
-                            copyBtn.Text = "Failed to copy!";
+                            copyBtn.Phrase = "Failed to copy!";
                             setTimeout(() => {
-                                copyBtn.Text = "Copy";
+                                copyBtn.Phrase = "Copy";
                             }, 2000);
                         }
                     });
