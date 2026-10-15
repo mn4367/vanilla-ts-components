@@ -3,7 +3,7 @@
   "description": "TypeScript Web UI Library -- Components",
   "companyname": "mn4367",
   "copyright": "©2026 mn4367",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "identifier": "mn4367.vanilla-ts.components",
   "keywords": [
@@ -69,7 +69,7 @@
     "@rollup/plugin-json": "6.1.0",
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-terser": "1.0.0",
-    "eslint-plugin-jsdoc": "65.3.4",
+    "eslint-plugin-jsdoc": "65.3.6",
     "eslint": "10.12.0",
     "globals": "17.13.0",
     "npm-run-all2": "9.0.3",
