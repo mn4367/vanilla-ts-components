@@ -2,6 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const pdfjsWorkerSrcFile = "./node_modules/pdfjs-dist/build/pdf.worker.min.mjs";
+const pdfjsWorkerLegacySrcFile = "./node_modules/pdfjs-dist/legacy/build/pdf.worker.min.mjs";
 
 if (!existsSync(pdfjsWorkerSrcFile)) {
     console.info("PDF.js not installed, skipping.");
@@ -43,4 +44,4 @@ const patchLoaderSrc = (PDFLoad_ts, pdfjsWorkerFile) => {
 
 patchLoaderSrc("PDFLoad.js", pdfjsWorkerSrcFile);
 
-patchLoaderSrc("PDFLoad_legacy.js", "./node_modules/pdfjs-dist/legacy/build/pdf.worker.min.mjs");
+patchLoaderSrc("PDFLoad_legacy.js", pdfjsWorkerLegacySrcFile);
