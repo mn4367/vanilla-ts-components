@@ -12,7 +12,7 @@
             &.vertical {
                 height: auto;
                 padding-block: var(--3px);
-                align-self: center;
+                /* align-self: center; */
                 &.single-icon {
                     padding-inline: var(--3px);
                 }

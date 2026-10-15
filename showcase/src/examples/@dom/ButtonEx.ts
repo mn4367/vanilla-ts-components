@@ -7,7 +7,9 @@ const intro = `
 A component that encapsulates the native DOM button element
 (%\`<button>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button%).
 It is an interactive control that users can activate to perform an action, such as submitting a
-form or opening a dialog.
+form or opening a dialog. Buttons also have a \`Pressed\` property to enable support for toggling
+the button state. For easier handling, the button component also emits its own event
+\`PressedEvent\` (\`pressed\`).
 
 **Class:** \`@vanilla-ts/dom/Button\`
 
@@ -38,6 +40,8 @@ does) provides styles for the following common button types:
 - Buttons that trigger a destructive action (like deleting data) are given the class name \`warn\`
   in addition to \`regular\`. \`warn\` can't be used together with \`default\`, doing so may lead to
   a confusing styling.
+- Buttons that can serve as a toggle with the property \`Pressed\` are given the class names
+  \`pressed\`/\`not-pressed\` in addition to \`regular\`.
 
 ### Code example (styled default buttons)
 
@@ -48,8 +52,13 @@ import { Button } from "@vanilla-ts/dom";
 const btnSkip = new Button("Skip").addClass("regular", "warn");
 const btnCancel = new Button("Cancel").addClass("regular");
 const btnOk = new Button("OK").addClass("regular", "default");
+const btnToggle = new Button("On").addClass("regular")
+    .pressed(true)
+    .on("click", () => {
+        btnToggle.phrase(btnToggle.Pressed ? "On" : "Off");
+    }),
 
-new VTS_App(document.body).append(btnSkip, btnCancel, btnOk);
+new VTS_App(document.body).append(btnSkip, btnCancel, btnOk, btnToggle);
 \`\`\`
 `;
 
@@ -69,8 +78,12 @@ const bf = new ButtonFactory();
 const btnSkip = bf.buttonWarn("Skip");
 const btnCancel = bf.buttonRegular("Cancel");
 const btnOk = bf.buttonDefault("OK");
+const btnToggle = bf.buttonToggle(true, "On")
+    .on("click", () => {
+        btnToggle.phrase(btnToggle.Pressed ? "On" : "Off");
+    });
 
-new VTS_App(document.body).append(btnSkip, btnCancel, btnOk);
+new VTS_App(document.body).append(btnSkip, btnCancel, btnOk, btnToggle);
 \`\`\`
 
 This way, the correct class names are applied automatically (the result is optically identical to
@@ -88,6 +101,7 @@ export class ButtonEx extends BaseExample {
         let btnSkip: Button;
         let btnCancel: Button;
         let btnOk: Button;
+        let btnToggle: Button;
         this.append(
             this.markdown(intro),
             this.markdown(example),
@@ -101,7 +115,12 @@ export class ButtonEx extends BaseExample {
                 btnCancel = $.buttonRegular("Cancel"),
                 new Text("\u2003"),
                 btnOk = $.buttonDefault("OK"),
-            ], [btnSkip, btnCancel, btnOk]),
+                new Text("\u2003"),
+                btnToggle = $.buttonToggle(true, "On")
+                    .on("click", () => {
+                        btnToggle.phrase(btnToggle.Pressed ? "On" : "Off");
+                    }),
+            ], [btnSkip, btnCancel, btnOk, btnToggle]),
             this.markdown(exampleFactory)
         );
     }

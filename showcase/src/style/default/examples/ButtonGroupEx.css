@@ -1,0 +1,17 @@
+.ex-button-group {
+    .button-group,
+    .vts-button-group {
+        .icon-button,
+        .vts-icon-button {
+            width: 2.5rem;
+            height: auto;
+            aspect-ratio: 1;
+            > .start,
+            > .end {
+                font-family: "MaterialIconsRounded";
+                font-size: 1.8rem;
+                /* line-height: 0; */
+            }
+        }
+    }
+}

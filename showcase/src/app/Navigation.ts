@@ -6,6 +6,7 @@ import { APP } from "../App.js";
 // import { $ } from "../App.js";
 
 import { BusyOverlayEx } from "../examples/@components/BusyOverlayEx.js";
+import { ButtonGroupEx } from "../examples/@components/ButtonGroupEx.js";
 import { DisclosureContainerEx } from "../examples/@components/DisclosureContainerEx.js";
 import { IconButtonEx } from "../examples/@components/IconButtonEx.js";
 import { ComponentsIntroductionEx } from "../examples/@components/IntroductionComponents.js";
@@ -156,6 +157,7 @@ export const NAVIGATION_TARGETS = [
     // Components
     "#@components/Introduction",
     "#@components/BusyOverlay",
+    "#@components/ButtonGroup",
     "#@components/Dialog",
     "#@components/DisclosureContainer",
     "#@components/IconButton",
@@ -256,6 +258,7 @@ let ulEx: UlEx;
 // Components
 let componentsIntroductionEx: ComponentsIntroductionEx;
 let busyOverlayEx: BusyOverlayEx;
+let buttonGroupEx: ButtonGroupEx;
 let iconButtonEx: IconButtonEx;
 let disclosureContainerEx: DisclosureContainerEx;
 let labeledAnchorEx: LabeledAnchorEx;
@@ -477,6 +480,9 @@ export function navigateTo(target: NAVIGATION_TARGET, sender?: IElementComponent
             break;
         case "#@components/BusyOverlay":
             example = busyOverlayEx ??= new BusyOverlayEx();
+            break;
+        case "#@components/ButtonGroup":
+            example = buttonGroupEx ??= new ButtonGroupEx();
             break;
         case "#@components/Dialog":
             break;

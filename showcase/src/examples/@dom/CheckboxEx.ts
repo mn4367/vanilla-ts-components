@@ -8,7 +8,8 @@ const introCheckbox = `
 A component that encapsulates the native DOM checkbox
 (%\`<input type="checkbox">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/checkbox%).
 It lets users enable or disable a single option. Its indeterminate state can additionally represent
-a mixed or not-yet-decided value.
+a mixed or not-yet-decided value. For easier handling, the checkbox component emits its own event
+\`CheckedEvent\`; see the corresponding documentation in the \`Checkbox\` class.
 This component is also available as a §@components/LabeledCheckbox / -Switch§.
 
 **Class:** \`@vanilla-ts/dom/Checkbox\`
@@ -27,9 +28,6 @@ const cb3 = new Checkbox().indeterminate(true);
 
 new VTS_App(document.body).append(cb1, cb2, cb3);
 \`\`\`
-
-For easier handling, the checkbox component emits its own event \`CheckedEvent\`; see the
-corresponding documentation in the \`Checkbox\` class.
 `;
 
 const introSwitch = `

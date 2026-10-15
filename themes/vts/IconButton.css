@@ -1,4 +1,5 @@
-/* The styling here is very generic and only handles the basic layout. */
+/* The styling here is very generic and only handles the basic layout. In most cases, `width` and
+   `height` in particular need to be adjusted. */
 .icon-button,
 .vts-icon-button {
     --icon-button-margin: var(--base-size-half);
@@ -34,7 +35,6 @@
     }
     &.vertical {
         flex-direction: column;
-        height: auto;
         > .start:not(.empty):has(+ .phrase:not(:empty)) {
             margin-block-end: var(--icon-button-margin);
         }

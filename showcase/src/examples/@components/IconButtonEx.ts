@@ -19,6 +19,9 @@ components which can be styled individually:
 The intended use of this component is that the icons (part one and three) are styled by background
 images or with an icon font like 'Material Icons'.
 
+Like \`Button\`, \`IconButton\` also has a \`Pressed\` property and also emits its own event
+\`PressedEvent\` (\`pressed\`).
+
 **Class:** \`@vanilla-ts/components/IconButton\`
 
 *Note:* \`IconButton\` has no built-in default design except for some basic inner margins. The two examples
@@ -82,7 +85,8 @@ const example = new Div().append(
         IconEnd: "-circle",
         Title: "Turn Wifi on"
     })
-        .on("click", () => {
+        .pressed(false)
+        .on("pressed", () => {
             setTimeout(() => {
                 ibWifi
                     .toggleClass("wifi-on")
@@ -180,7 +184,8 @@ const example = new Div().append(
         IconEnd: "circle",
         Title: "Turn Wifi on"
     })
-        .on("click", () => {
+        .pressed(false)
+        .on("pressed", () => {
             setTimeout(() => {
                 ibWifi
                     .toggleClass("wifi-on")
@@ -271,7 +276,8 @@ export class IconButtonEx extends BaseExample {
                         IconEnd: "-circle",
                         Title: "Turn Wifi on"
                     })
-                        .on("click", () => {
+                        .pressed(false)
+                        .on("pressed", () => {
                             setTimeout(() => {
                                 ib3
                                     .toggleClass("wifi-on")
@@ -302,7 +308,8 @@ export class IconButtonEx extends BaseExample {
                         IconEnd: "circle",
                         Title: "Turn Wifi on"
                     })
-                        .on("click", () => {
+                        .pressed(false)
+                        .on("pressed", () => {
                             setTimeout(() => {
                                 ib3a
                                     .toggleClass("wifi-on")
