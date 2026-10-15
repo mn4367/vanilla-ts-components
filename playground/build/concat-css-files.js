@@ -7,7 +7,8 @@ await concatCSS({
         {
             Pattern: [
                 "./themes/vts/Vars.css",
-                "./themes/vts/Common.css"
+                "./themes/vts/Common.css",
+                "./themes/vts/Input.css"
             ],
             RelativeTo: "./playground/style/"
         },
