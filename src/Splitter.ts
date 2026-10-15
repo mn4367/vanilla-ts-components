@@ -1,4 +1,4 @@
-import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, CSSPropertyNames, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, FlowContents, getClientRect, getDebouncedFnc, IElementWithChildrenComponent } from "@vanilla-ts/core";
+import { ACustomComponentEvent, AElementComponentWithInternalUI, ComponentFactory, CSSPropertyNames, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, FlowContents, getClientRect, getDebouncedFnc, IElementWithChildrenComponent, isRTL } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 
 
@@ -931,7 +931,7 @@ export class Splitter<EventMap extends SplitterEventMap = SplitterEventMap> exte
         this.resizeStart.X = ev.clientX;
         this.resizeStart.Y = ev.clientY;
         this.resizeAreaSize = this.activeArea.DOM[this.clientSizeProp];
-        this.isRTL = getComputedStyle(this._dom).direction === "rtl";
+        this.isRTL = isRTL(this._dom);
     }
 
     /**

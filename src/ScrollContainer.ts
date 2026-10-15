@@ -1,4 +1,4 @@
-import { AChildren, AElementComponentWithInternalUI, clamp, ComponentFactory, DefaultEventMap, FlowContent, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, mixin, rectContains } from "@vanilla-ts/core";
+import { AChildren, AElementComponentWithInternalUI, clamp, ComponentFactory, DefaultEventMap, FlowContent, IChildrenMixin, IElementWithChildrenComponent, INodeComponent, isRTL, mixin, rectContains } from "@vanilla-ts/core";
 import { Div } from "@vanilla-ts/dom";
 
 
@@ -471,7 +471,7 @@ export class ScrollContainer<Child extends FlowContent = FlowContent, EventMap e
         let hasHOff = false;
         let vboHeight = "";
         let hasVOff = false;
-        this.#isRTL = getComputedStyle(this.#_dom_).direction === "rtl";
+        this.#isRTL = isRTL(this.#_dom_);
         this.#isRTL
             ? this.#_dom_.classList.add("rtl")
             : this.#_dom_.classList.remove("rtl");
@@ -528,7 +528,7 @@ export class ScrollContainer<Child extends FlowContent = FlowContent, EventMap e
      * @param _event The scroll event.
      */
     #syncScrollBars(_event?: Event): void {
-        this.#isRTL = getComputedStyle(this.#_dom_).direction === "rtl";
+        this.#isRTL = isRTL(this.#_dom_);
         this.#_dom_.classList.add("scrolling");
         this.#repositionScrollBars();
     }

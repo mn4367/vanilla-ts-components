@@ -1,4 +1,4 @@
-import { AChildren, ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, FlowContent, getProp, IChildrenMixin, IElementComponent, mixin, tabKeyFocusCycle } from "@vanilla-ts/core";
+import { AChildren, ACustomComponentEvent, AElementComponent, AElementComponentWithInternalUI, ComponentFactory, DEFAULT_CANCELABLE_EVENT_INIT_DICT, DEFAULT_EVENT_INIT_DICT, DefaultEventMap, FlowContent, getProp, IChildrenMixin, IElementComponent, isRTL, mixin, tabKeyFocusCycle } from "@vanilla-ts/core";
 import { Div, Dialog as DOMDialog } from "@vanilla-ts/dom";
 
 
@@ -1023,7 +1023,7 @@ export class Dialog<Child extends FlowContent = FlowContent, EventMap extends Di
             if (!this.dispatch(new DialogMoveStartEvent(this))) {
                 return;
             }
-            this.isRTL = this.DOM.parentElement !== null && getComputedStyle(this.DOM.parentElement).direction === "rtl";
+            this.isRTL = this.DOM.parentElement !== null && isRTL(this.DOM.parentElement);
             this.pointerDownStart.X = ev.clientX;
             this.pointerDownStart.Y = ev.clientY;
             this.moveStartPositionOffset.X = parseFloat(this.Style.insetInlineStart?.slice(0, -2)) || 0;
@@ -1110,7 +1110,7 @@ export class Dialog<Child extends FlowContent = FlowContent, EventMap extends Di
         if (!this.dispatch(new DialogResizeStartEvent(this, this.resizeDir))) {
             return;
         }
-        this.isRTL = this.DOM.parentElement !== null && getComputedStyle(this.DOM.parentElement).direction === "rtl";
+        this.isRTL = this.DOM.parentElement !== null && isRTL(this.DOM.parentElement);
         this.pointerDownStart.X = ev.clientX;
         this.pointerDownStart.Y = ev.clientY;
         const pos = this.getPosition();
