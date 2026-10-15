@@ -142,6 +142,11 @@
             return result;
         }
     }
+    /**
+     * Custom 'value' event with a configurable value type for components.
+     */
+    class ValueEvent extends ACustomComponentEvent {
+    }
 
     /**
      * The type of a component.
@@ -183,8 +188,11 @@
     /** Orientation (of a component). */
     var Orientation;
     (function (Orientation) {
-        Orientation[Orientation["HORIZONTAL"] = 0] = "HORIZONTAL";
-        Orientation[Orientation["VERTICAL"] = 1] = "VERTICAL";
+        Orientation[Orientation["NONE"] = 0] = "NONE";
+        Orientation[Orientation["HORIZONTAL"] = 1] = "HORIZONTAL";
+        Orientation[Orientation["VERTICAL"] = 2] = "VERTICAL";
+        Orientation[Orientation["ARIA_HORIZONTAL"] = 3] = "ARIA_HORIZONTAL";
+        Orientation[Orientation["ARIA_VERTICAL"] = 4] = "ARIA_VERTICAL";
     })(Orientation || (Orientation = {}));
     // #endregion
     //////////////////////////////
@@ -440,6 +448,19 @@
         }
     }
     /**
+     * Checks whether the text direction of a component is right-to-left (RTL).\
+     * __Note:__ This function will cause an error if `component` is `null`, `undefined`, not an
+     * instance of `HTMLElement`, incompatible with `{ DOM: HTMLElement; }` or if accessing
+     * `component.DOM` isn't possible.
+     * @param component The component or HTML element whose text direction is to be checked.
+     * @returns `true` if the component's text direction is right-to-left (RTL), otherwise `false`.
+     */
+    function isRTL(component) {
+        return (component instanceof HTMLElement
+            ? component.ownerDocument.defaultView?.getComputedStyle(component).direction
+            : component.DOM.ownerDocument.defaultView?.getComputedStyle(component.DOM).direction) === "rtl";
+    }
+    /**
      * Get a rectangle (`DOMRect`) that contains the position and size of an HTML element The position
      * is calculated relative to the parent element of `elem`. The size includes the border width and
      * padding of `elem`.
@@ -596,62 +617,6 @@
         };
     // #endregion
     //////////////////////////////
-    // /**
-    //  * Type that is largely similar to a readonly map.\
-    //  * Differences to `Map`:
-    //  * - There is no constructor.
-    //  * - There is no `forEach()` function.
-    //  * - `size` is a function, not a property.
-    //  */
-    // export interface ReadonlyMapLike<K, V> {
-    //     /* eslint-disable jsdoc/require-jsdoc */
-    //     entries(): MapIterator<[K, V]>;
-    //     // forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any): void;
-    //     get(key: K): V | undefined;
-    //     has(key: K): boolean;
-    //     keys(): MapIterator<K>;
-    //     values(): MapIterator<V>;
-    //     size(): number;
-    //     [Symbol.iterator](): MapIterator<[K, V]>;
-    //     /* eslint-enable */
-    // }
-    // /**
-    //  * Returns an _object_ from an existing map similar to a `ReadonlyMap` that is not only readonly at
-    //  * compile time but also at runtime.
-    //  * @param map The map to be used as the 'backend' for the readonly map-like object. This map can
-    //  * still be used normally, the returned object is just an accessor facade for the map so the object
-    //  * is always in sync with the map.
-    //  * @returns An object similar to a `ReadonlyMap` that is not only readonly at compile time but also
-    //  * at runtime. Please also not that the return value is a simple (frozen) object, not an instance of
-    //  * a `Map` like class.
-    //  * @see {@link ReadonlyMapLike} for the differences of the returned object to `Map`/`ReadonlyMap`.
-    //  */
-    // export function readonlyMapLike<K, V>(map: Map<K, V>): ReadonlyMapLike<K, V> {
-    //     return Object.freeze({
-    //         /* eslint-disable jsdoc/require-jsdoc */
-    //         entries: map.entries.bind(map),
-    //         // forEach: map.forEach.bind(map),
-    //         get: map.get.bind(map),
-    //         has: map.has.bind(map),
-    //         keys: map.keys.bind(map),
-    //         size: (): number => map.size,
-    //         values: map.values.bind(map),
-    //         [Symbol.iterator]: map[Symbol.iterator].bind(map)
-    //         /* eslint-enable */
-    //     });
-    // }
-    // /**
-    //  * Rounds a numeric value.
-    //  * @param value The value to be rounded.
-    //  * @param step The rounding amount. `2` for example returns a number where `value % 2 === 0` and
-    //  * `0.1` would return `2.7` for the value `2.74`
-    //  * @returns The rounded value.
-    //  */
-    // export function round(value: number, step ?: number): number {
-    //     step || (step = 1);
-    //     const inv = 1.0 / step;
-    //     return Math.round(value * inv) / inv;
-    // }
 
     /**
      * Abstract base implementation of _all_ components.
@@ -741,7 +706,12 @@
         eventListeners = [];
         /** @inheritdoc */
         get DOM() {
-            return this._dom;
+            if (this._dom) {
+                return this._dom;
+            }
+            throw new Error(this.Disposed
+                ? `Instance of '${this.ClassName}' is already disposed of.`
+                : `Instance of '${this.ClassName}' is not yet initialized or in an undefined state.`);
         }
         /** @inheritdoc */
         ComponentType = ComponentType.NODE;
@@ -2395,6 +2365,7 @@
      * ```
      */
     class AElementComponentWithInternalUI extends AElementComponent {
+        // export abstract class AElementComponentWithInternalUI<UI extends (IElementComponent<HTMLElement> & IChildren), EventMap extends EventMapVoid = DefaultEventMap> extends AElementComponent<HTMLElement, EventMap> {
         /** The container which constitutes the component tree/user interface of the component. */
         ui;
         #mountUI;
@@ -3939,14 +3910,6 @@
             return this;
         }
     }
-    // /**
-    //  * Custom 'value' event for input components. Like `change` and `input` this event is only emitted
-    //  * on user input, not on checking/unchecking the checkbox or radio button by code!
-    //  */
-    // export class ValueEvent<S extends INodeComponent<Node>, D extends object = {
-    //     /** The current value of the input component. */
-    //     Value: string;
-    // }> extends ACustomComponentEvent<"value", S, D> { }
     /**
      * 'Value' (string|number) getter/setter and set method returning this instance.\
      * __Notes:__
@@ -4031,7 +3994,7 @@
      * is available for all components which need/want to expose an orientation property.
      */
     class OrientationAttr extends AElementComponent {
-        _orientation = Orientation.HORIZONTAL;
+        _orientation = Orientation.NONE;
         /**
          * Get/set the orientation of the component.
          */
@@ -4050,9 +4013,21 @@
         orientation(orientation) {
             if (this._orientation !== orientation) {
                 this._orientation = orientation;
-                this._orientation === Orientation.HORIZONTAL
-                    ? this.removeClass("vertical").addClass("horizontal")
-                    : this.removeClass("horizontal").addClass("vertical");
+                this.removeClass("horizontal", "vertical").DOM.ariaOrientation = null;
+                switch (this._orientation) {
+                    case Orientation.HORIZONTAL:
+                        this.addClass("horizontal");
+                        break;
+                    case Orientation.VERTICAL:
+                        this.addClass("vertical");
+                        break;
+                    case Orientation.ARIA_HORIZONTAL:
+                        this.addClass("horizontal").DOM.ariaOrientation = "horizontal";
+                        break;
+                    case Orientation.ARIA_VERTICAL:
+                        this.addClass("vertical").DOM.ariaOrientation = "vertical";
+                        break;
+                }
             }
             return this;
         }
@@ -4237,6 +4212,11 @@
     }
 
     /**
+     * Custom 'pressed' event for buttons.
+     */
+    class PressedEvent extends ACustomComponentEvent {
+    }
+    /**
      * Button component (`<button>`). Represents an interactive control that users can activate to
      * perform an action, such as submitting a form or opening a dialog.
      * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button
@@ -4251,6 +4231,54 @@
         constructor(...phrase) {
             super("button");
             phrase.length > 0 && this.phrase(...phrase);
+            this.on("click", () => {
+                if (this.Pressed !== undefined) {
+                    this.dispatch(new PressedEvent("pressed", this, { Pressed: !this.Pressed }, DEFAULT_CANCELABLE_EVENT_INIT_DICT)) && this.pressed(!this.Pressed); // eslint-disable-line jsdoc/require-jsdoc
+                }
+            });
+        }
+        /**
+         * Get/set the persistent pressed state of the button through the `aria-pressed` attribute.
+         * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+         * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+         * click on the button as well as pressing the space or enter keys will toggle its pressed
+         * state.\
+         * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+         * removes the `type` attribute.
+         */
+        get Pressed() {
+            const pressed = this._dom.getAttribute("aria-pressed");
+            return pressed === "true" ? true : pressed === "false" ? false : undefined;
+        }
+        /** @inheritdoc */
+        set Pressed(v) {
+            this.pressed(v);
+        }
+        /**
+         * Set the persistent pressed state of the button through the `aria-pressed` attribute.
+         * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+         * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+         * click on the button as well as pressing the space or enter keys will toggle its pressed
+         * state.\
+         * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+         * removes the `type` attribute.
+         * @param v `true` for pressed, `false` for unpressed, or `undefined` for a regular button.
+         * @returns This instance.
+         */
+        pressed(v) {
+            if (v !== this.Pressed) {
+                v === undefined
+                    ? this
+                        .attrib("aria-pressed", null)
+                        .attrib("type", null)
+                        .removeClass("pressed", "not-pressed")
+                    : this
+                        .attrib("aria-pressed", v ? "true" : "false")
+                        .attrib("type", "button")
+                        .addClass(v ? "pressed" : "not-pressed")
+                        .removeClass(v ? "not-pressed" : "pressed");
+            }
+            return this;
         }
         static {
             /** Mixin additional DOM attributes/properties. */
@@ -4315,6 +4343,25 @@
                 : Array.isArray(phrase)
                     ? new Button(...phrase)
                     : new Button(phrase)).addClass("regular", "warn"), data);
+        }
+        /**
+         * Create, set up and return a toggle Button component. Identical to {@link buttonRegular()},
+         * but additionally the property `Pressed` is set to the value of the `pressed` parameter
+         * (`true` or `false` but not `undefined`).
+         * @param pressed Whether the toggle button is initially pressed or not.
+         * @param phrase The phrasing content for the `<button>` element.
+         * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+         * @returns Toggle button component (with the class name `regular` added; the class name
+         * `pressed` is also added if the `pressed` parameter is `true`).
+         */
+        buttonToggle(pressed, phrase, data) {
+            return this.setupComponent((!phrase
+                ? new Button()
+                : Array.isArray(phrase)
+                    ? new Button(...phrase)
+                    : new Button(phrase))
+                .addClass("regular")
+                .pressed(pressed), data);
         }
     }
 
@@ -7187,6 +7234,37 @@
                 .addClass(this._options.Horizontal ? "horizontal" : "vertical");
         }
         /**
+         * Get/set the persistent pressed state of the button through the `aria-pressed` attribute.
+         * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+         * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+         * click on the button as well as pressing the space or enter keys will toggle its pressed
+         * state.\
+         * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+         * removes the `type` attribute.\
+         */
+        get Pressed() {
+            return this.ui.Pressed;
+        }
+        /** @inheritdoc */
+        set Pressed(v) {
+            this.ui.pressed(v);
+        }
+        /**
+         * Set the persistent pressed state of the button through the `aria-pressed` attribute.
+         * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+         * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+         * click on the button as well as pressing the space or enter keys will toggle its pressed
+         * state.\
+         * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+         * removes the `type` attribute.
+         * @param v `true` for pressed, `false` for unpressed, or `undefined` for a regular button.
+         * @returns This instance.
+         */
+        pressed(v) {
+            this.ui.pressed(v);
+            return this;
+        }
+        /**
          * @inheritdoc
          * @see {@link IElementWithChildrenComponent.Phrase}
          */
@@ -7275,7 +7353,11 @@
         /** @inheritdoc */
         buildUI() {
             this.ui = new Button()
-                .append(this.spanStart = new Span().style("order", "1").addClass("start"), this.btnPhrase = new Span().style("order", "2").addClass("phrase"), this.spanEnd = new Span().style("order", "3").addClass("end"));
+                .append(this.spanStart = new Span().style("order", "1").addClass("start"), this.btnPhrase = new Span().style("order", "2").addClass("phrase"), this.spanEnd = new Span().style("order", "3").addClass("end"))
+                .on("pressed", (ev) => {
+                // Patch the sender to be this instance.
+                ev.$.Sender = this;
+            });
             return this;
         }
         static {
@@ -9488,7 +9570,7 @@
         _toggle;
         /**
          * Create RadioButtonGroup component.
-         * @param radioButtons An array of radio button data used to create the buttons.
+         * @param labeledRadioButtons An array of radio button data used to create the buttons.
          * @param name The `name` property for all radio buttons.
          * @param orientation The orientation of the labeled radio buttons.\
          * Default: {@link Orientation.VERTICAL}.
@@ -9497,7 +9579,7 @@
          * @param labelAlignment The alignment of the label of the radio buttons.\
          * Default: {@link LabelAlignment.START}.
          */
-        constructor(radioButtons, name, orientation = Orientation.VERTICAL, labelPosition = LabelPosition.END, labelAlignment = LabelAlignment.START) {
+        constructor(labeledRadioButtons, name, orientation = Orientation.VERTICAL, labelPosition = LabelPosition.END, labelAlignment = LabelAlignment.START) {
             super();
             this._name = name;
             super
@@ -9505,7 +9587,7 @@
                 .orientation(orientation)
                 .labelPosition(labelPosition)
                 .labelAlignment(labelAlignment)
-                .radioButtons(radioButtons, name);
+                .labeledRadioButtons(labeledRadioButtons, name);
         }
         /**
          * Get an array of all contained labeled radio button components. Modifying this array has no
@@ -9514,21 +9596,27 @@
          * labeled radio button will never fire the event `checked`. Instead, listening for this event
          * must be done on the radio button group instance itself.
          */
-        get LabeledRadioButtons() {
+        get RadioButtons() {
             return this._labeledRadioButtons.slice();
+        }
+        /**
+         * Identical to the property {@link RadioButtons} (just calls it).
+         */
+        get LabeledRadioButtons() {
+            return this.RadioButtons;
         }
         /**
          * Set the radio buttons of this group.\
          * __Note:__ Setting new radio buttons clears the internal list of radio buttons and also
          * disposes of all previously contained radio buttons, so instances of radio buttons obtained
          * before with the getter `RadioButtons` are unusable after this operation!
-         * @param radioButtons The radio buttons to be set.
+         * @param labeledRadioButtons The radio buttons to be set.
          * @param name The `name` property for all radio buttons.
          * @param keepValue If `true`, the previous value of the radio button group will be restored (if
          * possible).
          * @returns This instance.
          */
-        radioButtons(radioButtons, name, keepValue) {
+        radioButtons(labeledRadioButtons, name, keepValue) {
             const oldValue = this.Value;
             this.ui.remove();
             for (const rb of this._labeledRadioButtons) {
@@ -9536,7 +9624,7 @@
             }
             this._name = name;
             this._labeledRadioButtons.length = 0;
-            this._labeledRadioButtons.push(...radioButtons.map(item => {
+            this._labeledRadioButtons.push(...labeledRadioButtons.map(item => {
                 const lrb = new LabeledRadioButton(item.Label, item.ID, item.Value, this._name, this._labelPosition, this._labelAlignment, undefined)
                     .parentDisabled(this.Disabled)
                     .addClass(LabeledRadioButton.DefaultCSSClassName);
@@ -9551,6 +9639,13 @@
             keepValue && oldValue && this.value(oldValue);
             this.ui.append(...this._labeledRadioButtons);
             return this;
+        }
+        // eslint-disable-next-line jsdoc/require-param, jsdoc/require-returns
+        /**
+         * Identical to the function {@link radioButtons} (just calls it).
+         */
+        labeledRadioButtons(labeledRadioButtons, name, keepValue) {
+            return this.radioButtons(labeledRadioButtons, name, keepValue);
         }
         /**
          * Get/set `name` attribute value of the component. Internally the setter sets the `name`
@@ -9611,6 +9706,20 @@
                 }
             }
             return this;
+        }
+        /**
+         * Get an array of the values of all contained radio buttons. The array has the same order as
+         * the radio buttons in the group.
+         */
+        get Values() {
+            return this._labeledRadioButtons.map(rb => rb.Value);
+        }
+        /**
+         * Gets the index of the currently checked radio button. If no radio button is checked, it
+         * returns `-1`.
+         */
+        get CheckedIndex() {
+            return this._labeledRadioButtons.findIndex(e => e.Checked);
         }
         /**
          * Allow toggling the radio button state of all contained radio buttons.
@@ -10891,7 +11000,7 @@
             let hasHOff = false;
             let vboHeight = "";
             let hasVOff = false;
-            this.#isRTL = getComputedStyle(this.#_dom_).direction === "rtl";
+            this.#isRTL = isRTL(this.#_dom_);
             this.#isRTL
                 ? this.#_dom_.classList.add("rtl")
                 : this.#_dom_.classList.remove("rtl");
@@ -10949,7 +11058,7 @@
          * @param _event The scroll event.
          */
         #syncScrollBars(_event) {
-            this.#isRTL = getComputedStyle(this.#_dom_).direction === "rtl";
+            this.#isRTL = isRTL(this.#_dom_);
             this.#_dom_.classList.add("scrolling");
             this.#repositionScrollBars();
         }
@@ -12051,7 +12160,7 @@
             this.resizeStart.X = ev.clientX;
             this.resizeStart.Y = ev.clientY;
             this.resizeAreaSize = this.activeArea.DOM[this.clientSizeProp];
-            this.isRTL = getComputedStyle(this._dom).direction === "rtl";
+            this.isRTL = isRTL(this._dom);
         }
         /**
          * Drag the handle.
@@ -13073,7 +13182,7 @@
         }
     }
 
-    const intro$1b = `
+    const intro$1c = `
 \`BusyOverlay\` is a component for displaying an overlay that indicates a
 'busy-with-no-defined-end' state. The overlay covers the complete viewport and prevents any user
 interaction with the UI below it. It is typically used during long-running operations where user
@@ -13089,7 +13198,7 @@ The component offers additional features:
 - Support for nested calls to \`busy()\`/\`idle()\`. This makes it very easy to use the overlay in
   scenarios where multiple (asynchronous) operations may overlap.
 `;
-    const example$16 = `
+    const example$17 = `
 ### Basic usage
 
 \`\`\`
@@ -13244,8 +13353,672 @@ longRunning3();
             const btnBusy3 = new Button("Show")
                 .addClass("regular")
                 .on("click", async () => await show(false, 3500, 500));
-            this.append(this.markdown(intro$1b), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
-            ), this.markdown(example$16), this.markdown(example2));
+            this.append(this.markdown(intro$1c), this.markdown("### Examples"), this.properties(btnBusy1, new Span("\u2003Show for 3 seconds").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy2, new Span("\u2003Show for max. 3 seconds (cancelable with 'Esc')").style({ "display": "inline-block", "height": "2rem" }), new Br(), btnBusy3, new Span("\u2003Show for 3 seconds after a delay of 500 ms") //.style({ "display": "inline-block", "height": "2rem" }), new Br()
+            ), this.markdown(example$17), this.markdown(example2));
+        }
+    }
+
+    /**
+     * An event that is emitted when the selection in a button group changes. This event is only emitted
+     * if a user interaction causes a change in the selection. Multiple interactions are reported
+     * together as one final selection change.
+     */
+    class ButtonGroupValueEvent extends ValueEvent {
+    }
+    /**
+     * The selection behavior of the button group, determining how buttons can be/must be pressed.
+     * "First" refers to the order in `Children`. Empty groups are allowed in every mode.
+     */
+    var SelectionMode;
+    (function (SelectionMode) {
+        /**
+         * Only one button can be pressed at a time. If multiple buttons are already pressed, only the
+         * first one will remain pressed. This implies that when a button is pressed, all other buttons
+         * will be unpressed.
+         */
+        SelectionMode["SINGLE"] = "single";
+        /**
+         * Only one button can be pressed at a time, and at least one button must be pressed. If this
+         * condition is not met, the first button will be automatically pressed if no other button is
+         * pressed already. If multiple buttons are already pressed, only the first one of these pressed
+         * buttons will remain pressed. The button group ensures that at least one button is always
+         * pressed.
+         */
+        SelectionMode["SINGLE_REQUIRED"] = "single-required";
+        /**
+         * Multiple buttons can be pressed at the same time. Setting this style on an existing button
+         * group will leave the `Pressed` state of all buttons unchanged.
+         */
+        SelectionMode["MULTIPLE"] = "multiple";
+        /**
+         * Multiple buttons can be pressed at the same time, and at least one button must be pressed. If
+         * this condition is not met, the first button will be automatically pressed if no other button
+         * is pressed already. If one or multiple buttons are already pressed setting this style won't
+         * change the state `Pressed` of any button in the group. The button group ensures that at least
+         * one button is always pressed.
+         */
+        SelectionMode["MULTIPLE_REQUIRED"] = "multiple-required";
+    })(SelectionMode || (SelectionMode = {}));
+    /**
+     * The semantic role of a button group. This also determines the tab order and keyboard navigation
+     * behavior of a button group.
+     */
+    var GroupRole;
+    (function (GroupRole) {
+        /** A toolbar with one tab stop and local arrow-key navigation. */
+        GroupRole["Toolbar"] = "toolbar";
+        /** A group whose tab order and keyboard navigation may be managed by its parent. */
+        GroupRole["Group"] = "group";
+    })(GroupRole || (GroupRole = {}));
+    /**
+     * An orientation mixin that chooses the ARIA orientation variant or the normal orientation
+     * according to the button group's role.
+     */
+    class ButtonGroupOrientationAttr extends OrientationAttr {
+        /** @inheritdoc */
+        orientation(v) {
+            const vertical = v === Orientation.VERTICAL || v === Orientation.ARIA_VERTICAL;
+            return super.orientation(v === Orientation.NONE
+                ? Orientation.NONE
+                : this.DOM.getAttribute("role") === GroupRole.Toolbar
+                    ? vertical
+                        ? Orientation.ARIA_VERTICAL
+                        : Orientation.ARIA_HORIZONTAL
+                    : vertical
+                        ? Orientation.VERTICAL
+                        : Orientation.HORIZONTAL);
+        }
+    }
+    /**
+     * A container for a group of buttons. Buttons added to this group will have their `Pressed` state
+     * automatically enabled. A common use case is the implementation of toolbars or option groups.
+     *
+     * Features and usage notes:
+     *
+     * - The group allows to enforce specific selection modes, such as single selection or multiple
+     *   selection, depending on the configured `SelectionMode` property.
+     * - Changes made through `values()` and `selectionMode()` are checked and corrected with regard to
+     *   the configured `SelectionMode` property, if necessary, to maintain a correct selection state.
+     * - Disabled child button components do not interfere with the selection state of the group, they
+     *   are handled the same way as non-disabled buttons.
+     * - The correct behavior of the group is not guaranteed if it contains buttons with the same value.
+     *   Using distinct values for each button must be ensured by the developer.
+     * - `GroupRole.Toolbar` (the default) provides one tab stop on an enabled button. Arrow keys move
+     *   the focus without changing the current selection: Left/Right for a horizontally aligned group,
+     *   Up/Down for a vertically aligned group, wrapping at either end and skipping disabled buttons
+     *   and buttons hidden by `hidden` or CSS `display: none`. Enter and Space toggle the focused
+     *   button. The last focused button remains the tab stop; initially this is the first enabled
+     *   button.
+     * - `GroupRole.Group` disables local keyboard navigation and leaves tab indices unmanaged. Without
+     *   a parent focus manager, buttons retain their natural tab order. Switching from Toolbar to Group
+     *   restores the tab indices saved before local navigation was enabled.
+     * - Both `GroupRole.Toolbar` and `GroupRole.Group` should have an accessible name supplied by the
+     *   application via `aria-label` or `aria-labelledby`. Toolbar orientation is reflected in
+     *   `aria-orientation`.
+     * - Both emitted events are only triggered by user interactions and not by programmatic changes to
+     *   any of the child buttons or the group itself.
+     * - All `pressed` events triggered by the child buttons are propagated to the button group so that
+     *   listeners on the group instead of the child buttons can respond to them.
+     * - `pressed` is dispatched before the button changes state; its details contain the intended
+     *   state and `preventDefault()` cancels the change. `values()` and `selectionMode()` normalize
+     *   synchronously, while direct `Pressed` assignments and child list changes are normalized by a
+     *   `MutationObserver`. Synchronous event handlers may therefore observe an intermediate selection.
+     * - `value` is emitted in a microtask after a user interaction and selection normalization.
+     *   Interactions within the same batch are reported as one final change. Programmatic changes alone
+     *   do not emit it, but changes made before a pending user interaction is processed may affect its
+     *   payload or suppress the event. Use `Values` to read the normalized result of user interactions.
+     */
+    class ButtonGroup extends Div {
+        #groupRole = GroupRole.Toolbar;
+        #originalGroupTabIndex;
+        #selectionMode = SelectionMode.MULTIPLE;
+        #selectionObserver;
+        #onPressedFnc = this.#onPressed.bind(this);
+        #onKeyDownFnc = this.#onKeyDown.bind(this);
+        #onFocusInFnc = this.#onFocusIn.bind(this);
+        #tabStop;
+        #originalTabIndexes = new Map();
+        #pendingUserChanges = []; // eslint-disable-line jsdoc/require-jsdoc
+        /**
+         * Create ButtonGroup component.
+         * @param buttons The buttons to be added to the button group.
+         * @param selectionMode The selection behavior of the button group, determining how buttons can
+         * be/must be pressed.
+         * @param orientation The orientation of the button group.
+         * @param groupRole The semantic role and keyboard behavior. Defaults to Toolbar.
+         */
+        constructor(buttons, selectionMode = SelectionMode.MULTIPLE, orientation = Orientation.HORIZONTAL, groupRole = GroupRole.Toolbar) {
+            super();
+            this.#startMutationObserver();
+            this.DOM.addEventListener("pressed", this.#onPressedFnc);
+            this.DOM.addEventListener("keydown", this.#onKeyDownFnc);
+            this.DOM.addEventListener("focusin", this.#onFocusInFnc);
+            for (const button of buttons) {
+                button.Pressed === undefined && (button.Pressed = false);
+            }
+            this
+                .orientation(orientation)
+                .groupRole(groupRole)
+                .append(...buttons)
+                .selectionMode(selectionMode);
+        }
+        /** Get/set the semantic role and keyboard navigation behavior. */
+        get GroupRole() {
+            return this.#groupRole;
+        }
+        /** @inheritdoc */
+        set GroupRole(v) {
+            this.groupRole(v);
+        }
+        /**
+         * Set the semantic role and keyboard navigation behavior.
+         * @param v `GroupRole.Toolbar` manages focus locally; `GroupRole.Group` leaves focus management
+         * to the application.
+         * @returns This instance.
+         */
+        groupRole(v) {
+            if (this.#groupRole === GroupRole.Toolbar && v === GroupRole.Group) {
+                this.#restoreTabStops();
+            }
+            this.#groupRole = v;
+            this.role(v);
+            this.orientation(this.Orientation);
+            if (v === GroupRole.Toolbar) {
+                this.#syncTabStops();
+            }
+            return this;
+        }
+        /**
+         * Get/set the values of all 'selected' buttons in the group. When setting `Values`, the
+         * `Pressed` state of a button in the group is set to `true` only if the given array `v`
+         * contains the button's value. The resulting selection is adjusted to the current group
+         * selection style.
+         */
+        get Values() {
+            return this.Children
+                .filter(button => button.Pressed)
+                .map(button => button.Value);
+        }
+        /** @inheritdoc */
+        set Values(v) {
+            this.values(v);
+        }
+        /**
+         * Set the values of all buttons in the group. This will set the `Pressed` state of a button in
+         * the group to `true` only if the given array `v` contains the button's value. Single-selection
+         * modes keep the first matching button. If no value matches, the required modes keep the first
+         * previously pressed button, or select the first button if none was pressed.
+         * @param v The array of values to be set for the buttons in the group.
+         * @returns This instance.
+         */
+        values(v) {
+            const buttons = this.Children;
+            const previouslyPressed = buttons.find(button => button.Pressed === true);
+            for (const button of buttons) {
+                button.Pressed = v.includes(button.Value);
+            }
+            this.#normalizeSelection(buttons.some(button => button.Pressed === true) ? undefined : previouslyPressed);
+            return this;
+        }
+        /**
+         * Get/set the selection mode of the button group.
+         */
+        get SelectionMode() {
+            return this.#selectionMode;
+        }
+        /** @inheritdoc */
+        set SelectionMode(v) {
+            this.selectionMode(v);
+        }
+        /**
+         * Set the selection mode and normalize the current selection, even if the style is unchanged.
+         * @param v The new selection mode to be set for the button group.
+         * @returns This instance.
+         */
+        selectionMode(v) {
+            this.#selectionMode = v;
+            this.removeClass("select-single", "select-single-required", "select-multiple", "select-multiple-required");
+            switch (this.#selectionMode) {
+                case SelectionMode.SINGLE:
+                    this.addClass("select-single");
+                    break;
+                case SelectionMode.SINGLE_REQUIRED:
+                    this.addClass("select-single-required");
+                    break;
+                case SelectionMode.MULTIPLE:
+                    this.addClass("select-multiple");
+                    break;
+                case SelectionMode.MULTIPLE_REQUIRED:
+                    this.addClass("select-multiple-required");
+                    break;
+            }
+            this.#normalizeSelection();
+            return this;
+        }
+        /**
+         * Enable toggle behavior and enforce the current selection rules.
+         * @param preferred The changed button, which takes precedence when pressed in a
+         * single-selection mode, or is restored if unpressing it would leave a required group without a
+         * selection.
+         */
+        #normalizeSelection(preferred) {
+            try {
+                const buttons = this.Children;
+                for (const button of buttons) {
+                    button.Pressed === undefined && (button.Pressed = false);
+                }
+                const single = this.#selectionMode === SelectionMode.SINGLE || this.#selectionMode === SelectionMode.SINGLE_REQUIRED;
+                const required = this.#selectionMode === SelectionMode.SINGLE_REQUIRED || this.#selectionMode === SelectionMode.MULTIPLE_REQUIRED;
+                const selected = preferred?.Pressed === true ? preferred : buttons.find(button => button.Pressed === true);
+                if (single && selected) {
+                    for (const button of buttons) {
+                        button !== selected && button.Pressed === true && (button.Pressed = false);
+                    }
+                }
+                if (required && !selected) {
+                    const fallback = preferred ?? buttons[0];
+                    fallback && (fallback.Pressed = true);
+                }
+            }
+            finally {
+                this.#syncTabStops();
+                // Discard mutations produced by this normalization to avoid observer feedback loops.
+                this.#selectionObserver.takeRecords();
+            }
+        }
+        /**
+         * Start observing mutations on the button group's DOM. This includes removing/adding buttons
+         * from/to the group.
+         */
+        #startMutationObserver() {
+            this.#selectionObserver = new MutationObserver(records => {
+                const buttons = this.Children;
+                const changed = records.findLast(record => record.attributeName === "aria-pressed"
+                    && record.oldValue !== "true"
+                    && buttons.some(button => button.DOM === record.target && button.Pressed === true))
+                    ?? records.findLast(record => record.attributeName === "aria-pressed"
+                        && buttons.some(button => button.DOM === record.target));
+                this.#normalizeSelection(buttons.find(button => button.DOM === changed?.target));
+            });
+            this.#selectionObserver.observe(this.DOM, {
+                /* eslint-disable jsdoc/require-jsdoc */
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ["aria-pressed", "disabled", "aria-disabled", "tabindex", "hidden", "class", "style"],
+                attributeOldValue: true
+                /* eslint-enable */
+            });
+        }
+        /**
+         * Get the buttons currently available for keyboard navigation.
+         * @returns Enabled buttons without the HTML hidden attribute or computed `display: none`.
+         */
+        #navigableButtons() {
+            return this.Children.filter(button => !button.Disabled
+                && !button.ParentDisabled
+                && !button.DOM.matches(":disabled")
+                && !button.DOM.hidden
+                && button.DOM.ownerDocument.defaultView?.getComputedStyle(button.DOM).display !== "none");
+        }
+        /**
+         * Maintain one child tab stop and restore the original tabindex of removed buttons.
+         * @param preferred The button that has just received focus, if any.
+         */
+        #syncTabStops(preferred) {
+            if (this.#groupRole !== GroupRole.Toolbar) {
+                return;
+            }
+            const buttons = this.Children;
+            for (const [button, original] of this.#originalTabIndexes) {
+                if (!buttons.includes(button)) {
+                    if (!button.Disposed) {
+                        if (button.Parent instanceof ButtonGroup && button.Parent.GroupRole === GroupRole.Toolbar) {
+                            // Preserve the original value when a button is moved between groups.
+                            button.Parent.#originalTabIndexes.set(button, original);
+                        }
+                        else {
+                            button.attrib("tabindex", original);
+                        }
+                    }
+                    this.#originalTabIndexes.delete(button);
+                }
+            }
+            const navigable = this.#navigableButtons();
+            const focused = navigable.find(button => button.DOM.contains(this.DOM.ownerDocument.activeElement));
+            this.#tabStop = preferred && navigable.includes(preferred)
+                ? preferred
+                : focused ?? (this.#tabStop && navigable.includes(this.#tabStop)
+                    ? this.#tabStop
+                    : navigable[0]);
+            if (this.#originalGroupTabIndex === undefined) {
+                this.#originalGroupTabIndex = this.DOM.getAttribute("tabindex");
+            }
+            this.tabbable(false);
+            for (const button of buttons) {
+                if (!this.#originalTabIndexes.has(button)) {
+                    this.#originalTabIndexes.set(button, button.DOM.getAttribute("tabindex"));
+                }
+                button.tabbable(button === this.#tabStop);
+            }
+        }
+        /** Restore the tab indices managed by the toolbar without changing focus or selection. */
+        #restoreTabStops() {
+            for (const [button, original] of this.#originalTabIndexes) {
+                if (!button.Disposed) {
+                    if (button.Parent instanceof ButtonGroup && button.Parent !== this
+                        && button.Parent.GroupRole === GroupRole.Toolbar) {
+                        button.Parent.#originalTabIndexes.set(button, original);
+                    }
+                    else {
+                        button.attrib("tabindex", original);
+                    }
+                }
+            }
+            this.#originalTabIndexes.clear();
+            this.#tabStop = undefined;
+            if (this.#originalGroupTabIndex !== undefined) {
+                this.attrib("tabindex", this.#originalGroupTabIndex);
+                this.#originalGroupTabIndex = undefined;
+            }
+        }
+        /**
+         * Remember focus changes caused by keyboard navigation, pointer input or code.
+         * @param ev The focus event bubbling from a child button.
+         */
+        #onFocusIn(ev) {
+            if (this.#groupRole !== GroupRole.Toolbar) {
+                return;
+            }
+            if (ev.target instanceof Node) {
+                const target = ev.target;
+                const button = this.Children.find(child => child.DOM.contains(target));
+                button && this.#syncTabStops(button);
+            }
+        }
+        /**
+         * Move focus along the group's orientation without changing the selection.
+         * @param ev The keyboard event bubbling from a child button.
+         */
+        #onKeyDown(ev) {
+            if (this.#groupRole !== GroupRole.Toolbar || ev.defaultPrevented || ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey || !(ev.target instanceof Node)) {
+                return;
+            }
+            if (this.Orientation === Orientation.NONE) {
+                return;
+            }
+            const horizontal = this.Orientation === Orientation.HORIZONTAL || this.Orientation === Orientation.ARIA_HORIZONTAL;
+            let step = ev.key === (horizontal ? "ArrowRight" : "ArrowDown")
+                ? 1
+                : ev.key === (horizontal ? "ArrowLeft" : "ArrowUp")
+                    ? -1
+                    : 0;
+            if (!step) {
+                return;
+            }
+            if (horizontal && this.DOM.ownerDocument.defaultView?.getComputedStyle(this.DOM).direction === "rtl") {
+                step = -step;
+            }
+            this.#syncTabStops();
+            const buttons = this.#navigableButtons();
+            const target = ev.target;
+            const index = buttons.findIndex(button => button.DOM.contains(target));
+            if (index < 0) {
+                return;
+            }
+            ev.preventDefault();
+            const next = buttons[(index + step + buttons.length) % buttons.length];
+            this.#syncTabStops(next);
+            next.focus();
+        }
+        /**
+         * Handle the pressed event for a button within the group. This code ensures, that at least one
+         * required button remains pressed, if the selection mode demands it.
+         * @param ev The pressed event triggered by a button within the group.
+         */
+        #onPressed(ev) {
+            const button = this.Children.find(child => child.DOM === ev.target);
+            if (!button) {
+                return;
+            }
+            const required = this.#selectionMode === SelectionMode.SINGLE_REQUIRED || this.#selectionMode === SelectionMode.MULTIPLE_REQUIRED;
+            if (button
+                && required
+                && ev.$.Pressed === false
+                && !this.Children.some(child => child !== button && child.Pressed === true)) {
+                ev.preventDefault();
+            }
+            if (ev.defaultPrevented) {
+                return;
+            }
+            const before = this.Children.filter(child => child.Pressed === true);
+            const scheduled = this.#pendingUserChanges.length > 0;
+            this.#pendingUserChanges.push({ Button: button, Event: ev }); // eslint-disable-line jsdoc/require-jsdoc
+            if (!scheduled) {
+                queueMicrotask(() => {
+                    const changes = this.#pendingUserChanges;
+                    this.#pendingUserChanges = [];
+                    if (this.Disposed) {
+                        return;
+                    }
+                    const buttons = this.Children;
+                    // Dispatch has finished: later handlers may also have cancelled the event.
+                    const changed = changes.findLast(change => !change.Event.defaultPrevented
+                        && buttons.includes(change.Button)
+                        && change.Button.Pressed === change.Event.$.Pressed);
+                    if (!changed) {
+                        return;
+                    }
+                    this.#normalizeSelection(changed.Button);
+                    const after = this.Children.filter(child => child.Pressed === true);
+                    if (before.length !== after.length || before.some((child, index) => child !== after[index])) {
+                        this.emit(new ButtonGroupValueEvent("value", this, { Value: this.Values })); // eslint-disable-line jsdoc/require-jsdoc
+                    }
+                });
+            }
+        }
+        /** @inheritdoc */
+        dispose() {
+            this.#pendingUserChanges = [];
+            this.#selectionObserver.disconnect();
+            this.DOM.removeEventListener("pressed", this.#onPressedFnc);
+            this.DOM.removeEventListener("keydown", this.#onKeyDownFnc);
+            this.DOM.removeEventListener("focusin", this.#onFocusInFnc);
+            this.#originalTabIndexes.clear();
+            this.#tabStop = undefined;
+            super.dispose();
+        }
+        static {
+            /** Mixin additional DOM attributes/properties. */
+            mixinDOMProperties(this, (OrientationAttr), 
+            /** Overrides the accessor of the `OrientationAttr` mixin. */
+            ButtonGroupOrientationAttr);
+        }
+    }
+
+    const intro$1b = `
+\`ButtonGroup\` is a container for §@dom/Button§s and §@components/IconButton§s components that
+manages the selection state (\`Pressed\`) of its child buttons. It supports single and multiple
+selection, optionally requiring at least one selected button. A common use case for this component
+is the implementation of toolbars or option groups.
+
+The example below uses \`SINGLE_REQUIRED\` for the 'Text alignment' group and \`MULTIPLE\` for the
+'Text formatting' group. Both groups are reachable via the 'Tab' key as a single tab stop, the focus
+is moved within each group using the arrow keys.
+
+The component emits \`value\` events whenever the selection changes and also \`pressed\` events when
+a button is pressed. Programmatic access to the selection state is also available via the \`Values\`
+property and the \`values()\` function.
+
+**Class:** \`@vanilla-ts/components/ButtonGroup\`
+`;
+    const example$16 = `
+### Code example
+
+\`\`\`
+import { ButtonGroup, IconButton, SelectionMode } from "@vanilla-ts/components";
+import { VTS_App } from "@vanilla-ts/core";
+import { Code, P } from "@vanilla-ts/dom";
+
+const alignmentValue = new Code("left");
+const formattingValue = new Code("none");
+new P(
+    "Lorem ipsum ut wisi enim ad minim veniam, quis nostrud exerci ullamcorper "
+    + "suscipit ut aliquip ex ea commodo consequat. Duis autem vel eum iriure "
+    + "dolor in vulputate velit esse molestie consequat, vel illum dolore eu "
+    + "feugiat nulla facilisis et blandit augue duis dolore te."
+).style({
+    inlineSize: "100%",
+    maxInlineSize: "34rem",
+    lineHeight: "1.6",
+    textAlign: "left"
+});
+
+function iconButton(icon: string, label: string, value: string): IconButton {
+    const button = new IconButton({ IconStart: icon, Title: label })
+        .addClass("icon-button", "regular")
+        .attrib("aria-label", label)
+        .value(value);
+    button.DOM.querySelector(".start")?.setAttribute("aria-hidden", "true");
+    return button;
+}
+
+const alignment = new ButtonGroup([
+    iconButton("format_align_left", "Align left", "left"),
+    iconButton("format_align_center", "Center", "center"),
+    iconButton("format_align_right", "Align right", "right"),
+    iconButton("format_align_justify", "Justify", "justify")
+], SelectionMode.SINGLE_REQUIRED)
+    .addClass("button-group")
+    .attrib("aria-label", "Text alignment")
+    .values(["left"])
+    .on("value", event => {
+        const value = event.$.Value[0] ?? "left";
+        preview.style("textAlign", value);
+        alignmentValue.text(value);
+    });
+
+const formatting = new ButtonGroup([
+    iconButton("format_bold", "Bold", "bold"),
+    iconButton("format_italic", "Italic", "italic"),
+    iconButton("format_underlined", "Underline", "underline")
+], SelectionMode.MULTIPLE)
+    .addClass("button-group")
+    .attrib("aria-label", "Text formatting")
+    .on("value", event => {
+        const values = event.$.Value;
+        preview.style({
+            fontWeight: values.includes("bold") ? "bold" : "normal",
+            fontStyle: values.includes("italic") ? "italic" : "normal",
+            textDecorationLine: values.includes("underline") ? "underline" : "none"
+        });
+        formattingValue.text(values.join(", ") || "none");
+    });
+
+new VTS_App(document.body).append(
+    new P("Text alignment: ", alignmentValue),
+    alignment,
+    new P("Text formatting: ", formattingValue),
+    formatting,
+    preview
+);
+\`\`\`
+`;
+    const CSS = `
+### CSS
+
+\`\`\`
+.button-group,
+.vts-button-group {
+    .icon-button,
+    .vts-icon-button {
+        width: 2.5rem;
+        height: auto;
+        aspect-ratio: 1;
+        > .start,
+        > .end {
+            font-family: "MaterialIconsRounded";
+            font-size: 1.8rem;
+        }
+    }
+}
+\`\`\`
+`;
+    /** Showcase for exclusive text alignment and independent text formatting buttons. */
+    class ButtonGroupEx extends BaseExample {
+        constructor() {
+            super("ButtonGroup");
+        }
+        /** @inheritdoc */
+        buildExample() {
+            const alignmentValue = new Code("left");
+            const formattingValue = new Code("none");
+            const preview = new P("Lorem ipsum ut wisi enim ad minim veniam, quis nostrud exerci ullamcorper "
+                + "suscipit ut aliquip ex ea commodo consequat. Duis autem vel eum iriure "
+                + "dolor in vulputate velit esse molestie consequat, vel illum dolore eu "
+                + "feugiat nulla facilisis et blandit augue duis dolore te.")
+                .style({
+                inlineSize: "100%",
+                maxInlineSize: "34rem",
+                lineHeight: "1.6",
+                textAlign: "left"
+            });
+            const alignment = new ButtonGroup([
+                this.#iconButton("format_align_left", "Align left", "left"),
+                this.#iconButton("format_align_center", "Center", "center"),
+                this.#iconButton("format_align_right", "Align right", "right"),
+                this.#iconButton("format_align_justify", "Justify", "justify")
+            ], SelectionMode.SINGLE_REQUIRED)
+                .addClass("button-group")
+                .attrib("aria-label", "Text alignment")
+                .values(["left"])
+                .on("value", event => {
+                const value = event.$.Value[0] ?? "left";
+                alignmentValue.text(value);
+                preview.style("textAlign", value);
+            });
+            const formatting = new ButtonGroup([
+                this.#iconButton("format_bold", "Bold", "bold"),
+                this.#iconButton("format_italic", "Italic", "italic"),
+                this.#iconButton("format_underlined", "Underline", "underline")
+            ], SelectionMode.MULTIPLE)
+                .addClass("button-group")
+                .attrib("aria-label", "Text formatting")
+                .on("value", event => {
+                const values = event.$.Value;
+                formattingValue.text(values.join(", ") || "none");
+                preview.style({
+                    fontWeight: values.includes("bold") ? "bold" : "normal",
+                    fontStyle: values.includes("italic") ? "italic" : "normal",
+                    textDecorationLine: values.includes("underline") ? "underline" : "none"
+                });
+            });
+            this.append(this.markdown(intro$1b), this.example([
+                new P("Text alignment: ", alignmentValue),
+                alignment,
+                new P("Text formatting: ", formattingValue),
+                formatting,
+                preview
+            ], [alignment, formatting]), this.markdown("### Configuration"), this.properties($.labeledCheckbox("Vertical text alignment group")
+                .checked(alignment.Orientation === Orientation.VERTICAL || alignment.Orientation === Orientation.ARIA_VERTICAL)
+                .on("checked", event => alignment.orientation(event.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL)), $.labeledCheckbox("Vertical text formatting group")
+                .checked(formatting.Orientation === Orientation.VERTICAL || formatting.Orientation === Orientation.ARIA_VERTICAL)
+                .on("checked", event => formatting.orientation(event.$.Checked ? Orientation.VERTICAL : Orientation.HORIZONTAL))), this.markdown(example$16), this.markdown(CSS));
+        }
+        /**
+         * Create an icon-only button using the existing showcase icon-font stylesheet.
+         * @param icon The MaterialIconsRounded ligature.
+         * @param label The accessible name and tooltip.
+         * @param value The selection value.
+         * @returns The configured icon button.
+         */
+        #iconButton(icon, label, value) {
+            const button = new IconButton({ IconStart: icon, Title: label })
+                .addClass("icon-button", "regular")
+                .attrib("aria-label", label)
+                .value(value);
+            button.DOM.querySelector(".start")?.setAttribute("aria-hidden", "true");
+            return button;
         }
     }
 
@@ -13500,6 +14273,9 @@ components which can be styled individually:
 The intended use of this component is that the icons (part one and three) are styled by background
 images or with an icon font like 'Material Icons'.
 
+Like \`Button\`, \`IconButton\` also has a \`Pressed\` property and also emits its own event
+\`PressedEvent\` (\`pressed\`).
+
 **Class:** \`@vanilla-ts/components/IconButton\`
 
 *Note:* \`IconButton\` has no built-in default design except for some basic inner margins. The two examples
@@ -13561,7 +14337,8 @@ const example = new Div().append(
         IconEnd: "-circle",
         Title: "Turn Wifi on"
     })
-        .on("click", () => {
+        .pressed(false)
+        .on("pressed", () => {
             setTimeout(() => {
                 ibWifi
                     .toggleClass("wifi-on")
@@ -13657,7 +14434,8 @@ const example = new Div().append(
         IconEnd: "circle",
         Title: "Turn Wifi on"
     })
-        .on("click", () => {
+        .pressed(false)
+        .on("pressed", () => {
             setTimeout(() => {
                 ibWifi
                     .toggleClass("wifi-on")
@@ -13736,7 +14514,8 @@ Compared to the example which uses background images the amount of CSS needed he
                     IconEnd: "-circle",
                     Title: "Turn Wifi on"
                 })
-                    .on("click", () => {
+                    .pressed(false)
+                    .on("pressed", () => {
                     setTimeout(() => {
                         ib3
                             .toggleClass("wifi-on")
@@ -13762,7 +14541,8 @@ Compared to the example which uses background images the amount of CSS needed he
                     IconEnd: "circle",
                     Title: "Turn Wifi on"
                 })
-                    .on("click", () => {
+                    .pressed(false)
+                    .on("pressed", () => {
                     setTimeout(() => {
                         ib3a
                             .toggleClass("wifi-on")
@@ -16742,7 +17522,9 @@ new VTS_App(document.body).append(example);
 A component that encapsulates the native DOM button element
 (%\`<button>\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button%).
 It is an interactive control that users can activate to perform an action, such as submitting a
-form or opening a dialog.
+form or opening a dialog. Buttons also have a \`Pressed\` property to enable support for toggling
+the button state. For easier handling, the button component also emits its own event
+\`PressedEvent\` (\`pressed\`).
 
 **Class:** \`@vanilla-ts/dom/Button\`
 
@@ -16771,6 +17553,8 @@ does) provides styles for the following common button types:
 - Buttons that trigger a destructive action (like deleting data) are given the class name \`warn\`
   in addition to \`regular\`. \`warn\` can't be used together with \`default\`, doing so may lead to
   a confusing styling.
+- Buttons that can serve as a toggle with the property \`Pressed\` are given the class names
+  \`pressed\`/\`not-pressed\` in addition to \`regular\`.
 
 ### Code example (styled default buttons)
 
@@ -16781,8 +17565,13 @@ import { Button } from "@vanilla-ts/dom";
 const btnSkip = new Button("Skip").addClass("regular", "warn");
 const btnCancel = new Button("Cancel").addClass("regular");
 const btnOk = new Button("OK").addClass("regular", "default");
+const btnToggle = new Button("On").addClass("regular")
+    .pressed(true)
+    .on("click", () => {
+        btnToggle.phrase(btnToggle.Pressed ? "On" : "Off");
+    }),
 
-new VTS_App(document.body).append(btnSkip, btnCancel, btnOk);
+new VTS_App(document.body).append(btnSkip, btnCancel, btnOk, btnToggle);
 \`\`\`
 `;
     const exampleFactory = `
@@ -16801,8 +17590,12 @@ const bf = new ButtonFactory();
 const btnSkip = bf.buttonWarn("Skip");
 const btnCancel = bf.buttonRegular("Cancel");
 const btnOk = bf.buttonDefault("OK");
+const btnToggle = bf.buttonToggle(true, "On")
+    .on("click", () => {
+        btnToggle.phrase(btnToggle.Pressed ? "On" : "Off");
+    });
 
-new VTS_App(document.body).append(btnSkip, btnCancel, btnOk);
+new VTS_App(document.body).append(btnSkip, btnCancel, btnOk, btnToggle);
 \`\`\`
 
 This way, the correct class names are applied automatically (the result is optically identical to
@@ -16817,6 +17610,7 @@ the previous example). For an advanced usage of component factories see §@core/
             let btnSkip;
             let btnCancel;
             let btnOk;
+            let btnToggle;
             this.append(this.markdown(intro$J), this.markdown(example$H), this.example([
                 new Button("Button")
             ]), this.markdown(exampleStyled), this.example([
@@ -16825,7 +17619,12 @@ the previous example). For an advanced usage of component factories see §@core/
                 btnCancel = $.buttonRegular("Cancel"),
                 new Text$1("\u2003"),
                 btnOk = $.buttonDefault("OK"),
-            ], [btnSkip, btnCancel, btnOk]), this.markdown(exampleFactory));
+                new Text$1("\u2003"),
+                btnToggle = $.buttonToggle(true, "On")
+                    .on("click", () => {
+                    btnToggle.phrase(btnToggle.Pressed ? "On" : "Off");
+                }),
+            ], [btnSkip, btnCancel, btnOk, btnToggle]), this.markdown(exampleFactory));
         }
     }
 
@@ -16894,7 +17693,8 @@ new VTS_App(document.body).append(example);
 A component that encapsulates the native DOM checkbox
 (%\`<input type="checkbox">\`|https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/checkbox%).
 It lets users enable or disable a single option. Its indeterminate state can additionally represent
-a mixed or not-yet-decided value.
+a mixed or not-yet-decided value. For easier handling, the checkbox component emits its own event
+\`CheckedEvent\`; see the corresponding documentation in the \`Checkbox\` class.
 This component is also available as a §@components/LabeledCheckbox / -Switch§.
 
 **Class:** \`@vanilla-ts/dom/Checkbox\`
@@ -16912,9 +17712,6 @@ const cb3 = new Checkbox().indeterminate(true);
 
 new VTS_App(document.body).append(cb1, cb2, cb3);
 \`\`\`
-
-For easier handling, the checkbox component emits its own event \`CheckedEvent\`; see the
-corresponding documentation in the \`Checkbox\` class.
 `;
     const introSwitch = `
 ## Switch
@@ -19497,6 +20294,7 @@ new VTS_App(document.body).append(example);
         // Components
         "#@components/Introduction",
         "#@components/BusyOverlay",
+        "#@components/ButtonGroup",
         "#@components/Dialog",
         "#@components/DisclosureContainer",
         "#@components/IconButton",
@@ -19594,6 +20392,7 @@ new VTS_App(document.body).append(example);
     // Components
     let componentsIntroductionEx;
     let busyOverlayEx;
+    let buttonGroupEx;
     let iconButtonEx;
     let disclosureContainerEx;
     let labeledAnchorEx;
@@ -19813,6 +20612,9 @@ new VTS_App(document.body).append(example);
                 break;
             case "#@components/BusyOverlay":
                 example = busyOverlayEx ??= new BusyOverlayEx();
+                break;
+            case "#@components/ButtonGroup":
+                example = buttonGroupEx ??= new ButtonGroupEx();
                 break;
             case "#@components/Dialog":
                 break;

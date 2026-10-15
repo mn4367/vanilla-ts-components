@@ -452,6 +452,8 @@ a {
         --btn-disabled-font-color: var(--font-disabled-color);
         --btn-warn-font-color: var(--color-warn);
         --btn-warn-disabled-font-color: var(--color-warn-light);
+        --btn-pressed-background: var(--black-5);
+        --btn-pressed-box-shadow: inset 0px 0px var(--3px) var(--3px) rgba(0, 0, 0, 0.03);
         appearance: none;
         position: relative;
         /* margin: var(--btn-margin); */
@@ -463,6 +465,7 @@ a {
         border: var(--btn-border);
         border-bottom: var(--btn-border-bottom);
         background: var(--btn-background);
+        box-shadow: none;
         &.disabled,
         &:disabled {
             border: var(--btn-disabled-border);
@@ -471,7 +474,7 @@ a {
             color: var(--btn-disabled-font-color);
         }
         &:active {
-            background: var(--btn-active-background)
+            background: var(--btn-active-background);
         }
         &.default {
             height: var(--btn-regular-default-height);
@@ -496,6 +499,21 @@ a {
                 color: var(--btn-warn-disabled-font-color);
             }
         }
+        &.pressed {
+            background: var(--btn-pressed-background);
+            box-shadow: var(--btn-pressed-box-shadow);
+            &:active {
+                background: var(--btn-active-background);
+                box-shadow: none;
+            }
+            &.disabled,
+            &:disabled {
+                /* box-shadow: none; */
+            }
+        }
+        &.not-pressed {
+            /* Style is equivalent to the regular button style. */
+        }
     }
     .disabled button,
     :disabled button,
@@ -509,6 +527,9 @@ a {
         }
         &.warn {
             color: var(--btn-warn-disabled-font-color);
+        }
+        &.pressed {
+            /* box-shadow: none; */
         }
     }
 }
@@ -2115,7 +2136,8 @@ input[type="text"] {
 /* #endregion */
 
 /* #region ../../themes/vts/IconButton.css */
-/* The styling here is very generic and only handles the basic layout. */
+/* The styling here is very generic and only handles the basic layout. In most cases, `width` and
+   `height` in particular need to be adjusted. */
 .icon-button,
 .vts-icon-button {
     --icon-button-margin: var(--base-size-half);
@@ -3423,6 +3445,65 @@ input[type="text"] {
 }
 /* #endregion */
 
+/* #region ../../themes/vts/ButtonGroup.css */
+.button-group,
+.vts-button-group {
+    display: flex;
+    /* This button styling is tailored for `Button`/`Iconbutton` with class `regular`. */
+    &.horizontal {
+        flex-direction: row;
+        > .regular {
+            &:not(:first-child):not(:last-child) {
+                &:not(:focus-visible) {
+                    border-radius: 0;
+                }
+                border-right: none;
+            }
+            &:first-child:not(:only-child) {
+                &:not(:focus-visible) {
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+                border-right: none;
+            }
+            &:last-child:not(:only-child) {
+                &:not(:focus-visible) {
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                }
+            }
+        }
+        > button {
+            height: auto;
+        }
+    }
+    &.vertical {
+        flex-direction: column;
+        > .regular {
+            &:not(:first-child):not(:last-child) {
+                &:not(:focus-visible) {
+                    border-radius: 0;
+                }
+                border-bottom: none;
+            }
+            &:first-child:not(:only-child) {
+                &:not(:focus-visible) {
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+                border-bottom: none;
+            }
+            &:last-child:not(:only-child) {
+                &:not(:focus-visible) {
+                    border-top-left-radius: 0;
+                    border-top-right-radius: 0;
+                }
+            }
+        }
+    }
+}
+/* #endregion */
+
 /* #region ../src/style/default/app/AppFooter.css */
 .app-footer {
     flex-grow: 0;
@@ -3591,6 +3672,26 @@ input[type="text"] {
 }
 /* #endregion */
 
+/* #region ../src/style/default/examples/ButtonGroupEx.css */
+.ex-button-group {
+    .button-group,
+    .vts-button-group {
+        .icon-button,
+        .vts-icon-button {
+            width: 2.5rem;
+            height: auto;
+            aspect-ratio: 1;
+            > .start,
+            > .end {
+                font-family: "MaterialIconsRounded";
+                font-size: 1.8rem;
+                /* line-height: 0; */
+            }
+        }
+    }
+}
+/* #endregion */
+
 /* #region ../src/style/default/examples/DisclosureContainerEx.css */
 .example {
     .example-area {
@@ -3669,7 +3770,7 @@ input[type="text"] {
             &.vertical {
                 height: auto;
                 padding-block: var(--3px);
-                align-self: center;
+                /* align-self: center; */
                 &.single-icon {
                     padding-inline: var(--3px);
                 }

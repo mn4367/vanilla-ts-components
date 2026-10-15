@@ -180,8 +180,11 @@ const HTMLTagsWithNativeTabbing = [
 /** Orientation (of a component). */
 var Orientation;
 (function (Orientation) {
-    Orientation[Orientation["HORIZONTAL"] = 0] = "HORIZONTAL";
-    Orientation[Orientation["VERTICAL"] = 1] = "VERTICAL";
+    Orientation[Orientation["NONE"] = 0] = "NONE";
+    Orientation[Orientation["HORIZONTAL"] = 1] = "HORIZONTAL";
+    Orientation[Orientation["VERTICAL"] = 2] = "VERTICAL";
+    Orientation[Orientation["ARIA_HORIZONTAL"] = 3] = "ARIA_HORIZONTAL";
+    Orientation[Orientation["ARIA_VERTICAL"] = 4] = "ARIA_VERTICAL";
 })(Orientation || (Orientation = {}));
 // #endregion
 //////////////////////////////
@@ -437,6 +440,19 @@ function tabKeyFocusCycle(elem, ev, preventPropagation = true, selector = tabbab
     }
 }
 /**
+ * Checks whether the text direction of a component is right-to-left (RTL).\
+ * __Note:__ This function will cause an error if `component` is `null`, `undefined`, not an
+ * instance of `HTMLElement`, incompatible with `{ DOM: HTMLElement; }` or if accessing
+ * `component.DOM` isn't possible.
+ * @param component The component or HTML element whose text direction is to be checked.
+ * @returns `true` if the component's text direction is right-to-left (RTL), otherwise `false`.
+ */
+function isRTL(component) {
+    return (component instanceof HTMLElement
+        ? component.ownerDocument.defaultView?.getComputedStyle(component).direction
+        : component.DOM.ownerDocument.defaultView?.getComputedStyle(component.DOM).direction) === "rtl";
+}
+/**
  * Get a rectangle (`DOMRect`) that contains the position and size of an HTML element The position
  * is calculated relative to the parent element of `elem`. The size includes the border width and
  * padding of `elem`.
@@ -601,62 +617,6 @@ function getProp(from, ref, prop, def) {
 }
 // #endregion
 //////////////////////////////
-// /**
-//  * Type that is largely similar to a readonly map.\
-//  * Differences to `Map`:
-//  * - There is no constructor.
-//  * - There is no `forEach()` function.
-//  * - `size` is a function, not a property.
-//  */
-// export interface ReadonlyMapLike<K, V> {
-//     /* eslint-disable jsdoc/require-jsdoc */
-//     entries(): MapIterator<[K, V]>;
-//     // forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any): void;
-//     get(key: K): V | undefined;
-//     has(key: K): boolean;
-//     keys(): MapIterator<K>;
-//     values(): MapIterator<V>;
-//     size(): number;
-//     [Symbol.iterator](): MapIterator<[K, V]>;
-//     /* eslint-enable */
-// }
-// /**
-//  * Returns an _object_ from an existing map similar to a `ReadonlyMap` that is not only readonly at
-//  * compile time but also at runtime.
-//  * @param map The map to be used as the 'backend' for the readonly map-like object. This map can
-//  * still be used normally, the returned object is just an accessor facade for the map so the object
-//  * is always in sync with the map.
-//  * @returns An object similar to a `ReadonlyMap` that is not only readonly at compile time but also
-//  * at runtime. Please also not that the return value is a simple (frozen) object, not an instance of
-//  * a `Map` like class.
-//  * @see {@link ReadonlyMapLike} for the differences of the returned object to `Map`/`ReadonlyMap`.
-//  */
-// export function readonlyMapLike<K, V>(map: Map<K, V>): ReadonlyMapLike<K, V> {
-//     return Object.freeze({
-//         /* eslint-disable jsdoc/require-jsdoc */
-//         entries: map.entries.bind(map),
-//         // forEach: map.forEach.bind(map),
-//         get: map.get.bind(map),
-//         has: map.has.bind(map),
-//         keys: map.keys.bind(map),
-//         size: (): number => map.size,
-//         values: map.values.bind(map),
-//         [Symbol.iterator]: map[Symbol.iterator].bind(map)
-//         /* eslint-enable */
-//     });
-// }
-// /**
-//  * Rounds a numeric value.
-//  * @param value The value to be rounded.
-//  * @param step The rounding amount. `2` for example returns a number where `value % 2 === 0` and
-//  * `0.1` would return `2.7` for the value `2.74`
-//  * @returns The rounded value.
-//  */
-// export function round(value: number, step ?: number): number {
-//     step || (step = 1);
-//     const inv = 1.0 / step;
-//     return Math.round(value * inv) / inv;
-// }
 
 /**
  * Abstract base implementation of _all_ components.
@@ -746,7 +706,12 @@ class ANodeComponent extends AComponent {
     eventListeners = [];
     /** @inheritdoc */
     get DOM() {
-        return this._dom;
+        if (this._dom) {
+            return this._dom;
+        }
+        throw new Error(this.Disposed
+            ? `Instance of '${this.ClassName}' is already disposed of.`
+            : `Instance of '${this.ClassName}' is not yet initialized or in an undefined state.`);
     }
     /** @inheritdoc */
     ComponentType = ComponentType.NODE;
@@ -2400,6 +2365,7 @@ class AElementComponentWithChildren extends AElementComponent {
  * ```
  */
 class AElementComponentWithInternalUI extends AElementComponent {
+    // export abstract class AElementComponentWithInternalUI<UI extends (IElementComponent<HTMLElement> & IChildren), EventMap extends EventMapVoid = DefaultEventMap> extends AElementComponent<HTMLElement, EventMap> {
     /** The container which constitutes the component tree/user interface of the component. */
     ui;
     #mountUI;
@@ -3580,14 +3546,6 @@ class TargetAttr extends AElementComponent {
         return this;
     }
 }
-// /**
-//  * Custom 'value' event for input components. Like `change` and `input` this event is only emitted
-//  * on user input, not on checking/unchecking the checkbox or radio button by code!
-//  */
-// export class ValueEvent<S extends INodeComponent<Node>, D extends object = {
-//     /** The current value of the input component. */
-//     Value: string;
-// }> extends ACustomComponentEvent<"value", S, D> { }
 /**
  * 'Value' (string|number) getter/setter and set method returning this instance.\
  * __Notes:__
@@ -3749,6 +3707,11 @@ class Br extends ElementComponentVoid {
 }
 
 /**
+ * Custom 'pressed' event for buttons.
+ */
+class PressedEvent extends ACustomComponentEvent {
+}
+/**
  * Button component (`<button>`). Represents an interactive control that users can activate to
  * perform an action, such as submitting a form or opening a dialog.
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button
@@ -3763,6 +3726,54 @@ class Button extends ElementComponentWithChildren {
     constructor(...phrase) {
         super("button");
         phrase.length > 0 && this.phrase(...phrase);
+        this.on("click", () => {
+            if (this.Pressed !== undefined) {
+                this.dispatch(new PressedEvent("pressed", this, { Pressed: !this.Pressed }, DEFAULT_CANCELABLE_EVENT_INIT_DICT)) && this.pressed(!this.Pressed); // eslint-disable-line jsdoc/require-jsdoc
+            }
+        });
+    }
+    /**
+     * Get/set the persistent pressed state of the button through the `aria-pressed` attribute.
+     * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+     * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+     * click on the button as well as pressing the space or enter keys will toggle its pressed
+     * state.\
+     * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+     * removes the `type` attribute.
+     */
+    get Pressed() {
+        const pressed = this._dom.getAttribute("aria-pressed");
+        return pressed === "true" ? true : pressed === "false" ? false : undefined;
+    }
+    /** @inheritdoc */
+    set Pressed(v) {
+        this.pressed(v);
+    }
+    /**
+     * Set the persistent pressed state of the button through the `aria-pressed` attribute.
+     * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+     * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+     * click on the button as well as pressing the space or enter keys will toggle its pressed
+     * state.\
+     * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+     * removes the `type` attribute.
+     * @param v `true` for pressed, `false` for unpressed, or `undefined` for a regular button.
+     * @returns This instance.
+     */
+    pressed(v) {
+        if (v !== this.Pressed) {
+            v === undefined
+                ? this
+                    .attrib("aria-pressed", null)
+                    .attrib("type", null)
+                    .removeClass("pressed", "not-pressed")
+                : this
+                    .attrib("aria-pressed", v ? "true" : "false")
+                    .attrib("type", "button")
+                    .addClass(v ? "pressed" : "not-pressed")
+                    .removeClass(v ? "not-pressed" : "pressed");
+        }
+        return this;
     }
     static {
         /** Mixin additional DOM attributes/properties. */
@@ -3827,6 +3838,25 @@ class ButtonFactory extends ComponentFactory$1 {
             : Array.isArray(phrase)
                 ? new Button(...phrase)
                 : new Button(phrase)).addClass("regular", "warn"), data);
+    }
+    /**
+     * Create, set up and return a toggle Button component. Identical to {@link buttonRegular()},
+     * but additionally the property `Pressed` is set to the value of the `pressed` parameter
+     * (`true` or `false` but not `undefined`).
+     * @param pressed Whether the toggle button is initially pressed or not.
+     * @param phrase The phrasing content for the `<button>` element.
+     * @param data Optional arbitrary data passed to the `setupComponent()` function of the factory.
+     * @returns Toggle button component (with the class name `regular` added; the class name
+     * `pressed` is also added if the `pressed` parameter is `true`).
+     */
+    buttonToggle(pressed, phrase, data) {
+        return this.setupComponent((!phrase
+            ? new Button()
+            : Array.isArray(phrase)
+                ? new Button(...phrase)
+                : new Button(phrase))
+            .addClass("regular")
+            .pressed(pressed), data);
     }
 }
 
@@ -4704,6 +4734,37 @@ class IconButton extends AElementComponentWithInternalUI {
             .addClass(this._options.Horizontal ? "horizontal" : "vertical");
     }
     /**
+     * Get/set the persistent pressed state of the button through the `aria-pressed` attribute.
+     * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+     * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+     * click on the button as well as pressing the space or enter keys will toggle its pressed
+     * state.\
+     * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+     * removes the `type` attribute.\
+     */
+    get Pressed() {
+        return this.ui.Pressed;
+    }
+    /** @inheritdoc */
+    set Pressed(v) {
+        this.ui.pressed(v);
+    }
+    /**
+     * Set the persistent pressed state of the button through the `aria-pressed` attribute.
+     * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+     * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+     * click on the button as well as pressing the space or enter keys will toggle its pressed
+     * state.\
+     * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+     * removes the `type` attribute.
+     * @param v `true` for pressed, `false` for unpressed, or `undefined` for a regular button.
+     * @returns This instance.
+     */
+    pressed(v) {
+        this.ui.pressed(v);
+        return this;
+    }
+    /**
      * @inheritdoc
      * @see {@link IElementWithChildrenComponent.Phrase}
      */
@@ -4792,7 +4853,11 @@ class IconButton extends AElementComponentWithInternalUI {
     /** @inheritdoc */
     buildUI() {
         this.ui = new Button()
-            .append(this.spanStart = new Span().style("order", "1").addClass("start"), this.btnPhrase = new Span().style("order", "2").addClass("phrase"), this.spanEnd = new Span().style("order", "3").addClass("end"));
+            .append(this.spanStart = new Span().style("order", "1").addClass("start"), this.btnPhrase = new Span().style("order", "2").addClass("phrase"), this.spanEnd = new Span().style("order", "3").addClass("end"))
+            .on("pressed", (ev) => {
+            // Patch the sender to be this instance.
+            ev.$.Sender = this;
+        });
         return this;
     }
     static {
@@ -6426,7 +6491,7 @@ class Splitter extends AElementComponentWithInternalUI {
         this.resizeStart.X = ev.clientX;
         this.resizeStart.Y = ev.clientY;
         this.resizeAreaSize = this.activeArea.DOM[this.clientSizeProp];
-        this.isRTL = getComputedStyle(this._dom).direction === "rtl";
+        this.isRTL = isRTL(this._dom);
     }
     /**
      * Drag the handle.
@@ -7297,7 +7362,7 @@ class Dialog extends AElementComponentWithInternalUI {
             if (!this.dispatch(new DialogMoveStartEvent(this))) {
                 return;
             }
-            this.isRTL = this.DOM.parentElement !== null && getComputedStyle(this.DOM.parentElement).direction === "rtl";
+            this.isRTL = this.DOM.parentElement !== null && isRTL(this.DOM.parentElement);
             this.pointerDownStart.X = ev.clientX;
             this.pointerDownStart.Y = ev.clientY;
             this.moveStartPositionOffset.X = parseFloat(this.Style.insetInlineStart?.slice(0, -2)) || 0;
@@ -7397,7 +7462,7 @@ class Dialog extends AElementComponentWithInternalUI {
         if (!this.dispatch(new DialogResizeStartEvent(this, this.resizeDir))) {
             return;
         }
-        this.isRTL = this.DOM.parentElement !== null && getComputedStyle(this.DOM.parentElement).direction === "rtl";
+        this.isRTL = this.DOM.parentElement !== null && isRTL(this.DOM.parentElement);
         this.pointerDownStart.X = ev.clientX;
         this.pointerDownStart.Y = ev.clientY;
         const pos = this.getPosition();

@@ -507,6 +507,8 @@ a {
         --btn-disabled-font-color: var(--font-disabled-color);
         --btn-warn-font-color: var(--color-warn);
         --btn-warn-disabled-font-color: var(--color-warn-light);
+        --btn-pressed-background: var(--black-5);
+        --btn-pressed-box-shadow: inset 0px 0px var(--3px) var(--3px) rgba(0, 0, 0, 0.03);
         appearance: none;
         position: relative;
         /* margin: var(--btn-margin); */
@@ -518,6 +520,7 @@ a {
         border: var(--btn-border);
         border-bottom: var(--btn-border-bottom);
         background: var(--btn-background);
+        box-shadow: none;
         &.disabled,
         &:disabled {
             border: var(--btn-disabled-border);
@@ -526,7 +529,7 @@ a {
             color: var(--btn-disabled-font-color);
         }
         &:active {
-            background: var(--btn-active-background)
+            background: var(--btn-active-background);
         }
         &.default {
             height: var(--btn-regular-default-height);
@@ -551,6 +554,21 @@ a {
                 color: var(--btn-warn-disabled-font-color);
             }
         }
+        &.pressed {
+            background: var(--btn-pressed-background);
+            box-shadow: var(--btn-pressed-box-shadow);
+            &:active {
+                background: var(--btn-active-background);
+                box-shadow: none;
+            }
+            &.disabled,
+            &:disabled {
+                /* box-shadow: none; */
+            }
+        }
+        &.not-pressed {
+            /* Style is equivalent to the regular button style. */
+        }
     }
     .disabled button,
     :disabled button,
@@ -564,6 +582,9 @@ a {
         }
         &.warn {
             color: var(--btn-warn-disabled-font-color);
+        }
+        &.pressed {
+            /* box-shadow: none; */
         }
     }
 }
@@ -908,7 +929,8 @@ textarea {
 /* #endregion */
 
 /* #region ../../themes/vts/IconButton.css */
-/* The styling here is very generic and only handles the basic layout. */
+/* The styling here is very generic and only handles the basic layout. In most cases, `width` and
+   `height` in particular need to be adjusted. */
 .icon-button,
 .vts-icon-button {
     --icon-button-margin: var(--base-size-half);
