@@ -1,5 +1,5 @@
 import { AElementComponentWithInternalUI, ComponentFactory, DefaultEventMap, IElementWithChildrenComponent, mixinDOMProperties, NameAttr, NullableString, Phrase, Phrases, ValueAttr } from "@vanilla-ts/core";
-import { Button, Span } from "@vanilla-ts/dom";
+import { Button, PressedEvent, Span } from "@vanilla-ts/dom";
 
 
 /**
@@ -41,6 +41,12 @@ export type IconButtonOptions = {
     Horizontal?: boolean;
 };
 
+/** Additional event(s) for `IconButton`. */
+export interface IconButtonEventMap extends DefaultEventMap {
+    /** An icon button is pressed/unpressed. */
+    "pressed": PressedEvent<IconButton>;
+}
+
 /**
  * IconButton component to display buttons with icons and/or text. The component consists of three
  * inner parts:
@@ -71,7 +77,7 @@ export type IconButtonOptions = {
  * - The styling in `themes/vts/IconButton.css` is very generic and only handles the basic layout.
  * @see {@link IconButtonOptions}
  */
-export class IconButton<EventMap extends DefaultEventMap = DefaultEventMap> extends AElementComponentWithInternalUI<Button, EventMap> {
+export class IconButton<EventMap extends IconButtonEventMap = IconButtonEventMap> extends AElementComponentWithInternalUI<Button, EventMap> { // eslint-disable-line @typescript-eslint/no-unsafe-declaration-merging
     protected _options: IconButtonOptions = {};
     protected btnPhrase: Span;
     protected spanStart: Span;
@@ -153,6 +159,39 @@ export class IconButton<EventMap extends DefaultEventMap = DefaultEventMap> exte
             .setSingleIcon()
             .removeClass("horizontal", "vertical")
             .addClass(this._options.Horizontal ? "horizontal" : "vertical");
+    }
+
+    /**
+     * Get/set the persistent pressed state of the button through the `aria-pressed` attribute.
+     * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+     * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+     * click on the button as well as pressing the space or enter keys will toggle its pressed
+     * state.\
+     * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+     * removes the `type` attribute.\
+     */
+    public get Pressed(): boolean | undefined {
+        return this.ui.Pressed;
+    }
+    /** @inheritdoc */
+    public set Pressed(v: boolean | undefined) {
+        this.ui.pressed(v);
+    }
+
+    /**
+     * Set the persistent pressed state of the button through the `aria-pressed` attribute.
+     * `undefined` (the default) represents a regular button without `aria-pressed`; `false` and
+     * `true` represent an unpressed and pressed toggle button. If `true` or `false` is passed, a
+     * click on the button as well as pressing the space or enter keys will toggle its pressed
+     * state.\
+     * __Note:__ Setting `true` or `false` also sets the `type` attribute to `"button"`. `undefined`
+     * removes the `type` attribute.
+     * @param v `true` for pressed, `false` for unpressed, or `undefined` for a regular button.
+     * @returns This instance.
+     */
+    public pressed(v: boolean | undefined): this {
+        this.ui.pressed(v);
+        return this;
     }
 
     /**
@@ -265,7 +304,11 @@ export class IconButton<EventMap extends DefaultEventMap = DefaultEventMap> exte
                 this.spanStart = new Span().style("order", "1").addClass("start"),
                 this.btnPhrase = new Span().style("order", "2").addClass("phrase"),
                 this.spanEnd = new Span().style("order", "3").addClass("end")
-            );
+            )
+            .on("pressed", (ev: PressedEvent<Button>) => {
+                // Patch the sender to be this instance.
+                (ev as unknown as PressedEvent<IconButton>).$.Sender = this;
+            });
         return this;
     }
 
@@ -283,6 +326,12 @@ export class IconButton<EventMap extends DefaultEventMap = DefaultEventMap> exte
         );
     }
 }
+
+// Augment class definition with the DOM attributes/properties introduced by `mixinDOMProperties()`
+// above.
+export interface IconButton<EventMap extends IconButtonEventMap = IconButtonEventMap> extends AElementComponentWithInternalUI<Button, EventMap>, // eslint-disable-line jsdoc/require-jsdoc
+    NameAttr<HTMLButtonElement, EventMap>,
+    ValueAttr<HTMLButtonElement, EventMap> { }
 
 /**
  * Factory for `IconButton` components.

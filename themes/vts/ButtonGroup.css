@@ -1,0 +1,57 @@
+.button-group,
+.vts-button-group {
+    display: flex;
+    /* This button styling is tailored for `Button`/`Iconbutton` with class `regular`. */
+    &.horizontal {
+        flex-direction: row;
+        > .regular {
+            &:not(:first-child):not(:last-child) {
+                &:not(:focus-visible) {
+                    border-radius: 0;
+                }
+                border-right: none;
+            }
+            &:first-child:not(:only-child) {
+                &:not(:focus-visible) {
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+                border-right: none;
+            }
+            &:last-child:not(:only-child) {
+                &:not(:focus-visible) {
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                }
+            }
+        }
+
+        > button {
+            height: auto;
+        }
+    }
+    &.vertical {
+        flex-direction: column;
+        > .regular {
+            &:not(:first-child):not(:last-child) {
+                &:not(:focus-visible) {
+                    border-radius: 0;
+                }
+                border-bottom: none;
+            }
+            &:first-child:not(:only-child) {
+                &:not(:focus-visible) {
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+                border-bottom: none;
+            }
+            &:last-child:not(:only-child) {
+                &:not(:focus-visible) {
+                    border-top-left-radius: 0;
+                    border-top-right-radius: 0;
+                }
+            }
+        }
+    }
+}

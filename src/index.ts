@@ -1,4 +1,5 @@
 export * from "./BusyOverlay.js";
+export * from "./ButtonGroup.js";
 export * from "./Dialog.js";
 export * from "./DisclosureContainer.js";
 export * from "./I18N/StdDialogI18N_DE.js";
