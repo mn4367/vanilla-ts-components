@@ -44,7 +44,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
 
     /**
      * Create RadioButtonGroup component.
-     * @param radioButtons An array of radio button data used to create the buttons.
+     * @param labeledRadioButtons An array of radio button data used to create the buttons.
      * @param name The `name` property for all radio buttons.
      * @param orientation The orientation of the labeled radio buttons.\
      * Default: {@link Orientation.VERTICAL}.
@@ -54,7 +54,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * Default: {@link LabelAlignment.START}.
      */
     constructor(
-        radioButtons: LabeledRadioButtons,
+        labeledRadioButtons: LabeledRadioButtons,
         name: string,
         orientation: Orientation = Orientation.VERTICAL,
         labelPosition: LabelPosition = LabelPosition.END,
@@ -67,7 +67,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
             .orientation(orientation)
             .labelPosition(labelPosition)
             .labelAlignment(labelAlignment)
-            .radioButtons(radioButtons, name);
+            .labeledRadioButtons(labeledRadioButtons, name);
     }
 
     /**
@@ -77,8 +77,15 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * labeled radio button will never fire the event `checked`. Instead, listening for this event
      * must be done on the radio button group instance itself.
      */
-    public get LabeledRadioButtons(): LabeledRadioButton[] {
+    public get RadioButtons(): LabeledRadioButton[] {
         return this._labeledRadioButtons.slice();
+    }
+
+    /**
+     * Identical to the property {@link RadioButtons} (just calls it).
+     */
+    public get LabeledRadioButtons(): LabeledRadioButton[] {
+        return this.RadioButtons;
     }
 
     /**
@@ -86,13 +93,13 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
      * __Note:__ Setting new radio buttons clears the internal list of radio buttons and also
      * disposes of all previously contained radio buttons, so instances of radio buttons obtained
      * before with the getter `RadioButtons` are unusable after this operation!
-     * @param radioButtons The radio buttons to be set.
+     * @param labeledRadioButtons The radio buttons to be set.
      * @param name The `name` property for all radio buttons.
      * @param keepValue If `true`, the previous value of the radio button group will be restored (if
      * possible).
      * @returns This instance.
      */
-    public radioButtons(radioButtons: LabeledRadioButtons, name: string, keepValue?: boolean): this {
+    public radioButtons(labeledRadioButtons: LabeledRadioButtons, name: string, keepValue?: boolean): this {
         const oldValue = this.Value;
         this.ui.remove();
         for (const rb of this._labeledRadioButtons) {
@@ -101,7 +108,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
         this._name = name;
         this._labeledRadioButtons.length = 0;
         this._labeledRadioButtons.push(
-            ...radioButtons.map(item => {
+            ...labeledRadioButtons.map(item => {
                 const lrb = new LabeledRadioButton(
                     item.Label,
                     item.ID,
@@ -125,6 +132,14 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
         keepValue && oldValue && this.value(oldValue);
         this.ui.append(...this._labeledRadioButtons);
         return this;
+    }
+
+    // eslint-disable-next-line jsdoc/require-param, jsdoc/require-returns
+    /**
+     * Identical to the function {@link radioButtons} (just calls it).
+     */
+    public labeledRadioButtons(labeledRadioButtons: LabeledRadioButtons, name: string, keepValue?: boolean): this {
+        return this.radioButtons(labeledRadioButtons, name, keepValue);
     }
 
     /**
@@ -189,6 +204,22 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
             }
         }
         return this;
+    }
+
+    /**
+     * Get an array of the values of all contained radio buttons. The array has the same order as
+     * the radio buttons in the group.
+     */
+    public get Values(): string[] {
+        return this._labeledRadioButtons.map(rb => rb.Value);
+    }
+
+    /**
+     * Gets the index of the currently checked radio button. If no radio button is checked, it
+     * returns `-1`.
+     */
+    public get CheckedIndex(): number {
+        return this._labeledRadioButtons.findIndex(e => e.Checked);
     }
 
     /**
@@ -291,7 +322,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
         /** Mixin additional DOM attributes/properties. */
         mixinDOMProperties(
             this,
-            OrientationAttr<HTMLInputElement>,
+            OrientationAttr<HTMLDivElement>,
         );
     }
 }
@@ -299,7 +330,7 @@ export class RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioB
 // Augment class definition with the DOM attributes/properties introduced by `mixinDOMProperties()`
 // above.
 export interface RadioButtonGroup<EventMap extends RadioButtonGroupEventMap = RadioButtonGroupEventMap> extends AElementComponentWithInternalUI<Div, EventMap>, // eslint-disable-line jsdoc/require-jsdoc
-    OrientationAttr<HTMLElement, EventMap> { }
+    OrientationAttr<HTMLDivElement, EventMap> { }
 
 /**
  * Factory for `RadioButtonGroup` components.
